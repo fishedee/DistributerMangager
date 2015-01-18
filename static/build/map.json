@@ -1,0 +1,701 @@
+{
+    "res": {
+        "fishstrap/api/netType.js": {
+            "uri": "/fishstrap/api/netType.js",
+            "type": "js",
+            "deps": [
+                "lib/netType"
+            ]
+        },
+        "fishstrap/api/weixinApi.js": {
+            "uri": "/fishstrap/api/weixinApi.js",
+            "type": "js"
+        },
+        "fishstrap/core/global.js": {
+            "uri": "/fishstrap/core/global.js",
+            "type": "js",
+            "deps": [
+                "fishstrap/lib/underscore.js",
+                "fishstrap/lib/jquery.js"
+            ],
+            "id": "fishstrap/core/global.js"
+        },
+        "fishstrap/core/html5.js": {
+            "uri": "/fishstrap/core/html5.js",
+            "type": "js",
+            "deps": [
+                "fishstrap/core/global.js"
+            ],
+            "id": "fishstrap/core/html5.js"
+        },
+        "fishstrap/lib/echarts/echarts.js": {
+            "uri": "http://apps.bdimg.com/libs/echarts/2.0.4/echarts-plain.js",
+            "type": "js"
+        },
+        "fishstrap/lib/fastclick.js": {
+            "uri": "/fishstrap/lib/fastclick.js",
+            "type": "js"
+        },
+        "fishstrap/lib/gri/bootstrap.css": {
+            "uri": "/fishstrap/lib/gri/bootstrap.css",
+            "type": "css"
+        },
+        "fishstrap/lib/gri/form.css": {
+            "uri": "/fishstrap/lib/gri/form.css",
+            "type": "css"
+        },
+        "fishstrap/lib/gri/gri.css": {
+            "uri": "/fishstrap/lib/gri/gri.css",
+            "type": "css",
+            "id": "fishstrap/lib/gri/gri.css"
+        },
+        "fishstrap/lib/gri/gri.js": {
+            "uri": "/fishstrap/lib/gri/gri.js",
+            "type": "js",
+            "deps": [
+                "fishstrap/lib/gri/gri.css"
+            ],
+            "id": "fishstrap/lib/gri/gri.js"
+        },
+        "fishstrap/lib/gri/griTable.js": {
+            "uri": "/fishstrap/lib/gri/griTable.js",
+            "type": "js",
+            "deps": [
+                "fishstrap/lib/gri/gri.css"
+            ],
+            "id": "fishstrap/lib/gri/griTable.js"
+        },
+        "fishstrap/lib/gri/jquery.datetimepicker.css": {
+            "uri": "/fishstrap/lib/gri/jquery.datetimepicker.css",
+            "type": "css"
+        },
+        "fishstrap/lib/gri/module.css": {
+            "uri": "/fishstrap/lib/gri/module.css",
+            "type": "css"
+        },
+        "fishstrap/lib/gri/page.css": {
+            "uri": "/fishstrap/lib/gri/page.css",
+            "type": "css"
+        },
+        "fishstrap/lib/gri/reset.css": {
+            "uri": "/fishstrap/lib/gri/reset.css",
+            "type": "css"
+        },
+        "fishstrap/lib/gri/share.css": {
+            "uri": "/fishstrap/lib/gri/share.css",
+            "type": "css"
+        },
+        "fishstrap/lib/gri/style.css": {
+            "uri": "/fishstrap/lib/gri/style.css",
+            "type": "css"
+        },
+        "fishstrap/lib/iscroll.js": {
+            "uri": "/fishstrap/lib/iscroll.js",
+            "type": "js"
+        },
+        "fishstrap/lib/jquery.js": {
+            "uri": "http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js",
+            "type": "js",
+            "id": "fishstrap/lib/jquery.js"
+        },
+        "fishstrap/lib/mod.js": {
+            "uri": "/fishstrap/lib/mod.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/dialogs/attachment/attachment.css": {
+            "uri": "/fishstrap/lib/ueditor/dialogs/attachment/attachment.css",
+            "type": "css"
+        },
+        "fishstrap/lib/ueditor/dialogs/attachment/attachment.js": {
+            "uri": "/fishstrap/lib/ueditor/dialogs/attachment/attachment.js",
+            "type": "js",
+            "deps": [
+                "fishstrap/lib/ueditor/dialogs/attachment/attachment.css"
+            ]
+        },
+        "fishstrap/lib/ueditor/dialogs/background/background.css": {
+            "uri": "/fishstrap/lib/ueditor/dialogs/background/background.css",
+            "type": "css"
+        },
+        "fishstrap/lib/ueditor/dialogs/background/background.js": {
+            "uri": "/fishstrap/lib/ueditor/dialogs/background/background.js",
+            "type": "js",
+            "deps": [
+                "fishstrap/lib/ueditor/dialogs/background/background.css"
+            ]
+        },
+        "fishstrap/lib/ueditor/dialogs/charts/chart.config.js": {
+            "uri": "/fishstrap/lib/ueditor/dialogs/charts/chart.config.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/dialogs/charts/charts.css": {
+            "uri": "/fishstrap/lib/ueditor/dialogs/charts/charts.css",
+            "type": "css"
+        },
+        "fishstrap/lib/ueditor/dialogs/charts/charts.js": {
+            "uri": "/fishstrap/lib/ueditor/dialogs/charts/charts.js",
+            "type": "js",
+            "deps": [
+                "fishstrap/lib/ueditor/dialogs/charts/charts.css"
+            ]
+        },
+        "fishstrap/lib/ueditor/dialogs/emotion/emotion.css": {
+            "uri": "/fishstrap/lib/ueditor/dialogs/emotion/emotion.css",
+            "type": "css"
+        },
+        "fishstrap/lib/ueditor/dialogs/emotion/emotion.js": {
+            "uri": "/fishstrap/lib/ueditor/dialogs/emotion/emotion.js",
+            "type": "js",
+            "deps": [
+                "fishstrap/lib/ueditor/dialogs/emotion/emotion.css"
+            ]
+        },
+        "fishstrap/lib/ueditor/dialogs/help/help.css": {
+            "uri": "/fishstrap/lib/ueditor/dialogs/help/help.css",
+            "type": "css"
+        },
+        "fishstrap/lib/ueditor/dialogs/help/help.js": {
+            "uri": "/fishstrap/lib/ueditor/dialogs/help/help.js",
+            "type": "js",
+            "deps": [
+                "fishstrap/lib/ueditor/dialogs/help/help.css"
+            ]
+        },
+        "fishstrap/lib/ueditor/dialogs/image/image.css": {
+            "uri": "/fishstrap/lib/ueditor/dialogs/image/image.css",
+            "type": "css"
+        },
+        "fishstrap/lib/ueditor/dialogs/image/image.js": {
+            "uri": "/fishstrap/lib/ueditor/dialogs/image/image.js",
+            "type": "js",
+            "deps": [
+                "fishstrap/lib/ueditor/dialogs/image/image.css"
+            ]
+        },
+        "fishstrap/lib/ueditor/dialogs/internal.js": {
+            "uri": "/fishstrap/lib/ueditor/dialogs/internal.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/dialogs/music/music.css": {
+            "uri": "/fishstrap/lib/ueditor/dialogs/music/music.css",
+            "type": "css"
+        },
+        "fishstrap/lib/ueditor/dialogs/music/music.js": {
+            "uri": "/fishstrap/lib/ueditor/dialogs/music/music.js",
+            "type": "js",
+            "deps": [
+                "fishstrap/lib/ueditor/dialogs/music/music.css"
+            ]
+        },
+        "fishstrap/lib/ueditor/dialogs/scrawl/scrawl.css": {
+            "uri": "/fishstrap/lib/ueditor/dialogs/scrawl/scrawl.css",
+            "type": "css"
+        },
+        "fishstrap/lib/ueditor/dialogs/scrawl/scrawl.js": {
+            "uri": "/fishstrap/lib/ueditor/dialogs/scrawl/scrawl.js",
+            "type": "js",
+            "deps": [
+                "fishstrap/lib/ueditor/dialogs/scrawl/scrawl.css"
+            ]
+        },
+        "fishstrap/lib/ueditor/dialogs/searchreplace/searchreplace.js": {
+            "uri": "/fishstrap/lib/ueditor/dialogs/searchreplace/searchreplace.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/dialogs/spechars/spechars.js": {
+            "uri": "/fishstrap/lib/ueditor/dialogs/spechars/spechars.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/dialogs/table/edittable.css": {
+            "uri": "/fishstrap/lib/ueditor/dialogs/table/edittable.css",
+            "type": "css"
+        },
+        "fishstrap/lib/ueditor/dialogs/table/edittable.js": {
+            "uri": "/fishstrap/lib/ueditor/dialogs/table/edittable.js",
+            "type": "js",
+            "deps": [
+                "fishstrap/lib/ueditor/dialogs/table/edittable.css"
+            ]
+        },
+        "fishstrap/lib/ueditor/dialogs/template/config.js": {
+            "uri": "/fishstrap/lib/ueditor/dialogs/template/config.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/dialogs/template/template.css": {
+            "uri": "/fishstrap/lib/ueditor/dialogs/template/template.css",
+            "type": "css"
+        },
+        "fishstrap/lib/ueditor/dialogs/template/template.js": {
+            "uri": "/fishstrap/lib/ueditor/dialogs/template/template.js",
+            "type": "js",
+            "deps": [
+                "fishstrap/lib/ueditor/dialogs/template/template.css"
+            ]
+        },
+        "fishstrap/lib/ueditor/dialogs/video/video.css": {
+            "uri": "/fishstrap/lib/ueditor/dialogs/video/video.css",
+            "type": "css"
+        },
+        "fishstrap/lib/ueditor/dialogs/video/video.js": {
+            "uri": "/fishstrap/lib/ueditor/dialogs/video/video.js",
+            "type": "js",
+            "deps": [
+                "fishstrap/lib/ueditor/dialogs/video/video.css"
+            ]
+        },
+        "fishstrap/lib/ueditor/dialogs/wordimage/tangram.js": {
+            "uri": "/fishstrap/lib/ueditor/dialogs/wordimage/tangram.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/dialogs/wordimage/wordimage.js": {
+            "uri": "/fishstrap/lib/ueditor/dialogs/wordimage/wordimage.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/lang/en/en.js": {
+            "uri": "/fishstrap/lib/ueditor/lang/en/en.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/lang/zh-cn/zh-cn.js": {
+            "uri": "/fishstrap/lib/ueditor/lang/zh-cn/zh-cn.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/themes/default/css/ueditor.css": {
+            "uri": "/fishstrap/lib/ueditor/themes/default/css/ueditor.css",
+            "type": "css"
+        },
+        "fishstrap/lib/ueditor/themes/default/css/ueditor.min.css": {
+            "uri": "/fishstrap/lib/ueditor/themes/default/css/ueditor.min.css",
+            "type": "css"
+        },
+        "fishstrap/lib/ueditor/themes/default/dialogbase.css": {
+            "uri": "/fishstrap/lib/ueditor/themes/default/dialogbase.css",
+            "type": "css"
+        },
+        "fishstrap/lib/ueditor/themes/iframe.css": {
+            "uri": "/fishstrap/lib/ueditor/themes/iframe.css",
+            "type": "css"
+        },
+        "fishstrap/lib/ueditor/third-party/SyntaxHighlighter/shCore.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/SyntaxHighlighter/shCore.js",
+            "type": "js",
+            "deps": [
+                "XRegExp",
+                "shCore"
+            ]
+        },
+        "fishstrap/lib/ueditor/third-party/SyntaxHighlighter/shCoreDefault.css": {
+            "uri": "/fishstrap/lib/ueditor/third-party/SyntaxHighlighter/shCoreDefault.css",
+            "type": "css"
+        },
+        "fishstrap/lib/ueditor/third-party/codemirror/codemirror.css": {
+            "uri": "/fishstrap/lib/ueditor/third-party/codemirror/codemirror.css",
+            "type": "css"
+        },
+        "fishstrap/lib/ueditor/third-party/codemirror/codemirror.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/codemirror/codemirror.js",
+            "type": "js",
+            "deps": [
+                "fishstrap/lib/ueditor/third-party/codemirror/codemirror.css"
+            ]
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/adapters/mootools-adapter.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/adapters/mootools-adapter.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/adapters/mootools-adapter.src.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/adapters/mootools-adapter.src.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/adapters/prototype-adapter.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/adapters/prototype-adapter.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/adapters/prototype-adapter.src.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/adapters/prototype-adapter.src.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/adapters/standalone-framework.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/adapters/standalone-framework.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/adapters/standalone-framework.src.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/adapters/standalone-framework.src.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/highcharts-more.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/highcharts-more.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/highcharts-more.src.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/highcharts-more.src.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/highcharts.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/highcharts.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/highcharts.src.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/highcharts.src.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/modules/annotations.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/modules/annotations.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/modules/annotations.src.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/modules/annotations.src.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/modules/canvas-tools.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/modules/canvas-tools.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/modules/canvas-tools.src.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/modules/canvas-tools.src.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/modules/data.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/modules/data.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/modules/data.src.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/modules/data.src.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/modules/drilldown.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/modules/drilldown.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/modules/drilldown.src.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/modules/drilldown.src.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/modules/exporting.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/modules/exporting.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/modules/exporting.src.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/modules/exporting.src.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/modules/funnel.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/modules/funnel.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/modules/funnel.src.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/modules/funnel.src.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/modules/heatmap.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/modules/heatmap.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/modules/heatmap.src.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/modules/heatmap.src.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/modules/map.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/modules/map.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/modules/map.src.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/modules/map.src.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/modules/no-data-to-display.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/modules/no-data-to-display.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/modules/no-data-to-display.src.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/modules/no-data-to-display.src.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/themes/dark-blue.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/themes/dark-blue.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/themes/dark-green.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/themes/dark-green.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/themes/gray.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/themes/gray.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/themes/grid.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/themes/grid.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/highcharts/themes/skies.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/highcharts/themes/skies.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/jquery-1.10.2.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/jquery-1.10.2.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/jquery-1.10.2.min.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/jquery-1.10.2.min.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/video-js/video-js.css": {
+            "uri": "/fishstrap/lib/ueditor/third-party/video-js/video-js.css",
+            "type": "css"
+        },
+        "fishstrap/lib/ueditor/third-party/video-js/video-js.min.css": {
+            "uri": "/fishstrap/lib/ueditor/third-party/video-js/video-js.min.css",
+            "type": "css"
+        },
+        "fishstrap/lib/ueditor/third-party/video-js/video.dev.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/video-js/video.dev.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/video-js/video.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/video-js/video.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/webuploader/webuploader.css": {
+            "uri": "/fishstrap/lib/ueditor/third-party/webuploader/webuploader.css",
+            "type": "css"
+        },
+        "fishstrap/lib/ueditor/third-party/webuploader/webuploader.custom.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/webuploader/webuploader.custom.js",
+            "type": "js",
+            "deps": [
+                "webuploader"
+            ]
+        },
+        "fishstrap/lib/ueditor/third-party/webuploader/webuploader.custom.min.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/webuploader/webuploader.custom.min.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/webuploader/webuploader.flashonly.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/webuploader/webuploader.flashonly.js",
+            "type": "js",
+            "deps": [
+                "webuploader"
+            ]
+        },
+        "fishstrap/lib/ueditor/third-party/webuploader/webuploader.flashonly.min.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/webuploader/webuploader.flashonly.min.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/webuploader/webuploader.html5only.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/webuploader/webuploader.html5only.js",
+            "type": "js",
+            "deps": [
+                "webuploader"
+            ]
+        },
+        "fishstrap/lib/ueditor/third-party/webuploader/webuploader.html5only.min.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/webuploader/webuploader.html5only.min.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/webuploader/webuploader.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/webuploader/webuploader.js",
+            "type": "js",
+            "deps": [
+                "webuploader",
+                "fishstrap/lib/ueditor/third-party/webuploader/webuploader.css"
+            ]
+        },
+        "fishstrap/lib/ueditor/third-party/webuploader/webuploader.min.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/webuploader/webuploader.min.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/webuploader/webuploader.withoutimage.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/webuploader/webuploader.withoutimage.js",
+            "type": "js",
+            "deps": [
+                "webuploader"
+            ]
+        },
+        "fishstrap/lib/ueditor/third-party/webuploader/webuploader.withoutimage.min.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/webuploader/webuploader.withoutimage.min.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/zeroclipboard/ZeroClipboard.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/zeroclipboard/ZeroClipboard.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/third-party/zeroclipboard/ZeroClipboard.min.js": {
+            "uri": "/fishstrap/lib/ueditor/third-party/zeroclipboard/ZeroClipboard.min.js",
+            "type": "js"
+        },
+        "fishstrap/lib/ueditor/ueditor.all.min.js": {
+            "uri": "/fishstrap/lib/ueditor/ueditor.all.min.js",
+            "type": "js",
+            "id": "fishstrap/lib/ueditor/ueditor.all.min.js"
+        },
+        "fishstrap/lib/ueditor/ueditor.config.js": {
+            "uri": "/fishstrap/lib/ueditor/ueditor.config.js",
+            "type": "js",
+            "id": "fishstrap/lib/ueditor/ueditor.config.js"
+        },
+        "fishstrap/lib/ueditor/ueditor.parse.min.js": {
+            "uri": "/fishstrap/lib/ueditor/ueditor.parse.min.js",
+            "type": "js"
+        },
+        "fishstrap/lib/underscore.js": {
+            "uri": "http://apps.bdimg.com/libs/underscore.js/1.7.0/underscore-min.js",
+            "type": "js",
+            "id": "fishstrap/lib/underscore.js"
+        },
+        "fishstrap/page/browserCheck.js": {
+            "uri": "/fishstrap/page/browserCheck.js",
+            "type": "js",
+            "deps": [
+                "core/global"
+            ]
+        },
+        "fishstrap/page/indexPage.css": {
+            "uri": "/fishstrap/page/indexPage.css",
+            "type": "css",
+            "id": "fishstrap/page/indexPage.css"
+        },
+        "fishstrap/page/indexPage.js": {
+            "uri": "/fishstrap/page/indexPage.js",
+            "type": "js",
+            "deps": [
+                "fishstrap/page/indexPage.css",
+                "fishstrap/core/global.js"
+            ],
+            "id": "fishstrap/page/indexPage.js"
+        },
+        "fishstrap/page/loginPage.js": {
+            "uri": "/fishstrap/page/loginPage.js",
+            "type": "js",
+            "deps": [
+                "fishstrap/lib/gri/gri.css",
+                "fishstrap/core/global.js"
+            ],
+            "id": "fishstrap/page/loginPage.js"
+        },
+        "fishstrap/page/subPage.js": {
+            "uri": "/fishstrap/page/subPage.js",
+            "type": "js",
+            "deps": [
+                "core/global"
+            ]
+        },
+        "fishstrap/ui/chart.js": {
+            "uri": "/fishstrap/ui/chart.js",
+            "type": "js",
+            "deps": [
+                "fishstrap/lib/echarts/echarts.js",
+                "fishstrap/core/global.js"
+            ]
+        },
+        "fishstrap/ui/dialog.js": {
+            "uri": "/fishstrap/ui/dialog.js",
+            "type": "js",
+            "deps": [
+                "fishstrap/lib/gri/gri.js",
+                "fishstrap/core/global.js"
+            ],
+            "id": "fishstrap/ui/dialog.js"
+        },
+        "fishstrap/ui/editor.js": {
+            "uri": "/fishstrap/ui/editor.js",
+            "type": "js",
+            "deps": [
+                "fishstrap/lib/ueditor/ueditor.config.js",
+                "fishstrap/lib/ueditor/ueditor.all.min.js",
+                "fishstrap/core/global.js"
+            ],
+            "id": "fishstrap/ui/editor.js"
+        },
+        "fishstrap/ui/input.js": {
+            "uri": "/fishstrap/ui/input.js",
+            "type": "js",
+            "deps": [
+                "fishstrap/core/global.js",
+                "fishstrap/ui/dialog.js",
+                "fishstrap/ui/editor.js",
+                "fishstrap/util/upload.js",
+                "fishstrap/util/jqueryDatetimePicker.js"
+            ],
+            "id": "fishstrap/ui/input.js"
+        },
+        "fishstrap/ui/query.js": {
+            "uri": "/fishstrap/ui/query.js",
+            "type": "js",
+            "deps": [
+                "fishstrap/core/global.js",
+                "fishstrap/ui/dialog.js",
+                "fishstrap/ui/table.js",
+                "fishstrap/ui/input.js"
+            ],
+            "id": "fishstrap/ui/query.js"
+        },
+        "fishstrap/ui/table.js": {
+            "uri": "/fishstrap/ui/table.js",
+            "type": "js",
+            "deps": [
+                "fishstrap/lib/gri/griTable.js",
+                "fishstrap/core/global.js",
+                "fishstrap/ui/dialog.js"
+            ],
+            "id": "fishstrap/ui/table.js"
+        },
+        "fishstrap/ui/tree.js": {
+            "uri": "/fishstrap/ui/tree.js",
+            "type": "js",
+            "deps": [
+                "fishstrap/core/global.js"
+            ]
+        },
+        "fishstrap/util/imageCompresser.js": {
+            "uri": "/fishstrap/util/imageCompresser.js",
+            "type": "js",
+            "deps": [
+                "fishstrap/core/global.js",
+                "fishstrap/util/jpegEncoder.js"
+            ],
+            "id": "fishstrap/util/imageCompresser.js"
+        },
+        "fishstrap/util/jpegEncoder.js": {
+            "uri": "/fishstrap/util/jpegEncoder.js",
+            "type": "js",
+            "id": "fishstrap/util/jpegEncoder.js"
+        },
+        "fishstrap/util/jpegMeta.js": {
+            "uri": "/fishstrap/util/jpegMeta.js",
+            "type": "js",
+            "id": "fishstrap/util/jpegMeta.js"
+        },
+        "fishstrap/util/jquery.datetimepicker.css": {
+            "uri": "/fishstrap/util/jquery.datetimepicker.css",
+            "type": "css",
+            "id": "fishstrap/util/jquery.datetimepicker.css"
+        },
+        "fishstrap/util/jqueryDatetimePicker.js": {
+            "uri": "/fishstrap/util/jqueryDatetimePicker.js",
+            "type": "js",
+            "deps": [
+                "fishstrap/util/jquery.datetimepicker.css"
+            ],
+            "id": "fishstrap/util/jqueryDatetimePicker.js"
+        },
+        "fishstrap/util/jqueryLazyload.js": {
+            "uri": "/fishstrap/util/jqueryLazyload.js",
+            "type": "js"
+        },
+        "fishstrap/util/jqueryValidate.js": {
+            "uri": "/fishstrap/util/jqueryValidate.js",
+            "type": "js"
+        },
+        "fishstrap/util/upload.js": {
+            "uri": "/fishstrap/util/upload.js",
+            "type": "js",
+            "deps": [
+                "fishstrap/core/global.js",
+                "fishstrap/core/html5.js",
+                "fishstrap/util/imageCompresser.js",
+                "fishstrap/util/jpegMeta.js"
+            ],
+            "id": "fishstrap/util/upload.js"
+        }
+    },
+    "pkg": {}
+}

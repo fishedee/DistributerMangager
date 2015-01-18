@@ -378,10 +378,6 @@ $config['email_async_url'] = '/email/asyncSendReceiver';
 * TimerÅäÖÃ
 */
 $config['timer'] = array(
-	array(
-		'period'=>60,
-		'task'=>'test',
-	)
 );
 
 /* End of file config.php */
