@@ -1101,7 +1101,7 @@
             var positon = _this.getElementAbsPos(_table);
             var loadingDiv = document.createElement('div');
             loadingDiv.className = 'gri_datatable_loading';
-            loadingDiv.innerHTML = "<img src='"+'/fishstrap/ui/loading.gif'+"' alt='加载中...' />";
+            loadingDiv.innerHTML = "<img src='"+'/fishstrap/ui/loading_394bafc.gif'+"' alt='加载中...' />";
 
             document.getElementsByTagName('body')[0].appendChild(loadingDiv);
             loadingDiv.style.position = "absolute";

@@ -10,19 +10,23 @@ class UserDb extends CI_Model
 
 	public function search($where,$limit){
 		foreach( $where as $key=>$value ){
-			if( $key == "name" )
+			if( $key == "name" || $key == "company" || $key == "phone")
 				$this->db->like($key,$value);
 			else if( $key == "type" )
 				$this->db->where($key,$value);
+			else if( $key == "userId" )
+				$this->db->where_in($key,$value);
 		}
 		
 		$count = $this->db->count_all_results($this->tableName);
 		
 		foreach( $where as $key=>$value ){
-			if( $key == "name" )
+			if( $key == "name" || $key == "company" || $key == "phone")
 				$this->db->like($key,$value);
 			else if( $key == "type" )
 				$this->db->where($key,$value);
+			else if( $key == "userId" )
+				$this->db->where_in($key,$value);
 		}
 			
 		$this->db->order_by('createTime','desc');

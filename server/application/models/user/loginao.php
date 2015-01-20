@@ -60,7 +60,7 @@ class LoginAo extends CI_Model {
 		return array(
 			'code'=>0,
 			'msg'=>'',
-			'data'=>$result['data']['userId'],
+			'data'=>$result['data'],
 		);
 	}
 	
@@ -79,7 +79,7 @@ class LoginAo extends CI_Model {
 		return array(
 			'code'=>0,
 			'msg'=>'',
-			'data'=>$result['data']['userId'],
+			'data'=>$result['data'],
 		);
 	}
 	public function isClient($permission){
@@ -104,7 +104,7 @@ class LoginAo extends CI_Model {
 		return array(
 			'code'=>0,
 			'msg'=>'',
-			'data'=>$result['data']['userId'],
+			'data'=>$result['data'],
 		);
 	}
 	

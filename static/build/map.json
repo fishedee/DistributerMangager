@@ -1,18 +1,18 @@
 {
     "res": {
         "fishstrap/api/netType.js": {
-            "uri": "/fishstrap/api/netType.js",
+            "uri": "/fishstrap/api/netType_5384810.js",
             "type": "js",
             "deps": [
                 "lib/netType"
             ]
         },
         "fishstrap/api/weixinApi.js": {
-            "uri": "/fishstrap/api/weixinApi.js",
+            "uri": "/fishstrap/api/weixinApi_1322501.js",
             "type": "js"
         },
         "fishstrap/core/global.js": {
-            "uri": "/fishstrap/core/global.js",
+            "uri": "/fishstrap/core/global_5482bca.js",
             "type": "js",
             "deps": [
                 "fishstrap/lib/underscore.js",
@@ -21,7 +21,7 @@
             "id": "fishstrap/core/global.js"
         },
         "fishstrap/core/html5.js": {
-            "uri": "/fishstrap/core/html5.js",
+            "uri": "/fishstrap/core/html5_0314c31.js",
             "type": "js",
             "deps": [
                 "fishstrap/core/global.js"
@@ -542,19 +542,19 @@
             "id": "fishstrap/lib/underscore.js"
         },
         "fishstrap/page/browserCheck.js": {
-            "uri": "/fishstrap/page/browserCheck.js",
+            "uri": "/fishstrap/page/browserCheck_ae188de.js",
             "type": "js",
             "deps": [
                 "core/global"
             ]
         },
         "fishstrap/page/indexPage.css": {
-            "uri": "/fishstrap/page/indexPage.css",
+            "uri": "/fishstrap/page/indexPage_fbafffd.css",
             "type": "css",
             "id": "fishstrap/page/indexPage.css"
         },
         "fishstrap/page/indexPage.js": {
-            "uri": "/fishstrap/page/indexPage.js",
+            "uri": "/fishstrap/page/indexPage_f8ef888.js",
             "type": "js",
             "deps": [
                 "fishstrap/page/indexPage.css",
@@ -563,7 +563,7 @@
             "id": "fishstrap/page/indexPage.js"
         },
         "fishstrap/page/loginPage.js": {
-            "uri": "/fishstrap/page/loginPage.js",
+            "uri": "/fishstrap/page/loginPage_4e6127e.js",
             "type": "js",
             "deps": [
                 "fishstrap/lib/gri/gri.css",
@@ -572,14 +572,15 @@
             "id": "fishstrap/page/loginPage.js"
         },
         "fishstrap/page/subPage.js": {
-            "uri": "/fishstrap/page/subPage.js",
+            "uri": "/fishstrap/page/subPage_094d34c.js",
             "type": "js",
             "deps": [
-                "core/global"
-            ]
+                "fishstrap/core/global.js"
+            ],
+            "id": "fishstrap/page/subPage.js"
         },
         "fishstrap/ui/chart.js": {
-            "uri": "/fishstrap/ui/chart.js",
+            "uri": "/fishstrap/ui/chart_6d1b004.js",
             "type": "js",
             "deps": [
                 "fishstrap/lib/echarts/echarts.js",
@@ -587,7 +588,7 @@
             ]
         },
         "fishstrap/ui/dialog.js": {
-            "uri": "/fishstrap/ui/dialog.js",
+            "uri": "/fishstrap/ui/dialog_4074175.js",
             "type": "js",
             "deps": [
                 "fishstrap/lib/gri/gri.js",
@@ -596,7 +597,7 @@
             "id": "fishstrap/ui/dialog.js"
         },
         "fishstrap/ui/editor.js": {
-            "uri": "/fishstrap/ui/editor.js",
+            "uri": "/fishstrap/ui/editor_e695187.js",
             "type": "js",
             "deps": [
                 "fishstrap/lib/ueditor/ueditor.config.js",
@@ -606,7 +607,7 @@
             "id": "fishstrap/ui/editor.js"
         },
         "fishstrap/ui/input.js": {
-            "uri": "/fishstrap/ui/input.js",
+            "uri": "/fishstrap/ui/input_56c6be6.js",
             "type": "js",
             "deps": [
                 "fishstrap/core/global.js",
@@ -618,7 +619,7 @@
             "id": "fishstrap/ui/input.js"
         },
         "fishstrap/ui/query.js": {
-            "uri": "/fishstrap/ui/query.js",
+            "uri": "/fishstrap/ui/query_3d39e43.js",
             "type": "js",
             "deps": [
                 "fishstrap/core/global.js",
@@ -629,7 +630,7 @@
             "id": "fishstrap/ui/query.js"
         },
         "fishstrap/ui/table.js": {
-            "uri": "/fishstrap/ui/table.js",
+            "uri": "/fishstrap/ui/table_1cced6b.js",
             "type": "js",
             "deps": [
                 "fishstrap/lib/gri/griTable.js",
@@ -639,14 +640,14 @@
             "id": "fishstrap/ui/table.js"
         },
         "fishstrap/ui/tree.js": {
-            "uri": "/fishstrap/ui/tree.js",
+            "uri": "/fishstrap/ui/tree_c7ebb8c.js",
             "type": "js",
             "deps": [
                 "fishstrap/core/global.js"
             ]
         },
         "fishstrap/util/imageCompresser.js": {
-            "uri": "/fishstrap/util/imageCompresser.js",
+            "uri": "/fishstrap/util/imageCompresser_8f0129e.js",
             "type": "js",
             "deps": [
                 "fishstrap/core/global.js",
@@ -655,22 +656,22 @@
             "id": "fishstrap/util/imageCompresser.js"
         },
         "fishstrap/util/jpegEncoder.js": {
-            "uri": "/fishstrap/util/jpegEncoder.js",
+            "uri": "/fishstrap/util/jpegEncoder_2630213.js",
             "type": "js",
             "id": "fishstrap/util/jpegEncoder.js"
         },
         "fishstrap/util/jpegMeta.js": {
-            "uri": "/fishstrap/util/jpegMeta.js",
+            "uri": "/fishstrap/util/jpegMeta_fd86478.js",
             "type": "js",
             "id": "fishstrap/util/jpegMeta.js"
         },
         "fishstrap/util/jquery.datetimepicker.css": {
-            "uri": "/fishstrap/util/jquery.datetimepicker.css",
+            "uri": "/fishstrap/util/jquery.datetimepicker_22baa8a.css",
             "type": "css",
             "id": "fishstrap/util/jquery.datetimepicker.css"
         },
         "fishstrap/util/jqueryDatetimePicker.js": {
-            "uri": "/fishstrap/util/jqueryDatetimePicker.js",
+            "uri": "/fishstrap/util/jqueryDatetimePicker_56d10bc.js",
             "type": "js",
             "deps": [
                 "fishstrap/util/jquery.datetimepicker.css"
@@ -678,15 +679,15 @@
             "id": "fishstrap/util/jqueryDatetimePicker.js"
         },
         "fishstrap/util/jqueryLazyload.js": {
-            "uri": "/fishstrap/util/jqueryLazyload.js",
+            "uri": "/fishstrap/util/jqueryLazyload_b17a50b.js",
             "type": "js"
         },
         "fishstrap/util/jqueryValidate.js": {
-            "uri": "/fishstrap/util/jqueryValidate.js",
+            "uri": "/fishstrap/util/jqueryValidate_07c0b55.js",
             "type": "js"
         },
         "fishstrap/util/upload.js": {
-            "uri": "/fishstrap/util/upload.js",
+            "uri": "/fishstrap/util/upload_d9d358d.js",
             "type": "js",
             "deps": [
                 "fishstrap/core/global.js",

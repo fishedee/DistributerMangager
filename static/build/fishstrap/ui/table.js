@@ -110,7 +110,7 @@ module.exports = {
 		_option.summary     = '';
 		_option.ifRealPage  = true;
 		_option.data        = 'data';
-		_option.checkAll    = false;
+		_option.checkAll    = defaultOption.checkAll;
 		_option.params      = {};
 
 		//拼接url

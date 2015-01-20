@@ -21,12 +21,13 @@ class Login extends CI_Controller {
 		$this->load->view('json',$result);
 	}
 	
-
-	
 	public function checkin()
 	{
 		//检查输入参数
-		$result = $this->argv->postRequireInput(array('name','password'));
+		$result = $this->argv->checkPost(array(
+			array('name','require'),
+			array('password','require'),
+		));
 		if( $result["code"] != 0 ){
 			$this->load->view('json',$result);
 			return;

@@ -108,7 +108,7 @@ module.exports = {
 		_option.summary     = '';
 		_option.ifRealPage  = true;
 		_option.data        = 'data';
-		_option.checkAll    = false;
+		_option.checkAll    = defaultOption.checkAll;
 		_option.params      = {};
 
 		//拼接url
@@ -206,6 +206,22 @@ module.exports = {
 				}
 			});
 		});
+		
+		return {
+			getCheckData:function(){
+				var target = $('#'+defaultOption.id+' .gri_td_checkbox:checked');
+				var data = [];
+				target.each(function(){
+					var parent = $(this).parent().parent();
+					var singleData = {};
+					parent.find('td').each(function(){
+						singleData[$(this).attr('class')] = $(this).text();
+					});
+					data.push(singleData);
+				});
+				return data;
+			}
+		};
 	},
 	
 };

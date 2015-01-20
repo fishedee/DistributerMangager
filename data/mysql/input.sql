@@ -45,7 +45,7 @@ alter table t_user_permission add index userIdIndex(userId);
 create table t_user_client(
 	userClientId integer not null auto_increment,
 	userId integer not null,
-	userId2 integer not null,
+	clientUserId integer not null,
 	createTime timestamp not null default CURRENT_TIMESTAMP,
 	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
 	primary key( userClientId )
@@ -121,7 +121,8 @@ alter table t_user_company_banner add index userIdIndex(userId);
 
 #建立初始数据
 insert into t_user(userId,name,password,company,phone,type) values
-(10001,"fish",SHA1("123456"),'烘焙帮信息科技有限公司','15018749403',1);
+(10001,"fish",SHA1("123456"),'烘焙帮信息科技有限公司','15018749403',1),
+(10002,"fish2",SHA1("123456"),'烘焙帮信息科技有限公司','15018749403',1);
 
 #显示初始数据
 select * from t_user;

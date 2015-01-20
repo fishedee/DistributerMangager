@@ -12,7 +12,9 @@
 		var $ = require('/fishstrap/core/global.js');
 		var dialog = require('/fishstrap/ui/dialog.js');
 		var query = require('/fishstrap/ui/query.js');
+		var subPage = require('/fishstrap/page/subPage.js');
 		var userType = {};
+		var tableOperation = {};
 		function getAllType(next){
 			$.get('/user/getAllType',{},function(data){
 				data = $.JSON.parse(data);
@@ -24,10 +26,17 @@
 				next();
 			});
 		}
+		function whenWindowClose(mode){
+			if( mode == 'confirm' )
+				return _.pluck(tableOperation.getCheckData(),'userId');
+			else
+				return [];
+		}
 		function go(){
-			query.simpleQuery({
+			tableOperation = query.simpleQuery({
 				id:'container',
 				url:'/user/search',
+				checkAll:true,
 				column:[
 					{id:'userId',type:'text',name:'用户ID'},
 					{id:'name',type:'text',name:'姓名'},
@@ -70,7 +79,14 @@
 				{
 					name:'添加用户',
 					click:function(){
-						location.href = 'view.html';
+						//location.href = 'view.html';
+						subPage.open({
+							title:'HelloW2',
+							url:'/backstage/view/user/index.html',
+							close:function(data){
+								alert($.JSON.stringify(data));
+							},
+						});
 					}
 				}
 				],

@@ -27,4 +27,4 @@ release:copy_common
 	-rm $(DIST_OUT) -rf
 	fis release --md5 --pack --domains --optimize --dest $(DiST_OUT)
 watch:debug
-	fis release --md5 --domains --watch
+	fis release --md5 --domains --watch --dest $(OUT)

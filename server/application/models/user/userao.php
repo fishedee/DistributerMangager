@@ -7,6 +7,7 @@ class UserAo extends CI_Model {
 	public function __construct(){
 		parent::__construct();
 		$this->load->model('user/userDb','userDb');
+		$this->load->model('user/userClientDb','userClientDb');
 		$this->load->model('user/userPermissionDb','userPermissionDb');
 	}
 	
@@ -25,6 +26,11 @@ class UserAo extends CI_Model {
 			return $result;
 		$user['permission'] = __::pluck($result['data'],'permissionId');
 		
+		$result = $this->userClientDb->getByUser($userId);
+		if($result['code'] != 0 )
+			return $result;
+		$user['client'] = __::pluck($result['data'],'clientUserId');
+		
 		return array(
 			'code'=>0,
 			'msg'=>'',
@@ -38,6 +44,13 @@ class UserAo extends CI_Model {
 			return $result;
 			
 		$result = $this->userPermissionDb->delByUser($userId);
+		if($result['code'] != 0 )
+			return $result;
+		
+		$result = $this->userClientDb->delByUser($userId);
+		if($result['code'] != 0 )
+			return $result;
+		
 		return $result;
 	}
 	
@@ -55,12 +68,10 @@ class UserAo extends CI_Model {
 			);
 		
 		//添加用户基本信息
-		$userBaseInfo = array(
-			'name'=>$data['name'],
-			'company'=>$data['company'],
-			'phone'=>$data['phone'],
-			'type'=>$data['type']
-		);
+		$userBaseInfo = $data;
+		unset($userBaseInfo['permission']);
+		unset($userBaseInfo['client']);
+		$userBaseInfo['password'] = sha1($userBaseInfo['password']);
 		$result = $this->userDb->add($userBaseInfo);
 		if( $result['code'] != 0 )
 			return $result;
@@ -75,16 +86,29 @@ class UserAo extends CI_Model {
 			);
 		};
 		$result = $this->userPermissionDb->addBatch($userPermissionInfo);
+		if( $result['code'] != 0 )
+			return $result;
+		
+		//添加用户客户列表
+		$userClientInfo = array();
+		foreach( $data['client'] as $single ){
+			$userClientInfo[] = array(
+				'userId'=>$userId,
+				'clientUserId'=>$single
+			);
+		};
+		$result = $this->userClientDb->addBatch($userClientInfo);
+		if( $result['code'] != 0 )
+			return $result;
+			
 		return $result;
 	}
 	
 	public function mod($userId,$data){
 		//修改用户基本信息
-		$userBaseInfo = array(
-			'company'=>$data['company'],
-			'phone'=>$data['phone'],
-			'type'=>$data['type']
-		);
+		$userBaseInfo = $data;
+		unset($userBaseInfo['permission']);
+		unset($userBaseInfo['client']);
 		$result = $this->userDb->mod($userId,$userBaseInfo);
 		if( $result['code'] != 0 )
 			return $result;
@@ -102,6 +126,25 @@ class UserAo extends CI_Model {
 			return $result;
 		
 		$result = $this->userPermissionDb->addBatch($userPermissionInfo);
+		if( $result['code'] != 0 )
+			return $result;
+			
+		//修改用户客户列表
+		$userClientInfo = array();
+		foreach( $data['client'] as $single ){
+			$userClientInfo[] = array(
+				'userId'=>$userId,
+				'clientUserId'=>$single
+			);
+		};
+		$result = $this->userClientDb->delByUser($userId);
+		if($result['code'] != 0 )
+			return $result;
+		
+		$result = $this->userClientDb->addBatch($userClientInfo);
+		if( $result['code'] != 0 )
+			return $result;
+			
 		return $result;
 	}
 	
