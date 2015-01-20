@@ -1,4 +1,6 @@
-define('fishstrap/core/html5.js', function(require, exports, module){ var $ = require('fishstrap/core/global.js');
+define('fishstrap/core/html5.js', function(require, exports, module){
+
+var $ = require('fishstrap/core/global.js');
 var self = {};
 //加入localStorage扩展
 self.localStorage = function(name, value, options) {
@@ -140,4 +142,6 @@ self.fileReader = {
 		}
 	}
 };
-return self; });
+return self;
+
+});

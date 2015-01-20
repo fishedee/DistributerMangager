@@ -1,4 +1,6 @@
-define('fishstrap/util/jpegEncoder.js', function(require, exports, module){ module.exports = {
+define('fishstrap/util/jpegEncoder.js', function(require, exports, module){
+
+module.exports = {
 	JPEGEncoder: function(quality){
 		var self = this;
 		var fround = Math.round;
@@ -520,4 +522,6 @@ define('fishstrap/util/jpegEncoder.js', function(require, exports, module){ modu
 
 	}
 }
- });
+
+
+});

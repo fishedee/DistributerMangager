@@ -17,8 +17,10 @@ create table ci_sessions (
 #创建用户表
 create table t_user(
 	userId integer not null auto_increment,
-	name char(32) not null,
+	name varchar(32) not null,
 	password char(48) not null,
+	company varchar(128) not null,
+	phone varchar(11) not null,
 	type integer not null,
 	createTime timestamp not null default CURRENT_TIMESTAMP,
 	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
@@ -75,21 +77,21 @@ create table t_company_template_classify(
 
 alter table t_company_template add index companyTemplateIdIndex(companyTemplateId);
 
-#创建用户模板表
-create table t_user_template(
-	userTemplateId integer not null auto_increment,
+#创建用户公司模板表
+create table t_user_company_template(
+	userCompanyTemplateId integer not null auto_increment,
 	userId integer not null,
 	companyTemplateId integer not null,
 	createTime timestamp not null default CURRENT_TIMESTAMP,
 	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
-	primary key( userTemplateId )
+	primary key( userCompanyTemplateId )
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
 
-alter table t_user_template add index userIdIndex(userId);
+alter table t_user_company_template add index userIdIndex(userId);
 
-#创建用户文章表
-create table t_user_article(
-	userArticleId integer not null auto_increment,
+#创建用户公司文章表
+create table t_user_company_article(
+	userCompanyArticleId integer not null auto_increment,
 	userId integer not null,
 	title varchar(128) not null,
 	remark varchar(256) not null,
@@ -97,14 +99,29 @@ create table t_user_article(
 	companyTemplateClassifyId integer not null,
 	createTime timestamp not null default CURRENT_TIMESTAMP,
 	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
-	primary key( userArticleId )
+	primary key( userCompanyArticleId )
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
 
-alter table t_user_article add index userIdIndex(userId);
+alter table t_user_company_article add index userIdIndex(userId);
+
+#创建用户公司广告表
+create table t_user_company_banner(
+	userCompanyBannerId integer not null auto_increment,
+	userId integer not null,
+	sort integer not null,
+	image varchar(256) not null,
+	url varchar(256) not null,
+	remark varchar(256) not null,
+	createTime timestamp not null default CURRENT_TIMESTAMP,
+	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
+	primary key( userCompanyBannerId )
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+
+alter table t_user_company_banner add index userIdIndex(userId);
 
 #建立初始数据
-insert into t_user(userId,name,password,type) values
-(10001,"fish",SHA1("123456"),1);
+insert into t_user(userId,name,password,company,phone,type) values
+(10001,"fish",SHA1("123456"),'烘焙帮信息科技有限公司','15018749403',1);
 
 #显示初始数据
 select * from t_user;
@@ -112,5 +129,6 @@ select * from t_user_permission;
 select * from t_user_client;
 select * from t_company_template;
 select * from t_company_template_classify;
-select * from t_user_template;
-select * from t_user_article;
+select * from t_user_company_template;
+select * from t_user_company_article;
+select * from t_user_company_banner;

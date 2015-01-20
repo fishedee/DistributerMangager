@@ -1,4 +1,6 @@
-define('fishstrap/ui/chart.js', function(require, exports, module){ /*
+define('fishstrap/ui/chart.js', function(require, exports, module){
+
+/*
 * @require fishstrap/lib/echarts/echarts.js
 */
 var $ = require('fishstrap/core/global.js');
@@ -418,4 +420,6 @@ return {
 		myChart.setTheme(theme);
 		myChart.setOption(option); 
 	}         
-}; });
+};
+
+});

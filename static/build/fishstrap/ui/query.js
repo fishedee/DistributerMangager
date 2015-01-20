@@ -1,4 +1,6 @@
-define('fishstrap/ui/query.js', function(require, exports, module){ var $ = require('fishstrap/core/global.js');
+define('fishstrap/ui/query.js', function(require, exports, module){
+
+var $ = require('fishstrap/core/global.js');
 var dialog = require('fishstrap/ui/dialog.js');
 var table = require('fishstrap/ui/table.js');
 var input = require('fishstrap/ui/input.js');
@@ -81,4 +83,6 @@ module.exports = {
 		}
 		
 	},
-}; });
+};
+
+});

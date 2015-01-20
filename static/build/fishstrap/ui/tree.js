@@ -1,4 +1,6 @@
-define('fishstrap/ui/tree.js', function(require, exports, module){ var $ = require('fishstrap/core/global.js');
+define('fishstrap/ui/tree.js', function(require, exports, module){
+
+var $ = require('fishstrap/core/global.js');
 module.exports = {
 	easyTree:function(option){
 		//处理option
@@ -77,4 +79,6 @@ module.exports = {
 			div.find('.item[data='+defaultOption.value+']').click();
 		}
 	}
-}; });
+};
+
+});

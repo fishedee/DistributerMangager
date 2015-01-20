@@ -7,6 +7,7 @@ class UserAo extends CI_Model {
 	public function __construct(){
 		parent::__construct();
 		$this->load->model('user/userDb','userDb');
+		$this->load->model('user/userPermissionDb','userPermissionDb');
 	}
 	
 	public function search($dataWhere,$dataLimit){
@@ -14,11 +15,30 @@ class UserAo extends CI_Model {
 	}
 	
 	public function get($userId){
-		return $this->userDb->get($userId);
+		$result = $this->userDb->get($userId);
+		if( $result['code'] != 0 )
+			return $result;
+		$user = $result['data'];
+		
+		$result = $this->userPermissionDb->getByUser($userId);
+		if($result['code'] != 0 )
+			return $result;
+		$user['permission'] = __::pluck($result['data'],'permissionId');
+		
+		return array(
+			'code'=>0,
+			'msg'=>'',
+			'data'=>$user
+		);
 	}
 	
 	public function del($userId){
-		return $this->userDb->del($userId);
+		$result = $this->userDb->del($userId);
+		if( $result['code'] != 0 )
+			return $result;
+			
+		$result = $this->userPermissionDb->delByUser($userId);
+		return $result;
 	}
 	
 	public function add($data){
@@ -34,15 +54,55 @@ class UserAo extends CI_Model {
 				'data'=>''
 			);
 		
-		//添加用户
-		$data['password'] = sha1($data['password']);
-		return $this->userDb->add($data);
+		//添加用户基本信息
+		$userBaseInfo = array(
+			'name'=>$data['name'],
+			'company'=>$data['company'],
+			'phone'=>$data['phone'],
+			'type'=>$data['type']
+		);
+		$result = $this->userDb->add($userBaseInfo);
+		if( $result['code'] != 0 )
+			return $result;
+		$userId = $result['data'];
+		
+		//添加用户权限
+		$userPermissionInfo = array();
+		foreach( $data['permission'] as $single ){
+			$userPermissionInfo[] = array(
+				'userId'=>$userId,
+				'permissionId'=>$single
+			);
+		};
+		$result = $this->userPermissionDb->addBatch($userPermissionInfo);
+		return $result;
 	}
 	
-	public function modType($userId,$type){
-		$data = array();
-		$data['type'] = $type;
-		return $this->userDb->mod($userId,$data);
+	public function mod($userId,$data){
+		//修改用户基本信息
+		$userBaseInfo = array(
+			'company'=>$data['company'],
+			'phone'=>$data['phone'],
+			'type'=>$data['type']
+		);
+		$result = $this->userDb->mod($userId,$userBaseInfo);
+		if( $result['code'] != 0 )
+			return $result;
+			
+		//修改用户权限
+		$userPermissionInfo = array();
+		foreach( $data['permission'] as $single ){
+			$userPermissionInfo[] = array(
+				'userId'=>$userId,
+				'permissionId'=>$single
+			);
+		};
+		$result = $this->userPermissionDb->delByUser($userId);
+		if($result['code'] != 0 )
+			return $result;
+		
+		$result = $this->userPermissionDb->addBatch($userPermissionInfo);
+		return $result;
 	}
 	
 	public function modPassword($userId,$password){

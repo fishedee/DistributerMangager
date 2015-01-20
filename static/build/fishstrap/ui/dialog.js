@@ -1,4 +1,6 @@
-define('fishstrap/ui/dialog.js', function(require, exports, module){ 
+define('fishstrap/ui/dialog.js', function(require, exports, module){
+
+
 /*
 *载入依赖的gri.js
 *@require fishstrap/lib/gri/gri.js
@@ -75,4 +77,6 @@ module.exports = {
 		$('#__loading').remove();
 	}
 };
-module.exports.init(); });
+module.exports.init();
+
+});

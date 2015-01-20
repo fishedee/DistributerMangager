@@ -1,4 +1,6 @@
-define('fishstrap/page/loginPage.js', function(require, exports, module){ /*
+define('fishstrap/page/loginPage.js', function(require, exports, module){
+
+/*
 * @require fishstrap/lib/gri/gri.css
 */
 var $ = require('fishstrap/core/global.js');
@@ -100,4 +102,6 @@ return {
 		$('body').append(div);
 		option.init();
 	}
-}; });
+};
+
+});

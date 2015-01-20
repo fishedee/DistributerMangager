@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-    <title>烘焙帮后台管理系统</title>
+    <title>经销商管理系统</title>
 	<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
 <link rel="stylesheet" type="text/css" href="/fishstrap/lib/gri/gri.css">
 
@@ -20,7 +20,7 @@
 		var dialog = require('fishstrap/ui/dialog.js');
 		var loginPage = require('fishstrap/page/loginPage.js');
 		loginPage.use({
-			title:'烘焙帮后台管理系统',
+			title:'经销商管理系统',
 			init:function(){
 				$.get('/login/islogin?t='+Math.random(),{},function(data){
 					data = $.JSON.parse(data);

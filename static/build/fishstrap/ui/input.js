@@ -1,4 +1,6 @@
-define('fishstrap/ui/input.js', function(require, exports, module){ var $ = require('fishstrap/core/global.js');
+define('fishstrap/ui/input.js', function(require, exports, module){
+
+var $ = require('fishstrap/core/global.js');
 var dialog = require('fishstrap/ui/dialog.js');
 var editor = require('fishstrap/ui/editor.js');
 var upload = require('fishstrap/util/upload.js');
@@ -221,11 +223,12 @@ module.exports = {
 				div.find('input[name='+field.id+']').each(function(){
 					for( var i in defaultOption.value[field.id] ){
 						var value = defaultOption.value[field.id][i];
-						if( $(this).val() == value )
+						if( $(this).val() == value ){
 							$(this).attr('checked',true);
-						else
-							$(this).attr('checked',false);
+							return;
+						}
 					}
+					$(this).attr('checked',false);
 				});
 			}
 		}
@@ -261,4 +264,6 @@ module.exports = {
 		});
 		div.find('.cancel').click(defaultOption.cancel);
 	}
-}; });
+};
+
+});

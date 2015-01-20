@@ -1,4 +1,6 @@
-define('fishstrap/util/upload.js', function(require, exports, module){ var $ = require('fishstrap/core/global.js');
+define('fishstrap/util/upload.js', function(require, exports, module){
+
+var $ = require('fishstrap/core/global.js');
 var html5 = require('fishstrap/core/html5.js');
 var imageCompresser = require('fishstrap/util/imageCompresser.js');
 var jpegMeta = require('fishstrap/util/jpegMeta.js').JpegMeta;
@@ -359,4 +361,6 @@ module.exports = {
 			});
 		});
 	}
-}; });
+};
+
+});

@@ -1,4 +1,6 @@
-define('fishstrap/util/jpegMeta.js', function(require, exports, module){ 
+define('fishstrap/util/jpegMeta.js', function(require, exports, module){
+
+
 module.exports = {init: function() {
 		var JpegMeta = {};
 		this.JpegMeta = JpegMeta;
@@ -309,4 +311,6 @@ module.exports = {init: function() {
 			}
 		};
 	}}
-module.exports.init(); });
+module.exports.init();
+
+});

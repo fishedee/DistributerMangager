@@ -1,4 +1,6 @@
-define('fishstrap/core/global.js', function(require, exports, module){ /*
+define('fishstrap/core/global.js', function(require, exports, module){
+
+/*
 * 依赖jquery.js与underscore.js
 * @require fishstrap/lib/underscore.js
 * @require fishstrap/lib/jquery.js
@@ -507,4 +509,6 @@ $.addCssToHead = function(str_css) {
 	};
 })($);
 
-return $; });
+return $;
+
+});

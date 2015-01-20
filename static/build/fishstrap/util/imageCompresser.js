@@ -1,4 +1,6 @@
-define('fishstrap/util/imageCompresser.js', function(require, exports, module){ var $ = require('fishstrap/core/global.js');
+define('fishstrap/util/imageCompresser.js', function(require, exports, module){
+
+var $ = require('fishstrap/core/global.js');
 var jpegEncoder = require('fishstrap/util/jpegEncoder.js');
 module.exports = {
 	isIosSubSample: function(b) {
@@ -230,4 +232,6 @@ module.exports = {
 	support: function() {
 		return typeof(window.File) && typeof(window.FileList) && typeof(window.FileReader) && typeof(window.Blob)
 	}
-}; });
+};
+
+});

@@ -1,5 +1,5 @@
 server {
-	listen   81; ## listen for ipv4; this line is default and implied
+	listen   8080; ## listen for ipv4; this line is default and implied
 
 	root /var/www/DistributerMangager/;
 	server_name localhost;

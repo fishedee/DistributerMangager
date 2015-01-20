@@ -1,4 +1,6 @@
-define('fishstrap/page/indexPage.js', function(require, exports, module){ /*
+define('fishstrap/page/indexPage.js', function(require, exports, module){
+
+/*
 *@require fishstrap/page/indexPage.css
 */
 var $ = require('fishstrap/core/global.js');
@@ -215,4 +217,6 @@ module.exports = {
 		}
 		defaultOption.init();
 	}
-}; });
+};
+
+});

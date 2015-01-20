@@ -3,8 +3,6 @@
 class UserDb extends CI_Model 
 {
 	var $tableName = "t_user";
-	var $TYPE_ADMIN = 0;
-	var $TYPE_USER = 1;
 
 	public function __construct(){
 		parent::__construct();
@@ -74,7 +72,7 @@ class UserDb extends CI_Model
 		return array(
 			"code"=>0,
 			"msg"=>"",
-			"data"=>""
+			"data"=>$this->db->insert_id()
 			);
 	}
 

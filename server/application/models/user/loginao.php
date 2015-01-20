@@ -6,6 +6,8 @@ class LoginAo extends CI_Model {
     {
         parent::__construct();
 		$this->load->model('user/userDb','userDb');
+		$this->load->model('user/userTypeEnum','userTypeEnum');
+		$this->load->model('user/userPermissionEnum','userPermissionEnum');
     }
 	
 	public function isLocalRequest(){
@@ -31,16 +33,79 @@ class LoginAo extends CI_Model {
 				
 			return array(
 				"code"=>0,
-				"msg"=>"",
-				"data"=>$userId
+				"msg"=>'',
+				"data"=>$result['data']
 			);
 		}else{
 			return array(
 				"code"=>1,
 				"msg"=>"帐号未登录",
-				"data"=>""
+				"data"=>'',
 			);
 		}
+	}
+	
+	public function isAdmin(){
+		$result = $this->islogin();
+		if( $result['code'] != 0 )
+			return $result;
+		
+		if( $result['data']['type'] != $this->userTypeEnum->ADMIN )
+			return array(
+				'code'=>1,
+				'msg'=>'非管理员无法执行此操作',
+				'data'=>'',
+			);
+		
+		return array(
+			'code'=>0,
+			'msg'=>'',
+			'data'=>$result['data']['userId'],
+		);
+	}
+	
+	public function isAgent(){
+		$result = $this->islogin();
+		if( $result['code'] != 0 )
+			return $result;
+		
+		if( $result['data']['type'] != $this->userTypeEnum->AGENT )
+			return array(
+				'code'=>1,
+				'msg'=>'非代理商无法执行此操作',
+				'data'=>'',
+			);
+		
+		return array(
+			'code'=>0,
+			'msg'=>'',
+			'data'=>$result['data']['userId'],
+		);
+	}
+	public function isClient($permission){
+		$result = $this->islogin();
+		if( $result['code'] != 0 )
+			return $result;
+		
+		if( $result['data']['type'] != $this->userTypeEnum->CLIENT )
+			return array(
+				'code'=>1,
+				'msg'=>'非商城用户无法执行此操作',
+				'data'=>'',
+			);
+		
+		if( isset($result['data']['permission'][$permission]) == false )
+			return array(
+				'code'=>1,
+				'msg'=>'没有'.$this->userPermissionEnum->names[$permission].'权限',
+				'data'=>'',
+			);
+		
+		return array(
+			'code'=>0,
+			'msg'=>'',
+			'data'=>$result['data']['userId'],
+		);
 	}
 	
 	public function logout(){

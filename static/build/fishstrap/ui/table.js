@@ -1,4 +1,6 @@
-define('fishstrap/ui/table.js', function(require, exports, module){ /*
+define('fishstrap/ui/table.js', function(require, exports, module){
+
+/*
 *加载griTable
 *@require fishstrap/lib/gri/griTable.js
 */
@@ -208,4 +210,6 @@ module.exports = {
 		});
 	},
 	
-}; });
+};
+
+});

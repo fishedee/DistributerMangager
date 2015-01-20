@@ -20,6 +20,9 @@ class Login extends CI_Controller {
 		$result = $this->loginAo->logout();
 		$this->load->view('json',$result);
 	}
+	
+
+	
 	public function checkin()
 	{
 		//检查输入参数

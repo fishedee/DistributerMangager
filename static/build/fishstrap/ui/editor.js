@@ -1,4 +1,6 @@
-define('fishstrap/ui/editor.js', function(require, exports, module){ /*
+define('fishstrap/ui/editor.js', function(require, exports, module){
+
+/*
 *加载依赖的ueditor
 *@require fishstrap/lib/ueditor/ueditor.config.js
 *@require fishstrap/lib/ueditor/ueditor.all.min.js
@@ -131,4 +133,6 @@ module.exports = {
 			}
 		};
 	}
-}; });
+};
+
+});
