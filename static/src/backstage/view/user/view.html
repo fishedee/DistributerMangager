@@ -13,6 +13,7 @@
 		var dialog = require('/fishstrap/ui/dialog.js');
 		var input = require('/fishstrap/ui/input.js');
 		var userId = $.location.getQueryArgv('userId');
+		var subPage = require('/fishstrap/page/subPage.js');
 		var userType = {};
 		var userPermission = {};
 		var user = {};
@@ -62,6 +63,33 @@
 					{id:'company',type:'text',name:'公司'},
 					{id:'phone',type:'text',name:'电话'},
 					{id:'permission',type:'check',name:'权限',map:userPermission},
+					{id:'client',type:'table',name:'客户',
+						option:{
+							column:[
+								{name:'用户ID',type:'text',id:'userId'},
+								{name:'名字',type:'text',id:'name'},
+								{name:'公司',type:'text',id:'company'},
+							],
+							operate:[{
+								name:'删除',
+								click:function(data,operation){
+									operation.remove();
+								}
+							}],
+							button:[{
+								name:'添加',
+								click:function(operation){
+									subPage.open({
+										title:'添加客户',
+										url:'index.html?check=true',
+										close:function(data){
+											operation.add(data);
+										}
+									});
+								}
+							}]
+						}
+					},
 				],
 				value:user,
 				submit:function(data){

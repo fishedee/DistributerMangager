@@ -29,7 +29,12 @@ class UserAo extends CI_Model {
 		$result = $this->userClientDb->getByUser($userId);
 		if($result['code'] != 0 )
 			return $result;
-		$user['client'] = __::pluck($result['data'],'clientUserId');
+		$userIds = __::pluck($result['data'],'clientUserId');
+		
+		$result = $this->userDb->getByIds($userIds);
+		if($result['code'] != 0 )
+			return $result;
+		$user['client'] = $result['data'];  
 		
 		return array(
 			'code'=>0,
@@ -94,7 +99,7 @@ class UserAo extends CI_Model {
 		foreach( $data['client'] as $single ){
 			$userClientInfo[] = array(
 				'userId'=>$userId,
-				'clientUserId'=>$single
+				'clientUserId'=>$single['userId']
 			);
 		};
 		$result = $this->userClientDb->addBatch($userClientInfo);
@@ -134,7 +139,7 @@ class UserAo extends CI_Model {
 		foreach( $data['client'] as $single ){
 			$userClientInfo[] = array(
 				'userId'=>$userId,
-				'clientUserId'=>$single
+				'clientUserId'=>$single['userId']
 			);
 		};
 		$result = $this->userClientDb->delByUser($userId);

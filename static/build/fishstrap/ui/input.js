@@ -3,7 +3,9 @@ define('fishstrap/ui/input.js', function(require, exports, module){
 var $ = require('fishstrap/core/global.js');
 var dialog = require('fishstrap/ui/dialog.js');
 var editor = require('fishstrap/ui/editor.js');
+var table = require('fishstrap/ui/table.js');
 var upload = require('fishstrap/util/upload.js');
+var subPage = require('fishstrap/page/subPage.js');
 require('fishstrap/util/jqueryDatetimePicker.js');
 module.exports = {
 	flowInput:function( option ){
@@ -133,6 +135,17 @@ module.exports = {
 					option += '<span><input type="checkbox" name="'+field.id+'" value="'+j+'">'+field.map[j]+'</span>&nbsp;&nbsp;';
 				}
 				contentDiv += option;
+			}else if( field.type == 'table'){
+				field.tableId = $.uniqueNum();
+				contentDiv += '<div>';
+				for( var i = 0 ; i != field.option.button.length ; ++i ){
+					var singleButton = field.option.button[i];
+					singleButton.buttonId = $.uniqueNum();
+					contentDiv += '<button type="button" class="btn" id="'+singleButton.buttonId+'">'+singleButton.name+'</button>';
+					field.option.button[i] = singleButton;
+				}
+				contentDiv += '</div>';
+				contentDiv += '<div id="'+field.tableId+'"></div>';
 			}
 			contentDiv +=
 				'</td>'+
@@ -194,6 +207,19 @@ module.exports = {
 						format: 'Y-m-d',
 						closeOnDateSelect:true
 					});
+				}else if( field.type == 'table'){
+					field.tableOperation = table.staticSimpleTable({
+						id:field.tableId,
+						data:[],
+						column:field.option.column,
+						operate:field.option.operate
+					});
+					for( var i = 0 ; i != field.option.button.length ; ++i ){
+						var singleButton = field.option.button[i];
+						$('#'+singleButton.buttonId).click(function(){
+							singleButton.click(field.tableOperation);
+						});
+					}
 				}
 			})(field);
 		}
@@ -230,6 +256,8 @@ module.exports = {
 					}
 					$(this).attr('checked',false);
 				});
+			}else if( field.type == 'table'){
+				field.tableOperation.add(defaultOption.value[field.id]);
 			}
 		}
 		//挂载事件
@@ -258,6 +286,8 @@ module.exports = {
 					$('#'+defaultOption.id).find('input[name='+field.id+']:checked').each(function(){
 						data[field.id].push($(this).val());
 					});
+				}else if( field.type == 'table'){
+					data[field.id] = field.tableOperation.get();
 				}
 			}
 			defaultOption.submit(data);

@@ -38,7 +38,6 @@ class User extends CI_Controller {
 			array('type','option'),
 			array('company','option'),
 			array('phone','option'),
-			array('userId','option'),
 		));
 		if( $result["code"] != 0 ){
 			$this->load->view('json',$result);

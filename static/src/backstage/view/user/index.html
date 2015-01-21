@@ -13,6 +13,7 @@
 		var dialog = require('/fishstrap/ui/dialog.js');
 		var query = require('/fishstrap/ui/query.js');
 		var subPage = require('/fishstrap/page/subPage.js');
+		var isCheck = ($.location.getQueryArgv('check') != null);
 		var userType = {};
 		var tableOperation = {};
 		function getAllType(next){
@@ -28,7 +29,7 @@
 		}
 		function whenWindowClose(mode){
 			if( mode == 'confirm' )
-				return _.pluck(tableOperation.getCheckData(),'userId');
+				return tableOperation.getCheckData();
 			else
 				return [];
 		}
@@ -36,7 +37,7 @@
 			tableOperation = query.simpleQuery({
 				id:'container',
 				url:'/user/search',
-				checkAll:true,
+				checkAll:isCheck,
 				column:[
 					{id:'userId',type:'text',name:'用户ID'},
 					{id:'name',type:'text',name:'姓名'},
@@ -79,14 +80,7 @@
 				{
 					name:'添加用户',
 					click:function(){
-						//location.href = 'view.html';
-						subPage.open({
-							title:'HelloW2',
-							url:'/backstage/view/user/index.html',
-							close:function(data){
-								alert($.JSON.stringify(data));
-							},
-						});
+						location.href = 'view.html';
 					}
 				}
 				],

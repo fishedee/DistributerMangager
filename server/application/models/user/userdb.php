@@ -14,8 +14,6 @@ class UserDb extends CI_Model
 				$this->db->like($key,$value);
 			else if( $key == "type" )
 				$this->db->where($key,$value);
-			else if( $key == "userId" )
-				$this->db->where_in($key,$value);
 		}
 		
 		$count = $this->db->count_all_results($this->tableName);
@@ -25,8 +23,6 @@ class UserDb extends CI_Model
 				$this->db->like($key,$value);
 			else if( $key == "type" )
 				$this->db->where($key,$value);
-			else if( $key == "userId" )
-				$this->db->where_in($key,$value);
 		}
 			
 		$this->db->order_by('createTime','desc');
@@ -58,6 +54,22 @@ class UserDb extends CI_Model
 				"code"=>0,
 				"msg"=>"",
 				"data"=>$query[0]
+			    );
+	}
+	
+	public function getByIds($userId){
+		if( count($userId) == 0 )
+			return array(
+				"code"=>0,
+				"msg"=>"",
+				"data"=>array()
+			);
+		$this->db->where_in("userId",$userId);
+		$query = $this->db->get($this->tableName)->result_array();
+		return array(
+				"code"=>0,
+				"msg"=>"",
+				"data"=>$query
 			    );
 	}
 

@@ -20,7 +20,11 @@ return {
 					'<div class="tip"></div>'+
 					'<div class="closeicon">ｘ</div>'+
 					'<div class="frame">'+
-						'<iframe><iframe>'+
+						'<iframe></iframe>'+
+					'</div>'+
+					'<div class="footer">'+
+						'<div class="cancelicon">取消</div>'+
+						'<div class="confirmicon">确定</div>'+
 					'</div>'+
 				'</div>'+
 			'</div>'
@@ -72,7 +76,7 @@ return {
 		div.find(".frame").css({
 			'position':'absolute',
 			'top':'46px',
-			'bottom':'0px',
+			'bottom':'61px',
 			'left':'0px',
 			'right':'0px',
 		});
@@ -86,6 +90,42 @@ return {
 			'height':'100%',
 			'border':'0px',
 			
+		});
+		div.find(".footer").css({
+			'position':'absolute',
+			'bottom':'0px',
+			'left':'0px',
+			'right':'0px',
+			'height':'60px',
+			'color':'#4c4c4c',
+			'background':'#f0f0f0',
+			'border-top':'1px solid #d5d5d5'
+		});
+		div.find(".cancelicon").css({
+			'float':'right',
+			'margin-top':'17px',
+			'margin-right':'15px',
+			'font-size':'14px',
+			'padding':'5px 15px 5px 15px',
+			'line-height':'20px',
+			'color':'rgb(51, 51, 51)',
+			'cursor':'pointer',
+			'background':'#f5f5f5',
+			'border':'1px solid #cccccc',
+			'border-radius':'2px',
+		});
+		div.find(".confirmicon").css({
+			'float':'right',
+			'margin-top':'17px',
+			'margin-right':'15px',
+			'font-size':'14px',
+			'padding':'5px 15px 5px 15px',
+			'line-height':'20px',
+			'color':'#fff',
+			'cursor':'pointer',
+			'background':'#288cc8',
+			'border':'1px solid #0a6eaa',
+			'border-radius':'2px',
 		});
 		div.find(".tip").text(defaultOption.title);
 		div.find("iframe").attr('src',defaultOption.url);
@@ -101,10 +141,8 @@ return {
 			defaultOption.close(argv);
 		}
 		div.find(".closeicon").click(whenCancel);
+		div.find(".cancelicon").click(whenCancel);
+		div.find(".confirmicon").click(whenConfirm);
 		$('body').append(div);
-	},
-	close:function(argv){
-		var fun = parent.window['_subpage'];
-		fun(argv);
 	}
 }

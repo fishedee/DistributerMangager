@@ -30,7 +30,7 @@ module.exports = {
 		target.empty();
 		target.append(div);
 		//生成staticTable框架
-		table.staticTable({
+		var tableOperation = table.staticTable({
 			id:tableId,
 			params:defaultOption.params,
 			column:defaultOption.column,
@@ -81,7 +81,7 @@ module.exports = {
 				$('#'+buttonListId).append(div);
 			})(button);
 		}
-		
+		return tableOperation;
 	},
 };
 
