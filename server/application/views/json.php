@@ -1,9 +1,17 @@
 <?php
-	$result = array(
-		"code"=>$code,	
-		"msg"=>$msg,
-		"data"=>$data
-	);
+	if( $data instanceof Exception){
+		$result = array(
+			'code'=>$data->getCode(),
+			'msg'=>$data->getMessage(),
+			'data'=>$data->getData(),
+		);
+	}else{
+		$result = array(
+			'code'=>0,
+			'msg'=>'',
+			'data'=>$data
+		);
+	}
 	$output = json_encode($result);
 	if( $output == null ){
 		$output = json_encode(array(

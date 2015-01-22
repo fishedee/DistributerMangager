@@ -10,32 +10,17 @@ class UserPermissionDb extends CI_Model
 
 	public function getByUser($userId){
 		$this->db->where("userId",$userId);
-		$query = $this->db->get($this->tableName)->result_array();
-		return array(
-				"code"=>0,
-				"msg"=>"",
-				"data"=>$query
-			    );
+		return $this->db->get($this->tableName)->result_array();
 	}
 
 	public function delByUser( $userId ){
 		$this->db->where("userId",$userId);
-		$query = $this->db->delete($this->tableName);
-		return array(
-			"code"=>0,
-			"msg"=>"",
-			"data"=>""
-			);
+		$this->db->delete($this->tableName);
 	}
 	
 	public function addBatch( $data ){
 		if( count($data) != 0 )
 			$query = $this->db->insert_batch($this->tableName,$data);
-		return array(
-			"code"=>0,
-			"msg"=>"",
-			"data"=>""
-			);
 	}
 
 }

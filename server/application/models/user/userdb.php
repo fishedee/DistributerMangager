@@ -30,14 +30,10 @@ class UserDb extends CI_Model
 		if( isset($limit["pageIndex"]) && isset($limit["pageSize"]))
 			$this->db->limit($limit["pageSize"],$limit["pageIndex"]);
 
-		$query = $this->db->get($this->tableName);
+		$query = $this->db->get($this->tableName)->result_array();
 		return array(
-				"code"=>0,
-				"msg"=>"",
-				"data"=>array(
-					"count"=>$count,
-					"data"=>$query->result_array()
-				)
+			"count"=>$count,
+			"data"=>$query
 		);
 	}
 
@@ -45,117 +41,48 @@ class UserDb extends CI_Model
 		$this->db->where("userId",$userId);
 		$query = $this->db->get($this->tableName)->result_array();
 		if( count($query) == 0 )
-			return array(
-					"code"=>1,
-					"msg"=>"不存在此用户",
-					"data"=>""
-				    );
-		return array(
-				"code"=>0,
-				"msg"=>"",
-				"data"=>$query[0]
-			    );
+			throw new CI_MyException('不存在此用户');
+		return $query[0];
 	}
 	
 	public function getByIds($userId){
 		if( count($userId) == 0 )
-			return array(
-				"code"=>0,
-				"msg"=>"",
-				"data"=>array()
-			);
+			return array();
 		$this->db->where_in("userId",$userId);
-		$query = $this->db->get($this->tableName)->result_array();
-		return array(
-				"code"=>0,
-				"msg"=>"",
-				"data"=>$query
-			    );
+		return $this->db->get($this->tableName)->result_array();
 	}
 
 	public function del( $userId ){
 		$this->db->where("userId",$userId);
-		$query = $this->db->delete($this->tableName);
-		return array(
-			"code"=>0,
-			"msg"=>"",
-			"data"=>""
-			);
+		$this->db->delete($this->tableName);
 	}
 	
 	public function add( $data ){
-		$query = $this->db->insert($this->tableName,$data);
-		return array(
-			"code"=>0,
-			"msg"=>"",
-			"data"=>$this->db->insert_id()
-			);
+		$this->db->insert($this->tableName,$data);
+		return $this->db->insert_id();
 	}
 
 	public function mod( $userId , $data )
 	{
 		$this->db->where("userId",$userId);
-		$query = $this->db->update($this->tableName,$data);
-		return array(
-				"code"=>0,
-				"msg"=>"",
-				"data"=>""
-			    );
-	}
-
-	public function modPassword( $userId , $oldPassword , $newPassword ){
-		$data = array();
-		$data['password'] = $newPassword;
-		$this->db->where("userId",$userId);
-		$this->db->where("password",$oldPassword);
-
-		$query = $this->db->update($this->tableName,$data);
-		$rows = $this->db->affected_rows();
-		if( $rows == 0 ){
-			return array(
-					"code"=>1,
-					"msg"=>"密码错误",
-					"data"=>""
-				    );
-		}
-
-		return array(
-				"code"=>0,
-				"msg"=>"",
-				"data"=>""
-			    );
+		$this->db->update($this->tableName,$data);
 	}
 
 	public function getByIdAndPass($userId,$password){
 		$this->db->where("userId",$userId);
 		$this->db->where("password",$password);
-		$query = $this->db->get($this->tableName)->result_array();
-		return array(
-				"code"=>0,
-				"msg"=>"",
-				"data"=>$query
-			    );
+		return $this->db->get($this->tableName)->result_array();
 	}
 	
 	public function getByNameAndPass($name,$password){
 		$this->db->where("name",$name);
 		$this->db->where("password",$password);
-		$query = $this->db->get($this->tableName)->result_array();
-		return array(
-				"code"=>0,
-				"msg"=>"",
-				"data"=>$query
-			    );
+		return $this->db->get($this->tableName)->result_array();
 	}
 
 	public function getByName($name){
 		$this->db->where("name",$name);
-		$query = $this->db->get($this->tableName)->result_array();
-		return array(
-				"code"=>0,
-				"msg"=>"",
-				"data"=>$query
-			    );
+		return $this->db->get($this->tableName)->result_array();
 	}
 
 }

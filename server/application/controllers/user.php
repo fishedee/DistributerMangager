@@ -12,115 +12,86 @@ class User extends CI_Controller {
 		$this->load->library('argv','argv');
     }
 	
+	/**
+	* @view json
+	*/
 	public function getAllType()
 	{
-		$this->load->view('json',array(
-			'code'=>0,
-			'msg'=>'',
-			'data'=>$this->userTypeEnum->names
-		));
+		return $this->userTypeEnum->names;
 	}
 	
+	/**
+	* @view json
+	*/
 	public function getAllPermission()
 	{ 
-		$this->load->view('json',array(
-			'code'=>0,
-			'msg'=>'',
-			'data'=>$this->userPermissionEnum->names
-		));
+		return $this->userPermissionEnum->names;
 	}
 	
+	/**
+	* @view json
+	*/
 	public function search()
 	{
 		//检查输入参数		
-		$result = $this->argv->checkGet(array(
+		$dataWhere = $this->argv->checkGet(array(
 			array('name','option'),
 			array('type','option'),
 			array('company','option'),
 			array('phone','option'),
 		));
-		if( $result["code"] != 0 ){
-			$this->load->view('json',$result);
-			return;
-		}
-		$dataWhere = $result["data"];
 		
-		$result = $this->argv->checkGet(array(
+		$dataLimit = $this->argv->checkGet(array(
 			array('pageIndex','require'),
 			array('pageSize','require'),
 		));
-		if( $result["code"] != 0 ){
-			$this->load->view('json',$result);
-			return;
-		}
-		$dataLimit = $result["data"];
 		
 		//检查权限
-		$result = $this->loginAo->islogin();
-		if( $result["code"] != 0 ){
-			$this->load->view('json',$result);
-			return $result;
-		}
+		$this->loginAo->checkMustLogin();
 		
 		//执行业务逻辑
-		$result = $this->userAo->search($dataWhere,$dataLimit);
-		if( $result["code"] != 0 ){
-			$this->load->view('json',$result);
-			return;
-		}
-		$this->load->view('json',$result);
+		return $this->userAo->search($dataWhere,$dataLimit);
 	}
 	
+	/**
+	* @view json
+	*/
 	public function get()
 	{
 		//检查输入参数
-		$result = $this->argv->checkGet(array(
+		$data = $this->argv->checkGet(array(
 			array('userId','require'),
 		));
-		if( $result["code"] != 0 ){
-			$this->load->view('json',$result);
-			return;
-		}
-		$userId = $result["data"]['userId'];
+		$userId = $data['userId'];
 		
 		//检查权限
-		$result = $this->loginAo->islogin();
-		if( $result["code"] != 0 ){
-			$this->load->view('json',$result);
-			return $result;
-		}
+		$this->loginAo->checkMustLogin();
 		
 		//执行业务逻辑
-		$data = $this->userAo->get(
-			$userId
-		);
-		$this->load->view('json',$data);
+		return $this->userAo->get($userId);
 	}
 	
+	/**
+	* @view json
+	*/
 	public function add()
 	{
 		//检查输入参数
-		$result = $this->argv->checkPost(array(
+		$data = $this->argv->checkPost(array(
 			array('name','require'),
 			array('password','require'),
-			array('type','option',$this->userTypeEnum->CLIENT),
+			array('type','option'),
 			array('phone','require'),
 			array('company','require'),
 			array('permission','option',array()),
 			array('client','option',array()),
 		));
-		if( $result["code"] != 0 ){
-			$this->load->view('json',$result);
-			return;
-		}
-		$data = $result['data'];
 		
 		//检查权限
-		$result = $this->loginAo->islogin();
-		if( $result["code"] == 0 ){
+		$loginUser = $this->loginAo->islogin();
+		if( $loginUser !== false ){
 			//登录用户
-			$loginUserInfo = $result['data'];
-			if( $loginUserInfo['type'] == $this->userTypeEnum->ADMIN ){
+			if( $loginUser['type'] == $this->userTypeEnum->ADMIN ){
 				//管理员可以为所欲为
 			}else{
 				//非管理员只能添加商城用户
@@ -136,149 +107,103 @@ class User extends CI_Controller {
 		}
 		
 		//执行业务逻辑
-		$result = $this->userAo->add(
-			$data
-		);
-		$this->load->view('json',$result);
+		$this->userAo->add($data);
 	}
 	
+	/**
+	* @view json
+	*/
 	public function del()
 	{
 		//检查输入参数
-		$result = $this->argv->checkPost(array(
+		$data = $this->argv->checkPost(array(
 			array('userId','require'),
 		));
-		if( $result["code"] != 0 ){
-			$this->load->view('json',$result);
-			return;
-		}
-		$userId = $result["data"]['userId'];
+		$userId = $data['userId'];
 		
 		//检查权限
-		$result = $this->loginAo->isAdmin();
-		if( $result["code"] != 0 ){
-			$this->load->view('json',$result);
-			return $result;
-		}
+		$this->loginAo->checkMustAdmin();
 		
 		//执行业务逻辑
-		$result = $this->userAo->del(
-			$userId
-		);
-		$this->load->view('json',$result);
+		$this->userAo->del($userId);
 	}
 	
+	/**
+	* @view json
+	*/
 	public function mod()
 	{
 		//检查输入参数
-		$result = $this->argv->checkPost(array(
-			array('userId','option',0),
+		$data = $this->argv->checkPost(array(
+			array('userId','require'),
 		));
-		if( $result["code"] != 0 ){
-			$this->load->view('json',$result);
-			return;
-		}
-		$userId = $result["data"]['userId'];
+		$userId = $data['userId'];
 		
-		$result = $this->argv->checkPost(array(
+		$data = $this->argv->checkPost(array(
 			array('type','require'),
 			array('phone','require'),
 			array('company','require'),
 			array('permission','option',array()),
 			array('client','option',array()),
 		));
-		if( $result["code"] != 0 ){
-			$this->load->view('json',$result);
-			return;
-		}
-		$data = $result["data"];
 		
 		//检查权限
-		$result = $this->loginAo->islogin();
-		if( $result["code"] != 0 ){
-			$this->load->view('json',$result);
-			return $result;
-		}
-		$loginUserInfo = $result['data'];
-		
-		if( $loginUserInfo['type'] == $this->userTypeEnum->ADMIN ){
+		$loginUser = $this->loginAo->checkMustLogin();
+		if( $loginUser['type'] == $this->userTypeEnum->ADMIN ){
 			//管理员可以为所欲为
 		}else{
 			//非管理员不能设置类型，权限和手下，并且只能设置自己的信息
 			unset($data['type']);
 			unset($data['permission']);
 			unset($data['client']);
-			$userId = $loginUserInfo['userId'];
+			$userId = $loginUser['userId'];
 		}
 		
 		//执行业务逻辑
-		$result = $this->userAo->mod(
-			$userId,
-			$data
-		);
-		$this->load->view('json',$result);
+		$this->userAo->mod($userId,$data);
 	}
 	
+	/**
+	* @view json
+	*/
 	public function modPassword()
 	{
 		//检查输入参数
-		$result = $this->argv->checkPost(array(
+		$data = $this->argv->checkPost(array(
 			array('userId','require'),
 			array('password','require'),
 		));
-		if( $result["code"] != 0 ){
-			$this->load->view('json',$result);
-			return $result;
-		}
-		$userId = $result['data']['userId'];
-		$password = $result['data']['password'];
 		
 		//检查权限
-		$result = $this->loginAo->isAdmin();
-		if( $result["code"] != 0 ){
-			$this->load->view('json',$result);
-			return $result;
-		}
+		$this->loginAo->checkMustAdmin();
 		
 		//执行业务逻辑
-		$result = $this->userAo->modPassword(
-			$userId,
-			$password
+		$this->userAo->modPassword(
+			$data['userId'],
+			$data['password']
 		);
-		$this->load->view('json',$result);
 	}
 	
+	/**
+	* @view json
+	*/
 	public function modMyPassword()
 	{
 		//检查输入参数
-		$result = $this->argv->checkPost(array(
-			array('userId','require'),
+		$data = $this->argv->checkPost(array(
 			array('oldPassword','require'),
 			array('newPassword','require')
 		));
-		if( $result["code"] != 0 ){
-			$this->load->view('json',$result);
-			return $result;
-		}
-		$userId = $result['data']['userId'];
-		$oldPassword = $result['data']['oldPassword'];
-		$newPassword = $result['data']['newPassword'];
 		
 		//检查权限
-		$result = $this->loginAo->islogin();
-		if( $result["code"] != 0 ){
-			$this->load->view('json',$result);
-			return $result;
-		}
-		$userId = $result['data']['userId'];
+		$loginUser = $this->loginAo->checkMustLogin();
 		
 		//执行业务逻辑
-		$result = $this->userAo->modPasswordByOld(
-			$userId,
-			$oldPassword,
-			$newPassword
+		$this->userAo->modPasswordByOld(
+			$loginUser['userId'],
+			$data['oldPassword'],
+			$data['newPassword']
 		);
-		$this->load->view('json',$result);
 	}
 }
 

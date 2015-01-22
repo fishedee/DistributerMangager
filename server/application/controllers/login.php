@@ -8,37 +8,39 @@ class Login extends CI_Controller {
 		$this->load->model('user/loginAo','loginAo');
 		$this->load->library('argv','argv');
     }
-	
+
+	/**
+	*@view json
+	*/
 	public function islogin()
 	{
-		$result = $this->loginAo->islogin();
-		$this->load->view('json',$result);
+		$this->loginAo->checkMustLogin();
 	}
 	
+	/**
+	* @view json
+	*/
 	public function checkout()
 	{
-		$result = $this->loginAo->logout();
-		$this->load->view('json',$result);
+		$this->loginAo->logout();
 	}
 	
+	/**
+	* @view json
+	*/
 	public function checkin()
 	{
 		//检查输入参数
-		$result = $this->argv->checkPost(array(
+		$data = $this->argv->checkPost(array(
 			array('name','require'),
 			array('password','require'),
 		));
-		if( $result["code"] != 0 ){
-			$this->load->view('json',$result);
-			return;
-		}
 		
 		//执行业务逻辑
-		$result = $this->loginAo->login(
-			$result["data"]["name"],
-			$result["data"]["password"]
+		$this->loginAo->login(
+			$data["name"],
+			$data["password"]
 		);
-		$this->load->view('json',$result);
 	}
 }
 

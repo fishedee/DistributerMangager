@@ -10,131 +10,64 @@ class LoginAo extends CI_Model {
 		$this->load->model('user/userPermissionEnum','userPermissionEnum');
     }
 	
-	public function isLocalRequest(){
+	public function checkMustLocalRequest(){
 		if( $_SERVER['REMOTE_ADDR'] != '127.0.0.1')
-			return array(
-				'code'=>1,
-				'msg'=>'非本地请求',
-				'data'=>''
-			);
-		return array(
-			"code"=>0,
-			"msg"=>"",
-			"data"=>''
-		);
+			throw new CI_MyException(1,'非本地请求');
 	}
 	
 	public function islogin(){
 		$userId = $this->session->userdata('userId');
 		if( $userId >= 10000 ){
-			$result = $this->userDb->get($userId);
-			if( $result["code"] != 0 )
-				return $result;
-				
-			return array(
-				"code"=>0,
-				"msg"=>'',
-				"data"=>$result['data']
-			);
+			return $this->userDb->get($userId);
 		}else{
-			return array(
-				"code"=>1,
-				"msg"=>"帐号未登录",
-				"data"=>'',
-			);
+			return false;
 		}
 	}
 	
-	public function isAdmin(){
-		$result = $this->islogin();
-		if( $result['code'] != 0 )
-			return $result;
+	public function checkMustLogin(){
+		$user = $this->islogin();
+		if( $user === false )
+			throw new CI_MyException(1,'未登录');
 		
-		if( $result['data']['type'] != $this->userTypeEnum->ADMIN )
-			return array(
-				'code'=>1,
-				'msg'=>'非管理员无法执行此操作',
-				'data'=>'',
-			);
-		
-		return array(
-			'code'=>0,
-			'msg'=>'',
-			'data'=>$result['data'],
-		);
+		return $user;
 	}
 	
-	public function isAgent(){
-		$result = $this->islogin();
-		if( $result['code'] != 0 )
-			return $result;
+	public function checkMustAdmin(){
+		$user = $this->islogin();
 		
-		if( $result['data']['type'] != $this->userTypeEnum->AGENT )
-			return array(
-				'code'=>1,
-				'msg'=>'非代理商无法执行此操作',
-				'data'=>'',
-			);
+		if( $user['type'] != $this->userTypeEnum->ADMIN )
+			throw new CI_MyException(1,'非管理员无法执行此操作');
 		
-		return array(
-			'code'=>0,
-			'msg'=>'',
-			'data'=>$result['data'],
-		);
+		return $user;
 	}
-	public function isClient($permission){
-		$result = $this->islogin();
-		if( $result['code'] != 0 )
-			return $result;
+	
+	public function checkMustAgent(){
+		$user = $this->islogin();
 		
-		if( $result['data']['type'] != $this->userTypeEnum->CLIENT )
-			return array(
-				'code'=>1,
-				'msg'=>'非商城用户无法执行此操作',
-				'data'=>'',
-			);
+		if( $user['type'] != $this->userTypeEnum->AGENT )
+			throw new CI_MyException(1,'非代理商无法执行此操作');
 		
-		if( isset($result['data']['permission'][$permission]) == false )
-			return array(
-				'code'=>1,
-				'msg'=>'没有'.$this->userPermissionEnum->names[$permission].'权限',
-				'data'=>'',
-			);
+		return $user;
+	}
+	public function checkMustClient($permission){
+		$user = $this->islogin();
 		
-		return array(
-			'code'=>0,
-			'msg'=>'',
-			'data'=>$result['data'],
-		);
+		if( $user['type'] != $this->userTypeEnum->CLIENT )
+			throw new CI_MyException(1,'非商城用户无法执行此操作');
+		
+		if( in_array($user['permission'],$permission) == false )
+			throw new CI_MyException('没有'.$this->userPermissionEnum->names[$permission].'权限');
 	}
 	
 	public function logout(){
 		$this->session->unset_userdata('userId');
-		return array(
-				"code"=>0,
-				"msg"=>"",
-				"data"=>""
-			);
 	}
 	
 	public function login( $name , $password ){
-		
-		$result = $this->userDb->getByNameAndPass($name,sha1($password));
-		if( $result["code"] != 0 )
-			return $result;
-		$user = $result["data"];
+		$user = $this->userDb->getByNameAndPass($name,sha1($password));
 		if( count($user) == 0 )
-			return array(
-				'code'=>1,
-				'msg'=>'帐号或密码错误',
-				'data'=>''
-			);
+			throw new MyException(1,'帐号或密码错误');
 		
 		$this->session->set_userdata('userId',$user[0]['userId']);
-		return array(
-				"code"=>0,
-				"msg"=>"",
-				"data"=>""
-			);
 	}
 }

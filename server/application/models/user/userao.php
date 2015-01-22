@@ -16,95 +16,60 @@ class UserAo extends CI_Model {
 	}
 	
 	public function get($userId){
-		$result = $this->userDb->get($userId);
-		if( $result['code'] != 0 )
-			return $result;
-		$user = $result['data'];
+		$user = $this->userDb->get($userId);
 		
-		$result = $this->userPermissionDb->getByUser($userId);
-		if($result['code'] != 0 )
-			return $result;
-		$user['permission'] = __::pluck($result['data'],'permissionId');
+		$userPermission = $this->userPermissionDb->getByUser($userId);
+		$user['permission'] = __::pluck($userPermission,'permissionId');
 		
-		$result = $this->userClientDb->getByUser($userId);
-		if($result['code'] != 0 )
-			return $result;
-		$userIds = __::pluck($result['data'],'clientUserId');
+		$userClient = $this->userClientDb->getByUser($userId);
+		$userClientIds = __::pluck($userClient,'clientUserId');
+		$user['client'] = $this->userDb->getByIds($userClientIds);
 		
-		$result = $this->userDb->getByIds($userIds);
-		if($result['code'] != 0 )
-			return $result;
-		$user['client'] = $result['data'];  
-		
-		return array(
-			'code'=>0,
-			'msg'=>'',
-			'data'=>$user
-		);
+		return $user;
 	}
 	
 	public function del($userId){
-		$result = $this->userDb->del($userId);
-		if( $result['code'] != 0 )
-			return $result;
+		$this->userDb->del($userId);
 			
-		$result = $this->userPermissionDb->delByUser($userId);
-		if($result['code'] != 0 )
-			return $result;
+		$this->userPermissionDb->delByUser($userId);
 		
-		$result = $this->userClientDb->delByUser($userId);
-		if($result['code'] != 0 )
-			return $result;
-		
-		return $result;
+		$this->userClientDb->delByUser($userId);
 	}
 	
 	public function add($data){
 		//检查是否有重名
-		$result = $this->userDb->getByName($data['name']);
-		if( $result['code'] != 0 )
-			return $result;
-		$user = $result['data'];
+		$user = $this->userDb->getByName($data['name']);
 		if( count($user) != 0 )
-			return array(
-				'code'=>1,
-				'msg'=>'存在重复的用户名',
-				'data'=>''
-			);
+			throw new CI_MyException(1,'存在重复的用户名');
 		
 		//添加用户基本信息
 		$userBaseInfo = $data;
 		unset($userBaseInfo['permission']);
 		unset($userBaseInfo['client']);
 		$userBaseInfo['password'] = sha1($userBaseInfo['password']);
-		$result = $this->userDb->add($userBaseInfo);
-		if( $result['code'] != 0 )
-			return $result;
-		$userId = $result['data'];
+		$userId = $this->userDb->add($userBaseInfo);
 		
 		//添加用户权限
-		$userPermissionInfo = array();
-		foreach( $data['permission'] as $single ){
-			$userPermissionInfo[] = array(
-				'userId'=>$userId,
-				'permissionId'=>$single
-			);
-		};
-		$result = $this->userPermissionDb->addBatch($userPermissionInfo);
-		if( $result['code'] != 0 )
-			return $result;
+		if( isset($data['permission']) ){
+			$userPermissionInfo = __::map($data['permission'],function($single)use($userId){
+				return array(
+					'userId'=>$userId,
+					'permissionId'=>$single
+				);
+			});
+			$this->userPermissionDb->addBatch($userPermissionInfo);
+		}
 		
 		//添加用户客户列表
-		$userClientInfo = array();
-		foreach( $data['client'] as $single ){
-			$userClientInfo[] = array(
-				'userId'=>$userId,
-				'clientUserId'=>$single['userId']
-			);
-		};
-		$result = $this->userClientDb->addBatch($userClientInfo);
-		if( $result['code'] != 0 )
-			return $result;
+		if( isset($data['client']) ){
+			$userClientInfo = __::map($data['client'],function($single)use($userId){
+				return array(
+					'userId'=>$userId,
+					'clientUserId'=>$single['userId']
+				);
+			});
+			$this->userClientDb->addBatch($userClientInfo);
+		}
 			
 		return $result;
 	}
@@ -114,67 +79,46 @@ class UserAo extends CI_Model {
 		$userBaseInfo = $data;
 		unset($userBaseInfo['permission']);
 		unset($userBaseInfo['client']);
-		$result = $this->userDb->mod($userId,$userBaseInfo);
-		if( $result['code'] != 0 )
-			return $result;
+		$this->userDb->mod($userId,$userBaseInfo);
 			
 		//修改用户权限
-		$userPermissionInfo = array();
-		foreach( $data['permission'] as $single ){
-			$userPermissionInfo[] = array(
-				'userId'=>$userId,
-				'permissionId'=>$single
-			);
-		};
-		$result = $this->userPermissionDb->delByUser($userId);
-		if($result['code'] != 0 )
-			return $result;
-		
-		$result = $this->userPermissionDb->addBatch($userPermissionInfo);
-		if( $result['code'] != 0 )
-			return $result;
+		if( isset($data['permission']) ){
+			$userPermissionInfo = __::map($data['permission'],function($single)use($userId){
+				return array(
+					'userId'=>$userId,
+					'permissionId'=>$single
+				);
+			});
+			$this->userPermissionDb->delByUser($userId);
+			$this->userPermissionDb->addBatch($userPermissionInfo);
+		}
 			
 		//修改用户客户列表
-		$userClientInfo = array();
-		foreach( $data['client'] as $single ){
-			$userClientInfo[] = array(
-				'userId'=>$userId,
-				'clientUserId'=>$single['userId']
-			);
-		};
-		$result = $this->userClientDb->delByUser($userId);
-		if($result['code'] != 0 )
-			return $result;
-		
-		$result = $this->userClientDb->addBatch($userClientInfo);
-		if( $result['code'] != 0 )
-			return $result;
-			
-		return $result;
+		if( isset($data['client']) ){
+			$userClientInfo = __::map($data['client'],function($single)use($userId){
+				return array(
+					'userId'=>$userId,
+					'clientUserId'=>$single['userId']
+				);
+			});
+			$this->userClientDb->delByUser($userId);
+			$this->userClientDb->addBatch($userClientInfo);
+		}
 	}
 	
 	public function modPassword($userId,$password){
 		$data = array();
 		$data['password'] = sha1($password);
-		return $this->userDb->mod($userId,$data);
+		$this->userDb->mod($userId,$data);
 	}
 	
 	public function modPasswordByOld($userId,$oldPassword,$newPassword){
 		//检查是否有重名
-		$result = $this->userDb->getByIdAndPass($userId,sha1($oldPassword));
-		if( $result['code'] != 0 )
-			return $result;
-		$users = $result['data'];
-		if( count($users) == 0 )
-			return array(
-				'code'=>1,
-				'msg'=>'原密码错误',
-				'data'=>''
-			);
+		$user = $this->userDb->getByIdAndPass($userId,sha1($oldPassword));
+		if( count($user) == 0 )
+			throw new CI_MyException(1,'原密码错误');
 		
 		//修改密码
-		$data = array();
-		$data['password'] = sha1($newPassword);
-		return $this->userDb->mod($userId,$data);
+		$this->modPassword($userId,$newPassword);
 	}
 }
