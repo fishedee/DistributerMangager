@@ -70,8 +70,6 @@ class UserAo extends CI_Model {
 			});
 			$this->userClientDb->addBatch($userClientInfo);
 		}
-			
-		return $result;
 	}
 	
 	public function mod($userId,$data){

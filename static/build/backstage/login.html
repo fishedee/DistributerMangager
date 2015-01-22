@@ -12,6 +12,7 @@
 <script type="text/javascript" src="/fishstrap/lib/gri/gri.js"></script>
 <script type="text/javascript" src="/fishstrap/ui/dialog.js"></script>
 <script type="text/javascript" src="/fishstrap/page/loginPage.js"></script>
+<script type="text/javascript" src="/fishstrap/page/subPage.js"></script>
 
 </head>
 <body>
@@ -19,6 +20,7 @@
 		var $ = require('fishstrap/core/global.js');
 		var dialog = require('fishstrap/ui/dialog.js');
 		var loginPage = require('fishstrap/page/loginPage.js');
+		var subPage = require('fishstrap/page/subPage.js');
 		loginPage.use({
 			title:'经销商管理系统',
 			init:function(){
@@ -39,7 +41,20 @@
 					}
 					location.href = 'index.html';
 				});
-			}
+			},
+			button:[
+				{
+					name:'注册',
+					click:function(){
+						subPage.open({
+							title:'注册商城用户',
+							url:'view/user/add.html',
+							close:function(){
+							}
+						});
+					}
+				}
+			],
 		});
 	</script>
 </body>

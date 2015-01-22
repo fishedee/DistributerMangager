@@ -66,7 +66,7 @@ class LoginAo extends CI_Model {
 	public function login( $name , $password ){
 		$user = $this->userDb->getByNameAndPass($name,sha1($password));
 		if( count($user) == 0 )
-			throw new MyException(1,'帐号或密码错误');
+			throw new CI_MyException(1,'帐号或密码错误');
 		
 		$this->session->set_userdata('userId',$user[0]['userId']);
 	}

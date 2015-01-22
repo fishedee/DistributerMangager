@@ -35,9 +35,7 @@
 		var dialog = require('fishstrap/ui/dialog.js');
 		var input = require('fishstrap/ui/input.js');
 		var userId = $.location.getQueryArgv('userId');
-		var subPage = require('fishstrap/page/subPage.js');
 		var userType = {};
-		var userPermission = {};
 		var user = {};
 		function getAllType(next){
 			$.get('/user/getAllType',{},function(data){
@@ -50,17 +48,6 @@
 				next();
 			});
 		}
-		function getAllPermission(next){
-			$.get('/user/getAllPermission',{},function(data){
-				data = $.JSON.parse(data);
-				if( data.code != 0 ){
-					dialog.message(data.msg);
-					return;
-				}
-				userPermission = data.data;
-				next();
-			});
-		}
 		function getUser( next ){
 			$.get('/user/get',{userId:userId},function(data){
 				data = $.JSON.parse(data);
@@ -69,22 +56,18 @@
 					return;
 				}
 				user = data.data;
+				user.typeName = userType[user.type];
 				next();
 			});
 		}
 		function go(){
-			if( userId != null )
-				nameType = 'read';
-			else
-				nameType = 'text';
 			input.verticalInput({
 				id:'container',
 				field:[
-					{id:'name',type:nameType,name:'姓名'},
-					{id:'type',type:'enum',name:'类型',map:userType},
+					{id:'name',type:'read',name:'姓名'},
+					{id:'typeName',type:'read',name:'类型'},
 					{id:'company',type:'text',name:'公司'},
 					{id:'phone',type:'text',name:'电话'},
-					{id:'permission',type:'check',name:'权限',map:userPermission},
 					{id:'client',type:'table',name:'客户',
 						option:{
 							column:[
@@ -92,62 +75,28 @@
 								{name:'名字',type:'text',id:'name'},
 								{name:'公司',type:'text',id:'company'},
 							],
-							operate:[{
-								name:'删除',
-								click:function(data,operation){
-									operation.remove();
-								}
-							}],
-							button:[{
-								name:'添加',
-								click:function(operation){
-									subPage.open({
-										title:'添加客户',
-										url:'index.html?check=true',
-										close:function(data){
-											operation.add(data);
-										}
-									});
-								}
-							}]
+							operate:[],
+							button:[]
 						}
 					},
 				],
 				value:user,
 				submit:function(data){
-					if( userId != null ){
-						data = $.extend({userId:userId},data);
-						$.post('/user/mod',data,function(data){
-							data = $.JSON.parse(data);
-							if( data.code != 0 ){
-								dialog.message(data.msg);
-								return;
-							}
-							location.href = 'index.html';
-						});
-					}else{
-						$.post('/user/add',data,function(data){
-							data = $.JSON.parse(data);
-							if( data.code != 0 ){
-								dialog.message(data.msg);
-								return;
-							}
-							location.href = 'index.html';
-						});
-					}
+					data = $.extend({userId:userId},data);
+					$.post('/user/mod',data,function(data){
+						data = $.JSON.parse(data);
+						if( data.code != 0 ){
+							dialog.message(data.msg);
+							return;
+						}
+						location.reload();
+					});
 				},
-				cancel:function(){
-					location.href = 'index.html';
-				}
+				cancel:undefined
 			});
 		}
 		getAllType(function(){
-			getAllPermission(function(){
-				if( userId != null )
-					getUser(go);
-				else
-					go();
-			});
+			getUser(go);
 		});
 	</script>
  </body>

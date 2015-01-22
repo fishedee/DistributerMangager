@@ -27,11 +27,11 @@
 				next();
 			});
 		}
-		function whenWindowClose(mode){
+		function whenWindowClose(mode,operation){
 			if( mode == 'confirm' )
-				return tableOperation.getCheckData();
+				operation.close( tableOperation.getCheckData() );
 			else
-				return [];
+				operation.close( []);
 		}
 		function go(){
 			tableOperation = query.simpleQuery({
@@ -52,7 +52,7 @@
 				{
 					name:'修改',
 					click:function(data){
-						location.href = 'view.html?userId='+data.userId;
+						location.href = 'viewByAdmin.html?userId='+data.userId;
 					}
 				},
 				{
@@ -80,7 +80,7 @@
 				{
 					name:'添加用户',
 					click:function(){
-						location.href = 'view.html';
+						location.href = 'viewByAdmin.html';
 					}
 				}
 				],

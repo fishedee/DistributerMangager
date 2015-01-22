@@ -34,34 +34,73 @@
 		var $ = require('fishstrap/core/global.js');
 		var dialog = require('fishstrap/ui/dialog.js');
 		var input = require('fishstrap/ui/input.js');
-		input.verticalInput({
-			id:'container',
-			field:[
-				{id:'oldPassword',type:'password',name:'旧密码'},
-				{id:'newPassword1',type:'password',name:'新密码'},
-				{id:'newPassword2',type:'password',name:'再输入一次新密码'},
-			],
-			submit:function(data){
-				if( data.newPassword1 != data.newPassword2 ){
-					dialog.message('两次输入密码不一致');
+		var userId = $.location.getQueryArgv('userId');
+		var userType = {};
+		var userPermission = {};
+		var user = {};
+		function getAllType(next){
+			$.get('/user/getAllType',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
 					return;
 				}
-				data = {
-					oldPassword:data.oldPassword,
-					newPassword:data.newPassword1
-				};
-				$.post('/user/modMyPassword',data,function(data){
-					data = $.JSON.parse(data);
-					if( data.code != 0 ){
-						dialog.message(data.msg);
-						return;
-					}
-					dialog.message('修改密码成功',function(){
-						location.href = 'index.html';
+				userType = data.data;
+				next();
+			});
+		}
+		function getAllPermission(next){
+			$.get('/user/getAllPermission',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				userPermission = data.data;
+				next();
+			});
+		}
+		function getUser( next ){
+			$.get('/user/get',{userId:userId},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				user = data.data;
+				user.typeName = userType[user.type];
+				next();
+			});
+		}
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'name',type:'read',name:'姓名'},
+					{id:'typeName',type:'read',name:'类型'},
+					{id:'company',type:'text',name:'公司'},
+					{id:'phone',type:'text',name:'电话'},
+					{id:'permission',type:'check',name:'权限',map:userPermission,disabled:true}
+				],
+				value:user,
+				submit:function(data){
+					data = $.extend({userId:userId},data);
+					$.post('/user/mod',data,function(data){
+						data = $.JSON.parse(data);
+						if( data.code != 0 ){
+							dialog.message(data.msg);
+							return;
+						}
+						location.reload();
 					});
-				});
-			},
-			cancel:undefined
+				},
+				cancel:undefined
+			});
+		}
+		getAllType(function(){
+			getAllPermission(function(){
+				getUser(go);
+			});
 		});
 	</script>
  </body>

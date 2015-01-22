@@ -122,7 +122,8 @@ alter table t_user_company_banner add index userIdIndex(userId);
 #建立初始数据
 insert into t_user(userId,name,password,company,phone,type) values
 (10001,"fish",SHA1("123456"),'烘焙帮信息科技有限公司','15018749403',1),
-(10002,"fish2",SHA1("123456"),'烘焙帮信息科技有限公司','15018749403',1);
+(10002,"fish_agent",SHA1("123456"),'烘焙帮信息科技有限公司','15018749403',2),
+(10003,"fish_client",SHA1("123456"),'烘焙帮信息科技有限公司','15018749403',3);
 
 #显示初始数据
 select * from t_user;

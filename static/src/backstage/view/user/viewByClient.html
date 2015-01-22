@@ -1,0 +1,85 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>烘焙帮后台管理系统</title>
+	<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+</head>
+<body class="definewidth m10">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var userId = $.location.getQueryArgv('userId');
+		var userType = {};
+		var userPermission = {};
+		var user = {};
+		function getAllType(next){
+			$.get('/user/getAllType',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				userType = data.data;
+				next();
+			});
+		}
+		function getAllPermission(next){
+			$.get('/user/getAllPermission',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				userPermission = data.data;
+				next();
+			});
+		}
+		function getUser( next ){
+			$.get('/user/get',{userId:userId},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				user = data.data;
+				user.typeName = userType[user.type];
+				next();
+			});
+		}
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'name',type:'read',name:'姓名'},
+					{id:'typeName',type:'read',name:'类型'},
+					{id:'company',type:'text',name:'公司'},
+					{id:'phone',type:'text',name:'电话'},
+					{id:'permission',type:'check',name:'权限',map:userPermission,disabled:true}
+				],
+				value:user,
+				submit:function(data){
+					data = $.extend({userId:userId},data);
+					$.post('/user/mod',data,function(data){
+						data = $.JSON.parse(data);
+						if( data.code != 0 ){
+							dialog.message(data.msg);
+							return;
+						}
+						location.reload();
+					});
+				},
+				cancel:undefined
+			});
+		}
+		getAllType(function(){
+			getAllPermission(function(){
+				getUser(go);
+			});
+		});
+	</script>
+ </body>
+</html>

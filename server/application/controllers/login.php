@@ -14,7 +14,7 @@ class Login extends CI_Controller {
 	*/
 	public function islogin()
 	{
-		$this->loginAo->checkMustLogin();
+		return $this->loginAo->checkMustLogin();
 	}
 	
 	/**

@@ -79,8 +79,8 @@ class User extends CI_Controller {
 		//检查输入参数
 		$data = $this->argv->checkPost(array(
 			array('name','require'),
-			array('password','require'),
-			array('type','option'),
+			array('password','option','123456'),
+			array('type','option',$this->userTypeEnum->CLIENT),
 			array('phone','require'),
 			array('company','require'),
 			array('permission','option',array()),
@@ -140,7 +140,7 @@ class User extends CI_Controller {
 		$userId = $data['userId'];
 		
 		$data = $this->argv->checkPost(array(
-			array('type','require'),
+			array('type','option'),
 			array('phone','require'),
 			array('company','require'),
 			array('permission','option',array()),
