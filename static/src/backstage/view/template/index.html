@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>烘焙帮后台管理系统</title>
+	<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+</head>
+<body class="definewidth m10">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		var isCheck = ($.location.getQueryArgv('check') != null);
+		var userType = {};
+		var tableOperation = {};
+		function getAllType(next){
+			$.get('/user/getAllType',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				userType = data.data;
+				next();
+			});
+		}
+		function whenWindowClose(mode,operation){
+			if( mode == 'confirm' )
+				operation.close( tableOperation.getCheckData() );
+			else
+				operation.close( []);
+		}
+		function go(){
+			tableOperation = query.simpleQuery({
+				id:'container',
+				url:'/template/search',
+				checkAll:isCheck,
+				column:[
+					{id:'companyTemplateId',type:'text',name:'模板ID'},
+					{id:'title',type:'text',name:'名字'},
+					{id:'url',type:'text',name:'位置'},
+					{id:'remark',type:'text',name:'备注'},
+					{id:'createTime',type:'text',name:'创建时间'},
+					{id:'modifyTime',type:'text',name:'修改时间'},
+				],
+				queryColumn:['title','remark'],
+				operate:[
+				{
+					name:'修改',
+					click:function(data){
+						location.href = 'view.html?companyTemplateId='+data.companyTemplateId;
+					}
+				},
+				{
+					name:'删除',
+					click:function(data){
+						dialog.confirm('确认删除该公司模板，所有使用该模板的客户都会失效，不可回退操作？!',function(){
+							$.post('/template/del',{companyTemplateId:data.companyTemplateId},function(data){
+								data = $.JSON.parse(data);
+								if( data.code != 0 ){
+									dialog.message(data.msg);
+									return;
+								}
+								location.href = 'index.html';
+							});
+						});
+					}
+				}],
+				button:[
+				{
+					name:'添加模板',
+					click:function(){
+						location.href = 'view.html';
+					}
+				}
+				],
+			});
+		}
+		getAllType(go);
+	</script>
+ </body>
+</html>

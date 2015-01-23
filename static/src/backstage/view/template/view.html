@@ -1,0 +1,119 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>烘焙帮后台管理系统</title>
+	<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+</head>
+<body class="definewidth m10">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var subPage = require('/fishstrap/page/subPage.js');
+		var companyTemplateId = $.location.getQueryArgv('companyTemplateId');
+		var companyTemplate = {};
+		function getCompanyTemplate( next ){
+			$.get('/template/get',{companyTemplateId:companyTemplateId},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				companyTemplate = data.data;
+				next();
+			});
+		}
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'title',type:'text',name:'标题'},
+					{id:'url',type:'text',name:'位置'},
+					{id:'remark',type:'text',name:'备注'},
+					{id:'classify',type:'table',name:'客户',
+						option:{
+							column:[
+								{name:'分类ID',type:'text',id:'companyTemplateClassifyId'},
+								{name:'名字',type:'text',id:'title'},
+							],
+							operate:[
+							{
+								name:'删除',
+								click:function(data,operation){
+									dialog.confirm('确认删除该公司分类，所有使用该模板分类的客户都会失效，不可回退操作？!',function(){
+										operation.remove();
+									});
+								}
+							},
+							{
+								name:'修改',
+								click:function(data,operation){
+									subPage.open({
+										title:'修改分类',
+										url:'viewClassify.html?title='+data.title,
+										close:function(state,data2){
+											if( state == 'confirm'){
+												data2.companyTemplateClassifyId = data.companyTemplateClassifyId;
+												operation.mod(data2);
+											}
+										}
+									});
+								}
+							}
+							],
+							button:[{
+								name:'添加',
+								click:function(operation){
+									subPage.open({
+										title:'添加分类',
+										url:'viewClassify.html',
+										close:function(state,data2){
+											if( state == 'confirm'){
+												data2.companyTemplateClassifyId = '';
+												operation.add([data2]);
+											}
+										}
+									});
+								}
+							}]
+						}
+					},
+				],
+				value:companyTemplate,
+				submit:function(data){
+					if( companyTemplateId != null ){
+						data = $.extend({companyTemplateId:companyTemplateId},data);
+						$.post('/template/mod',data,function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							location.href = 'index.html';
+						});
+					}else{
+						$.post('/template/add',data,function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							location.href = 'index.html';
+						});
+					}
+				},
+				cancel:function(){
+					location.href = 'index.html';
+				}
+			});
+		}
+		if( companyTemplateId != null )
+			getCompanyTemplate(go);
+		else
+			go();
+	</script>
+ </body>
+</html>

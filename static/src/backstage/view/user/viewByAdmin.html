@@ -82,8 +82,9 @@
 									subPage.open({
 										title:'添加客户',
 										url:'index.html?check=true',
-										close:function(data){
-											operation.add(data);
+										close:function(state,data){
+											if( state == 'confirm' )
+												operation.add(data);
 										}
 									});
 								}

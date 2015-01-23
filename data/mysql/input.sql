@@ -69,7 +69,6 @@ create table t_company_template_classify(
 	companyTemplateClassifyId integer not null auto_increment,
 	companyTemplateId integer not null,
 	title varchar(128) not null,
-	remark varchar(256) not null,
 	createTime timestamp not null default CURRENT_TIMESTAMP,
 	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
 	primary key( companyTemplateClassifyId )
