@@ -1,2 +1,4 @@
 /data/log/*
+/data/upload/*
 !/data/log/.gitignore
+!/data/upload/.gitignore

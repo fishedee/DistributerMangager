@@ -6,6 +6,7 @@ class LoginAo extends CI_Model {
     {
         parent::__construct();
 		$this->load->model('user/userDb','userDb');
+		$this->load->model('user/userAo','userAo');
 		$this->load->model('user/userTypeEnum','userTypeEnum');
 		$this->load->model('user/userPermissionEnum','userPermissionEnum');
     }
@@ -18,7 +19,7 @@ class LoginAo extends CI_Model {
 	public function islogin(){
 		$userId = $this->session->userdata('userId');
 		if( $userId >= 10000 ){
-			return $this->userDb->get($userId);
+			return $this->userAo->get($userId);
 		}else{
 			return false;
 		}
@@ -55,8 +56,10 @@ class LoginAo extends CI_Model {
 		if( $user['type'] != $this->userTypeEnum->CLIENT )
 			throw new CI_MyException(1,'非商城用户无法执行此操作');
 		
-		if( in_array($user['permission'],$permission) == false )
-			throw new CI_MyException('没有'.$this->userPermissionEnum->names[$permission].'权限');
+		if( in_array($permission,$user['permission']) == false )
+			throw new CI_MyException(1,'没有'.$this->userPermissionEnum->names[$permission].'权限');
+			
+		return $user;
 	}
 	
 	public function logout(){

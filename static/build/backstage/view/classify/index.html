@@ -12,11 +12,11 @@
 <script type="text/javascript" src="/fishstrap/core/global.js"></script>
 <script type="text/javascript" src="/fishstrap/lib/gri/gri.js"></script>
 <script type="text/javascript" src="/fishstrap/ui/dialog.js"></script>
+<script type="text/javascript" src="/fishstrap/lib/gri/griTable.js"></script>
+<script type="text/javascript" src="/fishstrap/ui/table.js"></script>
 <script type="text/javascript" src="/fishstrap/lib/ueditor/ueditor.config.js"></script>
 <script type="text/javascript" src="/fishstrap/lib/ueditor/ueditor.all.min.js"></script>
 <script type="text/javascript" src="/fishstrap/ui/editor.js"></script>
-<script type="text/javascript" src="/fishstrap/lib/gri/griTable.js"></script>
-<script type="text/javascript" src="/fishstrap/ui/table.js"></script>
 <script type="text/javascript" src="/fishstrap/core/html5.js"></script>
 <script type="text/javascript" src="/fishstrap/util/jpegEncoder.js"></script>
 <script type="text/javascript" src="/fishstrap/util/imageCompresser.js"></script>
@@ -25,6 +25,7 @@
 <script type="text/javascript" src="/fishstrap/page/subPage.js"></script>
 <script type="text/javascript" src="/fishstrap/util/jqueryDatetimePicker.js"></script>
 <script type="text/javascript" src="/fishstrap/ui/input.js"></script>
+<script type="text/javascript" src="/fishstrap/ui/query.js"></script>
 
 </head>
 <body class="definewidth m10">
@@ -33,61 +34,52 @@
 	<script type="text/javascript">
 		var $ = require('fishstrap/core/global.js');
 		var dialog = require('fishstrap/ui/dialog.js');
-		var input = require('fishstrap/ui/input.js');
-		var subPage = require('fishstrap/page/subPage.js');
-		var companyTemplateId = $.location.getQueryArgv('companyTemplateId');
-		var companyTemplate = {};
-		function getCompanyTemplate( next ){
-			$.get('/template/get',{companyTemplateId:companyTemplateId},function(data){
-				data = $.JSON.parse(data);
-				if( data.code != 0 ){
-					dialog.message(data.msg);
-					return;
-				}
-				companyTemplate = data.data;
-				next();
-			});
-		}
+		var query = require('fishstrap/ui/query.js');
 		function go(){
-			input.verticalInput({
+			tableOperation = query.simpleQuery({
 				id:'container',
-				field:[
-					{id:'title',type:'text',name:'标题'},
-					{id:'url',type:'text',name:'位置'},
+				url:'/classify/search',
+				column:[
+					{id:'userCompanyClassifyId',type:'text',name:'文章分类ID'},
+					{id:'title',type:'text',name:'姓名'},
 					{id:'remark',type:'text',name:'备注'},
+					{id:'createTime',type:'text',name:'创建时间'},
+					{id:'modifyTime',type:'text',name:'修改时间'},
 				],
-				value:companyTemplate,
-				submit:function(data){
-					if( companyTemplateId != null ){
-						data = $.extend({companyTemplateId:companyTemplateId},data);
-						$.post('/template/mod',data,function(data){
-							data = $.JSON.parse(data);
-							if( data.code != 0 ){
-								dialog.message(data.msg);
-								return;
-							}
-							location.href = 'index.html';
-						});
-					}else{
-						$.post('/template/add',data,function(data){
-							data = $.JSON.parse(data);
-							if( data.code != 0 ){
-								dialog.message(data.msg);
-								return;
-							}
-							location.href = 'index.html';
-						});
+				queryColumn:['title','remark'],
+				operate:[
+				{
+					name:'修改',
+					click:function(data){
+						location.href = 'view.html?userCompanyClassifyId='+data.userCompanyClassifyId;
 					}
 				},
-				cancel:function(){
-					location.href = 'index.html';
+				{
+					name:'删除',
+					click:function(data){
+						dialog.confirm('确认删除该文章分类，不可回退操作？!',function(){
+							$.post('/classify/del',{userCompanyClassifyId:data.userCompanyClassifyId},function(data){
+								data = $.JSON.parse(data);
+								if( data.code != 0 ){
+									dialog.message(data.msg);
+									return;
+								}
+								location.href = 'index.html';
+							});
+						});
+					}
+				}],
+				button:[
+				{
+					name:'添加分类',
+					click:function(){
+						location.href = 'view.html';
+					}
 				}
+				],
 			});
 		}
-		if( companyTemplateId != null )
-			getCompanyTemplate(go);
-		else
-			go();
+		go();
 	</script>
  </body>
 </html>

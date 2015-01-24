@@ -2,9 +2,7 @@
 
 class UserPermissionEnum extends CI_Model{
 	public $enums = array(
-		array(1,'COMPANY_ARTICLE','文章管理'),
-		array(2,'COMPANY_BANNER','广告管理'),
-		array(3,'COMPANY_TEMPLATE','模板管理')
+		array(1,'COMPANY_INTRODUCE','公司介绍'),
 	);
 	
 	public function __construct(){

@@ -1,9 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class UserAo extends CI_Model {
-	
-	var $TYPE_ADMIN = 0;
-	var $TYPE_USER = 1;
 	public function __construct(){
 		parent::__construct();
 		$this->load->model('user/userDb','userDb');

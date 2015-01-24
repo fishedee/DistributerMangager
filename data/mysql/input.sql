@@ -64,18 +64,6 @@ create table t_company_template(
 	primary key( companyTemplateId )
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
 
-#创建公司文章模板分类表
-create table t_company_template_classify(
-	companyTemplateClassifyId integer not null auto_increment,
-	companyTemplateId integer not null,
-	title varchar(128) not null,
-	createTime timestamp not null default CURRENT_TIMESTAMP,
-	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
-	primary key( companyTemplateClassifyId )
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-
-alter table t_company_template add index companyTemplateIdIndex(companyTemplateId);
-
 #创建用户公司模板表
 create table t_user_company_template(
 	userCompanyTemplateId integer not null auto_increment,
@@ -88,6 +76,21 @@ create table t_user_company_template(
 
 alter table t_user_company_template add index userIdIndex(userId);
 
+
+#创建用户公司文章分类表
+create table t_user_company_classify(
+	userCompanyClassifyId integer not null auto_increment,
+	userId integer not null,
+	title varchar(128) not null,
+	icon varchar(128) not null,
+	remark varchar(128) not null,
+	createTime timestamp not null default CURRENT_TIMESTAMP,
+	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
+	primary key( userCompanyClassifyId )
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+
+alter table t_user_company_classify add index userIdIndex(userId);
+
 #创建用户公司文章表
 create table t_user_company_article(
 	userCompanyArticleId integer not null auto_increment,
@@ -95,7 +98,7 @@ create table t_user_company_article(
 	title varchar(128) not null,
 	remark varchar(256) not null,
 	content text not null,
-	companyTemplateClassifyId integer not null,
+	userCompanyClassifyId integer not null,
 	createTime timestamp not null default CURRENT_TIMESTAMP,
 	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
 	primary key( userCompanyArticleId )
@@ -124,12 +127,15 @@ insert into t_user(userId,name,password,company,phone,type) values
 (10002,"fish_agent",SHA1("123456"),'烘焙帮信息科技有限公司','15018749403',2),
 (10003,"fish_client",SHA1("123456"),'烘焙帮信息科技有限公司','15018749403',3);
 
+insert into t_user_permission(userId,permissionId)values
+(10003,1);
+
 #显示初始数据
 select * from t_user;
 select * from t_user_permission;
 select * from t_user_client;
 select * from t_company_template;
-select * from t_company_template_classify;
 select * from t_user_company_template;
+select * from t_user_company_classify;
 select * from t_user_company_article;
 select * from t_user_company_banner;

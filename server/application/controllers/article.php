@@ -1,13 +1,13 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Template extends CI_Controller {
+class Article extends CI_Controller {
 
 	public function __construct()
     {
         parent::__construct();
 		$this->load->model('user/loginAo','loginAo');
 		$this->load->model('user/userPermissionEnum','userPermissionEnum');
-		$this->load->model('template/companyTemplateAo','companyTemplateAo');
+		$this->load->model('article/companyArticleAo','companyArticleAo');
 		$this->load->library('argv','argv');
     }
 	
@@ -20,6 +20,7 @@ class Template extends CI_Controller {
 		$dataWhere = $this->argv->checkGet(array(
 			array('title','option'),
 			array('remark','option'),
+			array('userCompanyClassifyId','option')
 		));
 		
 		$dataLimit = $this->argv->checkGet(array(
@@ -28,10 +29,13 @@ class Template extends CI_Controller {
 		));
 		
 		//检查权限
-		$this->loginAo->checkMustAdmin();
+		$user = $this->loginAo->checkMustClient(
+			$this->userPermissionEnum->COMPANY_INTRODUCE
+		);
+		$userId = $user['userId'];
 		
 		//执行业务逻辑
-		return $this->companyTemplateAo->search($dataWhere,$dataLimit);
+		return $this->companyArticleAo->search($userId,$dataWhere,$dataLimit);
 	}
 	
 	/**
@@ -41,15 +45,18 @@ class Template extends CI_Controller {
 	{
 		//检查输入参数
 		$data = $this->argv->checkGet(array(
-			array('companyTemplateId','require'),
+			array('userCompanyArticleId','require'),
 		));
-		$companyTemplateId = $data['companyTemplateId'];
+		$userCompanyArticleId = $data['userCompanyArticleId'];
 		
 		//检查权限
-		$this->loginAo->checkMustAdmin();
+		$user = $this->loginAo->checkMustClient(
+			$this->userPermissionEnum->COMPANY_INTRODUCE
+		);
+		$userId = $user['userId'];
 		
 		//执行业务逻辑
-		return $this->companyTemplateAo->get($companyTemplateId);
+		return $this->companyArticleAo->get($userId,$userCompanyArticleId);
 	}
 	
 	/**
@@ -62,13 +69,18 @@ class Template extends CI_Controller {
 			array('title','require'),
 			array('url','require'),
 			array('remark','require'),
+			array('content','require|noxss'),
+			array('userCompanyClassifyId','require')
 		));
 		
 		//检查权限
-		$this->loginAo->checkMustAdmin();
+		$user = $this->loginAo->checkMustClient(
+			$this->userPermissionEnum->COMPANY_INTRODUCE
+		);
+		$userId = $user['userId'];
 		
 		//执行业务逻辑
-		$this->companyTemplateAo->add($data);
+		$this->companyArticleAo->add($userId,$data);
 	}
 	
 	/**
@@ -78,15 +90,18 @@ class Template extends CI_Controller {
 	{
 		//检查输入参数
 		$data = $this->argv->checkPost(array(
-			array('companyTemplateId','require'),
+			array('userCompanyArticleId','require'),
 		));
-		$companyTemplateId = $data['companyTemplateId'];
+		$userCompanyArticleId = $data['userCompanyArticleId'];
 		
 		//检查权限
-		$this->loginAo->checkMustAdmin();
+		$user = $this->loginAo->checkMustClient(
+			$this->userPermissionEnum->COMPANY_INTRODUCE
+		);
+		$userId = $user['userId'];
 		
 		//执行业务逻辑
-		$this->companyTemplateAo->del($companyTemplateId);
+		$this->companyArticleAo->del($userId,$userCompanyArticleId);
 	}
 	
 	/**
@@ -96,55 +111,16 @@ class Template extends CI_Controller {
 	{
 		//检查输入参数
 		$data = $this->argv->checkPost(array(
-			array('companyTemplateId','require'),
+			array('userCompanyArticleId','require'),
 		));
-		$companyTemplateId = $data['companyTemplateId'];
+		$userCompanyArticleId = $data['userCompanyArticleId'];
 		
 		$data = $this->argv->checkPost(array(
 			array('title','require'),
 			array('url','require'),
 			array('remark','require'),
-		));
-		
-		//检查权限
-		$this->loginAo->checkMustAdmin();
-		
-		//执行业务逻辑
-		$this->companyTemplateAo->mod($companyTemplateId,$data);
-	}
-	
-	
-	/**
-	* @view json
-	*/
-	public function getMyTemplate()
-	{
-		//检查权限
-		$user = $this->loginAo->checkMustClient(
-			$this->userPermissionEnum->COMPANY_INTRODUCE
-		);
-		$userId = $user['userId'];
-		
-		//执行业务逻辑
-		$this->companyTemplateAo->getByUserId($userId);
-	}
-	
-	/**
-	* @view json
-	*/
-	public function modMyTemplate()
-	{
-		//检查输入参数
-		$data = $this->argv->checkPost(array(
-			array('companyTemplateId','require'),
-		));
-		$companyTemplateId = $data['companyTemplateId'];
-		
-		$data = $this->argv->checkPost(array(
-			array('title','require'),
-			array('url','require'),
-			array('remark','require'),
-			array('classify','option',array()),
+			array('content','require|noxss'),
+			array('userCompanyClassifyId','require')
 		));
 		
 		//检查权限
@@ -154,7 +130,7 @@ class Template extends CI_Controller {
 		$userId = $user['userId'];
 		
 		//执行业务逻辑
-		$this->companyTemplateAo->mod($companyTemplateId,$data);
+		$this->companyArticleAo->mod($userId,$userCompanyArticleId,$data);
 	}
 }
 
