@@ -67,7 +67,7 @@ class Article extends CI_Controller {
 		//检查输入参数
 		$data = $this->argv->checkPost(array(
 			array('title','require'),
-			array('url','require'),
+			array('cover','require'),
 			array('remark','require'),
 			array('content','require|noxss'),
 			array('userCompanyClassifyId','require')
@@ -117,7 +117,7 @@ class Article extends CI_Controller {
 		
 		$data = $this->argv->checkPost(array(
 			array('title','require'),
-			array('url','require'),
+			array('cover','require'),
 			array('remark','require'),
 			array('content','require|noxss'),
 			array('userCompanyClassifyId','require')

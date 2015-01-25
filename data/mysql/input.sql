@@ -95,6 +95,7 @@ alter table t_user_company_classify add index userIdIndex(userId);
 create table t_user_company_article(
 	userCompanyArticleId integer not null auto_increment,
 	userId integer not null,
+	cover varchar(128) not null,
 	title varchar(128) not null,
 	remark varchar(256) not null,
 	content text not null,
@@ -129,6 +130,14 @@ insert into t_user(userId,name,password,company,phone,type) values
 
 insert into t_user_permission(userId,permissionId)values
 (10003,1);
+
+insert into t_user_company_classify(userId,title,icon,remark)values
+(10003,'文章分类1','/data/upload/sample.jpg',''),
+(10003,'文章分类2','/data/upload/sample.jpg','');
+
+insert into t_user_company_article(userId,cover,title,remark,content,userCompanyClassifyId)values
+(10003,'/data/upload/sample.jpg','文章标题1','','文章内容1',10002),
+(10003,'/data/upload/sample.jpg','文章标题2','','文章内容2',10001);
 
 #显示初始数据
 select * from t_user;

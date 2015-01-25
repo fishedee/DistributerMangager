@@ -107,7 +107,7 @@ module.exports = {
 				contentDiv += '<a name="'+field.id+'" target="_blank"><div name="'+field.id+'"/></a>';
 			}else if( field.type == 'fullEditor'){
 				field.editorTargetId = $.uniqueNum();
-				contentDiv += '<div name="'+field.id+'" id="'+field.editorTargetId+'"/>';
+				contentDiv += '<div class="alert alert-danger" role="alert">注意！为了保证微信内观看视频的兼容性，强烈建议你只插入腾讯视频网址，不要插入其它视频网站，或直接上传视频。</div><div name="'+field.id+'" id="'+field.editorTargetId+'"/>';
 			}else if( field.type == 'simpleEditor'){
 				field.editorTargetId = $.uniqueNum();
 				contentDiv += '<div name="'+field.id+'" id="'+field.editorTargetId+'"/>';
@@ -207,11 +207,13 @@ module.exports = {
 					});
 				}else if( field.type == 'simpleEditor'){
 					field._editor = editor.simpleEditor({
-						id:field.editorTargetId
+						id:field.editorTargetId,
+						url:field.option.url
 					});
 				}else if( field.type == 'fullEditor'){
 					field._editor = editor.fullEditor({
-						id:field.editorTargetId
+						id:field.editorTargetId,
+						url:field.option.url
 					});
 				}else if( field.type == 'time'){
 					$('#'+defaultOption.id).find('input[name='+field.id+']').datetimepicker({

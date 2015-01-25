@@ -8,6 +8,7 @@ class Upload extends CI_Controller {
 		$this->load->library('argv','argv');
 		$this->load->library('image','','image');
 		$this->load->library('fileUpload','','fileUpload');
+		$this->load->library('uedit','','uedit');
     }
 	
 	/**
@@ -17,6 +18,14 @@ class Upload extends CI_Controller {
 	{
 		return $this->fileUpload->simpleImage('data');
 	}
+	
+	/**
+	* @view
+	*/
+	public function ueditor()
+	{
+		return $this->uedit->control();
+	}	
 }
 
 /* End of file welcome.php */
