@@ -34,7 +34,7 @@ class LoginAo extends CI_Model {
 	}
 	
 	public function checkMustAdmin(){
-		$user = $this->islogin();
+		$user = $this->checkMustLogin();
 		
 		if( $user['type'] != $this->userTypeEnum->ADMIN )
 			throw new CI_MyException(1,'非管理员无法执行此操作');
@@ -43,7 +43,7 @@ class LoginAo extends CI_Model {
 	}
 	
 	public function checkMustAgent(){
-		$user = $this->islogin();
+		$user = $this->checkMustLogin();
 		
 		if( $user['type'] != $this->userTypeEnum->AGENT )
 			throw new CI_MyException(1,'非代理商无法执行此操作');
@@ -51,7 +51,7 @@ class LoginAo extends CI_Model {
 		return $user;
 	}
 	public function checkMustClient($permission){
-		$user = $this->islogin();
+		$user = $this->checkMustLogin();
 		
 		if( $user['type'] != $this->userTypeEnum->CLIENT )
 			throw new CI_MyException(1,'非商城用户无法执行此操作');

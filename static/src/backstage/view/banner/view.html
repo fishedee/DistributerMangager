@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>烘焙帮后台管理系统</title>
+	<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+</head>
+<body class="definewidth m10">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var userCompanyBannerId = $.location.getQueryArgv('userCompanyBannerId');
+		var companyBanner = {};
+		function get(next){
+			$.get('/banner/get',{userCompanyBannerId:userCompanyBannerId},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				companyBanner = data.data;
+				next();
+			});
+		}
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'title',type:'text',name:'标题'},
+					{id:'image',type:'image',name:'图片',option:{url:'/upload/image',width:640}},
+					{id:'url',type:'text',name:'链接'},
+				],
+				value:companyBanner,
+				submit:function(data){
+					if( userCompanyBannerId != null ){
+						data = $.extend({userCompanyBannerId:userCompanyBannerId},data);
+						$.post('/banner/mod',data,function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							location.href = 'index.html';
+						});
+					}else{
+						$.post('/banner/add',data,function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							location.href = 'index.html';
+						});
+					}
+				},
+				cancel:function(){
+					location.href = 'index.html';
+				}
+			});
+		}
+		if( userCompanyBannerId != null )
+			get(go);
+		else
+			go();
+	</script>
+ </body>
+</html>

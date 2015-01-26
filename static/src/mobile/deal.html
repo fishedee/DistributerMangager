@@ -1,0 +1,15 @@
+<link rel="import" href="header.html?__inline">
+	<title>订单页面</title>
+</head>
+<body>
+	<div id="body"></div>
+	<script type="text/javascript">
+		var Footer = require('common/footer/footer.js');
+		var footer = new Footer('deal');
+		var Test = require('common/test/test.js');
+		var test = new Test('订单页面，第三期工作');
+		var pageHtml = test.el + footer.el;
+		$.page.start(pageHtml);
+	</script>
+</body>
+<link rel="import" href="footer.html?__inline">

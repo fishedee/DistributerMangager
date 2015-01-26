@@ -5,16 +5,14 @@ server {
 	server_name localhost;
 
 	rewrite ^/data/upload/(.*) /data/upload/$1 last;
-	rewrite ^/(.*\.(html|css|js|map|jpg|jpeg|png|gif|mp3|midi|swf|ico)) /static/build/$1 last;
+	rewrite ^/backstage/(.*\.(html|css|js|map|jpg|jpeg|png|gif|mp3|midi|swf|ico)) /static/build/backstage/$1 last;
+	rewrite ^/fishstrap/(.*\.(html|css|js|map|jpg|jpeg|png|gif|mp3|midi|swf|ico)) /static/build/fishstrap/$1 last;
+	rewrite ^/mobile/(.*\.(html|css|js|map|jpg|jpeg|png|gif|mp3|midi|swf|ico)) /static/build/mobile/$1 last;
 	rewrite ^/(.*) /server/index.php?/$1 last;
 
 	location ~ \.php {
 		fastcgi_pass localhost:9000;
 		include fastcgi_params;
-	}
-
-	location ~ \.html {
-		try_files $uri =404;
 	}
 
 	location / {

@@ -15,17 +15,18 @@ class CompanyTemplateAo extends CI_Model {
 	public function getByUserId($userId){
 		$data = $this->userCompanyTemplateDb->getByUserId($userId);
 		if( count($data) == 0 )
-			return null;
-		$companyTemplateId = $data[0]['companyTemplateId'];
-		return $this->companyTemplateDb->get($companyTemplateId);
+			return 0;
+		return $data[0]['companyTemplateId'];
 	}
 	
 	public function modByUserId($userId,$companyTemplateId){
 		$this->userCompanyTemplateDb->delByUserId($userId);
-		$this->userCompanyTemplateDb->add(array(
-			'userId'=>$userId,
-			'companyTemplateId'=>$companyTemplateId
-		));
+		if( $companyTemplateId != 0 ){
+			$this->userCompanyTemplateDb->add(array(
+				'userId'=>$userId,
+				'companyTemplateId'=>$companyTemplateId
+			));
+		}
 	}
 	
 	public function get($companyTemplateId){
@@ -34,6 +35,7 @@ class CompanyTemplateAo extends CI_Model {
 	
 	public function del($companyTemplateId){
 		$this->companyTemplateDb->del($companyTemplateId);
+		$this->userCompanyTemplateDb->delByCompanyTemplateId($companyTemplateId);
 	}
 	
 	public function add($data){

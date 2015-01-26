@@ -6,6 +6,7 @@ class Template extends CI_Controller {
     {
         parent::__construct();
 		$this->load->model('user/loginAo','loginAo');
+		$this->load->model('user/userTypeEnum','userTypeEnum');
 		$this->load->model('user/userPermissionEnum','userPermissionEnum');
 		$this->load->model('template/companyTemplateAo','companyTemplateAo');
 		$this->load->library('argv','argv');
@@ -23,12 +24,17 @@ class Template extends CI_Controller {
 		));
 		
 		$dataLimit = $this->argv->checkGet(array(
-			array('pageIndex','require'),
-			array('pageSize','require'),
+			array('pageIndex','option'),
+			array('pageSize','option'),
 		));
 		
 		//检查权限
-		$this->loginAo->checkMustAdmin();
+		$user = $this->loginAo->checkMustLogin();
+		if( $user['type'] != $this->userTypeEnum->ADMIN ){
+			$this->loginAo->checkMustClient(
+				$this->userPermissionEnum->COMPANY_INTRODUCE
+			);
+		}
 		
 		//执行业务逻辑
 		return $this->companyTemplateAo->search($dataWhere,$dataLimit);
@@ -126,7 +132,7 @@ class Template extends CI_Controller {
 		$userId = $user['userId'];
 		
 		//执行业务逻辑
-		$this->companyTemplateAo->getByUserId($userId);
+		return $this->companyTemplateAo->getByUserId($userId);
 	}
 	
 	/**
@@ -140,13 +146,6 @@ class Template extends CI_Controller {
 		));
 		$companyTemplateId = $data['companyTemplateId'];
 		
-		$data = $this->argv->checkPost(array(
-			array('title','require'),
-			array('url','require'),
-			array('remark','require'),
-			array('classify','option',array()),
-		));
-		
 		//检查权限
 		$user = $this->loginAo->checkMustClient(
 			$this->userPermissionEnum->COMPANY_INTRODUCE
@@ -154,7 +153,7 @@ class Template extends CI_Controller {
 		$userId = $user['userId'];
 		
 		//执行业务逻辑
-		$this->companyTemplateAo->mod($companyTemplateId,$data);
+		$this->companyTemplateAo->modByUserId($userId,$companyTemplateId);
 	}
 }
 

@@ -1,0 +1,36 @@
+@import (reference) '../core/core.less';
+#common_header{
+	&:extend(.common_global_fixtop);
+	height:50px;
+	border-bottom:1px solid @line_grey;
+	
+	.backicon{
+		&:extend(.common_global_leftcol);
+		margin-left:15px;
+		width:50px;
+		height:100%;
+		background-image:url(./back.png);
+		background-position:center center;
+		background-repeat:no-repeat;
+		background-size:20px 20px;
+	}
+	.searchicon{
+		&:extend(.common_global_rightcol);
+		margin-right:15px;
+		width:50px;
+		height:100%;
+		background-image:url(./search.png);
+		background-position:center center;
+		background-repeat:no-repeat;
+		background-size:20px 20px;
+	}
+	.title{
+		line-height:50px;
+		text-align:center;
+		color:@font_red;
+		font-size:@font_h1;
+	}
+}
+#common_header_padding{
+	padding-top:50px;
+}

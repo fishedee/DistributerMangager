@@ -66,7 +66,7 @@ module.exports = {
 		var loadingDiv = document.createElement('div');
 		loadingDiv.id = '__loading';
 		loadingDiv.className = 'gri_body_loading';
-		loadingDiv.innerHTML = "<img src='"+'/fishstrap/ui/loading.gif'+"' alt='加载中...' />";
+		loadingDiv.innerHTML = "<img src='"+'/fishstrap/ui/loading_394bafc.gif'+"' alt='加载中...' />";
 		loadingDiv.style.position = "absolute";
 		loadingDiv.style.left = "49%";
 		loadingDiv.style.top = "45%";

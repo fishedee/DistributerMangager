@@ -22,7 +22,7 @@ copy_common:
 	done
 debug:copy_common
 	-rm $(OUT) -rf
-	fis release --domains --dest $(OUT)
+	fis release --md5 --domains --dest $(OUT)
 release:copy_common
 	-rm $(DIST_OUT) -rf
 	fis release --md5 --pack --domains --optimize --dest $(DiST_OUT)

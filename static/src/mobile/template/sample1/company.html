@@ -1,0 +1,33 @@
+<link rel="import" href="../../header.html?__inline">
+	<title>商品页面</title>
+</head>
+<body>
+	<div id="body"></div>
+	<script type="text/javascript">
+		var Footer = require('../../common/footer/footer.js');
+		var footer = new Footer('company');
+		var Banner = require('../../common/banner/banner.js');
+		var banner = new Banner({
+			interval:5000,
+			images:[
+				{
+					link:'http://www.baidu.com',
+					image:'/data/upload/sample.jpg'
+				},
+				{
+					link:'http://www.baidu2.com',
+					image:'/data/upload/5fe50b5098567b737b543d7578ecf3f2.jpg'
+				},
+				{
+					link:'http://www.baidu3.com',
+					image:'/data/upload/21898187d25b84587a5b35433199158d.jpg'
+				},
+			]
+		});
+		var Test = require('../../common/test/test.js');
+		var test = new Test('公司页面，第一期工作');
+		var pageHtml = test.el + banner.el + footer.el;
+		$.page.start(pageHtml);
+	</script>
+</body>
+<link rel="import" href="../../footer.html?__inline">

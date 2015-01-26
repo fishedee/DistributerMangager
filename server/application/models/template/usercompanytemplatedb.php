@@ -13,6 +13,11 @@ class UserCompanyTemplateDb extends CI_Model
 		return $this->db->get($this->tableName)->result_array();
 	}
 
+	public function delByCompanyTemplateId($companyTemplateId){
+		$this->db->where("companyTemplateId",$companyTemplateId);
+		return $this->db->delete($this->tableName);
+	}
+	
 	public function delByUserId( $userId ){
 		$this->db->where("userId",$userId);
 		return $this->db->delete($this->tableName);

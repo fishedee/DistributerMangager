@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>烘焙帮后台管理系统</title>
+	<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+</head>
+<body class="definewidth m10">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var companyTemplate = {};
+		var userCompanyTemplate = {};
+		function getCompanyTemplate( next ){
+			$.get('/template/search',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				companyTemplate[0] = '无模板';
+				_.map(data.data.data,function(singleTemplate){
+					companyTemplate[singleTemplate.companyTemplateId] = singleTemplate.title;
+				});
+				next();
+			});
+		}
+		function get(next){
+			$.get('/template/getMyTemplate',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				userCompanyTemplate = {companyTemplateId:data.data};
+				next(); 
+			});
+		}
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'companyTemplateId',type:'enum',name:'模板',map:companyTemplate},
+				],
+				value:userCompanyTemplate,
+				submit:function(data){
+					$.post('/template/modMyTemplate',data,function(data){
+						data = $.JSON.parse(data);
+						if( data.code != 0 ){
+							dialog.message(data.msg);
+							return;
+						}
+						location.reload();
+					});
+				},
+				cancel:undefined
+			});
+		}
+		getCompanyTemplate(function(){
+			get(go);
+		});
+	</script>
+ </body>
+</html>

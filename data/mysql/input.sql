@@ -111,10 +111,10 @@ alter table t_user_company_article add index userIdIndex(userId);
 create table t_user_company_banner(
 	userCompanyBannerId integer not null auto_increment,
 	userId integer not null,
-	sort integer not null,
+	title varchar(256) not null,
 	image varchar(256) not null,
 	url varchar(256) not null,
-	remark varchar(256) not null,
+	sort integer not null,
 	createTime timestamp not null default CURRENT_TIMESTAMP,
 	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
 	primary key( userCompanyBannerId )
@@ -131,6 +131,10 @@ insert into t_user(userId,name,password,company,phone,type) values
 insert into t_user_permission(userId,permissionId)values
 (10003,1);
 
+insert into t_company_template(title,url,remark)values
+('模板1','/data/upload/template/template1',''),
+('模板2','/data/upload/template/template2','');
+
 insert into t_user_company_classify(userId,title,icon,remark)values
 (10003,'文章分类1','/data/upload/sample.jpg',''),
 (10003,'文章分类2','/data/upload/sample.jpg','');
@@ -138,6 +142,10 @@ insert into t_user_company_classify(userId,title,icon,remark)values
 insert into t_user_company_article(userId,cover,title,remark,content,userCompanyClassifyId)values
 (10003,'/data/upload/sample.jpg','文章标题1','','文章内容1',10002),
 (10003,'/data/upload/sample.jpg','文章标题2','','文章内容2',10001);
+
+insert into t_user_company_banner(userId,image,title,url,sort)values
+(10003,'/data/upload/sample.jpg','广告1','http://www.baidu.com',1),
+(10003,'/data/upload/sample.jpg','广告2','http://www.qq.com',2);
 
 #显示初始数据
 select * from t_user;
