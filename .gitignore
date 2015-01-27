@@ -2,3 +2,6 @@
 /data/upload/*
 !/data/log/.gitignore
 !/data/upload/.gitignore
+!/data/upload/sample.jpg
+!/data/upload/sample
+!/data/upload/template
