@@ -59,6 +59,7 @@
   padding-bottom: 5px;
   background: #dcdcdc;
   text-align: right;
+  font-size: 0px;
 }
 #common_banner ul.points li {
   display: inline-block;

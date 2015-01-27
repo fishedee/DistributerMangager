@@ -38,6 +38,21 @@ class Classify extends CI_Controller {
 	}
 	
 	/**
+	*@view json
+	*/
+	public function getByUserId()
+	{
+		//检查输入参数
+		$data = $this->argv->checkGet(array(
+			array('userId','require'),
+		));
+		$userId = $data['userId'];
+		
+		//执行业务逻辑
+		return $this->companyClassifyAo->search($userId,array(),array());
+	}
+	
+	/**
 	* @view json
 	*/
 	public function get()
@@ -48,14 +63,8 @@ class Classify extends CI_Controller {
 		));
 		$userCompanyClassifyId = $data['userCompanyClassifyId'];
 		
-		//检查权限
-		$user = $this->loginAo->checkMustClient(
-			$this->userPermissionEnum->COMPANY_INTRODUCE
-		);
-		$userId = $user['userId'];
-		
 		//执行业务逻辑
-		return $this->companyClassifyAo->get($userId,$userCompanyClassifyId);
+		return $this->companyClassifyAo->get($userCompanyClassifyId);
 	}
 	
 	/**
@@ -126,6 +135,48 @@ class Classify extends CI_Controller {
 		
 		//执行业务逻辑
 		$this->companyClassifyAo->mod($userId,$userCompanyClassifyId,$data);
+	}
+	
+	/**
+	* @view json
+	*/
+	public function moveUp()
+	{
+		//检查输入参数
+		$data = $this->argv->checkPost(array(
+			array('userCompanyClassifyId','require'),
+		));
+		$userCompanyClassifyId = $data['userCompanyClassifyId'];
+		
+		//检查权限
+		$user = $this->loginAo->checkMustClient(
+			$this->userPermissionEnum->COMPANY_INTRODUCE
+		);
+		$userId = $user['userId'];
+		
+		//执行业务逻辑
+		$this->companyClassifyAo->move($userId,$userCompanyClassifyId,'up');
+	}
+	
+	/**
+	* @view json
+	*/
+	public function moveDown()
+	{
+		//检查输入参数
+		$data = $this->argv->checkPost(array(
+			array('userCompanyClassifyId','require'),
+		));
+		$userCompanyClassifyId = $data['userCompanyClassifyId'];
+		
+		//检查权限
+		$user = $this->loginAo->checkMustClient(
+			$this->userPermissionEnum->COMPANY_INTRODUCE
+		);
+		$userId = $user['userId'];
+		
+		//执行业务逻辑
+		$this->companyClassifyAo->move($userId,$userCompanyClassifyId,'down');
 	}
 }
 

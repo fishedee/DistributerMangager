@@ -11,10 +11,8 @@ class CompanyArticleAo extends CI_Model {
 		return $this->companyArticleDb->search($dataWhere,$dataLimit);
 	}
 	
-	public function get($userId,$userCompanyArticleId){
+	public function get($userCompanyArticleId){
 		$article = $this->companyArticleDb->get($userCompanyArticleId);
-		if($article['userId'] != $userId)
-			throw new CI_MyException(1,'非本商城用户无此权限操作');
 		
 		return $article;
 	}
@@ -22,7 +20,7 @@ class CompanyArticleAo extends CI_Model {
 	public function del($userId,$userCompanyArticleId){
 		$article = $this->companyArticleDb->get($userCompanyArticleId);
 		if($article['userId'] != $userId)
-			throw new CI_MyException(1,'非本商城用户无此权限操作');
+			throw new CI_MyException(1,'闈炴湰鍟嗗煄鐢ㄦ埛鏃犳鏉冮檺鎿嶄綔');
 			
 		$this->companyArticleDb->del($userCompanyArticleId);
 	}
@@ -35,7 +33,7 @@ class CompanyArticleAo extends CI_Model {
 	public function mod($userId,$userCompanyArticleId,$data){
 		$article = $this->companyArticleDb->get($userCompanyArticleId);
 		if($article['userId'] != $userId)
-			throw new CI_MyException(1,'非本商城用户无此权限操作');
+			throw new CI_MyException(1,'闈炴湰鍟嗗煄鐢ㄦ埛鏃犳鏉冮檺鎿嶄綔');
 		
 		$this->companyArticleDb->mod($userCompanyArticleId,$data);
 	}

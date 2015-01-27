@@ -39,6 +39,21 @@ class Banner extends CI_Controller {
 	/**
 	* @view json
 	*/
+	public function getByUserId()
+	{
+		//检查输入参数
+		$data = $this->argv->checkGet(array(
+			array('userId','require'),
+		));
+		$userId = $data['userId'];
+		
+		//执行业务逻辑
+		return $this->companyBannerAo->search($userId,array(),array());
+	}
+	
+	/**
+	* @view json
+	*/
 	public function get()
 	{
 		//检查输入参数

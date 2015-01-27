@@ -1,0 +1,52 @@
+@import (reference) '../core/core.less';
+#common_articlelist{
+	padding-bottom:@section_margin;
+	padding-top:@section_margin;
+	padding-left:@body_left;
+	padding-right:@body_right;
+	background:@background_light_grey;
+	
+	li{
+		background:@background_white;
+		margin-top:@section_margin;
+		
+		&:first-child{
+			margin-top:0px;
+		}
+		
+		h1{
+			display:block;
+			padding-top:20px;
+			font-size:@font_h1;
+			color:@font_deep_grey;
+			text-align:center;
+		}
+		
+		img{
+			display:block;
+			margin-top:20px;
+			width:100%;
+		}
+		
+		p{
+			margin-top:20px;
+			margin-left:20px;
+			margin-right:20px;
+			font-size:@font_p;
+			color:@font_brown;
+			padding-bottom:20px;
+			border-bottom:1px solid @line_grey;
+		}
+		
+		span{
+			display:block;
+			margin-top:20px;
+			margin-left:20px;
+			margin-right:20px;
+			font-size:@font_p;
+			color:@font_brown;
+			padding-bottom:20px;
+		}
+		
+	}
+}

@@ -25,7 +25,7 @@ class CompanyClassifyDb extends CI_Model
 				$this->db->where($key,$value);
 		}
 			
-		$this->db->order_by('createTime','desc');
+		$this->db->order_by('sort','asc');
 		
 		if( isset($limit["pageIndex"]) && isset($limit["pageSize"]))
 			$this->db->limit($limit["pageSize"],$limit["pageIndex"]);
@@ -43,6 +43,13 @@ class CompanyClassifyDb extends CI_Model
 		if( count($query) == 0 )
 			throw new CI_MyException('不存在此公司文章分类');
 		return $query[0];
+	}
+	
+	public function getMaxSortByUser($userId){
+		$this->db->select_max('sort');
+		$this->db->where("userId",$userId);
+		$result = $this->db->get($this->tableName)->result_array();
+		return $result[0]['sort'];
 	}
 
 	public function del( $userCompanyClassifyId ){

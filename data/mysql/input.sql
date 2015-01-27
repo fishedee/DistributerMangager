@@ -83,6 +83,7 @@ create table t_user_company_classify(
 	userId integer not null,
 	title varchar(128) not null,
 	icon varchar(128) not null,
+	sort integer not null,
 	remark varchar(128) not null,
 	createTime timestamp not null default CURRENT_TIMESTAMP,
 	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
@@ -98,6 +99,7 @@ create table t_user_company_article(
 	cover varchar(128) not null,
 	title varchar(128) not null,
 	remark varchar(256) not null,
+	summary varchar(256) not null,
 	content text not null,
 	userCompanyClassifyId integer not null,
 	createTime timestamp not null default CURRENT_TIMESTAMP,
@@ -132,16 +134,21 @@ insert into t_user_permission(userId,permissionId)values
 (10003,1);
 
 insert into t_company_template(title,url,remark)values
-('模板1','/data/upload/template/template1',''),
-('模板2','/data/upload/template/template2','');
+('metro风格','/data/upload/template/sample1',''),
+('简约风格(测试用)','/data/upload/template/sample2','');
 
-insert into t_user_company_classify(userId,title,icon,remark)values
-(10003,'文章分类1','/data/upload/sample.jpg',''),
-(10003,'文章分类2','/data/upload/sample.jpg','');
+insert into t_user_company_classify(userId,title,icon,sort,remark)values
+(10003,'行业新闻','/data/upload/sample/earth.png',1,''),
+(10003,'公司文化','/data/upload/sample/cup.png',2,''),
+(10003,'公司介绍','/data/upload/sample/home.png',3,''),
+(10003,'数码产品','/data/upload/sample/picture.png',4,'');
 
-insert into t_user_company_article(userId,cover,title,remark,content,userCompanyClassifyId)values
-(10003,'/data/upload/sample.jpg','文章标题1','','文章内容1',10002),
-(10003,'/data/upload/sample.jpg','文章标题2','','文章内容2',10001);
+insert into t_user_company_article(userId,cover,title,summary,remark,content,userCompanyClassifyId)values
+(10003,'/data/upload/sample.jpg','文章标题1','文章简介1','','文章内容1',10001),
+(10003,'/data/upload/sample.jpg','文章标题2','文章简介2','','文章内容2',10002),
+(10003,'/data/upload/sample.jpg','文章标题3','文章简介3','','文章内容3',10003),
+(10003,'/data/upload/sample.jpg','文章标题4','文章简介4','','文章内容4',10004),
+(10003,'/data/upload/sample.jpg','文章标题5','文章简介5','','文章内容5',10001);
 
 insert into t_user_company_banner(userId,image,title,url,sort)values
 (10003,'/data/upload/sample.jpg','广告1','http://www.baidu.com',1),

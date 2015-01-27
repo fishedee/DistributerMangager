@@ -1,8 +1,16 @@
-#common_header .backicon {
-  float: left;
+#common_header .title {
+  overflow: hidden;
+  zoom: 1;
 }
 #common_header .searchicon {
   float: right;
+}
+#common_header .backicon {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  margin: auto 0;
 }
 #common_header {
   position: fixed;
@@ -14,6 +22,8 @@
 #common_header {
   height: 50px;
   border-bottom: 1px solid #dcdcdc;
+  background: #ffffff;
+  z-index: 9;
 }
 #common_header .backicon {
   margin-left: 15px;

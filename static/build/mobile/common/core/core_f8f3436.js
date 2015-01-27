@@ -44,6 +44,18 @@ $.ajax = function(opt){
 		if( tempError )
 			tempError(XMLHttpRequest, textStatus, errorThrown);
 	}
+	var userIdRegex = /http:\/\/(.*)?\/([0-9]+)/;
+	var userIdMatch = location.href.match(userIdRegex);
+	if( userIdMatch == null ){
+		tempSuccess({
+			'code':1,
+			'msg':'缺少userId参数',
+			'data':''
+		});
+		return;
+	}
+	var userId = userIdMatch[2];
+	opt.data = $.extend(opt.data,{userId:userId});
 	_dialogAjax(opt);
 };
 //单页面入口

@@ -41,6 +41,23 @@ class Article extends CI_Controller {
 	/**
 	* @view json
 	*/
+	public function getByClassifyId()
+	{
+		//检查输入参数
+		$data = $this->argv->checkGet(array(
+			array('userCompanyClassifyId','require'),
+			array('userId','require'),
+		));
+		$userId = $data['userId'];
+		$userCompanyClassifyId = $data['userCompanyClassifyId'];
+		
+		//执行业务逻辑
+		return $this->companyArticleAo->search($userId,array('userCompanyClassifyId'=>$userCompanyClassifyId),array());
+	}
+	
+	/**
+	* @view json
+	*/
 	public function get()
 	{
 		//检查输入参数
@@ -49,14 +66,8 @@ class Article extends CI_Controller {
 		));
 		$userCompanyArticleId = $data['userCompanyArticleId'];
 		
-		//检查权限
-		$user = $this->loginAo->checkMustClient(
-			$this->userPermissionEnum->COMPANY_INTRODUCE
-		);
-		$userId = $user['userId'];
-		
 		//执行业务逻辑
-		return $this->companyArticleAo->get($userId,$userCompanyArticleId);
+		return $this->companyArticleAo->get($userCompanyArticleId);
 	}
 	
 	/**
@@ -68,6 +79,7 @@ class Article extends CI_Controller {
 		$data = $this->argv->checkPost(array(
 			array('title','require'),
 			array('cover','require'),
+			array('summary','require'),
 			array('remark','require'),
 			array('content','require|noxss'),
 			array('userCompanyClassifyId','require')
@@ -118,6 +130,7 @@ class Article extends CI_Controller {
 		$data = $this->argv->checkPost(array(
 			array('title','require'),
 			array('cover','require'),
+			array('summary','require'),
 			array('remark','require'),
 			array('content','require|noxss'),
 			array('userCompanyClassifyId','require')

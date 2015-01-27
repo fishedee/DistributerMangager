@@ -1,0 +1,59 @@
+<link rel="import" href="../../header.html?__inline">
+	<title></title>
+</head>
+<body>
+	<div id="body"></div>
+	<script type="text/javascript">
+		var $ = require('../../common/core/core.js');
+		var dialog = require('../../common/dialog/dialog.js');
+		var Header = require('../../common/header/header.js');
+		var Articlelist = require('../../common/articlelist/articlelist.js');
+		var companyArticle = [];
+		var companyClassify = [];
+		var userCompanyClassifyId = $.location.getQueryArgv('userCompanyClassifyId');
+		function getClassify(next){
+			$.get('/classify/get',{userCompanyClassifyId:userCompanyClassifyId},function(data){
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				companyClassify = data.data;
+				next();
+			});
+		}
+		function getArticle(next){
+			$.get('/article/getByClassifyId',{userCompanyClassifyId:userCompanyClassifyId},function(data){
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				companyArticle = data.data.data;
+				next();
+			});
+		}
+		function go(){
+			//构建头部
+			var header = new Header({
+				title:companyClassify.title,
+				backLink:'company.html',
+				button:[]
+			});
+			
+			//构建文章列表
+			var articlelistArgv = _.map(companyArticle,function(single){
+				return {title:single.title,image:single.cover,summary:single.summary,link:'article.html?userCompanyArticleId='+single.userCompanyArticleId};
+			});
+			var articlelist = new Articlelist(articlelistArgv);
+			
+			//构建页面
+			var pageHtml = header.el + articlelist.el;
+			$.page.start(pageHtml);
+		}
+		getClassify(function(){
+			getArticle(function(){
+				go();
+			});
+		});
+	</script>
+</body>
+<link rel="import" href="../../footer.html?__inline">

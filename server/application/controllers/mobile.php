@@ -9,6 +9,7 @@ class Mobile extends CI_Controller {
 		$this->load->model('user/loginAo','loginAo');
 		$this->load->model('user/userPermissionEnum','userPermissionEnum');
 		$this->load->model('user/userTypeEnum','userTypeEnum');
+		$this->load->model('template/companyTemplateAo','companyTemplateAo');
 		$this->load->library('argv','argv');
     }
 	/**
@@ -23,8 +24,9 @@ class Mobile extends CI_Controller {
 			$url .= '/'.$url2;
 		if( $url3 != '')
 			$url .= '/'.$url3;
-		if( $url == '')
-			$url = '/company.html';
+		if( $url == ''){
+			header("Location: /$userId/company.html");
+		}
 		
 		//≥¢ ‘¥øæ≤Ã¨Œƒº˛
 		$staticAddress = dirname(__FILE__).'/../../../static/build/mobile';
@@ -34,10 +36,14 @@ class Mobile extends CI_Controller {
 		}
 			
 		//≥¢ ‘ƒ£∞Âæ≤Ã¨Œƒº˛
-		$staticAddress = dirname(__FILE__).'/../../../static/build/mobile/template/sample1';
-		if( file_exists($staticAddress.$url) ){
-			require_once($staticAddress.$url);
-			return;
+		$companyTemplateId = $this->companyTemplateAo->getByUserId($userId);
+		if( $companyTemplateId != 0 ){
+			$template = $this->companyTemplateAo->get($companyTemplateId);
+			$staticAddress = dirname(__FILE__).'/../../../'.$template['url'];
+			if( file_exists($staticAddress.$url) ){
+				require_once($staticAddress.$url);
+				return;
+			}
 		}
 		
 		//∑Ò‘Ú404

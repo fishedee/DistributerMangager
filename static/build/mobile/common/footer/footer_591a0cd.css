@@ -25,6 +25,7 @@
 #common_footer {
   height: 60px;
   border-top: 1px solid #dcdcdc;
+  z-index: 9;
 }
 #common_footer li {
   position: relative;

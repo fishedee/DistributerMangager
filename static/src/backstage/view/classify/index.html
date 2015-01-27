@@ -26,6 +26,32 @@
 				queryColumn:['title','remark'],
 				operate:[
 				{
+					name:'ÉÏÒÆ',
+					click:function(data){
+						$.post('/classify/moveUp',{userCompanyClassifyId:data.userCompanyClassifyId},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							location.href = 'index.html';
+						});
+					}
+				},
+				{
+					name:'ÏÂÒÆ',
+					click:function(data){
+						$.post('/classify/moveDown',{userCompanyClassifyId:data.userCompanyClassifyId},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							location.href = 'index.html';
+						});
+					}
+				},
+				{
 					name:'ÐÞ¸Ä',
 					click:function(data){
 						location.href = 'view.html?userCompanyClassifyId='+data.userCompanyClassifyId;
