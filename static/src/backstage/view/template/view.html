@@ -15,6 +15,7 @@
 		var subPage = require('/fishstrap/page/subPage.js');
 		var companyTemplateId = $.location.getQueryArgv('companyTemplateId');
 		var companyTemplate = {};
+		var companyTemplateFile = [];
 		function getCompanyTemplate( next ){
 			$.get('/template/get',{companyTemplateId:companyTemplateId},function(data){
 				data = $.JSON.parse(data);
@@ -26,16 +27,28 @@
 				next();
 			});
 		}
+		function getCompanyTemplateFile( next ){
+			$.get('/upload/readdir',{address:companyTemplate.url},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				companyTemplate.url = data.data;
+				next();
+			});
+		}
 		function go(){
 			input.verticalInput({
 				id:'container',
 				field:[
 					{id:'title',type:'text',name:'标题'},
-					{id:'url',type:'text',name:'位置'},
+					{id:'url',type:'compressFile',name:'位置',option:{url:'/upload/compressFile',type:'zip',maxSize:1024*1024*2}},
 					{id:'remark',type:'text',name:'备注'},
 				],
 				value:companyTemplate,
 				submit:function(data){
+					data.url = data.url[0];
 					if( companyTemplateId != null ){
 						data = $.extend({companyTemplateId:companyTemplateId},data);
 						$.post('/template/mod',data,function(data){
@@ -63,7 +76,9 @@
 			});
 		}
 		if( companyTemplateId != null )
-			getCompanyTemplate(go);
+			getCompanyTemplate(function(){
+				getCompanyTemplateFile(go);
+			});
 		else
 			go();
 	</script>

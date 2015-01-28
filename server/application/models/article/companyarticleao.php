@@ -13,7 +13,6 @@ class CompanyArticleAo extends CI_Model {
 	
 	public function get($userCompanyArticleId){
 		$article = $this->companyArticleDb->get($userCompanyArticleId);
-		
 		return $article;
 	}
 	

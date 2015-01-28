@@ -47,6 +47,7 @@
 				}
 				user = data.data;
 				user.typeName = userType[user.type];
+				user.url = 'http://'+location.host+'/'+userId;
 				next();
 			});
 		}
@@ -54,6 +55,7 @@
 			input.verticalInput({
 				id:'container',
 				field:[
+					{id:'url',type:'link',name:'网址'},
 					{id:'name',type:'read',name:'姓名'},
 					{id:'typeName',type:'read',name:'类型'},
 					{id:'company',type:'text',name:'公司'},

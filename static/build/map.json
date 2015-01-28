@@ -103,6 +103,19 @@
             "uri": "/fishstrap/lib/mod.js",
             "type": "js"
         },
+        "fishstrap/lib/swipe.css": {
+            "uri": "/fishstrap/lib/swipe.css",
+            "type": "css",
+            "id": "fishstrap/lib/swipe.css"
+        },
+        "fishstrap/lib/swipe.js": {
+            "uri": "/fishstrap/lib/swipe.js",
+            "type": "js",
+            "deps": [
+                "fishstrap/lib/swipe.css"
+            ],
+            "id": "fishstrap/lib/swipe.js"
+        },
         "fishstrap/lib/ueditor/dialogs/attachment/attachment.css": {
             "uri": "/fishstrap/lib/ueditor/dialogs/attachment/attachment.css",
             "type": "css"
@@ -608,7 +621,7 @@
             "id": "fishstrap/ui/editor.js"
         },
         "fishstrap/ui/input.js": {
-            "uri": "/fishstrap/ui/input_18023b5.js",
+            "uri": "/fishstrap/ui/input_84dd983.js",
             "type": "js",
             "deps": [
                 "fishstrap/core/global.js",
@@ -633,7 +646,7 @@
             "id": "fishstrap/ui/query.js"
         },
         "fishstrap/ui/table.js": {
-            "uri": "/fishstrap/ui/table_6cae4dc.js",
+            "uri": "/fishstrap/ui/table_2382844.js",
             "type": "js",
             "deps": [
                 "fishstrap/lib/gri/griTable.js",
@@ -737,21 +750,22 @@
             "type": "js"
         },
         "mobile/common/banner/banner.js": {
-            "uri": "/mobile/common/banner/banner_f7a3c88.js",
+            "uri": "/mobile/common/banner/banner_00e7876.js",
             "type": "js",
             "deps": [
+                "fishstrap/lib/swipe.js",
                 "mobile/common/core/core.js",
                 "mobile/common/banner/banner.less"
             ],
             "id": "mobile/common/banner/banner.js"
         },
         "mobile/common/banner/banner.less": {
-            "uri": "/mobile/common/banner/banner_f5e40e9.css",
+            "uri": "/mobile/common/banner/banner_eb146bf.css",
             "type": "css",
             "id": "mobile/common/banner/banner.less"
         },
         "mobile/common/banner/bannerTpl.tpl": {
-            "uri": "/mobile/common/banner/bannerTpl_eb008c6.js",
+            "uri": "/mobile/common/banner/bannerTpl_6e0cdac.js",
             "type": "js"
         },
         "mobile/common/core/core.js": {

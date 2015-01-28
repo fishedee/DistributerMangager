@@ -4,4 +4,5 @@
 !/data/upload/.gitignore
 !/data/upload/sample.jpg
 !/data/upload/sample
-!/data/upload/template
+!/data/upload/template/sample1
+!/data/upload/template/sample2

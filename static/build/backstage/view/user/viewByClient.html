@@ -16,7 +16,7 @@
 <script type="text/javascript" src="/fishstrap/lib/ueditor/ueditor.all.min.js"></script>
 <script type="text/javascript" src="/fishstrap/ui/editor_ae1703a.js"></script>
 <script type="text/javascript" src="/fishstrap/lib/gri/griTable.js"></script>
-<script type="text/javascript" src="/fishstrap/ui/table_6cae4dc.js"></script>
+<script type="text/javascript" src="/fishstrap/ui/table_2382844.js"></script>
 <script type="text/javascript" src="/fishstrap/core/html5_0314c31.js"></script>
 <script type="text/javascript" src="/fishstrap/util/jpegEncoder_2630213.js"></script>
 <script type="text/javascript" src="/fishstrap/util/imageCompresser_6c4565f.js"></script>
@@ -24,7 +24,7 @@
 <script type="text/javascript" src="/fishstrap/util/upload_bf281ca.js"></script>
 <script type="text/javascript" src="/fishstrap/page/subPage_238d144.js"></script>
 <script type="text/javascript" src="/fishstrap/util/jqueryDatetimePicker_56d10bc.js"></script>
-<script type="text/javascript" src="/fishstrap/ui/input_18023b5.js"></script>
+<script type="text/javascript" src="/fishstrap/ui/input_84dd983.js"></script>
 
 </head>
 <body class="definewidth m10">
@@ -69,6 +69,7 @@
 				}
 				user = data.data;
 				user.typeName = userType[user.type];
+				user.url = 'http://'+location.host+'/'+userId;
 				next();
 			});
 		}
@@ -76,6 +77,7 @@
 			input.verticalInput({
 				id:'container',
 				field:[
+					{id:'url',type:'link',name:'网址'},
 					{id:'name',type:'read',name:'姓名'},
 					{id:'typeName',type:'read',name:'类型'},
 					{id:'company',type:'text',name:'公司'},

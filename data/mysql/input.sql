@@ -151,8 +151,9 @@ insert into t_user_company_article(userId,cover,title,summary,remark,content,use
 (10003,'/data/upload/sample.jpg','文章标题5','文章简介5','','文章内容5',10001);
 
 insert into t_user_company_banner(userId,image,title,url,sort)values
-(10003,'/data/upload/sample.jpg','广告1','http://www.baidu.com',1),
-(10003,'/data/upload/sample.jpg','广告2','http://www.qq.com',2);
+(10003,'/data/upload/sample/sample1.jpg','广告1','http://www.baidu.com',1),
+(10003,'/data/upload/sample/sample2.jpg','广告2','http://www.qq.com',2),
+(10003,'/data/upload/sample/sample3.jpg','广告3','http://www.sina.com',2);
 
 #显示初始数据
 select * from t_user;
