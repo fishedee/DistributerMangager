@@ -30,7 +30,7 @@ class CompanyClassifyAo extends CI_Model {
 	}
 	
 	public function add($userId,$data){
-		$maxSort = $this->companyBannerDb->getMaxSortByUser($userId);
+		$maxSort = $this->companyClassifyDb->getMaxSortByUser($userId);
 		$data['userId'] = $userId;
 		if( $maxSort == null )
 			$data['sort'] = 1;
