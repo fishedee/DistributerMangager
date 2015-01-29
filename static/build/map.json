@@ -12,7 +12,7 @@
             "type": "js"
         },
         "fishstrap/core/global.js": {
-            "uri": "/fishstrap/core/global_39b61c4.js",
+            "uri": "/fishstrap/core/global_bd82cd3.js",
             "type": "js",
             "deps": [
                 "fishstrap/lib/underscore.js",
