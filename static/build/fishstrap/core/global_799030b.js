@@ -1,7 +1,9 @@
+define('fishstrap/core/global.js', function(require, exports, module){
+
 /*
 * 依赖jquery.js与underscore.js
-* @require ../lib/underscore.js
-* @require ../lib/jquery.js
+* @require fishstrap/lib/underscore.js
+* @require fishstrap/lib/jquery.js
 */
 //加入log扩展
 $.log = {
@@ -498,3 +500,5 @@ $.addCssToHead = function(str_css) {
 })($);
 
 return $;
+
+});

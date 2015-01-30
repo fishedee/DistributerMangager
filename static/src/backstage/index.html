@@ -11,6 +11,7 @@
 		var dialog = require('/fishstrap/ui/dialog.js');
 		var indexPage = require('/fishstrap/page/indexPage.js');
 		var menu = {};
+		var user = {};
 		function setMenu(next){
 			$.get('/login/islogin?t='+Math.random(),{},function(data){
 				data = $.JSON.parse(data);
@@ -18,7 +19,7 @@
 					location.href = 'login.html';
 					return;
 				}
-				var user = data.data;
+				user = data.data;
 				if( user.type == 1 ){
 					//管理员
 					menu = {
@@ -68,7 +69,7 @@
 		}
 		function go(){
 			indexPage.use({
-				title:'经销商管理系统',
+				title:'经销商管理系统('+user.name+')',
 				init:function(){
 					
 				},

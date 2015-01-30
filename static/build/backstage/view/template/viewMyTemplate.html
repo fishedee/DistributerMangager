@@ -9,7 +9,7 @@
 
 <script type="text/javascript" src="http://apps.bdimg.com/libs/underscore.js/1.7.0/underscore-min.js"></script>
 <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
-<script type="text/javascript" src="/fishstrap/core/global_bd82cd3.js"></script>
+<script type="text/javascript" src="/fishstrap/core/global_799030b.js"></script>
 <script type="text/javascript" src="/fishstrap/lib/gri/gri.js"></script>
 <script type="text/javascript" src="/fishstrap/ui/dialog_4074175.js"></script>
 <script type="text/javascript" src="/fishstrap/lib/ueditor/ueditor.config.js"></script>
@@ -34,22 +34,9 @@
 		var $ = require('fishstrap/core/global.js');
 		var dialog = require('fishstrap/ui/dialog.js');
 		var input = require('fishstrap/ui/input.js');
+		var subPage = require('fishstrap/page/subPage.js');
 		var companyTemplate = {};
-		var userCompanyTemplate = {};
-		function getCompanyTemplate( next ){
-			$.get('/template/search',{},function(data){
-				data = $.JSON.parse(data);
-				if( data.code != 0 ){
-					dialog.message(data.msg);
-					return;
-				}
-				companyTemplate[0] = '无模板';
-				_.map(data.data.data,function(singleTemplate){
-					companyTemplate[singleTemplate.companyTemplateId] = singleTemplate.title;
-				});
-				next();
-			});
-		}
+		var companyTemplateId = {};
 		function get(next){
 			$.get('/template/getMyTemplate',{},function(data){
 				data = $.JSON.parse(data);
@@ -57,19 +44,68 @@
 					dialog.message(data.msg);
 					return;
 				}
-				userCompanyTemplate = {companyTemplateId:data.data};
+				companyTemplateId = data.data;
 				next(); 
 			});
+		}
+		function getTemplateInfo(next){
+			if( companyTemplateId != 0 ){
+				$.get('/template/get',{companyTemplateId:companyTemplateId},function(data){
+					data = $.JSON.parse(data);
+					if( data.code != 0 ){
+						dialog.message(data.msg);
+						return;
+					}
+					companyTemplate = [data.data];
+					next();
+				});
+			}else{
+				companyTemplate = [];
+				next();
+			}
 		}
 		function go(){
 			input.verticalInput({
 				id:'container',
 				field:[
-					{id:'companyTemplateId',type:'enum',name:'模板',map:companyTemplate},
+					{id:'companyTemplate',type:'table',name:'模板',
+						option:{
+							column:[
+								{name:'模板ID',type:'text',id:'companyTemplateId'},
+								{name:'名字',type:'text',id:'title'},
+								{name:'备注',type:'text',id:'remark'},
+							],
+							operate:[{
+								name:'删除',
+								click:function(data,operation){
+									operation.remove();
+								}
+							}],
+							button:[{
+								name:'选择模板',
+								click:function(operation){
+									subPage.open({
+										title:'选择模板',
+										url:'index.html?check=true',
+										close:function(state,data){
+											if( state == 'confirm' ){
+												operation.clear();
+												if( data.length != 0 )
+													operation.add([data[0]]);
+											}
+										}
+									});
+								}
+							}]
+						}
+					},
 				],
-				value:userCompanyTemplate,
+				value:{companyTemplate:companyTemplate},
 				submit:function(data){
-					$.post('/template/modMyTemplate',data,function(data){
+					var companyTemplateId = 0;
+					if( data.companyTemplate.length != 0 )
+						companyTemplateId = data.companyTemplate[0].companyTemplateId;
+					$.post('/template/modMyTemplate',{companyTemplateId:companyTemplateId},function(data){
 						data = $.JSON.parse(data);
 						if( data.code != 0 ){
 							dialog.message(data.msg);
@@ -81,8 +117,8 @@
 				cancel:undefined
 			});
 		}
-		getCompanyTemplate(function(){
-			get(go);
+		get(function(){
+			getTemplateInfo(go);
 		});
 	</script>
  </body>

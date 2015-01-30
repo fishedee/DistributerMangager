@@ -52,7 +52,12 @@ class Template extends CI_Controller {
 		$companyTemplateId = $data['companyTemplateId'];
 		
 		//检查权限
-		$this->loginAo->checkMustAdmin();
+		$user = $this->loginAo->checkMustLogin();
+		if( $user['type'] != $this->userTypeEnum->ADMIN ){
+			$this->loginAo->checkMustClient(
+				$this->userPermissionEnum->COMPANY_INTRODUCE
+			);
+		}
 		
 		//执行业务逻辑
 		return $this->companyTemplateAo->get($companyTemplateId);
