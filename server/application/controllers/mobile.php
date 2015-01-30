@@ -27,6 +27,25 @@ class Mobile extends CI_Controller {
 		if( $url == ''){
 			header("Location: /$userId/company.html");
 		}
+		//根据后缀名输出Content-Type
+		$pos = strripos($url,'.');
+		if( $pos != false )
+			$extension = strtolower(substr($url,$pos+1));
+		else
+			$extension = '';
+		if( $extension == 'html' || $extension == 'htm' )
+			header( 'Content-Type:text/html');
+		else if( $extension == 'css' )
+			header( 'Content-Type:text/css');
+		else if( $extension == 'js' )
+			header('Content-type: text/javascript');  
+		else if( $extension == 'png')
+			header("Content-Type: image/png");
+		else if( $extension == 'gif')
+			header("Content-type: image/gif");
+		else 
+			header('Content-type: image/jpeg');
+		
 		
 		//尝试纯静态文件
 		$staticAddress = dirname(__FILE__).'/../../../static/build/mobile';
