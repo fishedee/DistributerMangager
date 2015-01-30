@@ -50,7 +50,9 @@ class Mobile extends CI_Controller {
 		//³¢ÊÔ´¿¾²Ì¬ÎÄ¼þ
 		$staticAddress = dirname(__FILE__).'/../../../static/build/mobile';
 		if( file_exists($staticAddress.$url) ){
-			require_once($staticAddress.$url);
+			ob_clean();  
+			flush();  
+			readfile($staticAddress.$url);  
 			return;
 		}
 			
@@ -60,7 +62,9 @@ class Mobile extends CI_Controller {
 			$template = $this->companyTemplateAo->get($companyTemplateId);
 			$staticAddress = dirname(__FILE__).'/../../../'.$template['url'];
 			if( file_exists($staticAddress.$url) ){
-				require_once($staticAddress.$url);
+				ob_clean();  
+				flush();  
+				readfile($staticAddress.$url);  
 				return;
 			}
 		}
