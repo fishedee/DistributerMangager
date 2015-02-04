@@ -9,7 +9,7 @@ create table ci_sessions (
   ip_address char(45) default '0' not null,
   user_agent char(120) not null,
   last_activity int(10) unsigned default 0 not null,
-  user_data text default '' not null,
+  user_data text not null,
   primary key (session_id),
   key `last_activity_idx` (`last_activity`)
 );
