@@ -64,7 +64,7 @@ $autoload['libraries'] = array('database','session','MyException');
 |	$autoload['helper'] = array('url', 'file');
 */
 
-$autoload['helper'] = array('underscore');
+$autoload['helper'] = array();
 
 
 /*

@@ -8,6 +8,20 @@ class UserAo extends CI_Model {
 		$this->load->model('user/userPermissionDb','userPermissionDb');
 	}
 	
+	public function checkMustVaildPassword($password,$passwordHash){
+		if( password_verify($password,$passwordHash) == false )
+			throw new CI_MyException(1,'密码不正确');
+	}
+
+	public function getPasswordHash($password){
+		return password_hash($password,PASSWORD_BCRYPT);
+	}
+
+	public function getByName($name){
+		return $this->userDb->getByName($name);
+	}
+
+
 	public function search($dataWhere,$dataLimit){
 		return $this->userDb->search($dataWhere,$dataLimit);
 	}
@@ -16,10 +30,14 @@ class UserAo extends CI_Model {
 		$user = $this->userDb->get($userId);
 		
 		$userPermission = $this->userPermissionDb->getByUser($userId);
-		$user['permission'] = __::pluck($userPermission,'permissionId');
+		$user['permission'] = array_map(function($single){
+			return $single['permissionId'];
+		},$userPermission);
 		
 		$userClient = $this->userClientDb->getByUser($userId);
-		$userClientIds = __::pluck($userClient,'clientUserId');
+		$userClientIds = array_map(function($single){
+			return $single['clientUserId'];
+		},$userClient);
 		$user['client'] = $this->userDb->getByIds($userClientIds);
 		
 		return $user;
@@ -43,28 +61,28 @@ class UserAo extends CI_Model {
 		$userBaseInfo = $data;
 		unset($userBaseInfo['permission']);
 		unset($userBaseInfo['client']);
-		$userBaseInfo['password'] = sha1($userBaseInfo['password']);
+		$userBaseInfo['password'] = $this->getPasswordHash($userBaseInfo['password']);
 		$userId = $this->userDb->add($userBaseInfo);
 		
 		//添加用户权限
 		if( isset($data['permission']) ){
-			$userPermissionInfo = __::map($data['permission'],function($single)use($userId){
+			$userPermissionInfo = array_map(function($single)use($userId){
 				return array(
 					'userId'=>$userId,
 					'permissionId'=>$single
 				);
-			});
+			},$data['permission']);
 			$this->userPermissionDb->addBatch($userPermissionInfo);
 		}
 		
 		//添加用户客户列表
 		if( isset($data['client']) ){
-			$userClientInfo = __::map($data['client'],function($single)use($userId){
+			$userClientInfo = array_map(function($single)use($userId){
 				return array(
 					'userId'=>$userId,
 					'clientUserId'=>$single['userId']
 				);
-			});
+			},$data['client']);
 			$this->userClientDb->addBatch($userClientInfo);
 		}
 	}
@@ -78,24 +96,24 @@ class UserAo extends CI_Model {
 			
 		//修改用户权限
 		if( isset($data['permission']) ){
-			$userPermissionInfo = __::map($data['permission'],function($single)use($userId){
+			$userPermissionInfo = array_map(function($single)use($userId){
 				return array(
 					'userId'=>$userId,
 					'permissionId'=>$single
 				);
-			});
+			},$data['permission']);
 			$this->userPermissionDb->delByUser($userId);
 			$this->userPermissionDb->addBatch($userPermissionInfo);
 		}
 			
 		//修改用户客户列表
 		if( isset($data['client']) ){
-			$userClientInfo = __::map($data['client'],function($single)use($userId){
+			$userClientInfo = array_map(function($single)use($userId){
 				return array(
 					'userId'=>$userId,
 					'clientUserId'=>$single['userId']
 				);
-			});
+			},$data['client']);
 			$this->userClientDb->delByUser($userId);
 			$this->userClientDb->addBatch($userClientInfo);
 		}
@@ -103,17 +121,16 @@ class UserAo extends CI_Model {
 	
 	public function modPassword($userId,$password){
 		$data = array();
-		$data['password'] = sha1($password);
+		$data['password'] = $this->getPasswordHash($password);
 		$this->userDb->mod($userId,$data);
 	}
 	
 	public function modPasswordByOld($userId,$oldPassword,$newPassword){
 		//检查是否有重名
-		$user = $this->userDb->getByIdAndPass($userId,sha1($oldPassword));
-		if( count($user) == 0 )
-			throw new CI_MyException(1,'原密码错误');
+		$user = $this->userDb->get($userId);
+		$this->checkMustVaildPassword($oldPassword,$user['password']);
 		
 		//修改密码
-		$this->modPassword($userId,$newPassword);
+		$this->modPassword($userId,$this->getPasswordHash($newPassword));
 	}
 }

@@ -12,7 +12,7 @@
 			'data'=>$data
 		);
 	}
-	$output = json_encode($result);
+	$output = json_encode($result,JSON_UNESCAPED_UNICODE);
 	if( $output == null ){
 		$output = json_encode(array(
 			'code'=>1,
