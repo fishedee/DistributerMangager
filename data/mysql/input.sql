@@ -18,7 +18,7 @@ create table ci_sessions (
 create table t_user(
 	userId integer not null auto_increment,
 	name varchar(32) not null,
-	password char(48) not null,
+	password char(60) not null,
 	company varchar(128) not null,
 	phone varchar(11) not null,
 	type integer not null,
@@ -126,9 +126,9 @@ alter table t_user_company_banner add index userIdIndex(userId);
 
 #建立初始数据
 insert into t_user(userId,name,password,company,phone,type) values
-(10001,"fish",SHA1("123456"),'烘焙帮信息科技有限公司','15018749403',1),
-(10002,"fish_agent",SHA1("123456"),'烘焙帮信息科技有限公司','15018749403',2),
-(10003,"fish_client",SHA1("123456"),'烘焙帮信息科技有限公司','15018749403',3);
+(10001,"fish","$2y$10$xKsYkwOJFQo2Ack68DqZuebTX99IgHL0lYBKmpwQpkxqzhJbKYgMG",'烘焙帮信息科技有限公司','15018749403',1),
+(10002,"fish_agent","$2y$10$xKsYkwOJFQo2Ack68DqZuebTX99IgHL0lYBKmpwQpkxqzhJbKYgMG",'烘焙帮信息科技有限公司','15018749403',2),
+(10003,"fish_client","$2y$10$xKsYkwOJFQo2Ack68DqZuebTX99IgHL0lYBKmpwQpkxqzhJbKYgMG",'烘焙帮信息科技有限公司','15018749403',3);
 
 insert into t_user_permission(userId,permissionId)values
 (10003,1);

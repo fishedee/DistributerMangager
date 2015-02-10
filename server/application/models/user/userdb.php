@@ -68,18 +68,6 @@ class UserDb extends CI_Model
 		$this->db->update($this->tableName,$data);
 	}
 
-	public function getByIdAndPass($userId,$password){
-		$this->db->where("userId",$userId);
-		$this->db->where("password",$password);
-		return $this->db->get($this->tableName)->result_array();
-	}
-	
-	public function getByNameAndPass($name,$password){
-		$this->db->where("name",$name);
-		$this->db->where("password",$password);
-		return $this->db->get($this->tableName)->result_array();
-	}
-
 	public function getByName($name){
 		$this->db->where("name",$name);
 		return $this->db->get($this->tableName)->result_array();

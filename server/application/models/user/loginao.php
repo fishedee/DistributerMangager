@@ -5,7 +5,6 @@ class LoginAo extends CI_Model {
     public function __construct()
     {
         parent::__construct();
-		$this->load->model('user/userDb','userDb');
 		$this->load->model('user/userAo','userAo');
 		$this->load->model('user/userTypeEnum','userTypeEnum');
 		$this->load->model('user/userPermissionEnum','userPermissionEnum');
@@ -67,9 +66,10 @@ class LoginAo extends CI_Model {
 	}
 	
 	public function login( $name , $password ){
-		$user = $this->userDb->getByNameAndPass($name,sha1($password));
+		$user = $this->userAo->getByName($name);
 		if( count($user) == 0 )
 			throw new CI_MyException(1,'帐号或密码错误');
+		$this->userAo->checkMustVaildPassword($password,$user[0]['password']);
 		
 		$this->session->set_userdata('userId',$user[0]['userId']);
 	}
