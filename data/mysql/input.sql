@@ -124,6 +124,24 @@ create table t_user_company_banner(
 
 alter table t_user_company_banner add index userIdIndex(userId);
 
+#创建用户商城商品分类表
+create table t_shop_commodity_classify(
+    shopCommodityClassifyId integer not null auto_increment,
+    userId integer not null,
+    title varchar(128) not null,
+    icon varchar(128) not null,
+    level integer not null,
+    parent integer not null,
+    sort integer not null,
+    remark varchar(128) not null,
+    createTime timestamp not null default CURRENT_TIMESTAMP,
+    modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    primary key( shopCommodityClassifyId )
+)engine=innodb default charset=utf8mb4 auto_increment = 100001;
+
+alter table t_shop_commodity_classify add index userIdIndex(userId);
+
+
 #建立初始数据
 insert into t_user(userId,name,password,company,phone,type) values
 (10001,"fish",SHA1("123456"),'烘焙帮信息科技有限公司','15018749403',1),
