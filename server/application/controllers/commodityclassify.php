@@ -17,8 +17,6 @@ class CommodityClassify extends CI_Constroller
     public function search(){
         //检查输入参数
         $dataWhere = $this->argv->checkGet(array(
-            //一级分类，值为1; 二级分类，值为2
-            array('level', 'option'), 
             //一级分类, 值为0, 二级分类，值为所属一级分类的ID
             array('parent', 'option')         
         ));
@@ -47,7 +45,6 @@ class CommodityClassify extends CI_Constroller
             array('userId', 'require')
         ));
         $dataWhere = $this->argv-checkGet(array(
-            array('level', 'require'),
             array('parent'), 'require')
         ));
 
@@ -80,7 +77,6 @@ class CommodityClassify extends CI_Constroller
         $data = $this->argv->checkPost(array(
             array('title', 'require'),
             array('icon', 'require'),
-            array('level', 'require'),
             array('parent', 'require')
         ));
 
@@ -124,7 +120,6 @@ class CommodityClassify extends CI_Constroller
         $data = $this->argv->checkPost(array(
             array('title', 'require'),
             array('icon', 'require'),
-            array('level', 'require'),
             array('parent', 'require'),
             array('remark', 'require')
         ));

@@ -21,7 +21,21 @@ class CommodityClassifyAO extends CI_Model {
         if($classify['userId'] != $userId)
             throw new CI_MyException(1, '非本商城用户无此权限操作');
 
+        
         $this->commodityClassifyDb->del($shopCommodityClassifyId);
+
+        //修改下级分类变为一级分类
+        $dataWhere = array(
+            "parent" => $shopCommodityClassifyId
+        );
+
+        $childrenClassify = $this->commodityClassifyDb->search($classify['userId'],
+           $dataWhere, array())["data"];
+        foreach( $childrenClassify as $key=>$value){
+            $classifyId = $value['shopCommodityClassifyId'];
+            $value['parent'] = 0;
+            $this->commodityClassifyDb->mod($classifyId, $value);
+        }
 
         //通知商品挂载的相关分类被删除了
         //TODO
@@ -34,6 +48,13 @@ class CommodityClassifyAO extends CI_Model {
             $data['sort'] = 1;
         else
             $data['sort'] = $maxSort + 1;
+        
+        if($data['parent'] != 0){
+            $parentClassify = $this->commodityClassifyDb->get($data['parent']);
+            if($parentClassify['parent'] != 0)
+                throw new CI_MyException(1, '上级分类是二级分类，不能再添加下级分类'); 
+        }
+
         $data['userId'] = $userId;
         $this->CommodityClassifyDb->add($data);
     }
@@ -42,6 +63,12 @@ class CommodityClassifyAO extends CI_Model {
         $classify = $this->commodityClassifyDb->get($shopCommodityClassifyId); 
         if($classify['userId'] != $userId)
             throw new CI_MyException(1, '非本商城用户无此权限操作');
+
+        if($data['parent'] != 0){
+            $parentClassify = $this->commodityClassifyDb->get($data['parent']);
+            if($parentClassify['parent'] != 0)
+                throw new CI_MyException(1, '上级分类是二级分类，不能再添加下级分类'); 
+        }
 
         $this->commodityClassifyDb->mod($shopCommodityClassifyId, $data);
     }

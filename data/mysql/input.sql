@@ -130,7 +130,6 @@ create table t_shop_commodity_classify(
     userId integer not null,
     title varchar(128) not null,
     icon varchar(128) not null,
-    level integer not null,
     parent integer not null,
     sort integer not null,
     remark varchar(128) not null,
