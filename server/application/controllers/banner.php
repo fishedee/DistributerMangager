@@ -16,7 +16,7 @@ class Banner extends CI_Controller {
 	*/
 	public function search()
 	{
-		//¼ì²éÊäÈë²ÎÊý		
+		//æ£€æŸ¥è¾“å…¥å‚æ•°		
 		$dataWhere = $this->argv->checkGet(array(
 			array('title','option'),
 		));
@@ -26,13 +26,13 @@ class Banner extends CI_Controller {
 			array('pageSize','require'),
 		));
 		
-		//¼ì²éÈ¨ÏÞ
+		//æ£€æŸ¥æƒé™
 		$user = $this->loginAo->checkMustClient(
 			$this->userPermissionEnum->COMPANY_INTRODUCE
 		);
 		$userId = $user['userId'];
 		
-		//Ö´ÐÐÒµÎñÂß¼­
+		//æ‰§è¡Œä¸šåŠ¡é€»è¾‘
 		return $this->companyBannerAo->search($userId,$dataWhere,$dataLimit);
 	}
 	
@@ -41,13 +41,13 @@ class Banner extends CI_Controller {
 	*/
 	public function getByUserId()
 	{
-		//¼ì²éÊäÈë²ÎÊý
+		//æ£€æŸ¥è¾“å…¥å‚æ•°
 		$data = $this->argv->checkGet(array(
 			array('userId','require'),
 		));
 		$userId = $data['userId'];
 		
-		//Ö´ÐÐÒµÎñÂß¼­
+		//æ‰§è¡Œä¸šåŠ¡é€»è¾‘
 		return $this->companyBannerAo->search($userId,array(),array());
 	}
 	
@@ -56,19 +56,19 @@ class Banner extends CI_Controller {
 	*/
 	public function get()
 	{
-		//¼ì²éÊäÈë²ÎÊý
+		//æ£€æŸ¥è¾“å…¥å‚æ•°
 		$data = $this->argv->checkGet(array(
 			array('userCompanyBannerId','require'),
 		));
 		$userCompanyBannerId = $data['userCompanyBannerId'];
 		
-		//¼ì²éÈ¨ÏÞ
+		//æ£€æŸ¥æƒé™
 		$user = $this->loginAo->checkMustClient(
 			$this->userPermissionEnum->COMPANY_INTRODUCE
 		);
 		$userId = $user['userId'];
 		
-		//Ö´ÐÐÒµÎñÂß¼­
+		//æ‰§è¡Œä¸šåŠ¡é€»è¾‘
 		return $this->companyBannerAo->get($userId,$userCompanyBannerId);
 	}
 	
@@ -77,20 +77,20 @@ class Banner extends CI_Controller {
 	*/
 	public function add()
 	{
-		//¼ì²éÊäÈë²ÎÊý
+		//æ£€æŸ¥è¾“å…¥å‚æ•°
 		$data = $this->argv->checkPost(array(
 			array('title','require'),
 			array('image','require'),
 			array('url','require'),
 		));
 		
-		//¼ì²éÈ¨ÏÞ
+		//æ£€æŸ¥æƒé™
 		$user = $this->loginAo->checkMustClient(
 			$this->userPermissionEnum->COMPANY_INTRODUCE
 		);
 		$userId = $user['userId'];
 		
-		//Ö´ÐÐÒµÎñÂß¼­
+		//æ‰§è¡Œä¸šåŠ¡é€»è¾‘
 		$this->companyBannerAo->add($userId,$data);
 	}
 	
@@ -99,19 +99,19 @@ class Banner extends CI_Controller {
 	*/
 	public function del()
 	{
-		//¼ì²éÊäÈë²ÎÊý
+		//æ£€æŸ¥è¾“å…¥å‚æ•°
 		$data = $this->argv->checkPost(array(
 			array('userCompanyBannerId','require'),
 		));
 		$userCompanyBannerId = $data['userCompanyBannerId'];
 		
-		//¼ì²éÈ¨ÏÞ
+		//æ£€æŸ¥æƒé™
 		$user = $this->loginAo->checkMustClient(
 			$this->userPermissionEnum->COMPANY_INTRODUCE
 		);
 		$userId = $user['userId'];
 		
-		//Ö´ÐÐÒµÎñÂß¼­
+		//æ‰§è¡Œä¸šåŠ¡é€»è¾‘
 		$this->companyBannerAo->del($userId,$userCompanyBannerId);
 	}
 	
@@ -120,7 +120,7 @@ class Banner extends CI_Controller {
 	*/
 	public function mod()
 	{
-		//¼ì²éÊäÈë²ÎÊý
+		//æ£€æŸ¥è¾“å…¥å‚æ•°
 		$data = $this->argv->checkPost(array(
 			array('userCompanyBannerId','require'),
 		));
@@ -132,13 +132,13 @@ class Banner extends CI_Controller {
 			array('url','require'),
 		));
 		
-		//¼ì²éÈ¨ÏÞ
+		//æ£€æŸ¥æƒé™
 		$user = $this->loginAo->checkMustClient(
 			$this->userPermissionEnum->COMPANY_INTRODUCE
 		);
 		$userId = $user['userId'];
 		
-		//Ö´ÐÐÒµÎñÂß¼­
+		//æ‰§è¡Œä¸šåŠ¡é€»è¾‘
 		$this->companyBannerAo->mod($userId,$userCompanyBannerId,$data);
 	}
 	
@@ -147,19 +147,19 @@ class Banner extends CI_Controller {
 	*/
 	public function moveUp()
 	{
-		//¼ì²éÊäÈë²ÎÊý
+		//æ£€æŸ¥è¾“å…¥å‚æ•°
 		$data = $this->argv->checkPost(array(
 			array('userCompanyBannerId','require'),
 		));
 		$userCompanyBannerId = $data['userCompanyBannerId'];
 		
-		//¼ì²éÈ¨ÏÞ
+		//æ£€æŸ¥æƒé™
 		$user = $this->loginAo->checkMustClient(
 			$this->userPermissionEnum->COMPANY_INTRODUCE
 		);
 		$userId = $user['userId'];
 		
-		//Ö´ÐÐÒµÎñÂß¼­
+		//æ‰§è¡Œä¸šåŠ¡é€»è¾‘
 		$this->companyBannerAo->move($userId,$userCompanyBannerId,'up');
 	}
 	
@@ -168,19 +168,19 @@ class Banner extends CI_Controller {
 	*/
 	public function moveDown()
 	{
-		//¼ì²éÊäÈë²ÎÊý
+		//æ£€æŸ¥è¾“å…¥å‚æ•°
 		$data = $this->argv->checkPost(array(
 			array('userCompanyBannerId','require'),
 		));
 		$userCompanyBannerId = $data['userCompanyBannerId'];
 		
-		//¼ì²éÈ¨ÏÞ
+		//æ£€æŸ¥æƒé™
 		$user = $this->loginAo->checkMustClient(
 			$this->userPermissionEnum->COMPANY_INTRODUCE
 		);
 		$userId = $user['userId'];
 		
-		//Ö´ÐÐÒµÎñÂß¼­
+		//æ‰§è¡Œä¸šåŠ¡é€»è¾‘
 		$this->companyBannerAo->move($userId,$userCompanyBannerId,'down');
 	}
 }

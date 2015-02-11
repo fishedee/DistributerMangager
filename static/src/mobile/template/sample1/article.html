@@ -21,20 +21,20 @@
 			});
 		}
 		function go(){
-			//构建header
+			//鏋勫缓header
 			var header = new Header({
 				title:companyArticle.title,
 				backLink:'articlelist.html?userCompanyClassifyId='+companyArticle.userCompanyClassifyId,
 				button:[]
 			});
 			
-			//构建article
+			//鏋勫缓article
 			var article = new Article({
 				title:companyArticle.title,
 				content:companyArticle.content
 			});
 			
-			//构建页面
+			//鏋勫缓椤甸潰
 			var pageHtml = header.el + article.el;
 			$.page.start(pageHtml);
 		}

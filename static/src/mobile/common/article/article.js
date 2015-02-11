@@ -19,7 +19,7 @@ function replaceImage(content,articleWith){
 function article(args){
 	args.id = _.uniqueId('common_article_');
 	
-	//对ueditor生成的代码进行正则变换以适应手机页面
+	//瀵箄editor鐢熸垚鐨勪唬鐮佽繘琛屾鍒欏彉鎹互閫傚簲鎵嬫満椤甸潰
 	var totalWidth = $('#body').width();
 	var articleWith = totalWidth - 12*2;
 	args.content = replaceQQVideo(args.content,articleWith);

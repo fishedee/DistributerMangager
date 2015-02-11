@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>ºæ±º°ïºóÌ¨¹ÜÀíÏµÍ³</title>
+	<title>çƒ˜ç„™å¸®åå°ç®¡ç†ç³»ç»Ÿ</title>
 	<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
 </head>
 <body class="definewidth m10">
@@ -17,16 +17,16 @@
 				id:'container',
 				url:'/banner/search',
 				column:[
-					{id:'userCompanyBannerId',type:'text',name:'¹ã¸æID'},
-					{id:'title',type:'text',name:'±êÌâ'},
-					{id:'url',type:'text',name:'Á´½Ó'},
-					{id:'createTime',type:'text',name:'´´½¨Ê±¼ä'},
-					{id:'modifyTime',type:'text',name:'ĞŞ¸ÄÊ±¼ä'},
+					{id:'userCompanyBannerId',type:'text',name:'å¹¿å‘ŠID'},
+					{id:'title',type:'text',name:'æ ‡é¢˜'},
+					{id:'url',type:'text',name:'é“¾æ¥'},
+					{id:'createTime',type:'text',name:'åˆ›å»ºæ—¶é—´'},
+					{id:'modifyTime',type:'text',name:'ä¿®æ”¹æ—¶é—´'},
 				],
 				queryColumn:['title'],
 				operate:[
 				{
-					name:'ÉÏÒÆ',
+					name:'ä¸Šç§»',
 					click:function(data){
 						$.post('/banner/moveUp',{userCompanyBannerId:data.userCompanyBannerId},function(data){
 							data = $.JSON.parse(data);
@@ -39,7 +39,7 @@
 					}
 				},
 				{
-					name:'ÏÂÒÆ',
+					name:'ä¸‹ç§»',
 					click:function(data){
 						$.post('/banner/moveDown',{userCompanyBannerId:data.userCompanyBannerId},function(data){
 							data = $.JSON.parse(data);
@@ -52,15 +52,15 @@
 					}
 				},
 				{
-					name:'ĞŞ¸Ä',
+					name:'ä¿®æ”¹',
 					click:function(data){
 						location.href = 'view.html?userCompanyBannerId='+data.userCompanyBannerId;
 					}
 				},
 				{
-					name:'É¾³ı',
+					name:'åˆ é™¤',
 					click:function(data){
-						dialog.confirm('È·ÈÏÉ¾³ı¸Ã¹ã¸æ£¬²»¿É»ØÍË²Ù×÷£¿!',function(){
+						dialog.confirm('ç¡®è®¤åˆ é™¤è¯¥å¹¿å‘Šï¼Œä¸å¯å›é€€æ“ä½œï¼Ÿ!',function(){
 							$.post('/banner/del',{userCompanyBannerId:data.userCompanyBannerId},function(data){
 								data = $.JSON.parse(data);
 								if( data.code != 0 ){
@@ -74,7 +74,7 @@
 				}],
 				button:[
 				{
-					name:'Ìí¼Ó¹ã¸æ',
+					name:'æ·»åŠ å¹¿å‘Š',
 					click:function(){
 						location.href = 'view.html';
 					}

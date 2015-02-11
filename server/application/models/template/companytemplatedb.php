@@ -37,7 +37,7 @@ class CompanyTemplateDb extends CI_Model
 		$this->db->where("companyTemplateId",$companyTemplateId);
 		$query = $this->db->get($this->tableName)->result_array();
 		if( count($query) == 0 )
-			throw new CI_MyException('不存在此公司模板');
+			throw new CI_MyException('涓嶅瓨鍦ㄦ鍏徃妯℃澘');
 		return $query[0];
 	}
 

@@ -5,7 +5,7 @@
 				<h1><%= list[i].title %></h1>
 				<img src="<%= list[i].image %>"/>
 				<p><%= list[i].summary %></p>
-				<span>¸ü¶à</span>
+				<span>æ›´å¤š</span>
 			</a>
 		</li>
 	<% } %>

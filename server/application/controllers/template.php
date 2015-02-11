@@ -17,7 +17,7 @@ class Template extends CI_Controller {
 	*/
 	public function search()
 	{
-		//¼ì²éÊäÈë²ÎÊý		
+		//æ£€æŸ¥è¾“å…¥å‚æ•°		
 		$dataWhere = $this->argv->checkGet(array(
 			array('title','option'),
 			array('remark','option'),
@@ -28,7 +28,7 @@ class Template extends CI_Controller {
 			array('pageSize','option'),
 		));
 		
-		//¼ì²éÈ¨ÏÞ
+		//æ£€æŸ¥æƒé™
 		$user = $this->loginAo->checkMustLogin();
 		if( $user['type'] != $this->userTypeEnum->ADMIN ){
 			$this->loginAo->checkMustClient(
@@ -36,7 +36,7 @@ class Template extends CI_Controller {
 			);
 		}
 		
-		//Ö´ÐÐÒµÎñÂß¼­
+		//æ‰§è¡Œä¸šåŠ¡é€»è¾‘
 		return $this->companyTemplateAo->search($dataWhere,$dataLimit);
 	}
 	
@@ -45,13 +45,13 @@ class Template extends CI_Controller {
 	*/
 	public function get()
 	{
-		//¼ì²éÊäÈë²ÎÊý
+		//æ£€æŸ¥è¾“å…¥å‚æ•°
 		$data = $this->argv->checkGet(array(
 			array('companyTemplateId','require'),
 		));
 		$companyTemplateId = $data['companyTemplateId'];
 		
-		//¼ì²éÈ¨ÏÞ
+		//æ£€æŸ¥æƒé™
 		$user = $this->loginAo->checkMustLogin();
 		if( $user['type'] != $this->userTypeEnum->ADMIN ){
 			$this->loginAo->checkMustClient(
@@ -59,7 +59,7 @@ class Template extends CI_Controller {
 			);
 		}
 		
-		//Ö´ÐÐÒµÎñÂß¼­
+		//æ‰§è¡Œä¸šåŠ¡é€»è¾‘
 		return $this->companyTemplateAo->get($companyTemplateId);
 	}
 	
@@ -68,17 +68,17 @@ class Template extends CI_Controller {
 	*/
 	public function add()
 	{
-		//¼ì²éÊäÈë²ÎÊý
+		//æ£€æŸ¥è¾“å…¥å‚æ•°
 		$data = $this->argv->checkPost(array(
 			array('title','require'),
 			array('url','require'),
 			array('remark','require'),
 		));
 		
-		//¼ì²éÈ¨ÏÞ
+		//æ£€æŸ¥æƒé™
 		$this->loginAo->checkMustAdmin();
 		
-		//Ö´ÐÐÒµÎñÂß¼­
+		//æ‰§è¡Œä¸šåŠ¡é€»è¾‘
 		$this->companyTemplateAo->add($data);
 	}
 	
@@ -87,16 +87,16 @@ class Template extends CI_Controller {
 	*/
 	public function del()
 	{
-		//¼ì²éÊäÈë²ÎÊý
+		//æ£€æŸ¥è¾“å…¥å‚æ•°
 		$data = $this->argv->checkPost(array(
 			array('companyTemplateId','require'),
 		));
 		$companyTemplateId = $data['companyTemplateId'];
 		
-		//¼ì²éÈ¨ÏÞ
+		//æ£€æŸ¥æƒé™
 		$this->loginAo->checkMustAdmin();
 		
-		//Ö´ÐÐÒµÎñÂß¼­
+		//æ‰§è¡Œä¸šåŠ¡é€»è¾‘
 		$this->companyTemplateAo->del($companyTemplateId);
 	}
 	
@@ -105,7 +105,7 @@ class Template extends CI_Controller {
 	*/
 	public function mod()
 	{
-		//¼ì²éÊäÈë²ÎÊý
+		//æ£€æŸ¥è¾“å…¥å‚æ•°
 		$data = $this->argv->checkPost(array(
 			array('companyTemplateId','require'),
 		));
@@ -117,10 +117,10 @@ class Template extends CI_Controller {
 			array('remark','require'),
 		));
 		
-		//¼ì²éÈ¨ÏÞ
+		//æ£€æŸ¥æƒé™
 		$this->loginAo->checkMustAdmin();
 		
-		//Ö´ÐÐÒµÎñÂß¼­
+		//æ‰§è¡Œä¸šåŠ¡é€»è¾‘
 		$this->companyTemplateAo->mod($companyTemplateId,$data);
 	}
 	
@@ -130,13 +130,13 @@ class Template extends CI_Controller {
 	*/
 	public function getMyTemplate()
 	{
-		//¼ì²éÈ¨ÏÞ
+		//æ£€æŸ¥æƒé™
 		$user = $this->loginAo->checkMustClient(
 			$this->userPermissionEnum->COMPANY_INTRODUCE
 		);
 		$userId = $user['userId'];
 		
-		//Ö´ÐÐÒµÎñÂß¼­
+		//æ‰§è¡Œä¸šåŠ¡é€»è¾‘
 		return $this->companyTemplateAo->getByUserId($userId);
 	}
 	
@@ -145,19 +145,19 @@ class Template extends CI_Controller {
 	*/
 	public function modMyTemplate()
 	{
-		//¼ì²éÊäÈë²ÎÊý
+		//æ£€æŸ¥è¾“å…¥å‚æ•°
 		$data = $this->argv->checkPost(array(
 			array('companyTemplateId','require'),
 		));
 		$companyTemplateId = $data['companyTemplateId'];
 		
-		//¼ì²éÈ¨ÏÞ
+		//æ£€æŸ¥æƒé™
 		$user = $this->loginAo->checkMustClient(
 			$this->userPermissionEnum->COMPANY_INTRODUCE
 		);
 		$userId = $user['userId'];
 		
-		//Ö´ÐÐÒµÎñÂß¼­
+		//æ‰§è¡Œä¸šåŠ¡é€»è¾‘
 		$this->companyTemplateAo->modByUserId($userId,$companyTemplateId);
 	}
 }
