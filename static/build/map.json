@@ -12,7 +12,7 @@
             "type": "js"
         },
         "fishstrap/core/global.js": {
-            "uri": "/fishstrap/core/global_799030b.js",
+            "uri": "/fishstrap/core/global_0ffe271.js",
             "type": "js",
             "deps": [
                 "fishstrap/lib/underscore.js",
@@ -621,7 +621,7 @@
             "id": "fishstrap/ui/editor.js"
         },
         "fishstrap/ui/input.js": {
-            "uri": "/fishstrap/ui/input_84dd983.js",
+            "uri": "/fishstrap/ui/input_cfd3497.js",
             "type": "js",
             "deps": [
                 "fishstrap/core/global.js",
@@ -646,7 +646,7 @@
             "id": "fishstrap/ui/query.js"
         },
         "fishstrap/ui/table.js": {
-            "uri": "/fishstrap/ui/table_2382844.js",
+            "uri": "/fishstrap/ui/table_c6bf500.js",
             "type": "js",
             "deps": [
                 "fishstrap/lib/gri/griTable.js",
@@ -703,7 +703,7 @@
             "type": "js"
         },
         "fishstrap/util/upload.js": {
-            "uri": "/fishstrap/util/upload_bf281ca.js",
+            "uri": "/fishstrap/util/upload_4a3b05c.js",
             "type": "js",
             "deps": [
                 "fishstrap/core/global.js",
