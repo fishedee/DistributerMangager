@@ -33,8 +33,7 @@ class CommodityClassifyAO extends CI_Model {
            $dataWhere, array())["data"];
         foreach( $childrenClassify as $key=>$value){
             $classifyId = $value['shopCommodityClassifyId'];
-            $value['parent'] = 0;
-            $this->commodityClassifyDb->mod($classifyId, $value);
+            $this->commodityClassifyDb->mod($classifyId, array('parent'=>0));
         }
 
         //通知商品挂载的相关分类被删除了
@@ -72,4 +71,62 @@ class CommodityClassifyAO extends CI_Model {
 
         $this->commodityClassifyDb->mod($shopCommodityClassifyId, $data);
     }
+
+    public function move($userId, $shopCommodityClassifyId, $direction){
+        //取出所有分类
+        $dataWhere['userId'] = $userId;
+        $allClassify = $this->commodityClassifyDb->search($dataWhere, array());
+        $allClassify = $allClassify['data'];
+
+        //计算上一级分类，与下一级分类
+        $index = -1;
+        foreach( $allClassify as $key=>$singleClassify){
+            if($singleClassify['shopCommodityClassifyId'] == $shopCommodityClassifyId){
+                $index = $key;
+                break;
+            }
+        }
+        if($index == false)
+            throw new CI_MyException(1, '不存在此分类');
+        $currentClassify = $allClassify[$index];
+
+        //调整sort值
+        if($direction == 'up'){
+            if($index - 1 < 0)
+                throw new CI_MyException(1, '不能再往上调整了');
+            $prevClassify = $allClassify[$index - 1];
+            $newCurrentSort = $prevClassify['sort']; 
+            $newCurrentId = $currentClassify['shopCommodityClassifyId'];
+            $newOtherSort = $currentClassify['sort'];
+            $newOtherId = $preClassify['shopCommodityClassifyId'];
+        }else{
+			if( $index + 1 >= count($allClassify) )
+				throw new CI_MyException(1,'不能再下调整了');
+            $nextClassify = $allClassify[$index + 1];
+            $newCurrentSort = $nextClassify['sort'];
+            $newCurrentId = $currentClassify['shopCommodityClassifyId'];
+            $newOtherSort = $currentClassify['sort'];
+            $newOtherId = $nextClassify['shopCommodityClassifyId'];
+        }
+
+        //更新数据库
+        $this->commodityClassifyDb->mod($newOtherId, array('sort'=>$newOtherSort));
+        $this->commodityClassifyDb->mod($newCurrentId, array('sort'=>$newCurrentSort));
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
