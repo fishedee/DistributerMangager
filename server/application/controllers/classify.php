@@ -16,7 +16,7 @@ class Classify extends CI_Controller {
 	*/
 	public function search()
 	{
-		//¼ì²éÊäÈë²ÎÊý		
+		//æ£€æŸ¥è¾“å…¥å‚æ•°		
 		$dataWhere = $this->argv->checkGet(array(
 			array('title','option'),
 			array('remark','option')
@@ -27,13 +27,13 @@ class Classify extends CI_Controller {
 			array('pageSize','option'),
 		));
 		
-		//¼ì²éÈ¨ÏÞ
+		//æ£€æŸ¥æƒé™
 		$user = $this->loginAo->checkMustClient(
 			$this->userPermissionEnum->COMPANY_INTRODUCE
 		);
 		$userId = $user['userId'];
 		
-		//Ö´ÐÐÒµÎñÂß¼­
+		//æ‰§è¡Œä¸šåŠ¡é€»è¾‘
 		return $this->companyClassifyAo->search($userId,$dataWhere,$dataLimit);
 	}
 	
@@ -42,13 +42,13 @@ class Classify extends CI_Controller {
 	*/
 	public function getByUserId()
 	{
-		//¼ì²éÊäÈë²ÎÊý
+		//æ£€æŸ¥è¾“å…¥å‚æ•°
 		$data = $this->argv->checkGet(array(
 			array('userId','require'),
 		));
 		$userId = $data['userId'];
 		
-		//Ö´ÐÐÒµÎñÂß¼­
+		//æ‰§è¡Œä¸šåŠ¡é€»è¾‘
 		return $this->companyClassifyAo->search($userId,array(),array());
 	}
 	
@@ -57,13 +57,13 @@ class Classify extends CI_Controller {
 	*/
 	public function get()
 	{
-		//¼ì²éÊäÈë²ÎÊý
+		//æ£€æŸ¥è¾“å…¥å‚æ•°
 		$data = $this->argv->checkGet(array(
 			array('userCompanyClassifyId','require'),
 		));
 		$userCompanyClassifyId = $data['userCompanyClassifyId'];
 		
-		//Ö´ÐÐÒµÎñÂß¼­
+		//æ‰§è¡Œä¸šåŠ¡é€»è¾‘
 		return $this->companyClassifyAo->get($userCompanyClassifyId);
 	}
 	
@@ -72,20 +72,20 @@ class Classify extends CI_Controller {
 	*/
 	public function add()
 	{
-		//¼ì²éÊäÈë²ÎÊý
+		//æ£€æŸ¥è¾“å…¥å‚æ•°
 		$data = $this->argv->checkPost(array(
 			array('title','require'),
 			array('remark','require'),
 			array('icon','require'),
 		));
 		
-		//¼ì²éÈ¨ÏÞ
+		//æ£€æŸ¥æƒé™
 		$user = $this->loginAo->checkMustClient(
 			$this->userPermissionEnum->COMPANY_INTRODUCE
 		);
 		$userId = $user['userId'];
 		
-		//Ö´ÐÐÒµÎñÂß¼­
+		//æ‰§è¡Œä¸šåŠ¡é€»è¾‘
 		$this->companyClassifyAo->add($userId,$data);
 	}
 	
@@ -94,19 +94,19 @@ class Classify extends CI_Controller {
 	*/
 	public function del()
 	{
-		//¼ì²éÊäÈë²ÎÊý
+		//æ£€æŸ¥è¾“å…¥å‚æ•°
 		$data = $this->argv->checkPost(array(
 			array('userCompanyClassifyId','require'),
 		));
 		$userCompanyClassifyId = $data['userCompanyClassifyId'];
 		
-		//¼ì²éÈ¨ÏÞ
+		//æ£€æŸ¥æƒé™
 		$user = $this->loginAo->checkMustClient(
 			$this->userPermissionEnum->COMPANY_INTRODUCE
 		);
 		$userId = $user['userId'];
 		
-		//Ö´ÐÐÒµÎñÂß¼­
+		//æ‰§è¡Œä¸šåŠ¡é€»è¾‘
 		$this->companyClassifyAo->del($userId,$userCompanyClassifyId);
 	}
 	
@@ -115,7 +115,7 @@ class Classify extends CI_Controller {
 	*/
 	public function mod()
 	{
-		//¼ì²éÊäÈë²ÎÊý
+		//æ£€æŸ¥è¾“å…¥å‚æ•°
 		$data = $this->argv->checkPost(array(
 			array('userCompanyClassifyId','require'),
 		));
@@ -127,13 +127,13 @@ class Classify extends CI_Controller {
 			array('icon','require'),
 		));
 		
-		//¼ì²éÈ¨ÏÞ
+		//æ£€æŸ¥æƒé™
 		$user = $this->loginAo->checkMustClient(
 			$this->userPermissionEnum->COMPANY_INTRODUCE
 		);
 		$userId = $user['userId'];
 		
-		//Ö´ÐÐÒµÎñÂß¼­
+		//æ‰§è¡Œä¸šåŠ¡é€»è¾‘
 		$this->companyClassifyAo->mod($userId,$userCompanyClassifyId,$data);
 	}
 	
@@ -142,19 +142,19 @@ class Classify extends CI_Controller {
 	*/
 	public function moveUp()
 	{
-		//¼ì²éÊäÈë²ÎÊý
+		//æ£€æŸ¥è¾“å…¥å‚æ•°
 		$data = $this->argv->checkPost(array(
 			array('userCompanyClassifyId','require'),
 		));
 		$userCompanyClassifyId = $data['userCompanyClassifyId'];
 		
-		//¼ì²éÈ¨ÏÞ
+		//æ£€æŸ¥æƒé™
 		$user = $this->loginAo->checkMustClient(
 			$this->userPermissionEnum->COMPANY_INTRODUCE
 		);
 		$userId = $user['userId'];
 		
-		//Ö´ÐÐÒµÎñÂß¼­
+		//æ‰§è¡Œä¸šåŠ¡é€»è¾‘
 		$this->companyClassifyAo->move($userId,$userCompanyClassifyId,'up');
 	}
 	
@@ -163,19 +163,19 @@ class Classify extends CI_Controller {
 	*/
 	public function moveDown()
 	{
-		//¼ì²éÊäÈë²ÎÊý
+		//æ£€æŸ¥è¾“å…¥å‚æ•°
 		$data = $this->argv->checkPost(array(
 			array('userCompanyClassifyId','require'),
 		));
 		$userCompanyClassifyId = $data['userCompanyClassifyId'];
 		
-		//¼ì²éÈ¨ÏÞ
+		//æ£€æŸ¥æƒé™
 		$user = $this->loginAo->checkMustClient(
 			$this->userPermissionEnum->COMPANY_INTRODUCE
 		);
 		$userId = $user['userId'];
 		
-		//Ö´ÐÐÒµÎñÂß¼­
+		//æ‰§è¡Œä¸šåŠ¡é€»è¾‘
 		$this->companyClassifyAo->move($userId,$userCompanyClassifyId,'down');
 	}
 }

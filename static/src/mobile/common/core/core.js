@@ -4,9 +4,9 @@
 */
 var $ = require('/fishstrap/core/global.js');
 var dialog = require('../dialog/dialog.js');
-//¼ÓÈëFastClickÀ©Õ¹
+//åŠ å…¥FastClickæ‰©å±•
 window.FastClick.attach(document.body);
-//ĞŞ¸Äajaxº¯Êı£¬¼ÓÈë×Ô¶¯×ª¾Õ»¨£¬×Ô¶¯×ª»»json£¬×Ô¶¯²¶×½json´íÎóºÍÍøÂç´íÎóµÄ¹¦ÄÜ¡£
+//ä¿®æ”¹ajaxå‡½æ•°ï¼ŒåŠ å…¥è‡ªåŠ¨è½¬èŠèŠ±ï¼Œè‡ªåŠ¨è½¬æ¢jsonï¼Œè‡ªåŠ¨æ•æ‰jsoné”™è¯¯å’Œç½‘ç»œé”™è¯¯çš„åŠŸèƒ½ã€‚
 var _dialogAjax = $.ajax;
 $.ajax = function(opt){
 	dialog.loadingBegin();
@@ -24,7 +24,7 @@ $.ajax = function(opt){
 		}catch(e){
 			data = {
 				'code':1,
-				'msg':'JSON½âÎö´íÎó',
+				'msg':'JSONè§£æé”™è¯¯',
 				'data':''
 			};
 		}
@@ -37,7 +37,7 @@ $.ajax = function(opt){
 			'msg':'',
 			'data':''
 		};
-		data.msg = 'ÍøÂç´íÎó£¬ÇëÉÔºóÔÙÊÔ£¬ÍøÂç´íÎóÂë'+XMLHttpRequest.status;
+		data.msg = 'ç½‘ç»œé”™è¯¯ï¼Œè¯·ç¨åå†è¯•ï¼Œç½‘ç»œé”™è¯¯ç '+XMLHttpRequest.status;
 		tempSuccess(data);
 		if( tempError )
 			tempError(XMLHttpRequest, textStatus, errorThrown);
@@ -47,7 +47,7 @@ $.ajax = function(opt){
 	if( userIdMatch == null ){
 		tempSuccess({
 			'code':1,
-			'msg':'È±ÉÙuserId²ÎÊı',
+			'msg':'ç¼ºå°‘userIdå‚æ•°',
 			'data':''
 		});
 		return;
@@ -56,7 +56,7 @@ $.ajax = function(opt){
 	opt.data = $.extend(opt.data,{userId:userId});
 	_dialogAjax(opt);
 };
-//µ¥Ò³ÃæÈë¿Ú
+//å•é¡µé¢å…¥å£
 (function(){
 	var body = $('#body');
 	var readyFun = [];

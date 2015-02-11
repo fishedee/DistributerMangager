@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>ºæ±º°ïºóÌ¨¹ÜÀíÏµÍ³</title>
+	<title>çƒ˜ç„™å¸®åå°ç®¡ç†ç³»ç»Ÿ</title>
 	<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
 </head>
 <body class="definewidth m10">
@@ -17,16 +17,16 @@
 				id:'container',
 				url:'/classify/search',
 				column:[
-					{id:'userCompanyClassifyId',type:'text',name:'ÎÄÕÂ·ÖÀàID'},
-					{id:'title',type:'text',name:'ĞÕÃû'},
-					{id:'remark',type:'text',name:'±¸×¢'},
-					{id:'createTime',type:'text',name:'´´½¨Ê±¼ä'},
-					{id:'modifyTime',type:'text',name:'ĞŞ¸ÄÊ±¼ä'},
+					{id:'userCompanyClassifyId',type:'text',name:'æ–‡ç« åˆ†ç±»ID'},
+					{id:'title',type:'text',name:'å§“å'},
+					{id:'remark',type:'text',name:'å¤‡æ³¨'},
+					{id:'createTime',type:'text',name:'åˆ›å»ºæ—¶é—´'},
+					{id:'modifyTime',type:'text',name:'ä¿®æ”¹æ—¶é—´'},
 				],
 				queryColumn:['title','remark'],
 				operate:[
 				{
-					name:'ÉÏÒÆ',
+					name:'ä¸Šç§»',
 					click:function(data){
 						$.post('/classify/moveUp',{userCompanyClassifyId:data.userCompanyClassifyId},function(data){
 							data = $.JSON.parse(data);
@@ -39,7 +39,7 @@
 					}
 				},
 				{
-					name:'ÏÂÒÆ',
+					name:'ä¸‹ç§»',
 					click:function(data){
 						$.post('/classify/moveDown',{userCompanyClassifyId:data.userCompanyClassifyId},function(data){
 							data = $.JSON.parse(data);
@@ -52,15 +52,15 @@
 					}
 				},
 				{
-					name:'ĞŞ¸Ä',
+					name:'ä¿®æ”¹',
 					click:function(data){
 						location.href = 'view.html?userCompanyClassifyId='+data.userCompanyClassifyId;
 					}
 				},
 				{
-					name:'É¾³ı',
+					name:'åˆ é™¤',
 					click:function(data){
-						dialog.confirm('È·ÈÏÉ¾³ı¸ÃÎÄÕÂ·ÖÀà£¬²»¿É»ØÍË²Ù×÷£¿!',function(){
+						dialog.confirm('ç¡®è®¤åˆ é™¤è¯¥æ–‡ç« åˆ†ç±»ï¼Œä¸å¯å›é€€æ“ä½œï¼Ÿ!',function(){
 							$.post('/classify/del',{userCompanyClassifyId:data.userCompanyClassifyId},function(data){
 								data = $.JSON.parse(data);
 								if( data.code != 0 ){
@@ -74,7 +74,7 @@
 				}],
 				button:[
 				{
-					name:'Ìí¼Ó·ÖÀà',
+					name:'æ·»åŠ åˆ†ç±»',
 					click:function(){
 						location.href = 'view.html';
 					}

@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>ºæ±º°ïºóÌ¨¹ÜÀíÏµÍ³</title>
+	<title>çƒ˜ç„™å¸®åå°ç®¡ç†ç³»ç»Ÿ</title>
 	<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
 </head>
 <body class="definewidth m10">
@@ -17,7 +17,7 @@
 			if( state == 'confirm'){
 				var data = inputOperation.get();
 				if( data.password != data.password2 ){
-					dialog.message('Á½´ÎÊäÈëÃÜÂë²»Ò»ÖÂ');
+					dialog.message('ä¸¤æ¬¡è¾“å…¥å¯†ç ä¸ä¸€è‡´');
 					return;
 				}
 				$.post('/user/add',data,function(data){
@@ -26,7 +26,7 @@
 						dialog.message(data.msg);
 						return;
 					}
-					dialog.message('×¢²á³É¹¦£¬ÇëÊ¹ÓÃÕÊºÅÃÜÂëµÇÈë¿ªÊ¼ÄãµÄÉÌ³Ç',function(){
+					dialog.message('æ³¨å†ŒæˆåŠŸï¼Œè¯·ä½¿ç”¨å¸å·å¯†ç ç™»å…¥å¼€å§‹ä½ çš„å•†åŸ',function(){
 						operation.close();
 					});
 				});
@@ -38,11 +38,11 @@
 			inputOperation = input.verticalInput({
 				id:'container',
 				field:[
-					{id:'name',type:'text',name:'ĞÕÃû'},
-					{id:'password',type:'password',name:'ÃÜÂë'},
-					{id:'password2',type:'password',name:'ÔÙ´ÎÃÜÂë'},
-					{id:'company',type:'text',name:'¹«Ë¾'},
-					{id:'phone',type:'text',name:'µç»°'},
+					{id:'name',type:'text',name:'å§“å'},
+					{id:'password',type:'password',name:'å¯†ç '},
+					{id:'password2',type:'password',name:'å†æ¬¡å¯†ç '},
+					{id:'company',type:'text',name:'å…¬å¸'},
+					{id:'phone',type:'text',name:'ç”µè¯'},
 				],
 				submit:undefined,
 				cancel:undefined

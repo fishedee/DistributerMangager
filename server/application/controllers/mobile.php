@@ -27,7 +27,7 @@ class Mobile extends CI_Controller {
 		if( $url == ''){
 			header("Location: /$userId/company.html");
 		}
-		//¸ù¾İºó×ºÃûÊä³öContent-Type
+		//æ ¹æ®åç¼€åè¾“å‡ºContent-Type
 		$pos = strripos($url,'.');
 		if( $pos != false )
 			$extension = strtolower(substr($url,$pos+1));
@@ -47,7 +47,7 @@ class Mobile extends CI_Controller {
 			header('Content-type: image/jpeg');
 		
 		
-		//³¢ÊÔ´¿¾²Ì¬ÎÄ¼ş
+		//å°è¯•çº¯é™æ€æ–‡ä»¶
 		$staticAddress = dirname(__FILE__).'/../../../static/build/mobile';
 		if( file_exists($staticAddress.$url) ){
 			ob_clean();  
@@ -56,7 +56,7 @@ class Mobile extends CI_Controller {
 			return;
 		}
 			
-		//³¢ÊÔÄ£°å¾²Ì¬ÎÄ¼ş
+		//å°è¯•æ¨¡æ¿é™æ€æ–‡ä»¶
 		$companyTemplateId = $this->companyTemplateAo->getByUserId($userId);
 		if( $companyTemplateId != 0 ){
 			$template = $this->companyTemplateAo->get($companyTemplateId);
@@ -69,7 +69,7 @@ class Mobile extends CI_Controller {
 			}
 		}
 		
-		//·ñÔò404
+		//å¦åˆ™404
 		show_404();
 	}
 	

@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>ºæ±º°ïºóÌ¨¹ÜÀíÏµÍ³</title>
+	<title>çƒ˜ç„™å¸®åå°ç®¡ç†ç³»ç»Ÿ</title>
 	<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
 </head>
 <body class="definewidth m10">
@@ -38,15 +38,15 @@
 			if( isCheck == false ){
 				operate = [
 					{
-						name:'ĞŞ¸Ä',
+						name:'ä¿®æ”¹',
 						click:function(data){
 							location.href = 'view.html?companyTemplateId='+data.companyTemplateId;
 						}
 					},
 					{
-						name:'É¾³ı',
+						name:'åˆ é™¤',
 						click:function(data){
-							dialog.confirm('È·ÈÏÉ¾³ı¸Ã¹«Ë¾Ä£°å£¬ËùÓĞÊ¹ÓÃ¸ÃÄ£°åµÄ¿Í»§¶¼»áÊ§Ğ§£¬²»¿É»ØÍË²Ù×÷£¿!',function(){
+							dialog.confirm('ç¡®è®¤åˆ é™¤è¯¥å…¬å¸æ¨¡æ¿ï¼Œæ‰€æœ‰ä½¿ç”¨è¯¥æ¨¡æ¿çš„å®¢æˆ·éƒ½ä¼šå¤±æ•ˆï¼Œä¸å¯å›é€€æ“ä½œï¼Ÿ!',function(){
 								$.post('/template/del',{companyTemplateId:data.companyTemplateId},function(data){
 									data = $.JSON.parse(data);
 									if( data.code != 0 ){
@@ -60,7 +60,7 @@
 					}];
 				button = [
 				{
-					name:'Ìí¼ÓÄ£°å',
+					name:'æ·»åŠ æ¨¡æ¿',
 					click:function(){
 						location.href = 'view.html';
 					}
@@ -73,12 +73,12 @@
 				url:'/template/search',
 				checkAll:isCheck,
 				column:[
-					{id:'companyTemplateId',type:'text',name:'Ä£°åID'},
-					{id:'title',type:'text',name:'Ãû×Ö'},
-					{id:'url',type:'text',name:'Î»ÖÃ'},
-					{id:'remark',type:'text',name:'±¸×¢'},
-					{id:'createTime',type:'text',name:'´´½¨Ê±¼ä'},
-					{id:'modifyTime',type:'text',name:'ĞŞ¸ÄÊ±¼ä'},
+					{id:'companyTemplateId',type:'text',name:'æ¨¡æ¿ID'},
+					{id:'title',type:'text',name:'åå­—'},
+					{id:'url',type:'text',name:'ä½ç½®'},
+					{id:'remark',type:'text',name:'å¤‡æ³¨'},
+					{id:'createTime',type:'text',name:'åˆ›å»ºæ—¶é—´'},
+					{id:'modifyTime',type:'text',name:'ä¿®æ”¹æ—¶é—´'},
 				],
 				queryColumn:['title','remark'],
 				operate:operate,

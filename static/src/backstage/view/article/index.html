@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>ºæ±º°ïºóÌ¨¹ÜÀíÏµÍ³</title>
+	<title>çƒ˜ç„™å¸®åå°ç®¡ç†ç³»ç»Ÿ</title>
 	<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
 </head>
 <body class="definewidth m10">
@@ -20,7 +20,7 @@
 					dialog.message(data.msg);
 					return;
 				}
-				companyClassify[0] = 'Î´·ÖÀà';
+				companyClassify[0] = 'æœªåˆ†ç±»';
 				_.each(data.data.data,function(single){
 					companyClassify[single.userCompanyClassifyId] = single.title;
 				});
@@ -32,25 +32,25 @@
 				id:'container',
 				url:'/article/search',
 				column:[
-					{id:'userCompanyArticleId',type:'text',name:'ÎÄÕÂID'},
-					{id:'title',type:'text',name:'±êÌâ'},
-					{id:'remark',type:'text',name:'±¸×¢'},
-					{id:'userCompanyClassifyId',type:'enum',name:'·ÖÀà',map:companyClassify},
-					{id:'createTime',type:'text',name:'´´½¨Ê±¼ä'},
-					{id:'modifyTime',type:'text',name:'ĞŞ¸ÄÊ±¼ä'},
+					{id:'userCompanyArticleId',type:'text',name:'æ–‡ç« ID'},
+					{id:'title',type:'text',name:'æ ‡é¢˜'},
+					{id:'remark',type:'text',name:'å¤‡æ³¨'},
+					{id:'userCompanyClassifyId',type:'enum',name:'åˆ†ç±»',map:companyClassify},
+					{id:'createTime',type:'text',name:'åˆ›å»ºæ—¶é—´'},
+					{id:'modifyTime',type:'text',name:'ä¿®æ”¹æ—¶é—´'},
 				],
 				queryColumn:['title','remark','userCompanyClassifyId'],
 				operate:[
 				{
-					name:'ĞŞ¸Ä',
+					name:'ä¿®æ”¹',
 					click:function(data){
 						location.href = 'view.html?userCompanyArticleId='+data.userCompanyArticleId;
 					}
 				},
 				{
-					name:'É¾³ı',
+					name:'åˆ é™¤',
 					click:function(data){
-						dialog.confirm('È·ÈÏÉ¾³ı¸ÃÎÄÕÂ£¬²»¿É»ØÍË²Ù×÷£¿!',function(){
+						dialog.confirm('ç¡®è®¤åˆ é™¤è¯¥æ–‡ç« ï¼Œä¸å¯å›é€€æ“ä½œï¼Ÿ!',function(){
 							$.post('/article/del',{userCompanyArticleId:data.userCompanyArticleId},function(data){
 								data = $.JSON.parse(data);
 								if( data.code != 0 ){
@@ -64,7 +64,7 @@
 				}],
 				button:[
 				{
-					name:'Ìí¼ÓÎÄÕÂ',
+					name:'æ·»åŠ æ–‡ç« ',
 					click:function(){
 						location.href = 'view.html';
 					}

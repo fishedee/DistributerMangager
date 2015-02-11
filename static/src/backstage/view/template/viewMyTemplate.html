@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>ºæ±º°ïºóÌ¨¹ÜÀíÏµÍ³</title>
+	<title>çƒ˜ç„™å¸®åå°ç®¡ç†ç³»ç»Ÿ</title>
 	<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
 </head>
 <body class="definewidth m10">
@@ -46,24 +46,24 @@
 			input.verticalInput({
 				id:'container',
 				field:[
-					{id:'companyTemplate',type:'table',name:'Ä£°å',
+					{id:'companyTemplate',type:'table',name:'æ¨¡æ¿',
 						option:{
 							column:[
-								{name:'Ä£°åID',type:'text',id:'companyTemplateId'},
-								{name:'Ãû×Ö',type:'text',id:'title'},
-								{name:'±¸×¢',type:'text',id:'remark'},
+								{name:'æ¨¡æ¿ID',type:'text',id:'companyTemplateId'},
+								{name:'åå­—',type:'text',id:'title'},
+								{name:'å¤‡æ³¨',type:'text',id:'remark'},
 							],
 							operate:[{
-								name:'É¾³ı',
+								name:'åˆ é™¤',
 								click:function(data,operation){
 									operation.remove();
 								}
 							}],
 							button:[{
-								name:'Ñ¡ÔñÄ£°å',
+								name:'é€‰æ‹©æ¨¡æ¿',
 								click:function(operation){
 									subPage.open({
-										title:'Ñ¡ÔñÄ£°å',
+										title:'é€‰æ‹©æ¨¡æ¿',
 										url:'index.html?check=true',
 										close:function(state,data){
 											if( state == 'confirm' ){

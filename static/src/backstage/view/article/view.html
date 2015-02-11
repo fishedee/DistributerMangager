@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>ºæ±º°ïºóÌ¨¹ÜÀíÏµÍ³</title>
+	<title>çƒ˜ç„™å¸®åå°ç®¡ç†ç³»ç»Ÿ</title>
 	<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
 </head>
 <body class="definewidth m10">
@@ -22,7 +22,7 @@
 					dialog.message(data.msg);
 					return;
 				}
-				companyClassify[0] = 'Î´·ÖÀà';
+				companyClassify[0] = 'æœªåˆ†ç±»';
 				_.each(data.data.data,function(single){
 					companyClassify[single.userCompanyClassifyId] = single.title;
 				});
@@ -44,12 +44,12 @@
 			input.verticalInput({
 				id:'container',
 				field:[
-					{id:'userCompanyClassifyId',type:'enum',name:'·ÖÀà',map:companyClassify},
-					{id:'title',type:'text',name:'±êÌâ'},
-					{id:'summary',type:'area',name:'¼ò½é'},
-					{id:'cover',type:'image',name:'·âÃæÍ¼Æ¬',option:{url:'/upload/image',width:640}},
-					{id:'content',type:'fullEditor',name:'ÄÚÈİ',option:{url:'/upload/ueditor'}},
-					{id:'remark',type:'text',name:'±¸×¢'},
+					{id:'userCompanyClassifyId',type:'enum',name:'åˆ†ç±»',map:companyClassify},
+					{id:'title',type:'text',name:'æ ‡é¢˜'},
+					{id:'summary',type:'area',name:'ç®€ä»‹'},
+					{id:'cover',type:'image',name:'å°é¢å›¾ç‰‡',option:{url:'/upload/image',width:640}},
+					{id:'content',type:'fullEditor',name:'å†…å®¹',option:{url:'/upload/ueditor'}},
+					{id:'remark',type:'text',name:'å¤‡æ³¨'},
 				],
 				value:companyArticle,
 				submit:function(data){

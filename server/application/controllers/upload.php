@@ -17,7 +17,7 @@ class Upload extends CI_Controller {
 	*/
 	private function getAllFiles($address){
 		if( strpos($address,'/data/upload/') != 0 )
-			throw new CI_MyException('Ö»ÄÜ²é¿´ÉÏ´«ÎÄ¼ş¼Ğ');
+			throw new CI_MyException('åªèƒ½æŸ¥çœ‹ä¸Šä¼ æ–‡ä»¶å¤¹');
 	
 		$folderAddress = dirname(__FILE__).'/../../../'.$address;
 		$folderPrefixLength = strlen(dirname(__FILE__).'/../../../');
@@ -69,7 +69,7 @@ class Upload extends CI_Controller {
 	*/
 	public function readdir()
 	{
-		//¼ì²éÊäÈë²ÎÊı
+		//æ£€æŸ¥è¾“å…¥å‚æ•°
 		$data = $this->argv->checkGet(array(
 			array('address','require')
 		));
