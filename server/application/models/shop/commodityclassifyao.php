@@ -3,7 +3,7 @@
 class CommodityClassifyAO extends CI_Model {
     public function __construct(){
         parent::__construct();
-        $this->load->model('classify/CommodityClassifyDb', 'commodityClassifyDb');
+        $this->load->model('shop/CommodityClassifyDb', 'commodityClassifyDb');
     }
 
     public function search($userId, $dataWhere, $dataLimit){
@@ -56,7 +56,7 @@ class CommodityClassifyAO extends CI_Model {
         }
 
         $data['userId'] = $userId;
-        $this->CommodityClassifyDb->add($data);
+        $this->commodityClassifyDb->add($data);
     }
 
     public function mod($userId, $shopCommodityClassifyId, $data){

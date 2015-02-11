@@ -156,6 +156,19 @@ create table t_shop_commodity_classify(
 
 alter table t_shop_commodity_classify add index userIdIndex(userId);
 
+#创建用户商城商品表
+create table t_shop_commodity(
+    commodityId integer not null auto_increment,
+    userId integer not null,
+    commodityClassifyId integer not null,
+    title varchar(128) not null,
+    icon varchar(128) not null,
+    introduction varchar(128) not null,
+    price integer not null,
+    detail varchar(128) not null,
+    inventory integer not null
+)engine=innode default charset=utf8mb4 auto_increment = 1000001;
+
 
 #建立初始数据
 insert into t_user(userId,name,password,company,phone,type) values
