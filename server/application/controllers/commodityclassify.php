@@ -82,7 +82,7 @@ class CommodityClassify extends CI_Constroller
 
         //检查权限
         $user = $this->loginAo->checkMustClient(
-            $this->userPermissionEnum->COMPANY_INTRODUCE
+            $this->userPermissionEnum->COMMODITY_CLASSIFY
         );
         $userId = $user['userId'];
 
@@ -102,7 +102,7 @@ class CommodityClassify extends CI_Constroller
 
         //检查权限
         $user = $this->loginAo->checkMustClient(
-            $this->userPermissionEnum->COMPANY_INTRODUCE
+            $this->userPermissionEnum->COMMODITY_CLASSIFY
         );
         $userId = $user['userId'];
 
@@ -126,7 +126,7 @@ class CommodityClassify extends CI_Constroller
 
         //检查权限
         $user = $this->loginAo->checkMustClient(
-            $this->userPermissionEnum->COMPANY_INTRODUCE
+            $this->userPermissionEnum->COMMODITY_CALSSIFY
         );
         $userId = $user['userId'];
         
