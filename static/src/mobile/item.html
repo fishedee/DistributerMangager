@@ -1,14 +1,36 @@
 <link rel="import" href="header.html?__inline">
-	<title>商品页面</title>
+	<title>鍟嗗搧椤甸潰</title>
 </head>
 <body>
 	<div id="body"></div>
 	<script type="text/javascript">
 		var Footer = require('common/footer/footer.js');
+		var HeaderSearch = require('common/headersearch/headersearch.js');
+		var ShopCart = require('common/shopcart/shopcart.js');
+		var LittleList = require('common/littlelist/littlelist.js');
+
+		var headersearch = new HeaderSearch();
 		var footer = new Footer('item');
-		var Test = require('common/test/test.js');
-		var test = new Test('商品页面，第二期工作');
-		var pageHtml = test.el + footer.el;
+		var shopcart = new ShopCart();
+		var littlelist = new LittleList([
+			{
+				link:'itemlist.html',
+				image:'/data/upload/sample/sample4.jpg',
+				text:'琛ｆ湇',
+			},
+			{
+				link:'itemlist.html',
+				image:'/data/upload/sample/sample5.jpg',
+				text:'闆堕',
+			},
+			{
+				link:'itemlist.html',
+				image:'/data/upload/sample/sample6.jpg',
+				text:'鐢靛櫒',
+			}
+		]);
+		
+		var pageHtml = headersearch.el + littlelist.el+ footer.el + shopcart.el;
 		$.page.start(pageHtml);
 	</script>
 </body>

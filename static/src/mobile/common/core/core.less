@@ -7,24 +7,35 @@
 @background_white: #ffffff;
 @background_light_grey:rgb(220,220,220);
 @background_grey:rgb(160,160,160);
+@background_green:rgb(92,184,24);
 /*线条颜色变量*/
 @line_grey:rgb(220,220,220);
+@line_deep_grey:rgb(200,200,200);
 /*字体颜色常量*/
 @font_grey:rgb(160,160,160);
 @font_deep_grey:rgb(120,120,120);
 @font_red: #ca191d;
 @font_white: #ffffff;
 @font_brown:rgb(148,137,137);
+@font_green:rgb(92,184,24);
+@font_black:rgb(0,0,0);
 /*字体大小常量*/
 @font_h1:18px;
 @font_h2:16px;
 @font_h3:14px;
+@font_h4:14px;
 @font_p:14px;
+/*层级大小*/
+@level_normal:1;
+@level_header:4;
+@level_footer:4;
+@level_dialog:8;
 /*全局css*/
 *{
 	margin:0px;
 	padding:0px;
 	border:0px;
+	border-radius:0px;
 	text-decoration:none;
 	list-style: none; 
 	background:transparent;
@@ -38,6 +49,9 @@
 	-webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 #body{
+}
+.body_grey{
+	background:@background_light_grey;	
 }
 /*float布局的常用css*/
 .common_global_row{

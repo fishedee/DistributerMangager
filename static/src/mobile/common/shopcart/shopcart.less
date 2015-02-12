@@ -1,0 +1,30 @@
+@import (reference) '../core/core.less';
+#common_shopcart{
+	position:fixed;
+	right:20px;
+	bottom:70px;
+
+	.icon{
+		&:extend(.common_global_row);
+		display:block;
+		width:60px;
+		height:60px;
+		border-radius:50%;
+		background-color:@background_green;
+		background-image:url(shopcart.png);
+		background-size:50px 50px;
+		background-position:3px center;
+		background-repeat:no-repeat;
+	}
+
+	.text{
+		&:extend(.common_global_row);
+		display:block;
+		margin-top:17px;
+		width:60px;
+		text-align:center;
+		font-size:@font_h2;
+		color:@font_green;
+	}
+	
+}

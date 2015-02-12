@@ -1,0 +1,105 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>烘焙帮后台管理系统</title>
+	<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+</head>
+<body class="definewidth m10">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		var allClassify = {};
+		function getAllParentClassify(next){
+			$.get('/commodityclassify/search',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				allClassify[0] = '无';
+				for( var i in data.data.data ){
+					allClassify[data.data.data[i].shopCommodityClassifyId] = data.data.data[i].name;
+				}
+				console.log(allClassify);
+				next();
+			});
+		}
+		function go(){
+			query.simpleQuery({
+				id:'container',
+				url:'/commodityclassify/search',
+				column:[
+					{id:'shopCommodityClassifyId',type:'text',name:'分类ID'},
+					{id:'title',type:'text',name:'名字'},
+					{id:'parent',type:'enum',name:'上级分类',map:allClassify},
+					{id:'remark',type:'text',name:'备注'},
+					{id:'createTime',type:'text',name:'创建时间'},
+					{id:'modifyTime',type:'text',name:'修改时间'},
+				],
+				queryColumn:['title','remark'],
+				operate:[
+				{
+					name:'上移',
+					click:function(data){
+						$.post('/commodityclassify/moveUp',{shopCommodityClassifyId:data.shopCommodityClassifyId},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							location.href = 'index.html';
+						});
+					}
+				},
+				{
+					name:'下移',
+					click:function(data){
+						$.post('/commodityclassify/moveDown',{shopCommodityClassifyId:data.shopCommodityClassifyId},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							location.href = 'index.html';
+						});
+					}
+				},
+				{
+					name:'编辑',
+					click:function(data){
+						location.href = 'view.html?shopCommodityClassifyId='+data.shopCommodityClassifyId;
+					}
+				},
+				{
+					name:'删除',
+					click:function(data){
+						dialog.confirm('确认删除该分类，不可回退操作？!',function(){
+							$.post('/commodityclassify/del',{shopCommodityClassifyId:data.shopCommodityClassifyId},function(data){
+								data = $.JSON.parse(data);
+								if( data.code != 0 ){
+									dialog.message(data.msg);
+									return;
+								}
+								location.href = 'index.html';
+							});
+						});
+					}
+				}],
+				button:[
+				{
+					name:'添加分类',
+					click:function(){
+						location.href = 'view.html';
+					}
+				}
+				],
+			});
+		}
+		getAllParentClassify(go);
+	</script>
+ </body>
+</html>

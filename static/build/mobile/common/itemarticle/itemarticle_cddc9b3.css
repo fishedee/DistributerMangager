@@ -1,0 +1,10 @@
+#common_itemarticle {
+  overflow: hidden;
+  zoom: 1;
+}
+#common_itemarticle .content {
+  margin-top: 16px;
+  padding-left: 12px;
+  padding-right: 12px;
+  padding-bottom: 16px;
+}

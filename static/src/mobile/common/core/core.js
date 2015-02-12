@@ -71,9 +71,33 @@ $.ajax = function(opt){
 	function ready(fun){
 		readyFun.push(fun);
 	}
+	function append(html){
+		body.append(html);
+	}
+	function setGrey(){
+		$('body').addClass('body_grey');
+	}
 	$.page = {
 		start:start,
-		ready:ready
+		append:append,
+		ready:ready,
+		setGrey:setGrey
 	};
 }());
+//函数空间
+(function(){
+	window.funcArray = {};
+	function invoke(fun){
+		var funcUniqueId = _.uniqueId('func_');
+		window.funcArray[funcUniqueId] = fun;
+		return "window.funcArray['"+funcUniqueId+"'](this)";
+	}
+	function clear(){
+		window.funcArray = {};
+	}
+	$.func = {
+		invoke:invoke,
+		clear:clear
+	};
+})();
 module.exports = $;

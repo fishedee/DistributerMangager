@@ -1,0 +1,72 @@
+@import (reference) '../core/core.less';
+.common_itembrief{
+	&:extend(.common_global_row);
+	background:@background_white;
+	padding-top:10px;
+	padding-left:10px;
+	padding-right:10px;
+	padding-bottom:10px;
+
+	.img{
+		&:extend(.common_global_leftcol);
+		width:128px;
+		height:128px;
+		margin-right:10px;
+
+		img{
+			width:100%;
+			height:100%;
+		}
+	}
+
+	.info{
+		&:extend(.common_global_row);
+
+		h1{
+			&:extend(.common_global_row);
+			margin-top:10px;
+			font-size:@font_h1;
+			color:@font_black;
+		}
+
+		p{
+			&:extend(.common_global_row);
+			margin-top:5px;
+			font-size:@font_p;
+			line-height:@font_p+5;
+			color:@font_red;
+		}
+
+		.price{
+			&:extend(.common_global_row);
+			margin-top:5px;
+			font-size:@font_p;
+			color:@font_black;
+
+			.current{
+				font-weight:bold;
+				font-size:@font_p;
+				color:@font_red;
+			}
+
+			.old{
+				margin-left:20px;
+				font-size:@font_h4;
+				color:@font_black;
+				text-decoration:line-through;
+			}
+		}
+
+		.stock{
+			&:extend(.common_global_row);
+			margin-top:5px;
+			font-size:@font_p;
+			color:@font_black;
+
+			.current{
+				font-size:@font_p;
+				color:@font_black;
+			}
+		}
+	}
+}

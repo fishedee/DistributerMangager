@@ -184,6 +184,9 @@ insert into t_company_template(title,url,remark)values
 ('metro风格','/data/upload/template/sample1',''),
 ('简约风格(测试用)','/data/upload/template/sample2','');
 
+insert into t_user_company_template(userId,companyTemplateId)values
+(10003,10001);
+
 insert into t_user_company_classify(userId,title,icon,sort,remark)values
 (10003,'行业新闻','/data/upload/sample/earth.png',1,''),
 (10003,'公司文化','/data/upload/sample/cup.png',2,''),
@@ -207,6 +210,7 @@ select * from t_user;
 select * from t_user_permission;
 select * from t_user_client;
 select * from t_company_template;
+select * from t_user_company_template;
 select * from t_user_company_template;
 select * from t_user_company_classify;
 select * from t_user_company_article;

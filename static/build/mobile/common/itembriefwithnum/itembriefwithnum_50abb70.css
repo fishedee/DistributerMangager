@@ -1,0 +1,35 @@
+.common_itembriefwithnum .quantity {
+  text-align: center;
+}
+.common_itembriefwithnum .quantity .tip1,
+.common_itembriefwithnum .quantity .tip2 {
+  font-size: 16px;
+  color: #000000;
+}
+.common_itembriefwithnum .quantity .decrease,
+.common_itembriefwithnum .quantity .increase {
+  display: inline-block;
+  background: #dcdcdc;
+  font-size: 18px;
+  line-height: 25px;
+  text-align: center;
+  width: 25px;
+  height: 25px;
+  border: 1px solid #dcdcdc;
+}
+.common_itembriefwithnum .quantity .decrease {
+  color: #a0a0a0;
+}
+.common_itembriefwithnum .quantity .increase {
+  color: #ca191d;
+}
+.common_itembriefwithnum .quantity input {
+  width: 50px;
+  height: 25px;
+  font-size: 16px;
+  line-height: 25px;
+  text-align: center;
+  vertical-align: bottom;
+  border-top: 1px solid #dcdcdc;
+  border-bottom: 1px solid #dcdcdc;
+}
