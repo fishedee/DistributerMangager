@@ -1,5 +1,5 @@
 /*
-*@requrie dialog.less
+*@require dialog.less
 */
 var $ = require('/fishstrap/core/global.js');
 var body = $('#body');
@@ -12,8 +12,15 @@ function loadingBegin(){
 function loadingEnd(){
 	loadingDiv.remove();
 }
-function message(data){
-	alert(data);
+function message(text,next){
+	alert(text);
+	if( next )
+		next();
+}
+function confirm(text,next){
+	var result = window.confirm(text); 
+	if( result )
+		next();
 }
 module.exports = {
 	loadingBegin:loadingBegin,

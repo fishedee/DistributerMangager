@@ -1,0 +1,13 @@
+@import (reference) '../core/core.less';
+.common_biglist{
+	&:extend(.common_global_row);
+	background:@background_light_grey;
+	padding-bottom:@section_margin;
+	padding-left:@body_left;
+	padding-right:@body_right;
+
+	li{
+		&:extend(.common_global_row);
+		margin-top:@section_margin;
+	}
+}

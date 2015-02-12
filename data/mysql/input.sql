@@ -43,7 +43,7 @@ create table t_address(
     createTime timestamp not null default CURRENT_TIMESTAMP,
     modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
     primary key(addressId)
-)engine=innode default charset=utf8mb4 auto_increment = 10001;
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
 
 #创建用户权限表
 create table t_user_permission(
@@ -166,8 +166,9 @@ create table t_shop_commodity(
     introduction varchar(128) not null,
     price integer not null,
     detail varchar(128) not null,
-    inventory integer not null
-)engine=innode default charset=utf8mb4 auto_increment = 1000001;
+    inventory integer not null,
+    primary key(commodityId)
+)engine=innodb default charset=utf8mb4 auto_increment = 100001;
 
 
 #建立初始数据
@@ -182,6 +183,9 @@ insert into t_user_permission(userId,permissionId)values
 insert into t_company_template(title,url,remark)values
 ('metro风格','/data/upload/template/sample1',''),
 ('简约风格(测试用)','/data/upload/template/sample2','');
+
+insert into t_user_company_template(userId,companyTemplateId)values
+(10003,10001);
 
 insert into t_user_company_classify(userId,title,icon,sort,remark)values
 (10003,'行业新闻','/data/upload/sample/earth.png',1,''),
@@ -206,6 +210,7 @@ select * from t_user;
 select * from t_user_permission;
 select * from t_user_client;
 select * from t_company_template;
+select * from t_user_company_template;
 select * from t_user_company_template;
 select * from t_user_company_classify;
 select * from t_user_company_article;

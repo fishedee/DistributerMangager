@@ -1,0 +1,29 @@
+#common_shopcart .icon,
+#common_shopcart .text {
+  overflow: hidden;
+  zoom: 1;
+}
+#common_shopcart {
+  position: fixed;
+  right: 20px;
+  bottom: 70px;
+}
+#common_shopcart .icon {
+  display: block;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #5cb818;
+  background-image: url(/mobile/common/shopcart/shopcart_7fea690.png);
+  background-size: 50px 50px;
+  background-position: 3px center;
+  background-repeat: no-repeat;
+}
+#common_shopcart .text {
+  display: block;
+  margin-top: 17px;
+  width: 60px;
+  text-align: center;
+  font-size: 16px;
+  color: #5cb818;
+}

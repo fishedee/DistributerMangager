@@ -1,0 +1,58 @@
+@import (reference) '../core/core.less';
+#common_itemdialog{
+	&:extend(.common_global_fixfull);
+	with:100%;
+	height:100%;
+	background:rgba(0,0,0,0.9);
+	padding-bottom:10px;
+	z-index:@level_dialog;
+
+	.dialog{
+		&:extend(.common_global_fixbottom);
+		background:@background_white;
+		.cacnelClick{
+			&:extend(.common_global_row);
+			text-align:right;
+			font-size:30px;
+			line-height:30px;
+			color:@font_black;
+			padding-top:5x;
+			padding-right:10px;
+		}
+
+		.confirmClik{
+			&:extend(.common_global_row);
+			text-align:center;
+			width:70%;
+			height:40px;
+			margin:0px auto;
+			margin-top:20px;
+			margin-bottom:10px;
+			border-radius:10px;
+
+			span{
+				font-size:@font_h1;
+				color:@font_white;
+				line-height:40px;
+				padding-left:30px;
+				background-position:left conter;
+				background-size:20px 20px;
+				background-repeat:no-repeat;
+			}
+			&.buy{
+				background-color:@background_red;
+				span{
+					background-image:url(buy.png);
+				}
+			}
+
+			&.cart{
+				background-color:@background_green;
+				span{
+					background-image:url(cart.png);
+				}
+			}
+		}
+
+	}
+}

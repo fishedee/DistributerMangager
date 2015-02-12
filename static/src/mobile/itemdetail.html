@@ -1,0 +1,85 @@
+<link rel="import" href="header.html?__inline">
+	<title>商品详情页面</title>
+</head>
+<body>
+	<div id="body"></div>
+	<script type="text/javascript">
+		var Header = require('common/header/header.js');
+		var ShopCart = require('common/shopcart/shopcart.js');
+		var ItemArticle = require('common/itemarticle/itemarticle.js');
+		var FooterButton = require('common/footerbutton/footerbutton.js');
+		var ItemDialog = require('common/itemdialog/itemdialog.js');
+		function showBuyDialog(){
+			var dialog = new ItemDialog({
+				image:'/data/upload/sample/sample4.jpg',
+				title:'零食1',
+				summary:'简介简介简介简介简介简介简介简介简介简介简介简介',
+				price:'99900',
+				oldprice:'433000',
+				stock:'40',
+				confirmName:'buy',
+				confirmText:'立即购买',
+				confirmClick:function(data){
+					location.href = 'shopcart.html';
+				}
+			}).el;
+			$.page.append(dialog);
+		}
+		function showCartDialog(){
+			var dialog = new ItemDialog({
+				image:'/data/upload/sample/sample4.jpg',
+				title:'零食1',
+				summary:'简介简介简介简介简介简介简介简介简介简介简介简介',
+				price:'99900',
+				oldprice:'433000',
+				stock:'40',
+				confirmName:'cart',
+				confirmText:'加入购物车',
+				confirmClick:function(data){
+					alert('加入'+data+'件商品到购物车成功');
+				}
+			}).el;
+			$.page.append(dialog);
+		}
+		function go(){
+			var header = new Header({
+				title:'零食1',
+				backLink:'itemlist.html',
+				button:[{
+					name:'search',
+					link:'search.html'
+				}]
+			});
+			var shopcart = new ShopCart();
+			var itemarticle = new ItemArticle({
+				image:'/data/upload/sample/sample4.jpg',
+				title:'零食1',
+				summary:'简介简介简介简介简介简介简介简介简介简介简介简介',
+				price:'99900',
+				oldprice:'433000',
+				stock:'40',
+				content:'<p>Hello World</p>',
+			});
+			var footerbutton = new FooterButton([
+				{
+					name:'buy',
+					text:'立即购买',
+					click:function(){
+						showBuyDialog();
+					}
+				},
+				{
+					name:'cart',
+					text:'加入购物车',
+					click:function(){
+						showCartDialog();
+					}
+				}
+			]);
+			var pageHtml = header.el + itemarticle.el + footerbutton.el + shopcart.el;
+			$.page.start(pageHtml);
+		}
+		go();
+	</script>
+</body>
+<link rel="import" href="footer.html?__inline">
