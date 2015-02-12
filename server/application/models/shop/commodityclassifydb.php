@@ -41,7 +41,7 @@ class CommodityClassifyDb extends CI_Model
         $this->db->where("shopCommodityClassifyId", $shopCommodityClassifyId);
         $query = $this->db->get($this->tableName)->result_array();
         if( count($query) == 0)
-            throw new CI_MyException('不存在此商品分类');
+            throw new CI_MyException(1, '不存在此商品分类');
         return $query[0];
     }
 

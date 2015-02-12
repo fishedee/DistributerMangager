@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Commodity extends CI_Constroller 
+class Commodity extends CI_Controller 
 {
     public function __construct(){
         parent::__construct();
@@ -49,10 +49,11 @@ class Commodity extends CI_Constroller
     public function get(){
         //检查输入参数
         $data = $this->argv->checkGet(array(
-            array('commodityId', 'require'),
+            array('shopCommodityId', 'require'),
         ));
 
-        return $this->commodityAo->get($data);
+        $shopCommodityId = $data['shopCommodityId'];
+        return $this->commodityAo->get($shopCommodityId);
     }
 
 	/**
@@ -61,7 +62,7 @@ class Commodity extends CI_Constroller
     public function add(){
         //检查输入参数
         $data = $this->argv->checkPost(array(
-            array('commodityClassifyId', 'require'),
+            array('shopCommodityClassifyId', 'require'),
             array('title', 'require'),
             array('introduction', 'require'),
             array('detail', 'require'),
@@ -85,18 +86,18 @@ class Commodity extends CI_Constroller
 	*/
     public function del(){
         $data = $this->argv->checkPost(array(
-            array('commodityId', 'require')   
+            array('shopCommodityId', 'require')   
         ));
-        $commodityId = $data['commodityId'];
+        $shopCommodityId = $data['shopCommodityId'];
 
         //检查权限
         $user = $this->loginAo->checkMustClient(
-            $this->userPermission->COMMODITY_MANAGE
+            $this->userPermissionEnum->COMMODITY_MANAGE
         );
         $userId = $user['userId'];
 
         //执行业务逻辑
-        $this->commodityAo->del($userId, $commodityID);
+        $this->commodityAo->del($userId, $shopCommodityId);
     }
     
 	/**
@@ -105,9 +106,9 @@ class Commodity extends CI_Constroller
     public function mod(){
         //检查输入参数
         $data = $this->argv->checkPost(array(
-            array('commodityId', 'require')
+            array('shopCommodityId', 'require')
         ));
-        $commodityId = $data['commodityId'];
+        $commodityId = $data['shopCommodityId'];
 
         $data = $this->argv->checkPost(array(
             array('shopCommodityClassifyId', 'require'),
@@ -121,12 +122,55 @@ class Commodity extends CI_Constroller
 
         //检查权限
         $user = $this->loginAo->checkMustClient(
-            $this->userPermissionEnum->COMMODITY_MANANGE
+            $this->userPermissionEnum->COMMODITY_MANAGE
         );
         $userId = $user['userId'];
 
         //执行业务逻辑
         $this->commodityAo->mod($userId, $commodityId, $data);
+    }
+
+
+    /**
+    * @view json
+    */
+    public function moveUp()
+    {
+        //检查输入参数
+        $data = $this->argv->checkPost(array(
+            array('shopCommodityId','require'),
+        ));
+        $shopCommodityId = $data['shopCommodityId'];
+        
+        //检查权限
+        $user = $this->loginAo->checkMustClient(
+            $this->userPermissionEnum->COMMODITY_MANAGE
+        );
+        $userId = $user['userId'];
+        
+        //执行业务逻辑
+        $this->commodityAo->move($userId,$shopCommodityId,'up');
+    }
+    
+    /**
+    * @view json
+    */
+    public function moveDown()
+    {
+        //检查输入参数
+        $data = $this->argv->checkPost(array(
+            array('shopCommodityId','require'),
+        ));
+        $shopCommodityId = $data['shopCommodityId'];
+        
+        //检查权限
+        $user = $this->loginAo->checkMustClient(
+            $this->userPermissionEnum->COMMODITY_MANAGE
+        );
+        $userId = $user['userId'];
+        
+        //执行业务逻辑
+        $this->commodityAo->move($userId,$shopCommodityId,'down');
     }
 }
 
