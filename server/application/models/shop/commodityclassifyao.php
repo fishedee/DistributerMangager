@@ -30,7 +30,8 @@ class CommodityClassifyAO extends CI_Model {
         );
 
         $query = $this->commodityClassifyDb->search($classify['userId'],
-            $dataWhere, array())
+            $dataWhere, array());
+
         $childrenClassify = $query["data"];
         foreach( $childrenClassify as $key=>$value){
             $classifyId = $value['shopCommodityClassifyId'];
@@ -64,7 +65,9 @@ class CommodityClassifyAO extends CI_Model {
         if($classify['userId'] != $userId)
             throw new CI_MyException(1, '非本商城用户无此权限操作');
 
-        $ChildrenClassify = $this->commodityClassifyDb->search($userId, array("parent"=>shopCommodityClassifyId), array());
+        $dataWhere = array('parent'=>$shopCommodityClassifyId);
+
+        $ChildrenClassify = $this->commodityClassifyDb->search($dataWhere, array());
         $count = $ChildrenClassify['count'];
         if($count != 0 && $data['parent'] != 0)
             throw new CI_MyException(1, '当前分类有子分类，不能成为二级目录');

@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class CommodityClassify extends CI_Constroller
+class CommodityClassify extends CI_Controller
 {
     public function __construct(){
         parent::__construct();
@@ -8,7 +8,7 @@ class CommodityClassify extends CI_Constroller
         $this->load->model('user/loginAo', 'loginAo');
         $this->load->model('user/userPermissionEnum', 'userPermissionEnum');
         $this->load->model('shop/commodityClassifyAo', 'commodityClassifyAo');
-        $this->load->model('argv', 'argv');
+        $this->load->library('argv', 'argv');
     }
     
     /**
@@ -44,8 +44,8 @@ class CommodityClassify extends CI_Constroller
         $data = $this->argv->checkGet(array(
             array('userId', 'require')
         ));
-        $dataWhere = $this->argv-checkGet(array(
-            array('parent'), 'require')
+        $dataWhere = $this->argv->checkGet(array(
+            array('parent', 'require')
         ));
 
         $userId = $data['userId'];
@@ -63,10 +63,10 @@ class CommodityClassify extends CI_Constroller
         $data = $this->argv->checkGet(array(
             array('shopCommodityClassifyId', 'require')
         ));
-        $shopCommodityClassifyid = $data['shopCommodityClassifyId'];
+        $shopCommodityClassifyId = $data['shopCommodityClassifyId'];
 
         //执行业务逻辑
-        return $this->companyClassifyAo->get($shopCommodityClassifyId);
+        return $this->commodityClassifyAo->get($shopCommodityClassifyId);
     }
 
 	/**
@@ -121,12 +121,11 @@ class CommodityClassify extends CI_Constroller
             array('title', 'require'),
             array('icon', 'require'),
             array('parent', 'require'),
-            array('remark', 'require')
         ));
 
         //检查权限
         $user = $this->loginAo->checkMustClient(
-            $this->userPermissionEnum->COMMODITY_CALSSIFY
+            $this->userPermissionEnum->COMMODITY_CLASSIFY
         );
         $userId = $user['userId'];
         
@@ -138,17 +137,4 @@ class CommodityClassify extends CI_Constroller
 /* End of file commodity_classify.php */
 /* location ./application/controllers/commodity_classify.php */
 
-
-
-
-
-
-
-
-
-
-
-
-
-}
 
