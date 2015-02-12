@@ -43,7 +43,7 @@ create table t_address(
     createTime timestamp not null default CURRENT_TIMESTAMP,
     modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
     primary key(addressId)
-)engine=innode default charset=utf8mb4 auto_increment = 10001;
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
 
 #创建用户权限表
 create table t_user_permission(
@@ -166,8 +166,9 @@ create table t_shop_commodity(
     introduction varchar(128) not null,
     price integer not null,
     detail varchar(128) not null,
-    inventory integer not null
-)engine=innode default charset=utf8mb4 auto_increment = 1000001;
+    inventory integer not null,
+    primary key(commodityId)
+)engine=innodb default charset=utf8mb4 auto_increment = 100001;
 
 
 #建立初始数据
