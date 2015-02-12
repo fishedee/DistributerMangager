@@ -7,8 +7,7 @@ class CommodityAO extends CI_Model
         $this->load->model('shop/CommodityDb', 'commodityDb');
     }
 
-    public function search($userId, $dataWhere, $dataLimit){
-        $dataWhere['userId'] = $userId;
+    public function search($dataWhere, $dataLimit){
         return $this->commodityDb->search($dataWhere, $dataLimit);
     }
 
@@ -27,6 +26,7 @@ class CommodityAO extends CI_Model
 
     public function add($userId, $data){
         $maxSort = $this->commodityDb->getMaxSortByUser($userId);
+
         $data['userId'] = $userId;
         if($maxSort == null)
             $data['sort'] = 1;
