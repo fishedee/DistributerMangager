@@ -1,0 +1,41 @@
+.common_numchooser {
+  text-align: center;
+  margin-top: 5px;
+}
+.common_numchooser .tip1,
+.common_numchooser .tip2 {
+  font-size: 16px;
+  color: #000000;
+}
+.common_numchooser .decrease,
+.common_numchooser .increase {
+  display: inline-block;
+  background: #dcdcdc;
+  font-size: 18px;
+  line-height: 30px;
+  text-align: center;
+  vertical-align: middle;
+  width: 30px;
+  height: 30px;
+  border: 1px solid #dcdcdc;
+}
+.common_numchooser .increase {
+  line-height: 28px;
+}
+.common_numchooser .decrease {
+  color: #a0a0a0;
+}
+.common_numchooser .increase {
+  color: #ca191d;
+}
+.common_numchooser input {
+  color: #ca191d;
+  width: 30px;
+  height: 30px;
+  font-size: 16px;
+  line-height: 30px;
+  text-align: center;
+  vertical-align: bottom;
+  border-top: 1px solid #dcdcdc;
+  border-bottom: 1px solid #dcdcdc;
+}

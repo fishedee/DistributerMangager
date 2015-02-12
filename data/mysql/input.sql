@@ -29,6 +29,25 @@ create table t_user(
 
 alter table t_user add index nameIndex(name,password);
 
+#创建客户表
+create table t_client(
+	clientId integer not null auto_increment,
+	name varchar(128) not null,
+	gender integer not null,
+	image varchar(128) not null,
+	openId varchar(128) not null,
+	district varchar(128) not null,
+	mail varchar(128) not null,
+	sign varchar(2056) not null,
+	year integer not null,
+	type integer not null,
+	createTime timestamp not null default CURRENT_TIMESTAMP,
+	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
+	primary key( clientId )
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+
+alter table t_client add index openIdIndex(openId);
+
 #创建地址表
 create table t_address(
     addressId integer not null auto_increment,
@@ -152,7 +171,7 @@ create table t_shop_commodity_classify(
     createTime timestamp not null default CURRENT_TIMESTAMP,
     modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
     primary key( shopCommodityClassifyId )
-)engine=innodb default charset=utf8mb4 auto_increment = 100001;
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
 
 alter table t_shop_commodity_classify add index userIdIndex(userId);
 
@@ -168,7 +187,7 @@ create table t_shop_commodity(
     detail varchar(128) not null,
     inventory integer not null,
     primary key(commodityId)
-)engine=innodb default charset=utf8mb4 auto_increment = 100001;
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
 
 
 #建立初始数据
@@ -178,7 +197,8 @@ insert into t_user(userId,name,password,company,phone,type) values
 (10003,"fish_client","$2y$10$xKsYkwOJFQo2Ack68DqZuebTX99IgHL0lYBKmpwQpkxqzhJbKYgMG",'烘焙帮信息科技有限公司','15018749403',3);
 
 insert into t_user_permission(userId,permissionId)values
-(10003,1);
+(10003,1),
+(10003,2);
 
 insert into t_company_template(title,url,remark)values
 ('metro风格','/data/upload/template/sample1',''),
@@ -205,6 +225,11 @@ insert into t_user_company_banner(userId,image,title,url,sort)values
 (10003,'/data/upload/sample/sample2.jpg','广告2','http://www.qq.com',2),
 (10003,'/data/upload/sample/sample3.jpg','广告3','http://www.sina.com',2);
 
+insert into t_shop_commodity_classify(userId,title,icon,parent,sort,remark)values
+(10003,'分类1','/data/upload/sample/sample1.jpg',0,1,''),
+(10003,'分类2','/data/upload/sample/sample2.jpg',0,2,''),
+(10003,'分类3','/data/upload/sample/sample3.jpg',0,3,'');
+
 #显示初始数据
 select * from t_user;
 select * from t_user_permission;
@@ -215,3 +240,4 @@ select * from t_user_company_template;
 select * from t_user_company_classify;
 select * from t_user_company_article;
 select * from t_user_company_banner;
+select * from t_shop_commodity_classify;
