@@ -135,7 +135,7 @@ class CommodityClassify extends CI_Controller
         $this->commodityClassifyAo->mod($userId, $shopCommodityClassifyId, $data);
     }
 
-        /**
+    /**
     * @view json
     */
     public function moveUp()
