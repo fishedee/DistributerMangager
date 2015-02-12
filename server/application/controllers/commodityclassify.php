@@ -44,8 +44,9 @@ class CommodityClassify extends CI_Constroller
         $data = $this->argv->checkGet(array(
             array('userId', 'require')
         ));
+
         $dataWhere = $this->argv-checkGet(array(
-            array('parent'), 'require')
+            array('parent', 'require')
         ));
 
         $userId = $data['userId'];
