@@ -46,8 +46,8 @@
 					return;
 				}
 				allParentClassify[0] = '无';
-				for( var i in data.data ){
-					allParentClassify[data.data[i].shopCommodityClassifyId] = data.data[i].name;
+				for( var i in data.data.data ){
+					allParentClassify[data.data.data[i].shopCommodityClassifyId] = data.data.data[i].title;
 				}
 				next();
 			});

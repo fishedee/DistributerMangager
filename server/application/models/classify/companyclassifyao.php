@@ -62,7 +62,7 @@ class CompanyClassifyAo extends CI_Model {
 				break;
 			}
 		}
-		if( $index === false )
+		if( $index == -1 )
 			throw new CI_MyException(1,'不存在此分类');
 		$currentClassify = $allClassify[$index];
 		
