@@ -4,10 +4,17 @@ define('mobile/common/itemdialog/itemdialog.js', function(require, exports, modu
 *@require mobile/common/itemdialog/itemdialog.less
 */
 var $ = require('mobile/common/core/core.js');
-var ItemBriefWithNum = require('mobile/common/itembriefwithnum/itembriefwithnum.js');
+var ItemBrief = require('mobile/common/itembrief/itembrief.js');
+var NumChooser = require('mobile/common/numchooser/numchooser.js');
 function itemdialog(args){
-	var itembriefwithnum = new ItemBriefWithNum($.extend({quantity:1},args));
-	args.itembriefwithnum = itembriefwithnum.el;
+	var itembrief = new ItemBrief(args);
+	var numchooser = new NumChooser({
+		tip1:'请选择数量：',
+		quantity:1,
+		tip2:'件',
+	});
+	args.itembrief = itembrief.el;
+	args.numchooser = numchooser.el;
 	args.cancelClick = function(){
 		var target = $('#common_itemdialog');
 		target.remove();
@@ -15,7 +22,7 @@ function itemdialog(args){
 	var tempConfirmClick = args.confirmClick;
 	args.confirmClick = function(){
 		var target = $('#common_itemdialog');
-		var value = itembriefwithnum.get();
+		var value = numchooser.get();
 		target.remove();
 		tempConfirmClick(value);
 	}
@@ -25,7 +32,9 @@ with(obj||{}){
 __p+='<div id="common_itemdialog">\n\t<div class="dialog">\n\t\t<div class="cacnelClick" onclick="'+
 ((__t=( $.func.invoke(cancelClick) ))==null?'':_.escape(__t))+
 '">×</div>\n\t\t'+
-((__t=( itembriefwithnum ))==null?'':__t)+
+((__t=( itembrief ))==null?'':__t)+
+'\n\t\t'+
+((__t=( numchooser ))==null?'':__t)+
 '\n\t\t<div class="confirmClik '+
 ((__t=( confirmName ))==null?'':_.escape(__t))+
 '" onclick="'+

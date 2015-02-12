@@ -28,6 +28,9 @@
 #common_itemdialog .dialog {
   background: #ffffff;
 }
+#common_itemdialog .dialog > .common_numchooser {
+  margin-top: 20px;
+}
 #common_itemdialog .dialog .cacnelClick {
   text-align: right;
   font-size: 30px;

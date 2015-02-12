@@ -921,7 +921,7 @@
             "type": "js"
         },
         "mobile/common/itembrief/itembrief.js": {
-            "uri": "/mobile/common/itembrief/itembrief_15783bd.js",
+            "uri": "/mobile/common/itembrief/itembrief_a32a864.js",
             "type": "js",
             "deps": [
                 "mobile/common/core/core.js",
@@ -935,45 +935,27 @@
             "id": "mobile/common/itembrief/itembrief.less"
         },
         "mobile/common/itembrief/itembriefTpl.tpl": {
-            "uri": "/mobile/common/itembrief/itembriefTpl_09cf577.js",
-            "type": "js"
-        },
-        "mobile/common/itembriefwithnum/itembriefwithnum.js": {
-            "uri": "/mobile/common/itembriefwithnum/itembriefwithnum_aba913c.js",
-            "type": "js",
-            "deps": [
-                "mobile/common/itembriefwithnum/itembriefwithnum.less",
-                "mobile/common/core/core.js",
-                "mobile/common/itembrief/itembrief.js"
-            ],
-            "id": "mobile/common/itembriefwithnum/itembriefwithnum.js"
-        },
-        "mobile/common/itembriefwithnum/itembriefwithnum.less": {
-            "uri": "/mobile/common/itembriefwithnum/itembriefwithnum_cb06031.css",
-            "type": "css",
-            "id": "mobile/common/itembriefwithnum/itembriefwithnum.less"
-        },
-        "mobile/common/itembriefwithnum/itembriefwithnumTpl.tpl": {
-            "uri": "/mobile/common/itembriefwithnum/itembriefwithnumTpl_ddf8245.js",
+            "uri": "/mobile/common/itembrief/itembriefTpl_1bf6278.js",
             "type": "js"
         },
         "mobile/common/itemdialog/itemdialog.js": {
-            "uri": "/mobile/common/itemdialog/itemdialog_913f126.js",
+            "uri": "/mobile/common/itemdialog/itemdialog_b336c91.js",
             "type": "js",
             "deps": [
                 "mobile/common/itemdialog/itemdialog.less",
                 "mobile/common/core/core.js",
-                "mobile/common/itembriefwithnum/itembriefwithnum.js"
+                "mobile/common/itembrief/itembrief.js",
+                "mobile/common/numchooser/numchooser.js"
             ],
             "id": "mobile/common/itemdialog/itemdialog.js"
         },
         "mobile/common/itemdialog/itemdialog.less": {
-            "uri": "/mobile/common/itemdialog/itemdialog_edf9e32.css",
+            "uri": "/mobile/common/itemdialog/itemdialog_c3c938c.css",
             "type": "css",
             "id": "mobile/common/itemdialog/itemdialog.less"
         },
         "mobile/common/itemdialog/itemdialogTpl.tpl": {
-            "uri": "/mobile/common/itemdialog/itemdialogTpl_10f256d.js",
+            "uri": "/mobile/common/itemdialog/itemdialogTpl_4552da8.js",
             "type": "js"
         },
         "mobile/common/littlelist/littlelist.js": {
@@ -1010,6 +992,24 @@
         },
         "mobile/common/metro/metroTpl.tpl": {
             "uri": "/mobile/common/metro/metroTpl_be0659f.js",
+            "type": "js"
+        },
+        "mobile/common/numchooser/numchooser.js": {
+            "uri": "/mobile/common/numchooser/numchooser_64970f7.js",
+            "type": "js",
+            "deps": [
+                "mobile/common/numchooser/numchooser.less",
+                "mobile/common/core/core.js"
+            ],
+            "id": "mobile/common/numchooser/numchooser.js"
+        },
+        "mobile/common/numchooser/numchooser.less": {
+            "uri": "/mobile/common/numchooser/numchooser_c64b34c.css",
+            "type": "css",
+            "id": "mobile/common/numchooser/numchooser.less"
+        },
+        "mobile/common/numchooser/numchooserTpl.tpl": {
+            "uri": "/mobile/common/numchooser/numchooserTpl_fb54209.js",
             "type": "js"
         },
         "mobile/common/shopcart/shopcart.js": {

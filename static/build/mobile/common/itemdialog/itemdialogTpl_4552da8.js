@@ -4,7 +4,9 @@ with(obj||{}){
 __p+='<div id="common_itemdialog">\n\t<div class="dialog">\n\t\t<div class="cacnelClick" onclick="'+
 ((__t=( $.func.invoke(cancelClick) ))==null?'':_.escape(__t))+
 '">×</div>\n\t\t'+
-((__t=( itembriefwithnum ))==null?'':__t)+
+((__t=( itembrief ))==null?'':__t)+
+'\n\t\t'+
+((__t=( numchooser ))==null?'':__t)+
 '\n\t\t<div class="confirmClik '+
 ((__t=( confirmName ))==null?'':_.escape(__t))+
 '" onclick="'+

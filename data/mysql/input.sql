@@ -29,6 +29,25 @@ create table t_user(
 
 alter table t_user add index nameIndex(name,password);
 
+#创建客户表
+create table t_client(
+	clientId integer not null auto_increment,
+	name varchar(128) not null,
+	gender integer not null,
+	image varchar(128) not null,
+	openId varchar(128) not null,
+	district varchar(128) not null,
+	mail varchar(128) not null,
+	sign varchar(2056) not null,
+	year integer not null,
+	type integer not null,
+	createTime timestamp not null default CURRENT_TIMESTAMP,
+	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
+	primary key( clientId )
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+
+alter table t_client add index openIdIndex(openId);
+
 #创建地址表
 create table t_address(
     addressId integer not null auto_increment,
