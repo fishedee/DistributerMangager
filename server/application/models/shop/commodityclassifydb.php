@@ -8,7 +8,7 @@ class CommodityClassifyDb extends CI_Model
         parent::__construct();
     }
 
-    public function search($where, limit){
+    public function search($where, $limit){
         foreach( $where as $key=>$value ){
             $this->db->where($key, $value);
         }

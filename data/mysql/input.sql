@@ -29,6 +29,22 @@ create table t_user(
 
 alter table t_user add index nameIndex(name,password);
 
+#创建地址表
+create table t_address(
+    addressId integer not null auto_increment,
+    userId integer not null,
+    name varchar(32) not null,
+    province varchar(32) not null,
+    city varchar(32) not null,
+    district varchar(32) not null,
+    address varchar(128) not null,
+    phone varchar(11) not null,
+    payment integer not null,
+    createTime timestamp not null default CURRENT_TIMESTAMP,
+    modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    primary key(addressId)
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+
 #创建用户权限表
 create table t_user_permission(
 	userPermissionId integer not null auto_increment,
@@ -130,7 +146,6 @@ create table t_shop_commodity_classify(
     userId integer not null,
     title varchar(128) not null,
     icon varchar(128) not null,
-    level integer not null,
     parent integer not null,
     sort integer not null,
     remark varchar(128) not null,
@@ -140,6 +155,20 @@ create table t_shop_commodity_classify(
 )engine=innodb default charset=utf8mb4 auto_increment = 100001;
 
 alter table t_shop_commodity_classify add index userIdIndex(userId);
+
+#创建用户商城商品表
+create table t_shop_commodity(
+    commodityId integer not null auto_increment,
+    userId integer not null,
+    commodityClassifyId integer not null,
+    title varchar(128) not null,
+    icon varchar(128) not null,
+    introduction varchar(128) not null,
+    price integer not null,
+    detail varchar(128) not null,
+    inventory integer not null,
+    primary key(commodityId)
+)engine=innodb default charset=utf8mb4 auto_increment = 100001;
 
 
 #建立初始数据
