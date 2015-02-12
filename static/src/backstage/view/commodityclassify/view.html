@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>烘焙帮后台管理系统</title>
+	<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+</head>
+<body class="definewidth m10">
+	<div id="container">
+	</div>
+	<script type="text/javascript" src="/fishstrap/js/fishstrap.js" charset="utf-8"></script>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var shopCommodityClassifyId = $.location.getQueryArgv('shopCommodityClassifyId');
+		var classify = {};
+		var allParentClassify = {};
+		function getAllParentClassify(next){
+			$.get('/commodityclassify/search',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				allParentClassify[0] = '无';
+				for( var i in data.data ){
+					allParentClassify[data.data[i].shopCommodityClassifyId] = data.data[i].name;
+				}
+				next();
+			});
+		}
+		function getClassify(next){
+			$.get('/commodityclassify/get',{shopCommodityClassifyId:shopCommodityClassifyId},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				classify = data.data;
+				next();
+			});
+		}
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'title',type:'text',name:'名字'},
+					{id:'icon',type:'image',name:'图片',
+						option:{
+							url:'/upload/image',
+							width:640
+						}
+					},
+					{id:'parent',type:'enum',name:'上级分类',map:allParentClassify},
+					{id:'remark',type:'text',name:'备注'},
+					
+				],
+				value:classify,
+				submit:function(data){
+					if( shopCommodityClassifyId != null ){
+						data = $.extend({shopCommodityClassifyId:shopCommodityClassifyId},data);
+						$.post('/commodityclassify/mod',data,function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							location.href = 'index.html';
+						});
+					}else{
+						$.post('/commodityclassify/add',data,function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							location.href = 'index.html';
+						});
+					}
+				},
+				cancel:function(){
+					location.href = 'index.html';
+				}
+			});
+		}
+		getAllParentClassify(function(){
+			if( shopCommodityClassifyId != null ){
+				getClassify(go);
+			}else{
+				go();
+			}
+		});
+	</script>
+ </body>
+</html>

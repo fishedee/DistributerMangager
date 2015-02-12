@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=medium-dpi">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+	<title>商品详情页面</title>
+<link rel="stylesheet" type="text/css" href="/mobile/common/core/core_7a3400d.css">
+<link rel="stylesheet" type="text/css" href="/mobile/common/dialog/dialog_09f6162.css">
+<link rel="stylesheet" type="text/css" href="/mobile/common/header/header_b51a32c.css">
+<link rel="stylesheet" type="text/css" href="/mobile/common/shopcart/shopcart_a6ea491.css">
+<link rel="stylesheet" type="text/css" href="/mobile/common/itembrief/itembrief_bc23208.css">
+<link rel="stylesheet" type="text/css" href="/mobile/common/itemarticle/itemarticle_cf5c6d1.css">
+<link rel="stylesheet" type="text/css" href="/mobile/common/footerbutton/footerbutton_e42fd46.css">
+<link rel="stylesheet" type="text/css" href="/mobile/common/itemdialog/itemdialog_edf9e32.css">
+<link rel="stylesheet" type="text/css" href="/mobile/common/itembriefwithnum/itembriefwithnum_cb06031.css">
+
+<script type="text/javascript" src="/fishstrap/lib/fastclick.js"></script>
+<script type="text/javascript" src="http://apps.bdimg.com/libs/underscore.js/1.7.0/underscore-min.js"></script>
+<script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="/fishstrap/core/global_0ffe271.js"></script>
+<script type="text/javascript" src="/mobile/common/dialog/dialog_97ae9ce.js"></script>
+<script type="text/javascript" src="/mobile/common/core/core_3837556.js"></script>
+<script type="text/javascript" src="/mobile/common/header/header_56f7924.js"></script>
+<script type="text/javascript" src="/mobile/common/shopcart/shopcart_6e67c2f.js"></script>
+<script type="text/javascript" src="/fishstrap/util/uedit_466b933.js"></script>
+<script type="text/javascript" src="/mobile/common/itembrief/itembrief_15783bd.js"></script>
+<script type="text/javascript" src="/mobile/common/itemarticle/itemarticle_560048e.js"></script>
+<script type="text/javascript" src="/mobile/common/footerbutton/footerbutton_8b1ae61.js"></script>
+<script type="text/javascript" src="/mobile/common/itembriefwithnum/itembriefwithnum_aba913c.js"></script>
+<script type="text/javascript" src="/mobile/common/itemdialog/itemdialog_913f126.js"></script>
+
+</head>
+<body>
+	<div id="body"></div>
+	<script type="text/javascript">
+		var Header = require('mobile/common/header/header.js');
+		var ShopCart = require('mobile/common/shopcart/shopcart.js');
+		var ItemArticle = require('mobile/common/itemarticle/itemarticle.js');
+		var FooterButton = require('mobile/common/footerbutton/footerbutton.js');
+		var ItemDialog = require('mobile/common/itemdialog/itemdialog.js');
+		function showBuyDialog(){
+			var dialog = new ItemDialog({
+				image:'/data/upload/sample/sample4.jpg',
+				title:'零食1',
+				summary:'简介简介简介简介简介简介简介简介简介简介简介简介',
+				price:'99900',
+				oldprice:'433000',
+				stock:'40',
+				confirmName:'buy',
+				confirmText:'立即购买',
+				confirmClick:function(data){
+					location.href = 'shopcart.html';
+				}
+			}).el;
+			$.page.append(dialog);
+		}
+		function showCartDialog(){
+			var dialog = new ItemDialog({
+				image:'/data/upload/sample/sample4.jpg',
+				title:'零食1',
+				summary:'简介简介简介简介简介简介简介简介简介简介简介简介',
+				price:'99900',
+				oldprice:'433000',
+				stock:'40',
+				confirmName:'cart',
+				confirmText:'加入购物车',
+				confirmClick:function(data){
+					alert('加入'+data+'件商品到购物车成功');
+				}
+			}).el;
+			$.page.append(dialog);
+		}
+		function go(){
+			var header = new Header({
+				title:'零食1',
+				backLink:'itemlist.html',
+				button:[{
+					name:'search',
+					link:'search.html'
+				}]
+			});
+			var shopcart = new ShopCart();
+			var itemarticle = new ItemArticle({
+				image:'/data/upload/sample/sample4.jpg',
+				title:'零食1',
+				summary:'简介简介简介简介简介简介简介简介简介简介简介简介',
+				price:'99900',
+				oldprice:'433000',
+				stock:'40',
+				content:'<p>Hello World</p>',
+			});
+			var footerbutton = new FooterButton([
+				{
+					name:'buy',
+					text:'立即购买',
+					click:function(){
+						showBuyDialog();
+					}
+				},
+				{
+					name:'cart',
+					text:'加入购物车',
+					click:function(){
+						showCartDialog();
+					}
+				}
+			]);
+			var pageHtml = header.el + itemarticle.el + footerbutton.el + shopcart.el;
+			$.page.start(pageHtml);
+		}
+		go();
+	</script>
+</body>
+</html>

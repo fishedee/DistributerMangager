@@ -1,0 +1,65 @@
+#common_itemarticle,
+#common_itemarticle .briefinfo,
+#common_itemarticle .briefinfo .info,
+#common_itemarticle .briefinfo .info h1,
+#common_itemarticle .briefinfo .info p,
+#common_itemarticle .briefinfo .info .price,
+#common_itemarticle .briefinfo .info .stock {
+  overflow: hidden;
+  zoom: 1;
+}
+#common_itemarticle .briefinfo .img {
+  float: left;
+}
+#common_itemarticle {
+  padding-bottom: 16px;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+#common_itemarticle .briefinfo {
+  margin-top: 16px;
+}
+#common_itemarticle .briefinfo .img {
+  width: 128px;
+  height: 128px;
+}
+#common_itemarticle .briefinfo .img img {
+  width: 100%;
+  height: 100%;
+}
+#common_itemarticle .briefinfo .info h1 {
+  margin-top: 20px;
+  font-size: 18px;
+  color: #000000;
+}
+#common_itemarticle .briefinfo .info p {
+  margin-top: 5px;
+  font-size: 14px;
+  line-height: 19px;
+  color: #ca191d;
+}
+#common_itemarticle .briefinfo .info .price {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #000000;
+}
+#common_itemarticle .briefinfo .info .price .current {
+  font-weight: bold;
+  font-size: 14px;
+  color: #ca191d;
+}
+#common_itemarticle .briefinfo .info .price .old {
+  margin-left: 20px;
+  font-size: 14px;
+  color: #000000;
+  text-decoration: line-through;
+}
+#common_itemarticle .briefinfo .info .stock {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #000000;
+}
+#common_itemarticle .briefinfo .info .stock .current {
+  font-size: 14px;
+  color: #000000;
+}

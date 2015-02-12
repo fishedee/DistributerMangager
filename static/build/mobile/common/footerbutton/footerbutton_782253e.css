@@ -1,0 +1,21 @@
+#common_footerbutton li {
+  float: left;
+}
+#common_footerbutton {
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  margin: 0 auto;
+}
+#common_footerbutton {
+  height: 60px;
+}
+#common_footerbutton li {
+  text-align: center;
+  height: 60px;
+}
+#common_footerbutton li span {
+  font-size: 18px;
+  line-height: 60px;
+}

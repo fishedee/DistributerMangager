@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=medium-dpi">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+	<title>商品列表页面</title>
+<link rel="stylesheet" type="text/css" href="/mobile/common/core/core_f99d18f.css">
+<link rel="stylesheet" type="text/css" href="/mobile/common/dialog/dialog_09f6162.css">
+<link rel="stylesheet" type="text/css" href="/mobile/common/header/header_eeb33d5.css">
+<link rel="stylesheet" type="text/css" href="/mobile/common/shopcart/shopcart_a6ea491.css">
+<link rel="stylesheet" type="text/css" href="/mobile/common/biglist/biglist_7af5cc7.css">
+
+<script type="text/javascript" src="/fishstrap/lib/fastclick.js"></script>
+<script type="text/javascript" src="http://apps.bdimg.com/libs/underscore.js/1.7.0/underscore-min.js"></script>
+<script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="/fishstrap/core/global_0ffe271.js"></script>
+<script type="text/javascript" src="/mobile/common/dialog/dialog_25e85e5.js"></script>
+<script type="text/javascript" src="/mobile/common/core/core_8c85e4e.js"></script>
+<script type="text/javascript" src="/mobile/common/header/header_56f7924.js"></script>
+<script type="text/javascript" src="/mobile/common/shopcart/shopcart_6e67c2f.js"></script>
+<script type="text/javascript" src="/mobile/common/biglist/biglist_7debf67.js"></script>
+
+</head>
+<body>
+	<div id="body"></div>
+	<script type="text/javascript">
+		var Header = require('mobile/common/header/header.js');
+		var ShopCart = require('mobile/common/shopcart/shopcart.js');
+		var BigList = require('mobile/common/biglist/biglist.js');
+
+		function go(){
+			var header = new Header({
+				title:'零食',
+				backLink:'item.html',
+				button:[{
+					name:'search',
+					link:'search.html'
+				}]
+			});
+			var shopcart = new ShopCart();
+			var biglist = new BigList([
+				{
+					link:'itemdetail.html',
+					image:'/data/upload/sample/sample4.jpg',
+					title:'零食1',
+					summary:'简介简介简介简介简介简介简介简介简介简介简介简介',
+					price:'99900',
+					oldprice:'433000',
+				},
+				{
+					link:'itemdetail.html',
+					image:'/data/upload/sample/sample5.jpg',
+					title:'零食2',
+					summary:'简介简介简介简介简介简介简介简介简介简介简介简介',
+					price:'99900',
+					oldprice:'433000',
+				},
+				{
+					link:'itemdetail.html',
+					image:'/data/upload/sample/sample6.jpg',
+					title:'零食3',
+					summary:'简介简介简介简介简介简介简介简介简介简介简介简介',
+					price:'99900',
+					oldprice:'433000',
+				}
+			]);
+			var pageHtml = header.el + biglist.el + shopcart.el;
+			$.page.setGrey();
+			$.page.start(pageHtml);
+		}
+		go();
+	</script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+.common_littlelist,
+.common_littlelist a li,
+.common_littlelist a li .img,
+.common_littlelist a li .text {
+  overflow: hidden;
+  zoom: 1;
+}
+.common_littlelist a {
+  float: left;
+}
+.common_littlelist a li .img img {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  margin: auto auto;
+}
+.common_littlelist {
+  padding-bottom: 16px;
+  margin-left: 12px;
+  margin-right: 12px;
+}
+.common_littlelist a {
+  display: block;
+  width: 50%;
+  margin-top: 16px;
+}
+.common_littlelist a:nth-child(odd) li {
+  margin-right: 6px;
+}
+.common_littlelist a:nth-child(even) li {
+  margin-left: 6px;
+}
+.common_littlelist a li {
+  border: 1px solid #c8c8c8;
+}
+.common_littlelist a li .img {
+  width: 100%;
+  height: 0px;
+  padding-bottom: 100%;
+  position: relative;
+}
+.common_littlelist a li .img img {
+  width: 100%;
+  height: 100%;
+}
+.common_littlelist a li .text {
+  background: #dcdcdc;
+  display: block;
+  line-height: 50px;
+  font-size: 18px;
+  color: #000000;
+  text-align: center;
+}
