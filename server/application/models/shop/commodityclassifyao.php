@@ -25,18 +25,7 @@ class CommodityClassifyAO extends CI_Model {
         $this->commodityClassifyDb->del($shopCommodityClassifyId);
 
         //修改下级分类变为一级分类
-        $dataWhere = array(
-            "parent" => $shopCommodityClassifyId
-        );
-
-        $query = $this->commodityClassifyDb->search($classify['userId'],
-            $dataWhere, array());
-
-        $childrenClassify = $query["data"];
-        foreach( $childrenClassify as $key=>$value){
-            $classifyId = $value['shopCommodityClassifyId'];
-            $this->commodityClassifyDb->mod($classifyId, array('parent'=>0));
-        }
+        $this->commodityClassifyDb->modByParent($shopCommodityClassifyId,array('parent'=>0));
 
         //通知商品挂载的相关分类被删除了
         //TODO
@@ -94,7 +83,7 @@ class CommodityClassifyAO extends CI_Model {
                 break;
             }
         }
-        if($index == false)
+        if($index == -1)
             throw new CI_MyException(1, '不存在此分类');
         $currentClassify = $allClassify[$index];
 
@@ -106,7 +95,7 @@ class CommodityClassifyAO extends CI_Model {
             $newCurrentSort = $prevClassify['sort']; 
             $newCurrentId = $currentClassify['shopCommodityClassifyId'];
             $newOtherSort = $currentClassify['sort'];
-            $newOtherId = $preClassify['shopCommodityClassifyId'];
+            $newOtherId = $prevClassify['shopCommodityClassifyId'];
         }else{
 			if( $index + 1 >= count($allClassify) )
 				throw new CI_MyException(1,'不能再下调整了');

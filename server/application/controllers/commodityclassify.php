@@ -18,6 +18,8 @@ class CommodityClassify extends CI_Controller
         //检查输入参数
         $dataWhere = $this->argv->checkGet(array(
             //一级分类, 值为0, 二级分类，值为所属一级分类的ID
+            array('title', 'option'),
+            array('remark', 'option'),
             array('parent', 'option')         
         ));
 
@@ -28,7 +30,7 @@ class CommodityClassify extends CI_Controller
 
         //检查权限
         $user = $this->loginAo->checkMustClient(
-            $this->userPermissionEnum->COMPANY_INTRODUCE
+            $this->userPermissionEnum->COMMODITY_CLASSIFY
         );
         $userId = $user['userId'];
 
@@ -44,14 +46,11 @@ class CommodityClassify extends CI_Controller
         $data = $this->argv->checkGet(array(
             array('userId', 'require')
         ));
-        $dataWhere = $this->argv->checkGet(array(
-            array('parent', 'require')
-        ));
 
         $userId = $data['userId'];
 
         //执行业务逻辑
-        return $this->commodityClassifyAo->search($userId, $dataWhere, array());
+        return $this->commodityClassifyAo->search($userId, array(), array());
     }
 
 
@@ -110,6 +109,9 @@ class CommodityClassify extends CI_Controller
         $this->commodityClassifyAo->del($userId, $shopCommodityClassifyId);
     }
 
+    /**
+    * @view json
+    */
     public function mod(){
         //检查输入参数
         $data = $this->argv->checkPost(array(
@@ -131,6 +133,48 @@ class CommodityClassify extends CI_Controller
         
         //执行业务逻辑
         $this->commodityClassifyAo->mod($userId, $shopCommodityClassifyId, $data);
+    }
+
+        /**
+    * @view json
+    */
+    public function moveUp()
+    {
+        //检查输入参数
+        $data = $this->argv->checkPost(array(
+            array('shopCommodityClassifyId','require'),
+        ));
+        $shopCommodityClassifyId = $data['shopCommodityClassifyId'];
+        
+        //检查权限
+        $user = $this->loginAo->checkMustClient(
+            $this->userPermissionEnum->COMMODITY_CLASSIFY
+        );
+        $userId = $user['userId'];
+        
+        //执行业务逻辑
+        $this->commodityClassifyAo->move($userId,$shopCommodityClassifyId,'up');
+    }
+    
+    /**
+    * @view json
+    */
+    public function moveDown()
+    {
+        //检查输入参数
+        $data = $this->argv->checkPost(array(
+            array('shopCommodityClassifyId','require'),
+        ));
+        $shopCommodityClassifyId = $data['shopCommodityClassifyId'];
+        
+        //检查权限
+        $user = $this->loginAo->checkMustClient(
+            $this->userPermissionEnum->COMMODITY_CLASSIFY
+        );
+        $userId = $user['userId'];
+        
+        //执行业务逻辑
+        $this->commodityClassifyAo->move($userId,$shopCommodityClassifyId,'down');
     }
 }
 

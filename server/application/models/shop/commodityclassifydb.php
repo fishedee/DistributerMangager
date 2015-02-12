@@ -10,13 +10,19 @@ class CommodityClassifyDb extends CI_Model
 
     public function search($where, $limit){
         foreach( $where as $key=>$value ){
-            $this->db->where($key, $value);
+            if( $key == 'userId' || $key == 'parent')
+                $this->db->where($key, $value);
+            else if( $key == 'title' || $key == 'remark')
+                $this->db->like($key, $value);
         }
 
         $count = $this->db->count_all_results($this->tableName);
 
         foreach( $where as $key=>$value ){
-            $this->db->where($key, $value);
+            if( $key == 'userId' || $key == 'parent')
+                $this->db->where($key, $value);
+            else if( $key == 'title' || $key == 'remark')
+                $this->db->like($key, $value);
         }
 
         $this->db->order_by('sort', 'asc');
@@ -47,7 +53,7 @@ class CommodityClassifyDb extends CI_Model
     }
 
     public function del($shopCommodityClassifyId){
-        $this->db->where("shopCommodityClassifyId", $shopCommodityClassify);
+        $this->db->where("shopCommodityClassifyId", $shopCommodityClassifyId);
         $this->db->delete($this->tableName);
     }
 
@@ -58,6 +64,11 @@ class CommodityClassifyDb extends CI_Model
 
     public function mod($shopCommodityClassifyId, $data){
         $this->db->where("shopCommodityClassifyId", $shopCommodityClassifyId);
+        $this->db->update($this->tableName, $data);
+    }
+
+    public function modByParent($parentShopCommodityClassifyId,$data){
+        $this->db->where("parent", $parentShopCommodityClassifyId);
         $this->db->update($this->tableName, $data);
     }
 }
