@@ -190,6 +190,17 @@ create table t_shop_commodity(
     primary key(shopCommodityId)
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
 
+#创建用户购物车表
+create table t_shop_troller(
+    shopTrollerId integer not null auto_increment,
+    userId integer not null,
+    clientId integer not null,
+    shopCommodityId integer not null,
+    primary key(shopTrollerId)
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+
+alter table t_shop_troller add index matchIndex(userId, clientId);
+
 
 #建立初始数据
 insert into t_user(userId,name,password,company,phone,type) values
