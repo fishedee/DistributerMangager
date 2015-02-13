@@ -177,16 +177,17 @@ alter table t_shop_commodity_classify add index userIdIndex(userId);
 
 #创建用户商城商品表
 create table t_shop_commodity(
-    commodityId integer not null auto_increment,
+    shopCommodityId integer not null auto_increment,
     userId integer not null,
-    commodityClassifyId integer not null,
+    shopCommodityClassifyId integer not null,
     title varchar(128) not null,
     icon varchar(128) not null,
     introduction varchar(128) not null,
     price integer not null,
     detail varchar(128) not null,
     inventory integer not null,
-    primary key(commodityId)
+    sort integer not null,
+    primary key(shopCommodityId)
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
 
 

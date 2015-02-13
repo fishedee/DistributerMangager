@@ -13,23 +13,21 @@ class CommodityDb extends CI_Model
             if($key == 'title' || $key == 'introduction' ||
                 $key == 'detail' || $key == 'detail')
                 $this->db->like($key, $value);
-            else if($key == 'userId' || $key == 'commodityClassifyId' ||
-                $key == 'inventory')
+            else if($key == 'userId' || $key == 'shopCommodityClassifyId')
                 $this->db->where($key, $value);
         }
-        $count = $this->db->count_all_result($this->tableName);
+        $count = $this->db->count_all_results($this->tableName);
 
         foreach($where as $key=>$value){
             if($key == 'title' || $key == 'introduction' ||
                 $key == 'detail' || $key == 'detail')
                 $this->db->like($key, $value);
-            else if($key == 'userId' || $key == 'commodityClassifyId' ||
-                $key == 'inventory')
+            else if($key == 'userId' || $key == 'shopCommodityClassifyId')
                 $this->db->where($key, $value);
         }
         $this->db->order_by('sort', 'asc');  
 
-        if(isset($limit['pageIndex'] && isset(limit['pageSize']))
+        if(isset($limit['pageIndex']) && isset($limit['pageSize']))
             $this->db->limit($limit['pageSize'], $limit['pageIndex']);
         $query = $this->db->get($this->tableName)->result_array();
         return array(
@@ -38,17 +36,24 @@ class CommodityDb extends CI_Model
         );
     }
 
-    public function get($commodityId){
-        $this->db->where("commodityId", $commodityId);    
+    public function get($shopCommodityId){
+        $this->db->where("shopCommodityId", $shopCommodityId);    
         $query = $this->db->get($this->tableName)->result_array();
         if(count($query) == 0)
-            throw new CI_MyException('不存在此商品');
+            throw new CI_MyException(1, '不存在此商品');
         return $query[0];
     }
 
-    public function del($commodityId){
-        $this->db->where("commodityId", $commodityId);
+    public function del($shopCommodityId){
+        $this->db->where("shopCommodityId", $shopCommodityId);
         $this->db->delete($this->tableName);
+    }
+
+    public function getMaxSortByUser($userId){
+        $this->db->select_max('sort');    
+        $this->db->where('userId', $userId);
+        $result = $this->db->get($this->tableName)->result_array();
+        return $result[0]['sort'];
     }
 
     public function add($data){
@@ -56,8 +61,13 @@ class CommodityDb extends CI_Model
         return $this->db->insert_id();
     }
 
-    public function mod($commodityId, $data){
-        $this->db->where('commodityId', $commodityId);
+    public function mod($shopCommodityId, $data){
+        $this->db->where('shopCommodityId', $shopCommodityId);
+        $this->db->update($this->tableName, $data);
+    }
+
+    public function modWhenClassifyDel($shopCommodityClassifyId, $data){
+        $this->db->where('shopCommodityClassifyId', $shopCommodityClassifyId);
         $this->db->update($this->tableName, $data);
     }
 }

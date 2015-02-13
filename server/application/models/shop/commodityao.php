@@ -13,7 +13,7 @@ class CommodityAO extends CI_Model
 
     public function get($commodityId){
         $commodity = $this->commodityDb->get($commodityId);
-        return $ccommodity;
+        return $commodity;
     }
 
     public function del($userId, $commodityId){
@@ -49,7 +49,72 @@ class CommodityAO extends CI_Model
         $dataWhere = array(
             'userId'=>$userId,
             'commodityClassifyId'=>$commodityClassifyId
-        )
+        );
         return $this->commodityDb->search($dataWhere, $dataLimit);
     }
+
+    public function move($userId, $shopCommodityId, $direction){
+        //取出所有商品
+        $dataWhere['userId'] = $userId;
+        $allCommodity = $this->commodityDb->search($dataWhere, array());
+        $allCommodity = $allCommodity['data'];
+
+        //计算上一个商品，和下一个商品
+        $index = -1;
+        foreach($allCommodity as $key=>$singleCommodity){
+            if($singleCommodity['shopCommodityId'] == $shopCommodityId){
+                $index = $key;
+                break;
+            }
+        }
+        if($index == -1)
+            throw new CI_MyException(1, '不存在此分类');
+        $currentCommodity = $allCommodity[$index];
+
+        //调整sort
+        if($direction == 'up'){
+            if($index - 1 < 0)
+                throw new CI_MyException(1, '不能再往上调整');
+            $prevCommodity = $allCommodity[$index - 1];
+            $newCurrentSort = $prevCommodity['sort'];
+            $newCurrentId = $currentCommodity['shopCommodityId'];
+            $newOtherSort = $currentCommodity['sort'];
+            $newOtherId = $prevCommodity['shopCommodityId'];
+        }else{
+            if($index + 1 >= count($allCommodity))
+                throw new CI_MyException(1, '不能再往下调整');
+            $nextCommodity = $allCommodity[$index + 1];
+            $newCurrentSort = $nextCommodity['sort'];
+            $newCurrentId = $currentCommodity['shopCommodityId'];
+            $newOtherSort = $currentCommodity['sort'];
+            $newOtherId = $nextCommodity['shopCommodityId'];
+        }
+
+        //更新数据库
+        $this->commodityDb->mod($newOtherId, array('sort'=>$newOtherSort));
+        $this->commodityDb->mod($newCurrentId, array('sort'=>$newCurrentSort));
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

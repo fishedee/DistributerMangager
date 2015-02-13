@@ -22,18 +22,20 @@ class AddressAo extends CI_Model
     }
 
     public function del($addressId){
-        $this->db->where('addressId', $addressId);
-        $this->db->delete($this->tableName);
+        $this->addressDb->del($addressId);
     }
 
     public function add($data){
-        $this->db->insert($this->tableName, $data);
-        return $this->db->insert_id();
+        return $this->addressDb->add($data);
     }
 
     public function mod($addressId, $data){
-        $this->db->where("addressId", $addressId);
-        $this->db->update($this->tableName, $data);
+        $this->addressDb->mod($addressId, $data);
     }
 
+    public function modByUserId($userId, $data){
+        $address = $this->addressDb->getByUserId($userId);
+        $addressId = $address['addressId'];
+        $this->addressDb->mod($addressId, $data);
+    }
 }

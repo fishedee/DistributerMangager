@@ -4,6 +4,7 @@ class CommodityClassifyAO extends CI_Model {
     public function __construct(){
         parent::__construct();
         $this->load->model('shop/CommodityClassifyDb', 'commodityClassifyDb');
+        $this->load->model('shop/CommodityDb', 'commodityDb');
     }
 
     public function search($userId, $dataWhere, $dataLimit){
@@ -28,7 +29,10 @@ class CommodityClassifyAO extends CI_Model {
         $this->commodityClassifyDb->modByParent($shopCommodityClassifyId,array('parent'=>0));
 
         //通知商品挂载的相关分类被删除了
-        //TODO
+        $this->commodityDb->modWhenClassifyDel(
+            $shopCommodityClassifyId, 
+            array('shopCommodityClassifyId'=>0)
+        );
     }
 
     public function add($userId, $data){

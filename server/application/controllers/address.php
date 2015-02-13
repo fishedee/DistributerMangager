@@ -31,7 +31,7 @@ class Address extends CI_Controller
         ));
 
         //检查权限
-        $user = $this->loginAo->checkMustAdmin();
+        $user = $this->loginAo->checkMustLogin();
 
         //执行业务逻辑
         return $this->addressAo->search($dataWhere, $dataLimit);
@@ -57,18 +57,18 @@ class Address extends CI_Controller
     public function add(){
         //检查输入参数
         $data = $this->argv->checkPost(array(
-            array('name', 'option'),
-            array('province', 'option'),
-            array('city', 'option'),
-            array('district', 'option'),
-            array('address', 'option'),
-            array('userId', 'option'),
-            array('payment', 'option'),
+            array('name', 'require'),
+            array('province', 'require'),
+            array('city', 'require'),
+            array('district', 'require'),
+            array('address', 'require'),
+            array('phone', 'require'),
+            array('payment', 'require'),
         ));
 
         //检查权限
         $user = $this->loginAo->checkMustLogin();
-        data["userId"] = $user['userId'];
+        $data['userId'] = $user['userId'];
 
         //执行业务逻辑
         $this->addressAo->add($data);
@@ -77,10 +77,24 @@ class Address extends CI_Controller
 	/**
 	* @view json
 	*/
-    public function mod(){
+    public function modByUserId(){
         //检查输入参数
         $data = $this->argv->checkPost(array(
-           array('userId', 'require')
+            array('name', 'require'),
+            array('province', 'require'),
+            array('city', 'require'),
+            array('district', 'require'),
+            array('address', 'require'),
+            array('phone', 'require'),
+            array('payment', 'require')
+        ));
+
+        //检查权限
+        $user = $this->loginAo->checkMustLogin();
+        $userId = $user['userId'];
+
+        //执行业务逻辑
+        $this->addressAo->modByUserId($userId, $data);
     }
 
 }
