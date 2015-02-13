@@ -3,6 +3,7 @@
 class Troller extends CI_Controller
 {
     public function __construct(){
+        parent::__construct();
         $this->load->model('user/loginAo', 'loginAo');
         $this->load->model('user/userPermissionEnum', 'userPermissionEnum');
         $this->load->model('shop/trollerAo', 'trollerAo');
@@ -24,7 +25,8 @@ class Troller extends CI_Controller
             $commodityOfClient[ $value['clientId'] ] = array();
         }
         foreach($query as $key=>$value){
-            $commodity = $this->$commodityAo->get($value['shopCommodityId']);  
+            $commodity = $this->commodityAo->get($value['shopCommodityId']);  
+            $commodity['shopTrollerId'] = $value['shopTrollerId'];
             $commodityOfClient[ $value['clientId'] ][] = $commodity;
         }
 
@@ -54,6 +56,7 @@ class Troller extends CI_Controller
         $commodityInTroller = array();
         foreach($query as $key=>$value){
             $commodity = $this->$commodityAo->get($value['shopCommodityId']);
+            $commodity['shopTrollerId'] = $value['shopTrollerId'];
             $commodityInTroller[] = $commodity;
         }
 
@@ -70,6 +73,8 @@ class Troller extends CI_Controller
             array('clientId', 'require'),
             array('shopCommodityId', 'require')
         ));
+        $clientId = $data['clientId'];
+        $shopCommodityId = $data['shopCommodityId'];
 
         //检查权限
         $user = $this->loginAo->checkMustLogin();

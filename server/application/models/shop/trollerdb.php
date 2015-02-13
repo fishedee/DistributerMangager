@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class TrollerDb extend CI_Model
+class TrollerDb extends CI_Model
 {
     var $tableName = 't_shop_troller';
 
@@ -23,6 +23,14 @@ class TrollerDb extend CI_Model
         if(count($query) == 0)
             throw new CI_MyException(1, '购物车为空');
         return $query;
+    }
+
+    public function get($shopTrollerId){
+        $this->db->where('shopTrollerId', $shopTrollerId);
+        $query = $this->db->get($this->tableName)->result_array();
+        if(count($query) == 0)
+            throw new CI_MyException(1, '购物车为空');
+        return $query[0];
     }
 
     public function del($shopTrollerId){

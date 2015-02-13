@@ -4,7 +4,7 @@ class TrollerAo extends CI_Model
 {
     public function __construct(){
         parent::__construct();
-        $this->load->model('shop/TrollerDb', 'trollerDb');
+        $this->load->model('shop/trollerDb', 'trollerDb');
         $this->load->model('shop/commodityAo', 'commodityAo');
     }
 
@@ -29,7 +29,7 @@ class TrollerAo extends CI_Model
         $data['clientId'] = $clientId;
         $data['shopCommodityId'] = $shopCommodityId;
 
-        $commodity = $this->commodityAo->get($commodityId);
+        $commodity = $this->commodityAo->get($shopCommodityId);
         if($commodity['userId'] != $clientId)
             throw new CI_MyException(1, '非法商品信息无法购买');
 
