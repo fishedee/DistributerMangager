@@ -8,6 +8,9 @@
   right: 0px;
   margin: 0 auto;
 }
+#common_footerbutton_padding {
+  height: 60px;
+}
 #common_footerbutton {
   height: 60px;
   z-index: 4;
@@ -36,4 +39,10 @@
 }
 #common_footerbutton li.cart span {
   background-image: url(/mobile/common/footerbutton/cart_7fea690.png);
+}
+#common_footerbutton li.pay {
+  background-color: #ca191d;
+}
+#common_footerbutton li.pay span {
+  background-image: url(/mobile/common/footerbutton/pay_30f4774.png);
 }

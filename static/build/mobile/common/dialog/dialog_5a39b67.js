@@ -33,7 +33,8 @@ function confirm(text,next){
 module.exports = {
 	loadingBegin:loadingBegin,
 	loadingEnd:loadingEnd,
-	message:message
+	message:message,
+	confirm:confirm
 };
 
 });

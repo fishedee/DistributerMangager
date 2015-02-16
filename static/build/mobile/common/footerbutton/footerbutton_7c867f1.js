@@ -9,7 +9,7 @@ function footerbutton(args){
 	var template = function(obj){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 with(obj||{}){
-__p+='<ul id="common_footerbutton">\n\t';
+__p+='<div id="common_footerbutton_padding"></div>\n<ul id="common_footerbutton">\n\t';
  for( var i in list ){ 
 __p+='\n\t';
  var width = 1/list.length * 100 ; 

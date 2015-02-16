@@ -1,0 +1,75 @@
+<link rel="import" href="header.html?__inline">
+	<title>购物车页面</title>
+</head>
+<body>
+	<div id="body"></div>
+	<script type="text/javascript">
+		var Header = require('common/header/header.js');
+		var HeaderTitle = require('common/headertitle/headertitle.js');
+		var ItemListWithNum = require('common/itemlistwithnum/itemlistwithnum.js');
+		var FooterButton = require('common/footerbutton/footerbutton.js');
+		function go(){
+			var header = new Header({
+				title:'购物车',
+				backLink:'itemdetail.html',
+				button:[{
+					name:'search',
+					link:'search.html'
+				}]
+			});
+			var headertitle = new HeaderTitle({
+				tip:'订单总金额：',
+				text:'3641.00元'
+			});
+			var itemlistwithnum = new ItemListWithNum({
+				title:'店铺：店铺1',
+				item:[
+					{
+						image:'/data/upload/sample/sample4.jpg',
+						title:'零食1',
+						summary:'简介简介简介简介简介简介简介简介简介简介简介简介',
+						price:'99900',
+						quantity:1,
+					},
+					{
+						image:'/data/upload/sample/sample5.jpg',
+						summary:'简介简介简介简介简介简介简介简介简介简介简介简介',
+						title:'零食2',
+						price:'99900',
+						quantity:2,
+					},
+				]
+			});
+			var itemlistwithnum2 = new ItemListWithNum({
+				title:'店铺：店铺2',
+				item:[
+					{
+						image:'/data/upload/sample/sample5.jpg',
+						title:'零食3',
+						summary:'简介简介简介简介简介简介简介简介简介简介简介简介',
+						price:'99900',
+						quantity:3,
+					},
+				]
+			});
+			var footerbutton = new FooterButton([
+				{
+					name:'pay',
+					text:'支付',
+					click:function(){
+						var data = [];
+						data = data.concat(itemlistwithnum.get());
+						data = data.concat(itemlistwithnum2.get());
+						console.log(data);
+						location.href = 'address.html';
+					}
+				}
+			]);
+			var pageHtml = header.el + headertitle.el + itemlistwithnum.el + itemlistwithnum2.el+footerbutton.el;
+			$.page.setGrey();
+			$.page.start(pageHtml);
+		}
+		go();
+	</script>
+</body>
+<link rel="import" href="footer.html?__inline">

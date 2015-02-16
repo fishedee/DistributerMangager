@@ -718,6 +718,25 @@
             ],
             "id": "fishstrap/util/upload.js"
         },
+        "mobile/common/address/address.js": {
+            "uri": "/mobile/common/address/address_914578a.js",
+            "type": "js",
+            "deps": [
+                "mobile/common/core/core.js",
+                "mobile/common/selectlist/selectlist.js",
+                "mobile/common/address/address.less"
+            ],
+            "id": "mobile/common/address/address.js"
+        },
+        "mobile/common/address/address.less": {
+            "uri": "/mobile/common/address/address_b1877e4.css",
+            "type": "css",
+            "id": "mobile/common/address/address.less"
+        },
+        "mobile/common/address/addressTpl.tpl": {
+            "uri": "/mobile/common/address/addressTpl_79ff50f.js",
+            "type": "js"
+        },
         "mobile/common/article/article.js": {
             "uri": "/mobile/common/article/article_f16aba7.js",
             "type": "js",
@@ -805,12 +824,12 @@
             "id": "mobile/common/core/core.js"
         },
         "mobile/common/core/core.less": {
-            "uri": "/mobile/common/core/core_7a3400d.css",
+            "uri": "/mobile/common/core/core_8488e02.css",
             "type": "css",
             "id": "mobile/common/core/core.less"
         },
         "mobile/common/dialog/dialog.js": {
-            "uri": "/mobile/common/dialog/dialog_97ae9ce.js",
+            "uri": "/mobile/common/dialog/dialog_5a39b67.js",
             "type": "js",
             "deps": [
                 "mobile/common/dialog/dialog.less",
@@ -846,7 +865,7 @@
             "type": "js"
         },
         "mobile/common/footerbutton/footerbutton.js": {
-            "uri": "/mobile/common/footerbutton/footerbutton_8b1ae61.js",
+            "uri": "/mobile/common/footerbutton/footerbutton_7c867f1.js",
             "type": "js",
             "deps": [
                 "mobile/common/core/core.js",
@@ -856,12 +875,12 @@
             "id": "mobile/common/footerbutton/footerbutton.js"
         },
         "mobile/common/footerbutton/footerbutton.less": {
-            "uri": "/mobile/common/footerbutton/footerbutton_e42fd46.css",
+            "uri": "/mobile/common/footerbutton/footerbutton_83df8f5.css",
             "type": "css",
             "id": "mobile/common/footerbutton/footerbutton.less"
         },
         "mobile/common/footerbutton/footerbuttonTpl.tpl": {
-            "uri": "/mobile/common/footerbutton/footerbuttonTpl_cbe21d1.js",
+            "uri": "/mobile/common/footerbutton/footerbuttonTpl_b935d25.js",
             "type": "js"
         },
         "mobile/common/header/header.js": {
@@ -900,6 +919,24 @@
             "uri": "/mobile/common/headersearch/headersearchTpl_990b345.js",
             "type": "js"
         },
+        "mobile/common/headertitle/headertitle.js": {
+            "uri": "/mobile/common/headertitle/headertitle_29e69bc.js",
+            "type": "js",
+            "deps": [
+                "mobile/common/core/core.js",
+                "mobile/common/headertitle/headertitle.less"
+            ],
+            "id": "mobile/common/headertitle/headertitle.js"
+        },
+        "mobile/common/headertitle/headertitle.less": {
+            "uri": "/mobile/common/headertitle/headertitle_aca84ff.css",
+            "type": "css",
+            "id": "mobile/common/headertitle/headertitle.less"
+        },
+        "mobile/common/headertitle/headertitleTpl.tpl": {
+            "uri": "/mobile/common/headertitle/headertitleTpl_53e3982.js",
+            "type": "js"
+        },
         "mobile/common/itemarticle/itemarticle.js": {
             "uri": "/mobile/common/itemarticle/itemarticle_560048e.js",
             "type": "js",
@@ -921,10 +958,11 @@
             "type": "js"
         },
         "mobile/common/itembrief/itembrief.js": {
-            "uri": "/mobile/common/itembrief/itembrief_a32a864.js",
+            "uri": "/mobile/common/itembrief/itembrief_9857f76.js",
             "type": "js",
             "deps": [
                 "mobile/common/core/core.js",
+                "mobile/common/numchooser/numchooser.js",
                 "mobile/common/itembrief/itembrief.less"
             ],
             "id": "mobile/common/itembrief/itembrief.js"
@@ -935,7 +973,7 @@
             "id": "mobile/common/itembrief/itembrief.less"
         },
         "mobile/common/itembrief/itembriefTpl.tpl": {
-            "uri": "/mobile/common/itembrief/itembriefTpl_1bf6278.js",
+            "uri": "/mobile/common/itembrief/itembriefTpl_80f75d7.js",
             "type": "js"
         },
         "mobile/common/itemdialog/itemdialog.js": {
@@ -956,6 +994,27 @@
         },
         "mobile/common/itemdialog/itemdialogTpl.tpl": {
             "uri": "/mobile/common/itemdialog/itemdialogTpl_4552da8.js",
+            "type": "js"
+        },
+        "mobile/common/itemlistwithnum/itemlistwithnum.js": {
+            "uri": "/mobile/common/itemlistwithnum/itemlistwithnum_d9d6b20.js",
+            "type": "js",
+            "deps": [
+                "mobile/common/itemlistwithnum/itemlistwithnum.less",
+                "mobile/common/core/core.js",
+                "mobile/common/dialog/dialog.js",
+                "mobile/common/itembrief/itembrief.js",
+                "mobile/common/numchooser/numchooser.js"
+            ],
+            "id": "mobile/common/itemlistwithnum/itemlistwithnum.js"
+        },
+        "mobile/common/itemlistwithnum/itemlistwithnum.less": {
+            "uri": "/mobile/common/itemlistwithnum/itemlistwithnum_b80b523.css",
+            "type": "css",
+            "id": "mobile/common/itemlistwithnum/itemlistwithnum.less"
+        },
+        "mobile/common/itemlistwithnum/itemlistwithnumTpl.tpl": {
+            "uri": "/mobile/common/itemlistwithnum/itemlistwithnumTpl_4f5fb25.js",
             "type": "js"
         },
         "mobile/common/littlelist/littlelist.js": {
@@ -1010,6 +1069,24 @@
         },
         "mobile/common/numchooser/numchooserTpl.tpl": {
             "uri": "/mobile/common/numchooser/numchooserTpl_fb54209.js",
+            "type": "js"
+        },
+        "mobile/common/selectlist/selectlist.js": {
+            "uri": "/mobile/common/selectlist/selectlist_d8d9683.js",
+            "type": "js",
+            "deps": [
+                "mobile/common/core/core.js",
+                "mobile/common/selectlist/selectlist.less"
+            ],
+            "id": "mobile/common/selectlist/selectlist.js"
+        },
+        "mobile/common/selectlist/selectlist.less": {
+            "uri": "/mobile/common/selectlist/selectlist_fa971e1.css",
+            "type": "css",
+            "id": "mobile/common/selectlist/selectlist.less"
+        },
+        "mobile/common/selectlist/selectlistTpl.tpl": {
+            "uri": "/mobile/common/selectlist/selectlistTpl_3974fa2.js",
             "type": "js"
         },
         "mobile/common/shopcart/shopcart.js": {

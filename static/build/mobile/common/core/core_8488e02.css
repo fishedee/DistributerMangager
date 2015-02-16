@@ -21,6 +21,9 @@
   -webkit-appearance: none;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
+#body {
+  padding-bottom: 16px;
+}
 .body_grey {
   background: #dcdcdc;
 }

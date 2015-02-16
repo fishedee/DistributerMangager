@@ -4,6 +4,7 @@ define('mobile/common/itembrief/itembrief.js', function(require, exports, module
 *@requrie itembrief.less
 */
 var $ = require('mobile/common/core/core.js');
+var NumChooser = require('mobile/common/numchooser/numchooser.js');
 function itembrief(args){
 	args.template = function(obj){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
@@ -20,27 +21,29 @@ __p+='\n\t\t\t<p>'+
  } 
 __p+='\n\t\t<div class="price">价格：<span class="current">￥'+
 ((__t=( (price/100).toFixed(2) ))==null?'':_.escape(__t))+
-'</span><span class="old">￥'+
+'</span>';
+ if( _.isUndefined(this.oldprice) == false ){ 
+__p+='<span class="old">￥'+
 ((__t=( (oldprice/100).toFixed(2) ))==null?'':_.escape(__t))+
-'</span></div>\n\t\t';
+'</span>';
+ } 
+__p+='</div>\n\t\t';
  if( _.isUndefined(this.stock) == false ){ 
 __p+='\n\t\t\t<div class="stock">库存：<span class="current">'+
 ((__t=( stock ))==null?'':_.escape(__t))+
 '</span></div>\n\t\t';
- } 
-__p+='\n\t\t';
- if( _.isUndefined(this.numchooser) == false ){ 
-__p+='\n\t\t\t'+
-((__t=( numchooser ))==null?'':__t)+
-'\n\t\t';
  } 
 __p+='\n\t</div>\n</div>';
 }
 return __p;
 };
 	var el = args.template(args);
+	function get(){
+		return args;
+	}
 	return {
-		el:el
+		el:el,
+		get:get
 	}
 }
 return itembrief;

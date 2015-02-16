@@ -1,4 +1,7 @@
 @import (reference) '../core/core.less';
+#common_footerbutton_padding{
+	height:60px;
+}
 #common_footerbutton{
 	&:extend(.common_global_fixbottom);
 	height:60px;
@@ -30,6 +33,13 @@
 			background-color:@background_green;
 			span{
 				background-image:url(cart.png);
+			}
+		}
+
+		&.pay{
+			background-color:@background_red;
+			span{
+				background-image:url(pay.png);
 			}
 		}
 	}

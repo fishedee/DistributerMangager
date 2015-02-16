@@ -1,0 +1,66 @@
+@import (reference) '../core/core.less';
+.common_itemlistwithnum{
+	&:extend(.common_global_row);
+	background:@background_white;
+	
+	> h2{
+		&:extend(.common_global_row);
+		height:40px;
+		line-height:40px;
+		padding-left:@body_left;
+		font-size:@font_h3;
+		color:@font_black;
+		border-bottom:1px solid @line_grey;
+	}
+
+	> .items{
+		&:extend(.common_global_row);
+		
+
+		> li {
+			&:extend(.common_global_row);
+			padding-bottom:10px;
+			border-bottom:1px solid @line_grey;
+
+			
+
+			> .info{
+				&:extend(.common_global_row);
+
+				> .checked{
+					&:extend(.common_global_leftcol);
+					margin-left:10px;
+					margin-top:10px;
+					width:20px;
+					height:20px;
+					border:1px solid @line_grey;
+
+					&.active{
+						background-image:url(checked.png);
+						background-position:center center;
+						background-size:20px 20px;
+						background-repeat:no-repeat;
+					}
+				}
+			}
+
+			> .numinfo{
+				&:extend(.common_global_row);
+
+				> .del{
+					&:extend(.common_global_rightcol);
+					margin-top:16px;
+					padding-left:20px;
+					margin-right:10px;
+					font-size:@font_h3;
+					color:@font_grey;
+					background-image:url(del.png);
+					background-position:left center;
+					background-size:15px 15px;
+					background-repeat:no-repeat;
+				}
+			}
+
+		}
+	}
+}
