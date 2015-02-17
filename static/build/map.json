@@ -812,6 +812,24 @@
             "uri": "/mobile/common/biglist/biglistTpl_9f5d153.js",
             "type": "js"
         },
+        "mobile/common/buttonlist/buttonlist.js": {
+            "uri": "/mobile/common/buttonlist/buttonlist_ee4d3cb.js",
+            "type": "js",
+            "deps": [
+                "mobile/common/core/core.js",
+                "mobile/common/buttonlist/buttonlist.less"
+            ],
+            "id": "mobile/common/buttonlist/buttonlist.js"
+        },
+        "mobile/common/buttonlist/buttonlist.less": {
+            "uri": "/mobile/common/buttonlist/buttonlist_7dbc42a.css",
+            "type": "css",
+            "id": "mobile/common/buttonlist/buttonlist.less"
+        },
+        "mobile/common/buttonlist/buttonlistTpl.tpl": {
+            "uri": "/mobile/common/buttonlist/buttonlistTpl_284f998.js",
+            "type": "js"
+        },
         "mobile/common/core/core.js": {
             "uri": "/mobile/common/core/core_3837556.js",
             "type": "js",
@@ -893,7 +911,7 @@
             "id": "mobile/common/footerbutton/footerbutton.js"
         },
         "mobile/common/footerbutton/footerbutton.less": {
-            "uri": "/mobile/common/footerbutton/footerbutton_83df8f5.css",
+            "uri": "/mobile/common/footerbutton/footerbutton_eea48c6.css",
             "type": "css",
             "id": "mobile/common/footerbutton/footerbutton.less"
         },

@@ -46,3 +46,15 @@
 #common_footerbutton li.pay span {
   background-image: url(/mobile/common/footerbutton/pay_30f4774.png);
 }
+#common_footerbutton li.confirm {
+  background-color: #ca191d;
+}
+#common_footerbutton li.confirm span {
+  background-image: url(/mobile/common/footerbutton/confirm_389002d.png);
+}
+#common_footerbutton li.cancel {
+  background-color: #5cb818;
+}
+#common_footerbutton li.cancel span {
+  background-image: url(/mobile/common/footerbutton/cancel_eec62b9.png);
+}

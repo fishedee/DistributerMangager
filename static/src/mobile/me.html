@@ -5,11 +5,27 @@
 	<div id="body"></div>
 	<script type="text/javascript">
 		var Footer = require('common/footer/footer.js');
-		var footer = new Footer('me');
-		var Test = require('common/test/test.js');
-		var test = new Test('我的页面，第四期工作');
-		var pageHtml = test.el + footer.el;
-		$.page.start(pageHtml);
+		var ButtonList = require('common/buttonlist/buttonlist.js');
+		function go(){
+			var footer = new Footer('me');
+			var buttonlist = new ButtonList([
+				{
+					name:'常用地址',
+					link:'myaddress.html'
+				},
+				{
+					name:'会员卡',
+					link:'vip.html'
+				},
+				{
+					name:'关于我们',
+					link:'about.html'
+				}
+			]);
+			var pageHtml = buttonlist.el + footer.el;
+			$.page.start(pageHtml);
+		}
+		go();
 	</script>
 </body>
 <link rel="import" href="footer.html?__inline">

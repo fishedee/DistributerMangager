@@ -13,6 +13,7 @@
 <link rel="stylesheet" type="text/css" href="/mobile/common/core/core_8488e02.css">
 <link rel="stylesheet" type="text/css" href="/mobile/common/dialog/dialog_09f6162.css">
 <link rel="stylesheet" type="text/css" href="/mobile/common/footer/footer_442a17a.css">
+<link rel="stylesheet" type="text/css" href="/mobile/common/buttonlist/buttonlist_7dbc42a.css">
 
 <script type="text/javascript" src="/fishstrap/lib/fastclick.js"></script>
 <script type="text/javascript" src="http://apps.bdimg.com/libs/underscore.js/1.7.0/underscore-min.js"></script>
@@ -21,18 +22,34 @@
 <script type="text/javascript" src="/mobile/common/dialog/dialog_5a39b67.js"></script>
 <script type="text/javascript" src="/mobile/common/core/core_3837556.js"></script>
 <script type="text/javascript" src="/mobile/common/footer/footer_b27c0d4.js"></script>
-<script type="text/javascript" src="/mobile/common/test/test_11dc573.js"></script>
+<script type="text/javascript" src="/mobile/common/buttonlist/buttonlist_ee4d3cb.js"></script>
 
 </head>
 <body>
 	<div id="body"></div>
 	<script type="text/javascript">
 		var Footer = require('mobile/common/footer/footer.js');
-		var footer = new Footer('me');
-		var Test = require('mobile/common/test/test.js');
-		var test = new Test('我的页面，第四期工作');
-		var pageHtml = test.el + footer.el;
-		$.page.start(pageHtml);
+		var ButtonList = require('mobile/common/buttonlist/buttonlist.js');
+		function go(){
+			var footer = new Footer('me');
+			var buttonlist = new ButtonList([
+				{
+					name:'常用地址',
+					link:'myaddress.html'
+				},
+				{
+					name:'会员卡',
+					link:'vip.html'
+				},
+				{
+					name:'关于我们',
+					link:'about.html'
+				}
+			]);
+			var pageHtml = buttonlist.el + footer.el;
+			$.page.start(pageHtml);
+		}
+		go();
 	</script>
 </body>
 </html>
