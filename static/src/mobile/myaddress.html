@@ -7,27 +7,46 @@
 		var Header = require('common/header/header.js');
 		var Address = require('common/address/address.js');
 		var FooterButton = require('common/footerbutton/footerbutton.js');
+		var myaddress = {};
+		var mapPaymentIdToName = {1:'微信支付',2:'货到付款'};
+		var mapPaymentNameToId = {'微信支付':1,'货到付款':2};
+		function get(next){
+			$.get('/address/getMyAddress',{},function(data){
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				myaddress = data.data;
+				next();
+			});
+		}
+		function mod(data,next){
+			data = $.extend(data,{payment:mapPaymentNameToId[data.payment]});
+			$.post('/address/modMyAddress',data,function(data){
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				next();
+			});
+		}
 		function go(){
 			var header = new Header({
 				title:'常用地址',
 				backLink:'me.html',
 				button:[]
 			});
-			var address = new Address({
-				name:'fish',
-				province:'广东',
-				city:'佛山',
-				address:'XXOO',
-				phone:'150XXX',
-				payment:'在线支付',
-			});
+
+			var address = new Address(_.extend(myaddress,{payment:mapPaymentIdToName[myaddress.payment]}));
 			var footerbutton = new FooterButton([
 				{
 					name:'confirm',
 					text:'确认',
 					click:function(){
-						alert('修改成功');
-						location.href = 'me.html';
+						mod(address.get(),function(){
+							alert('修改成功');
+							location.href = 'me.html';
+						});
 					}
 				},
 				{
@@ -41,7 +60,9 @@
 			var pageHtml = header.el + address.el + footerbutton.el;
 			$.page.start(pageHtml);
 		}
-		go();
+		$.checkMustLogin(function(){
+			get(go);
+		});
 	</script>
 </body>
 <link rel="import" href="footer.html?__inline">

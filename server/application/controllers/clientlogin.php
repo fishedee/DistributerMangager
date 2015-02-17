@@ -22,6 +22,19 @@ class ClientLogin extends CI_Controller {
 
 		$this->clientLoginAo->checkMustLogin($data['userId']);
 	}
+
+	/**
+	* @view json
+	*/
+	public function testlogin()
+	{
+		//检查输入参数
+		$data = $this->argv->checkGet(array(
+			array('userId','require')
+		));
+
+		$this->clientLoginAo->login($data['userId'],10001);
+	}
 	
 	/**
 	* @view json

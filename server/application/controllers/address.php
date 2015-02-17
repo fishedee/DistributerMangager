@@ -4,97 +4,52 @@ class Address extends CI_Controller
 {
     public function __construct(){
         parent::__construct();
-        $this->load->model('user/loginAo', 'loginAo');
-        $this->load->model('user/userPermissionEnum', 'userPermissionEnum');
-        $this->load->model('user/addressAo', 'addressAo');
+        $this->load->model('client/clientLoginAo', 'clientLoginAo');
+        $this->load->model('address/addressAo', 'addressAo');
         $this->load->library('argv', 'argv');
     }
 
 	/**
 	* @view json
 	*/
-    public function search(){
-        //检查输入参数
-        $dataWhere = $this->argv->checkGet(array(
-            array('name', 'option'),
-            array('province', 'option'),
-            array('city', 'option'),
-            array('district', 'option'),
-            array('address', 'option'),
-            array('userId', 'option'),
-            array('payment', 'option'),
-        ));
-
-        $dataLimit = $this->argv->checkGet(array(
-            array('pageIndex', 'require'),
-            array('pageSize', 'required'),
-        ));
-
-        //检查权限
-        $user = $this->loginAo->checkMustLogin();
-
-        //执行业务逻辑
-        return $this->addressAo->search($dataWhere, $dataLimit);
-    }
-
-	/**
-	* @view json
-	*/
-    public function  getByUserId(){
+    public function  getMyAddress(){
         //检查输入参数
         $data = $this->argv->checkGet(array(
             array('userId', 'require')
         ));
         $userId = $data['userId'];
 
+        //检查权限
+        $client = $this->clientLoginAo->checkMustLogin($userId);
+
         //执行业务逻辑
-        return $this->addressAo->getByUserId($userId);
+        return $this->addressAo->get($client['clientId']);
     }
 
 	/**
 	* @view json
 	*/
-    public function add(){
+    public function modMyAddress(){
         //检查输入参数
+        $data = $this->argv->checkPost(array(
+            array('userId', 'require')
+        ));
+        $userId = $data['userId'];
+
         $data = $this->argv->checkPost(array(
             array('name', 'require'),
             array('province', 'require'),
             array('city', 'require'),
-            array('district', 'require'),
             array('address', 'require'),
             array('phone', 'require'),
             array('payment', 'require'),
         ));
 
         //检查权限
-        $user = $this->loginAo->checkMustLogin();
-        $data['userId'] = $user['userId'];
+        $client = $this->clientLoginAo->checkMustLogin($userId);
 
         //执行业务逻辑
-        $this->addressAo->add($data);
-    }
-
-	/**
-	* @view json
-	*/
-    public function modByUserId(){
-        //检查输入参数
-        $data = $this->argv->checkPost(array(
-            array('name', 'require'),
-            array('province', 'require'),
-            array('city', 'require'),
-            array('district', 'require'),
-            array('address', 'require'),
-            array('phone', 'require'),
-            array('payment', 'require')
-        ));
-
-        //检查权限
-        $user = $this->loginAo->checkMustLogin();
-        $userId = $user['userId'];
-
-        //执行业务逻辑
-        $this->addressAo->modByUserId($userId, $data);
+        $this->addressAo->mod($client['clientId'],$data);
     }
 
 }

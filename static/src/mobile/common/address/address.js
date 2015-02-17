@@ -54,6 +54,7 @@ var $ = require('../core/core.js');
 var SelectList = require('../selectlist/selectlist.js');
 
 function address(args){
+	console.log(args);
 	//设置默认参数
 	var tempArgs = {
 		name:'',
@@ -106,11 +107,12 @@ function address(args){
 		var target = $('#common_address');
 		var data = {
 			name:target.find('.name input').val(),
+			province:args.provinceSelectList.get(),
+			city:args.citySelectList.get(),
 			address:target.find('.address input').val(),
-			phone:target.find('.phone input').val()
+			phone:target.find('.phone input').val(),
+			payment:args.paymentSelectList.get()
 		};
-		data.address = args.provinceSelectList.get() +  args.citySelectList.get() + data.address;
-		data.payment = args.paymentSelectList.get();
 		return data;
 	}
 	return {

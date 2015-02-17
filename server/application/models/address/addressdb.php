@@ -3,7 +3,15 @@
 class AddressDb extends CI_Model
 {
     var $tableName = 't_address';
-
+    var $tableField = array(
+        'clientId'=>'',
+        'name'=>'',
+        'province'=>'',
+        'city'=>'',
+        'address'=>'',
+        'phone'=>'',
+        'payment'=>0,
+    );
     public function __construct(){
         parent::__construct();
     }
@@ -13,7 +21,7 @@ class AddressDb extends CI_Model
             if($key == "name" || $key == "province" || $key == "city" ||
                 $key == "district" || $key == "address" || $key == "phone")
                 $this->db->like($key, $value);
-            else if($key == "userId" || $key == "payment"){
+            else if($key == "clientId" || $key == "payment"){
                 $this->db->where($key, $value);
             }
         }
@@ -24,7 +32,7 @@ class AddressDb extends CI_Model
             if($key == "name" || $key == "province" || $key == "city" ||
                 $key == "district" || $key == "address" || $key == "phone")
                 $this->db->like($key, $value);
-            else if($key == "userId" || $key == "payment"){
+            else if($key == "clientId" || $key == "payment"){
                 $this->db->where($key, $value);
             }
         }
@@ -41,35 +49,23 @@ class AddressDb extends CI_Model
         );
     }
 
-    public function get($addressId){
-        $this->db->where("addressId", $addressId);
-        $query = $this->db->get($this->tableName)->result_array();
-        if(count($query) == 0)
-            throw new CI_MyException('不存在此地址信息');
-        return $query[0];
-    }
-
-    public function del($addressId){
-        $this->db->where('addressId', $addressId);
-        $this->db->delete($this->tableName);
+    public function getByClientId($clientId){
+        $this->db->where("clientId", $clientId);
+        return $this->db->get($this->tableName)->result_array();
     }
 
     public function add($data){
+        $data = array_merge($this->tableField,array_intersect_key($data, $this->tableField));
         $this->db->insert($this->tableName, $data);
         return $this->db->insert_id();
     }
 
-    public function mod($addressId, $data){
-        $this->db->where("addressId", $addressId);
+    public function modByClientId($clientId,$data){
+        $data = array_intersect_key($data, $this->tableField);
+        if( count($data) == 0 )
+            return;
+        $this->db->where("clientId", $clientId);
         $this->db->update($this->tableName, $data);
     }
-
-    public function getByUserId($userId){
-        $this->db->where("userId", $userId);
-        $query = $this->db->get($this->tableName)->result_array();
-        if(count($query) == 0)
-            throw new CI_MyException(1, '不存在此用户的地址信息');
-        return $query[0];
-    } 
 
 }

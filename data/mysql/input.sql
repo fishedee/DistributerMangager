@@ -60,11 +60,10 @@ alter table t_client add index userIdIndex(userId);
 #创建地址表
 create table t_address(
     addressId integer not null auto_increment,
-    userId integer not null,
+    clientId integer not null,
     name varchar(32) not null,
     province varchar(32) not null,
     city varchar(32) not null,
-    district varchar(32) not null,
     address varchar(128) not null,
     phone varchar(11) not null,
     payment integer not null,
@@ -72,6 +71,8 @@ create table t_address(
     modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
     primary key(addressId)
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
+
+alter table t_address add index clientIdIndex(clientId);
 
 #创建用户权限表
 create table t_user_permission(
@@ -220,6 +221,9 @@ insert into t_user(userId,name,password,company,phone,type) values
 insert into t_user_permission(userId,permissionId)values
 (10003,1),
 (10003,2);
+
+insert into t_client(userId,openId,type)values
+(10003,'微信测试用户虚拟OpenId',2);
 
 insert into t_user_app(userId,appId,appKey,remark)values
 (10003,'wx5cc2d94dfe468c95','adc38d0974b0617023012fef684e9ae6','');

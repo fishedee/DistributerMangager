@@ -719,7 +719,7 @@
             "id": "fishstrap/util/upload.js"
         },
         "mobile/common/address/address.js": {
-            "uri": "/mobile/common/address/address_470cd49.js",
+            "uri": "/mobile/common/address/address_e874992.js",
             "type": "js",
             "deps": [
                 "mobile/common/core/core.js",
