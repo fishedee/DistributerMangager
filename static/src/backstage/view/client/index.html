@@ -1,0 +1,73 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>烘焙帮后台管理系统</title>
+	<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+</head>
+<body class="definewidth m10">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		var subPage = require('/fishstrap/page/subPage.js');
+		var clientType = {};
+		var clientGender = {};
+		function getType(next){
+			$.get('/client/getType',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0){
+					dialog.message(data.msg);
+					return;
+				}
+				clientType = data.data;
+				next();
+			});
+		}
+		function getGender(next){
+			$.get('/client/getGender',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0){
+					dialog.message(data.msg);
+					return;
+				}
+				clientGender = data.data;
+				next();
+			});
+		}
+		function go(){
+			query.simpleQuery({
+				id:'container',
+				url:'/client/search',
+				column:[
+					{id:'clientId',type:'text',name:'用户ID'},
+					{id:'name',type:'text',name:'姓名'},
+					{id:'gender',type:'enum',name:'性别',map:clientGender},
+					{id:'district',type:'text',name:'地址'},
+					{id:'year',type:'text',name:'出生年份'},
+					{id:'type',type:'enum',name:'类型',map:clientType},
+					{id:'createTime',type:'text',name:'创建时间'},
+					{id:'modifyTime',type:'text',name:'修改时间'},
+				],
+				queryColumn:['name','type','gender'],
+				operate:[{
+					name:'查看',
+					click:function(data){
+						subPage.open({
+							title:'查看用户',
+							url:'view.html?clientId='+data.clientId,
+							close:function(){
+							}
+						});
+					}
+				}]
+			});
+		}
+		getType(function(){
+			getGender(go);
+		});
+	</script>
+ </body>
+</html>

@@ -5,16 +5,31 @@ class ClientWxLoginAo extends CI_Model {
     public function __construct()
     {
         parent::__construct();
+        $this->load->model('user/userAppAo','userAppAo');
 		$this->load->model('client/clientAo','clientAo');
 		$this->load->model('client/clientLoginAo','clientLoginAo');
 		$this->load->model('client/clientGenderEnum','clientGenderEnum');
 		$this->load->model('client/clientTypeEnum','clientTypeEnum');
-		
-		$wxAppId = 'wxad20aeed157e7847';
-		$wxAppKey = 'ceb71bf49d02a0fce247add066d162f2';
+    }
+
+    private function getUserIdFromUrl($url){
+    	preg_match('/^http:\/\/[^\/]*\/(\d+)/i',$url,$matches);
+    	if( isset($matches[1]) == false )
+    		throw new CI_MyException(1,'不合法的跳转url'.$url);
+
+    	return $matches[1];
+    }
+
+    private function initWxSdk($userId){
+    	$appInfo = $this->userAppAo->get($userId);
+
+    	$wxAppId = $appInfo['appId'];
+		$wxAppKey = $appInfo['appKey'];
 		$wxScope = 'snsapi_userinfo';
 		$wxCallback = 'http://'.$_SERVER['HTTP_HOST'].'/clientlogin/wxlogincallback';
 		
+		if( $wxAppId == '' || $wxAppKey == '')
+			throw new CI_MyException(1,'未设置appId或appKey');
 		$this->load->library('wxSdk',array(
 			'appId'=>$wxAppId,
 			'appKey'=>$wxAppKey,
@@ -24,12 +39,23 @@ class ClientWxLoginAo extends CI_Model {
     }
 	
 	public function login($callback){
+		//初始化sdk
+		$userId = $this->getUserIdFromUrl($callback);
+
+		$this->initWxSdk($userId);
+
+		//获取跳转url
 		$loginUrl = $this->wxSdk->getLoginUrl($callback);
 		
 		header('Location: '.$loginUrl);
 	}
 	
 	public function loginCallback(){
+		//初始化sdk
+		$userId = $this->getUserIdFromUrl($_GET['state']);
+
+		$this->initWxSdk($userId);
+
 		//调用QQ接口获取登录信息
 		$accessToken = $this->wxSdk->getAccessTokenAndOpenId();
 		
@@ -47,6 +73,7 @@ class ClientWxLoginAo extends CI_Model {
 		$image = $userInfo['headimgurl'];
 		
 		$clientId = $this->clientAo->addOnce(array(
+			'userId'=>$this->getUserIdFromUrl($callback),
 			'name'=>$userInfo['nickname'],
 			'gender'=>$gender,
 			'image'=>$image,
@@ -58,7 +85,7 @@ class ClientWxLoginAo extends CI_Model {
 		));
 		
 		//设置登录态
-		$this->clientLoginAo->login($clientId);
+		$this->clientLoginAo->login($userId,$clientId);
 		
 		header('Location: '.$callback);
 	}

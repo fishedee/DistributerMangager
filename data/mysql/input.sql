@@ -29,9 +29,26 @@ create table t_user(
 
 alter table t_user add index nameIndex(name,password);
 
+#创建用户AppId与AppKey入口
+create table t_user_app(
+	userAppId integer not null auto_increment,
+	userId integer not null,
+	token varchar(128) not null,
+	aesKey varchar(128) not null,
+	appId varchar(128) not null,
+	appKey varchar(128) not null,
+	remark varchar(128) not null,
+	createTime timestamp not null default CURRENT_TIMESTAMP,
+	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
+	primary key( userAppId )
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+
+alter table t_user_app add index userIdIndex(userId);
+
 #创建客户表
 create table t_client(
 	clientId integer not null auto_increment,
+	userId integer not null,
 	name varchar(128) not null,
 	gender integer not null,
 	image varchar(128) not null,
@@ -47,6 +64,7 @@ create table t_client(
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
 
 alter table t_client add index openIdIndex(openId);
+alter table t_client add index userIdIndex(userId);
 
 #创建地址表
 create table t_address(
@@ -212,6 +230,9 @@ insert into t_user_permission(userId,permissionId)values
 (10003,1),
 (10003,2);
 
+insert into t_user_app(userId,appId,appKey,remark,token)values
+(10003,'wx5cc2d94dfe468c95','adc38d0974b0617023012fef684e9ae6','','54e338559ce0e');
+
 insert into t_company_template(title,url,remark)values
 ('metro风格','/data/upload/template/sample1',''),
 ('简约风格(测试用)','/data/upload/template/sample2','');
@@ -246,6 +267,7 @@ insert into t_shop_commodity_classify(userId,title,icon,parent,sort,remark)value
 select * from t_user;
 select * from t_user_permission;
 select * from t_user_client;
+select * from t_user_app;
 select * from t_company_template;
 select * from t_user_company_template;
 select * from t_user_company_template;

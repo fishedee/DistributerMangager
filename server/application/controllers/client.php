@@ -46,10 +46,13 @@ class Client extends CI_Controller {
 		));
 		
 		//检查权限
-		$this->loginAo->checkMustLogin();
+		$user = $this->loginAo->checkMustClient(
+			$this->userPermissionEnum->COMPANY_INTRODUCE
+		);
+		$userId = $user['userId'];
 			
 		//执行业务逻辑
-		return $this->clientAo->search($dataWhere,$dataLimit);
+		return $this->clientAo->search($userId,$dataWhere,$dataLimit);
 	}
 	
 	/**
@@ -64,10 +67,14 @@ class Client extends CI_Controller {
 		$clientId = $data["clientId"];
 		
 		//检查权限
-		$this->loginAo->checkMustLogin();
+		$user = $this->loginAo->checkMustClient(
+			$this->userPermissionEnum->COMPANY_INTRODUCE
+		);
+		$userId = $user['userId'];
 		
 		//执行业务逻辑
 		return $this->clientAo->get(
+			$userId,
 			$clientId
 		);
 	}

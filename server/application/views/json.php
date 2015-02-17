@@ -12,7 +12,7 @@
 			'data'=>$data
 		);
 	}
-	$output = json_encode($result,JSON_UNESCAPED_UNICODE);
+	$output = json_encode($result);
 	if( $output == null ){
 		$output = json_encode(array(
 			'code'=>1,
@@ -21,10 +21,6 @@
 		));
 		log_message('ERROR','输出中含有非UTF8编码');
 	}else{
-		if( $result['code'] != 0 ){
-			log_message('ERROR',$result['msg']);
-		}
-		
 		echo $output;
 	}
 ?>

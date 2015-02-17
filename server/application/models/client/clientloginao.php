@@ -8,9 +8,10 @@ class ClientLoginAo extends CI_Model {
 		$this->load->model('client/clientAo','clientAo');
     }
 	
-	public function islogin(){
+	public function islogin($userId){
 		$clientId = $this->session->userdata('clientId');
-		if( $clientId >= 10000 ){
+		$inUserId = $this->session->userdata('userId');
+		if( $clientId >= 10000 && $inUserId == $userId ){
 			return $this->clientAo->get($clientId);
 		}else{
 			return false;
@@ -19,9 +20,11 @@ class ClientLoginAo extends CI_Model {
 	
 	public function logout(){
 		$this->session->unset_userdata('clientId');
+		$this->session->unset_userdata('userId');
 	}
 	
-	public function login($clientId){
+	public function login($userId,$clientId){
+		$this->session->set_userdata('userId',$userId);
 		$this->session->set_userdata('clientId',$clientId);
 	}
 	
