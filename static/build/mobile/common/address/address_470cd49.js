@@ -49,6 +49,9 @@ function getAllCity(province){
 		return [];
 	return provinceInfo[1].split("|");
 }
+function getAllPayment(){
+	return ['微信支付','货到付款'];
+}
 var $ = require('mobile/common/core/core.js');
 var SelectList = require('mobile/common/selectlist/selectlist.js');
 
@@ -60,7 +63,7 @@ function address(args){
 		city:'佛山',
 		address:'',
 		phone:'',
-		payment:1,
+		payment:'微信支付',
 	};
 	args = $.extend(tempArgs,args);
 	//设置下拉列表
@@ -83,16 +86,9 @@ function address(args){
 	args.paymentSelectList = new SelectList({
 		change:_.noop,
 		value:args.payment,
-		list:[
-			{
-				name:'在线支付',
-				value:1,
-			},
-			{
-				name:'货到付款',
-				value:2,
-			}
-		]
+		list:_.map(getAllPayment(),function(single){
+			return {name:single,value:single};
+		})
 	});
 	args.paymentSelectListEl = args.paymentSelectList.el;
 	//生成页面
