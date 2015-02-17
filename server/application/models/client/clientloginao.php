@@ -11,8 +11,9 @@ class ClientLoginAo extends CI_Model {
 	public function islogin($userId){
 		$clientId = $this->session->userdata('clientId');
 		$inUserId = $this->session->userdata('userId');
-		if( $clientId >= 10000 && $inUserId == $userId ){
-			return $this->clientAo->get($clientId);
+
+		if( $clientId >= 10000 ){
+			return $this->clientAo->get($userId,$clientId);
 		}else{
 			return false;
 		}
@@ -24,12 +25,13 @@ class ClientLoginAo extends CI_Model {
 	}
 	
 	public function login($userId,$clientId){
+		log_message('error',$userId.','.$clientId);
 		$this->session->set_userdata('userId',$userId);
 		$this->session->set_userdata('clientId',$clientId);
 	}
 	
-	public function checkMustLogin(){
-		$client = $this->islogin();
+	public function checkMustLogin($userId){
+		$client = $this->islogin($userId);
 		if( $client === false )
 			throw new CI_MyException(1,'帐号未登录');
 		return $client;

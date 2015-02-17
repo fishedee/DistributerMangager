@@ -33,8 +33,6 @@ alter table t_user add index nameIndex(name,password);
 create table t_user_app(
 	userAppId integer not null auto_increment,
 	userId integer not null,
-	token varchar(128) not null,
-	aesKey varchar(128) not null,
 	appId varchar(128) not null,
 	appKey varchar(128) not null,
 	remark varchar(128) not null,
@@ -49,14 +47,7 @@ alter table t_user_app add index userIdIndex(userId);
 create table t_client(
 	clientId integer not null auto_increment,
 	userId integer not null,
-	name varchar(128) not null,
-	gender integer not null,
-	image varchar(128) not null,
 	openId varchar(128) not null,
-	district varchar(128) not null,
-	mail varchar(128) not null,
-	sign varchar(2056) not null,
-	year integer not null,
 	type integer not null,
 	createTime timestamp not null default CURRENT_TIMESTAMP,
 	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
@@ -230,8 +221,8 @@ insert into t_user_permission(userId,permissionId)values
 (10003,1),
 (10003,2);
 
-insert into t_user_app(userId,appId,appKey,remark,token)values
-(10003,'wx5cc2d94dfe468c95','adc38d0974b0617023012fef684e9ae6','','54e338559ce0e');
+insert into t_user_app(userId,appId,appKey,remark)values
+(10003,'wx5cc2d94dfe468c95','adc38d0974b0617023012fef684e9ae6','');
 
 insert into t_company_template(title,url,remark)values
 ('metro风格','/data/upload/template/sample1',''),

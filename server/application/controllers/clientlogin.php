@@ -15,7 +15,12 @@ class ClientLogin extends CI_Controller {
 	*/
 	public function islogin()
 	{
-		 $this->clientLoginAo->checkMustLogin();
+		//检查输入参数
+		$data = $this->argv->checkGet(array(
+			array('userId','require')
+		));
+
+		$this->clientLoginAo->checkMustLogin($data['userId']);
 	}
 	
 	/**

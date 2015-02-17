@@ -4,8 +4,6 @@ class UserAppDb extends CI_Model
 {
 	var $tableName = "t_user_app";
 	var $tableField = array(
-		'token'=>'',
-		'aesKey'=>'',
 		'userId'=>0,
 		'appId'=>'',
 		'appKey'=>'',

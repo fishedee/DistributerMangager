@@ -36,11 +36,6 @@ class User extends CI_Controller {
 		return $this->userAppAo->get($userId);
 	}
 
-	public function checkAppInfo()
-	{
-		echo $_GET["echostr"];
-	}
-
 	/**
 	* @view json
 	*/

@@ -831,7 +831,7 @@
             "type": "js"
         },
         "mobile/common/core/core.js": {
-            "uri": "/mobile/common/core/core_3837556.js",
+            "uri": "/mobile/common/core/core_a0a8bb7.js",
             "type": "js",
             "deps": [
                 "fishstrap/lib/fastclick.js",

@@ -10,7 +10,7 @@ class UserAppAo extends CI_Model{
 	private function addOnce($userId){
 		$userapp = $this->userAppDb->getByUser($userId);
 		if( count($userapp) == 0 ){
-			$this->userAppDb->add(array('token'=>uniqid(),'userId'=>$userId));
+			$this->userAppDb->add(array('userId'=>$userId));
 		}
 	}
 	public function get($userId){
@@ -18,7 +18,6 @@ class UserAppAo extends CI_Model{
 		
 		$user = $this->userAppDb->getByUser($userId)[0];
 
-		$user['tokenCheckUrl'] = 'http://'.$_SERVER['HTTP_HOST'].'/user/checkAppInfo?userId='.$userId;
 		return $user;
 	}
 
@@ -26,18 +25,5 @@ class UserAppAo extends CI_Model{
 		$this->addOnce($userId);
 
 		return $this->userAppDb->modByUser($userId,$data);
-	}
-
-	public function check($userId){
-		$this->load->library('wxSdk',array(
-			'appId'=>'',
-			'appKey'=>'',
-			'callback'=>'',
-			'scope'=>''
-		),'wxSdk');
-		
-		$userApp = $this->get($userId);
-
-		$this->wxSdk->checkServerValid($userApp['token']);
 	}
 }

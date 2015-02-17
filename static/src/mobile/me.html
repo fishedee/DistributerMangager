@@ -25,7 +25,9 @@
 			var pageHtml = buttonlist.el + footer.el;
 			$.page.start(pageHtml);
 		}
-		go();
+		$.checkMustLogin(function(){
+			go();
+		})
 	</script>
 </body>
 <link rel="import" href="footer.html?__inline">

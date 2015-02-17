@@ -8,7 +8,6 @@ class ClientWxLoginAo extends CI_Model {
         $this->load->model('user/userAppAo','userAppAo');
 		$this->load->model('client/clientAo','clientAo');
 		$this->load->model('client/clientLoginAo','clientLoginAo');
-		$this->load->model('client/clientGenderEnum','clientGenderEnum');
 		$this->load->model('client/clientTypeEnum','clientTypeEnum');
     }
 
@@ -25,7 +24,7 @@ class ClientWxLoginAo extends CI_Model {
 
     	$wxAppId = $appInfo['appId'];
 		$wxAppKey = $appInfo['appKey'];
-		$wxScope = 'snsapi_userinfo';
+		$wxScope = 'snsapi_base';
 		$wxCallback = 'http://'.$_SERVER['HTTP_HOST'].'/clientlogin/wxlogincallback';
 		
 		if( $wxAppId == '' || $wxAppKey == '')
@@ -59,29 +58,13 @@ class ClientWxLoginAo extends CI_Model {
 		//调用QQ接口获取登录信息
 		$accessToken = $this->wxSdk->getAccessTokenAndOpenId();
 		
-		$userInfo = $this->wxSdk->getUserInfo($accessToken['access_token'],$accessToken['openid']);
-		
 		$callback = $this->wxSdk->getLoginInfo();
 		
 		//第一次登录更新用户信息
-		if( $userInfo['sex']== 1 )
-			$gender = $this->clientGenderEnum->BOY;
-		else if(  $userInfo['sex']== 2 )
-			$gender = $this->clientGenderEnum->GIRL;
-		else
-			$gender = $this->clientGenderEnum->UNKNOWN;
-		$image = $userInfo['headimgurl'];
-		
 		$clientId = $this->clientAo->addOnce(array(
-			'userId'=>$this->getUserIdFromUrl($callback),
-			'name'=>$userInfo['nickname'],
-			'gender'=>$gender,
-			'image'=>$image,
+			'userId'=>$userId,
 			'openId'=>$accessToken['openid'],
-			'year'=>0,
-			'district'=>$userInfo['country'].' '.$userInfo['province'].' '.$userInfo['city'],
 			'type'=>$this->clientTypeEnum->WX,
-			'sign'=>''
 		));
 		
 		//设置登录态

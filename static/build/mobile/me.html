@@ -20,7 +20,7 @@
 <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
 <script type="text/javascript" src="/fishstrap/core/global_0ffe271.js"></script>
 <script type="text/javascript" src="/mobile/common/dialog/dialog_5a39b67.js"></script>
-<script type="text/javascript" src="/mobile/common/core/core_3837556.js"></script>
+<script type="text/javascript" src="/mobile/common/core/core_a0a8bb7.js"></script>
 <script type="text/javascript" src="/mobile/common/footer/footer_b27c0d4.js"></script>
 <script type="text/javascript" src="/mobile/common/buttonlist/buttonlist_ee4d3cb.js"></script>
 
@@ -49,7 +49,9 @@
 			var pageHtml = buttonlist.el + footer.el;
 			$.page.start(pageHtml);
 		}
-		go();
+		$.checkMustLogin(function(){
+			go();
+		})
 	</script>
 </body>
 </html>

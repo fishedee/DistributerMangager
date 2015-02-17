@@ -102,6 +102,19 @@ $.ajax = function(opt){
 		clear:clear
 	};
 })();
+//检查登录态并自动跳转
+(function(){
+	 function checkMustLogin(next){
+	 	$.get('/clientlogin/islogin',{},function(data){
+	 		if( data.code != 0 ){
+	 			location.href = $.url.buildQueryUrl('/clientlogin/wxlogin',{callback:location.href});
+	 			return;
+	 		}
+	 		next();
+	 	});
+	}
+	$.checkMustLogin = checkMustLogin;
+})();
 module.exports = $;
 
 });
