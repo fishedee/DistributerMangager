@@ -6,6 +6,7 @@ class CommodityClassify extends CI_Controller
         parent::__construct();
 
         $this->load->model('user/loginAo', 'loginAo');
+        $this->load->model('client/clientLoginAo', 'clientLoginAo');
         $this->load->model('user/userPermissionEnum', 'userPermissionEnum');
         $this->load->model('shop/commodityClassifyAo', 'commodityClassifyAo');
         $this->load->library('argv', 'argv');
@@ -53,6 +54,43 @@ class CommodityClassify extends CI_Controller
         return $this->commodityClassifyAo->search($userId, array(), array());
     }
 
+    /**
+    * @view json
+    */
+    public function getPrimaryClassify(){
+        //检查输入参数
+        $data = $this->argv->checkGet(array(
+            array('userId', 'require')
+        ));
+
+        $userId = $data['userId'];
+
+         //检查权限
+        $client = $this->clientLoginAo->checkMustLogin($userId);
+
+         //执行业务逻辑
+        return $this->commodityClassifyAo->getPrimaryClassify($userId);
+    }
+
+    /**
+    * @view json
+    */
+    public function getSecondaryClassify(){
+        //检查输入参数
+        $data = $this->argv->checkGet(array(
+            array('userId', 'require'),
+            array('shopCommodityClassifyId', 'require'),
+        ));
+
+        $userId = $data['userId'];
+        $shopCommodityClassifyId = $data['shopCommodityClassifyId'];
+
+         //检查权限
+        $client = $this->clientLoginAo->checkMustLogin($userId);
+
+         //执行业务逻辑
+        return $this->commodityClassifyAo->getSecondaryClassify($userId,$shopCommodityClassifyId);
+    }
 
 	/**
 	* @view json

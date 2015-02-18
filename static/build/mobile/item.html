@@ -32,34 +32,43 @@
 <body>
 	<div id="body"></div>
 	<script type="text/javascript">
+		var $ = require('mobile/common/core/core.js');
+		var dialog = require('mobile/common/dialog/dialog.js');
 		var Footer = require('mobile/common/footer/footer.js');
 		var HeaderSearch = require('mobile/common/headersearch/headersearch.js');
 		var ShopCart = require('mobile/common/shopcart/shopcart.js');
 		var LittleList = require('mobile/common/littlelist/littlelist.js');
-
-		var headersearch = new HeaderSearch();
-		var footer = new Footer('item');
-		var shopcart = new ShopCart();
-		var littlelist = new LittleList([
-			{
-				link:'itemlist.html',
-				image:'/data/upload/sample/sample4.jpg',
-				text:'衣服',
-			},
-			{
-				link:'itemlist.html',
-				image:'/data/upload/sample/sample5.jpg',
-				text:'零食',
-			},
-			{
-				link:'itemlist.html',
-				image:'/data/upload/sample/sample6.jpg',
-				text:'电器',
-			}
-		]);
-		
-		var pageHtml = headersearch.el + littlelist.el+ footer.el + shopcart.el;
-		$.page.start(pageHtml);
+		var commodityclassify = [];
+		function get(next){
+			$.get('/commodityclassify/getPrimaryClassify',{},function(data){
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				commodityclassify = data.data;
+				next();
+			});
+		}
+		function go(){
+			var headersearch = new HeaderSearch();
+			var footer = new Footer('item');
+			var shopcart = new ShopCart();
+			var littlelist = new LittleList(_.map(commodityclassify,function(single){
+				var link;
+				if( single.childrenCount == 0 ){
+					link = $.url.buildQueryUrl('itemlist.html',{shopCommodityClassifyId:single.shopCommodityClassifyId});
+				}else{
+					link = $.url.buildQueryUrl('classify.html',{shopCommodityClassifyId:single.shopCommodityClassifyId});
+				}
+				return {link:link,image:single.icon,text:single.title};
+			}));
+			
+			var pageHtml = headersearch.el + littlelist.el+ footer.el + shopcart.el;
+			$.page.start(pageHtml);
+		}
+		$.checkMustLogin(function(){
+			get(go);
+		});
 	</script>
 </body>
 </html>
