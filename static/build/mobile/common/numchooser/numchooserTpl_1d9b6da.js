@@ -9,6 +9,8 @@ __p+='<div class="common_numchooser" id="'+
 ((__t=( $.func.invoke(decreaseClick) ))==null?'':__t)+
 '">-</span><input type="text" value="'+
 ((__t=( quantity ))==null?'':_.escape(__t))+
+'" onchange="'+
+((__t=( $.func.invoke(change) ))==null?'':__t)+
 '"/><span class="increase" onclick="'+
 ((__t=( $.func.invoke(increaseClick) ))==null?'':__t)+
 '">+</span><span class="tip2">'+

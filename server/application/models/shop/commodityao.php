@@ -30,6 +30,15 @@ class CommodityAo extends CI_Model
         return $shopCommodity;
     }
 
+    public function getByIds($userId,$shopCommodityId){
+        $data = $this->search($userId,array('shopCommodityId'=>$shopCommodityId),array())['data'];
+        $map = array();
+        foreach($data as $singleData){
+            $map[$singleData['shopCommodityId']] = $singleData;
+        }
+        return $map;
+    }
+
     public function getOnStoreByClassify($userId,$shopCommodityClassifyId){
         $dataWhere = array();
         $dataWhere['userId'] = $userId;

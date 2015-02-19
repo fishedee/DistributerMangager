@@ -3,10 +3,17 @@
 */
 var $ = require('../core/core.js');
 function headertitle(args){
-	var template = __inline('headertitleTpl.tpl');
-	var el = template(args);
+	args.id = _.uniqueId('common_headertitle_');
+	args.template = __inline('headertitleTpl.tpl');
+	var el = args.template(args);
+	function set(data){
+		var target = $('#'+args.id);
+		args = $.extend(args,data);
+		target.replaceWith(args.template(args));
+	}
 	return {
-		el:el
+		el:el,
+		set:set
 	}
 }
 return headertitle;

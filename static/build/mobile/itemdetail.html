@@ -29,7 +29,7 @@
 <script type="text/javascript" src="/mobile/common/header/header_23de960.js"></script>
 <script type="text/javascript" src="/mobile/common/shopcart/shopcart_6e67c2f.js"></script>
 <script type="text/javascript" src="/fishstrap/util/uedit_466b933.js"></script>
-<script type="text/javascript" src="/mobile/common/numchooser/numchooser_64970f7.js"></script>
+<script type="text/javascript" src="/mobile/common/numchooser/numchooser_faad02f.js"></script>
 <script type="text/javascript" src="/mobile/common/itembrief/itembrief_bf37e55.js"></script>
 <script type="text/javascript" src="/mobile/common/itemarticle/itemarticle_560048e.js"></script>
 <script type="text/javascript" src="/mobile/common/footerbutton/footerbutton_7c867f1.js"></script>
@@ -58,37 +58,54 @@
 				next();
 			});
 		}
+		function showDialog(name,next){
+			var dialogArgv = {
+				image:commodity.icon,
+				title:commodity.title,
+				summary:commodity.introduction,
+				price:commodity.price,
+				oldprice:commodity.oldPrice,
+				stock:commodity.inventory,
+			};
+			if(name=='buy'){
+				dialogArgv = $.extend(dialogArgv,{confirmName:'buy',confirmText:'立即购买',confirmClick:next});
+			}else{
+				dialogArgv = $.extend(dialogArgv,{confirmName:'cart',confirmText:'加入购物车',confirmClick:next});
+			}
+			$.page.append(new ItemDialog(dialogArgv).el);
+		}
 		function showBuyDialog(){
-			var dialog = new ItemDialog({
-				image:'/data/upload/sample/sample4.jpg',
-				title:'零食1',
-				summary:'简介简介简介简介简介简介简介简介简介简介简介简介',
-				price:'99900',
-				oldprice:'433000',
-				stock:'40',
-				confirmName:'buy',
-				confirmText:'立即购买',
-				confirmClick:function(data){
-					location.href = 'shopcart.html';
-				}
-			}).el;
-			$.page.append(dialog);
+			showDialog('buy',function(quantity){
+				$.post('/troller/add',{shopCommodityId:shopCommodityId,quantity:quantity},function(data){
+					if(data.code != 0 ){
+						dialog.message(data.msg);
+						return;
+					}
+					var newQuantity = data.data;
+					if( newQuantity > 0 ){
+						location.href = 'shopcart.html';
+					}else{
+						dialog.message('库存不足，添加商品到购物车失败');
+					}
+				});
+			});
 		}
 		function showCartDialog(){
-			var dialog = new ItemDialog({
-				image:'/data/upload/sample/sample4.jpg',
-				title:'零食1',
-				summary:'简介简介简介简介简介简介简介简介简介简介简介简介',
-				price:'99900',
-				oldprice:'433000',
-				stock:'40',
-				confirmName:'cart',
-				confirmText:'加入购物车',
-				confirmClick:function(data){
-					alert('加入'+data+'件商品到购物车成功');
-				}
-			}).el;
-			$.page.append(dialog);
+			showDialog('cart',function(quantity){
+				$.post('/troller/add',{shopCommodityId:shopCommodityId,quantity:quantity},function(data){
+					if(data.code != 0 ){
+						dialog.message(data.msg);
+						return;
+					}
+					var newQuantity = data.data;
+					if( newQuantity == quantity ){
+						dialog.message('成功添加'+newQuantity+'件商品到购物车');
+					}else{
+						dialog.message('库存不足，只能添加'+newQuantity+'商品到购物车');
+					}
+					
+				});
+			});
 		}
 		function go(){
 			var header = new Header({
@@ -128,7 +145,9 @@
 			var pageHtml = header.el + itemarticle.el + footerbutton.el + shopcart.el;
 			$.page.start(pageHtml);
 		}
-		getCommodity(go);
+		$.checkMustLogin(function(){
+			getCommodity(go);
+		});
 	</script>
 </body>
 </html>

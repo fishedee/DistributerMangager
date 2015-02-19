@@ -5,10 +5,13 @@ define('mobile/common/headertitle/headertitle.js', function(require, exports, mo
 */
 var $ = require('mobile/common/core/core.js');
 function headertitle(args){
-	var template = function(obj){
+	args.id = _.uniqueId('common_headertitle_');
+	args.template = function(obj){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 with(obj||{}){
-__p+='<h1 class="common_headertitle"><span class="tip">'+
+__p+='<h1 class="common_headertitle" id="'+
+((__t=( id ))==null?'':_.escape(__t))+
+'"><span class="tip">'+
 ((__t=( tip ))==null?'':_.escape(__t))+
 '</span><span class="text">'+
 ((__t=( text ))==null?'':_.escape(__t))+
@@ -16,9 +19,15 @@ __p+='<h1 class="common_headertitle"><span class="tip">'+
 }
 return __p;
 };
-	var el = template(args);
+	var el = args.template(args);
+	function set(data){
+		var target = $('#'+args.id);
+		args = $.extend(args,data);
+		target.replaceWith(args.template(args));
+	}
 	return {
-		el:el
+		el:el,
+		set:set
 	}
 }
 return headertitle;

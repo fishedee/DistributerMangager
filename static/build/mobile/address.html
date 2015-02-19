@@ -9,7 +9,7 @@
 		<meta name="renderer" content="webkit">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
-	<title>我的页面</title>
+	<title>收货地址</title>
 <link rel="stylesheet" type="text/css" href="/mobile/common/core/core_8488e02.css">
 <link rel="stylesheet" type="text/css" href="/mobile/common/dialog/dialog_09f6162.css">
 <link rel="stylesheet" type="text/css" href="/mobile/common/header/header_b51a32c.css">
@@ -33,41 +33,47 @@
 <body>
 	<div id="body"></div>
 	<script type="text/javascript">
+		var $ = require('mobile/common/core/core.js');
+		var dialog = require('mobile/common/dialog/dialog.js');
 		var Header = require('mobile/common/header/header.js');
 		var Address = require('mobile/common/address/address.js');
 		var FooterButton = require('mobile/common/footerbutton/footerbutton.js');
+		var myaddress = {};
+		var mapPaymentIdToName = {1:'微信支付',2:'货到付款'};
+		var mapPaymentNameToId = {'微信支付':1,'货到付款':2};
+		function get(next){
+			$.get('/address/getMyAddress',{},function(data){
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				myaddress = data.data;
+				next();
+			});
+		}
 		function go(){
 			var header = new Header({
-				title:'支付',
-				backLink:'shopcart.html',
-				button:[{
-					name:'search',
-					link:'search.html'
-				}]
+				title:'收货地址',
+				backLink:'me.html',
+				button:[]
 			});
-			var address = new Address({
-				name:'fish',
-				province:'广东',
-				city:'佛山',
-				address:'XXOO',
-				phone:'150XXX',
-				payment:'在线支付',
-			});
+
+			var address = new Address(_.extend(myaddress,{payment:mapPaymentIdToName[myaddress.payment]}));
 			var footerbutton = new FooterButton([
 				{
 					name:'pay',
 					text:'支付',
 					click:function(){
-						var data = address.get();
-						console.log(data);
-						alert('转入微信支付页面!');
+						alert('生成订单，并执行微信支付！');
 					}
 				}
 			]);
 			var pageHtml = header.el + address.el + footerbutton.el;
 			$.page.start(pageHtml);
 		}
-		go();
+		$.checkMustLogin(function(){
+			get(go);
+		});
 	</script>
 </body>
 </html>

@@ -8,31 +8,129 @@ class TrollerAo extends CI_Model
         $this->load->model('shop/commodityAo', 'commodityAo');
     }
 
-    public function getByUserId($userId){
-        return $this->trollerDb->getByUserId($userId);
+    private function getQuantityInInventory($userId,$shopCommodityId,$quantity){
+        $shopCommodity = $this->commodityAo->get($userId,$shopCommodityId);
+        if($shopCommodity['inventory'] >= $quantity)
+            return $quantity;
+        else
+            return $shopCommodity['inventory'];
+    }
+    private function change($userId,$clientId,$shopCommodityId,$quantity,$isAddOrigin){
+        //获取购物车商品的原来信息
+        $shopTroller = $this->trollerDb->search(array(
+            'userId'=>$userId,
+            'clientId'=>$clientId,
+            'shopCommodityId'=>$shopCommodityId
+        ),array())['data'];
+
+        if( count($shopTroller) == 0 ){
+            $oldQuantity = 0;
+            $shopTrollerId = 0;  
+        }else{
+            $oldQuantity = $shopTroller[0]['quantity'];
+            $shopTrollerId = $shopTroller[0]['shopTrollerId'];
+        }
+        //计算新的quantity
+        $quantity = intval($quantity);
+        if( $quantity <= 0 )
+            $quantity = 0;
+        if( $isAddOrigin)
+            $quantity += $oldQuantity;
+        else
+            $quantity = $quantity;
+        $quantity = $this->getQuantityInInventory($userId,$shopCommodityId,$quantity);
+        $result = array(
+            'quantity'=>$quantity,
+            'oldQuantity'=>$oldQuantity
+        );
+        //计算quantity执行不同的操作
+        if( $quantity == 0  ){
+            //指定的quantity<=0
+            if($shopTrollerId == 0)
+                return $result;
+            $this->trollerDb->del($shopTrollerId);
+        }else{
+            if( $shopTrollerId == 0 ){
+                //指定的quantity>0且不存在原数据
+                $this->trollerDb->add(array(
+                    'userId'=>$userId,
+                    'clientId'=>$clientId,
+                    'shopCommodityId'=>$shopCommodityId,
+                    'quantity'=>$quantity
+                ));
+            }else{
+                //指定的quantity>0且存在原数据
+                if($quantity == $oldQuantity)
+                    return $result;
+                $this->trollerDb->mod($shopTrollerId,array(
+                    'quantity'=>$quantity
+                ));
+            }
+        }
+        return $result;
     }
 
-    public function getByUserIdClientId($userId, $clientId){
-        return $this->trollerDb->getByUserIdClientId($userId, $clientId);
+
+    public function getAll($userId,$clientId){
+        //取出所有数据
+        $shopCommodity = $this->trollerDb->search(array(
+            'userId'=>$userId,
+            'clientId'=>$clientId,
+        ),array())['data'];
+
+        //根据库存限制恰当设置购物车的数量
+        foreach($shopCommodity as $key=>$value){
+            $shopCommodity[$key]['quantity'] = $this->change(
+                $userId,
+                $clientId,
+                $shopCommodity[$key]['shopCommodityId'],
+                $shopCommodity[$key]['quantity'],
+                false
+            )['quantity'];
+        }
+
+        //获取购物车中商品的信息
+        $shopCommodityInfo = $this->commodityAo->getByIds($userId,array_map(function($single){
+            return $single['shopCommodityId'];
+        },$shopCommodity));
+        $shopCommodity = array_map(function($single)use($shopCommodityInfo){
+            return array_merge($single,$shopCommodityInfo[$single['shopCommodityId']]);
+        },$shopCommodity);
+
+        return $shopCommodity;
     }
 
-    public function del($userId, $shopTrollerId){
-        $troller = $this->trollerDb->get($shopTrollerId);
-        if($troller['userId'] != $userId)
-            throw new CI_MyException(1, '此用户无权限删除此商品');
-
-        return $this->trollerDb->del($shopTrollerId);    
+    public function delAll($userId,$clientId){
+       return $this->delByUserIdAndClientId($userId,$clientId);
     }
 
-    public function add($userId, $clientId, $shopCommodityId){
-        $data['userId'] = $userId;
-        $data['clientId'] = $clientId;
-        $data['shopCommodityId'] = $shopCommodityId;
+    public function setAll($userId,$clientId,$shopCommodity){
+        $isChange = false;
 
-        $commodity = $this->commodityAo->get($shopCommodityId);
-        if($commodity['userId'] != $clientId)
-            throw new CI_MyException(1, '非法商品信息无法购买');
+        foreach($shopCommodity as $single){
+            $quantity = $this->setCommodity($userId,$clientId,$single['shopCommodityId'],$single['quantity']);
+            if( $quantity != $single['quantity'] )
+                $isChange = true;
+        }
 
-        return $this->trollerDb->add($data);
+        $shopCommodityId = array_map(function($single){
+            return $single['shopCommodityId'];
+        },$shopCommodity);
+        $this->trollerDb->delByUserIdAndClientIdAndNotCommodityId($userId,$clientId,$shopCommodityId);
+        return $isChange;
     }
+
+    public function addCommodity($userId,$clientId,$shopCommodityId,$quantity){
+        $result = $this->change($userId,$clientId,$shopCommodityId,$quantity,true);
+        return ($result['quantity'] - $result['oldQuantity'] >= 0 )? ($result['quantity'] - $result['oldQuantity'] ): 0;
+    }
+
+    public function delCommodity($userId,$clientId,$shopCommodityId){
+       return $this->change($userId,$clientId,$shopCommodityId,0,false)['quantity'];
+    }
+
+    public function setCommodity($userId,$clientId,$shopCommodityId,$quantity){
+        return $this->change($userId,$clientId,$shopCommodityId,$quantity,false)['quantity'];
+    }
+
 }

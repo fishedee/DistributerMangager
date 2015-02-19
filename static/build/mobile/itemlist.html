@@ -26,7 +26,7 @@
 <script type="text/javascript" src="/mobile/common/core/core_a0a8bb7.js"></script>
 <script type="text/javascript" src="/mobile/common/header/header_23de960.js"></script>
 <script type="text/javascript" src="/mobile/common/shopcart/shopcart_6e67c2f.js"></script>
-<script type="text/javascript" src="/mobile/common/numchooser/numchooser_64970f7.js"></script>
+<script type="text/javascript" src="/mobile/common/numchooser/numchooser_faad02f.js"></script>
 <script type="text/javascript" src="/mobile/common/itembrief/itembrief_bf37e55.js"></script>
 <script type="text/javascript" src="/mobile/common/biglist/biglist_32dcb01.js"></script>
 
@@ -87,8 +87,10 @@
 			$.page.setGrey();
 			$.page.start(pageHtml);
 		}
-		getCommodityClassify(function(){
-			getCommodity(go);
+		$.checkMustLogin(function(){
+			getCommodityClassify(function(){
+				getCommodity(go);
+			});
 		});
 	</script>
 </body>

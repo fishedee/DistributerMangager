@@ -9,11 +9,20 @@ class CommodityDb extends CI_Model
     }
 
     public function search($where, $limit){
+        if( isset($where['shopCommodityId']) && count($where['shopCommodityId']) == 0 )
+            return array(
+                'count'=>0,
+                'data'=>array()
+            );
+
         foreach($where as $key=>$value){
             if($key == 'title' || $key == 'introduction' )
                 $this->db->like($key, $value);
             else if($key == 'userId' || $key == 'shopCommodityClassifyId' || $key == 'state')
                 $this->db->where($key, $value);
+            else if($key == 'shopCommodityId')
+                $this->db->where_in($key, $value);
+                
         }
         $count = $this->db->count_all_results($this->tableName);
 
@@ -22,6 +31,8 @@ class CommodityDb extends CI_Model
                 $this->db->like($key, $value);
             else if($key == 'userId' || $key == 'shopCommodityClassifyId' || $key == 'state')
                 $this->db->where($key, $value);
+            else if($key == 'shopCommodityId')
+                $this->db->where_in($key, $value);
         }
         $this->db->order_by('createTime', 'desc');  
 

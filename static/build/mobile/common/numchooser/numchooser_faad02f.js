@@ -5,6 +5,8 @@ define('mobile/common/numchooser/numchooser.js', function(require, exports, modu
 */
 var $ = require('mobile/common/core/core.js');
 function numchooser(args){
+	if( _.isUndefined(args.change) == true )
+		args.change = _.noop;
 	args.decreaseClick = decreaseClick;
 	args.increaseClick = increaseClick;
 	args.id = _.uniqueId('common_numchooser_');
@@ -19,6 +21,8 @@ __p+='<div class="common_numchooser" id="'+
 ((__t=( $.func.invoke(decreaseClick) ))==null?'':__t)+
 '">-</span><input type="text" value="'+
 ((__t=( quantity ))==null?'':_.escape(__t))+
+'" onchange="'+
+((__t=( $.func.invoke(change) ))==null?'':__t)+
 '"/><span class="increase" onclick="'+
 ((__t=( $.func.invoke(increaseClick) ))==null?'':__t)+
 '">+</span><span class="tip2">'+
@@ -32,11 +36,13 @@ return __p;
 		var target = $('#'+args.id).find('input');
 		var value = get();
 		target.val(value-1>=1?value-1:1);
+		args.change();
 	}
 	function increaseClick(){
 		var target = $('#'+args.id).find('input');
 		var value = get();
 		target.val(value+1);
+		args.change();
 	}
 	function get(){
 		var target = $('#'+args.id).find('input');

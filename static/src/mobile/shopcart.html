@@ -4,14 +4,27 @@
 <body>
 	<div id="body"></div>
 	<script type="text/javascript">
+		var $ = require('common/core/core.js');
+		var dialog = require('common/dialog/dialog.js');
 		var Header = require('common/header/header.js');
 		var HeaderTitle = require('common/headertitle/headertitle.js');
 		var ItemListWithNum = require('common/itemlistwithnum/itemlistwithnum.js');
 		var FooterButton = require('common/footerbutton/footerbutton.js');
+		var shopcart = {};
+		function getShopCart(next){
+			$.get('/troller/get',{},function(data){
+				if(data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				shopcart = data.data;
+				next();
+			});
+		}
 		function go(){
 			var header = new Header({
 				title:'购物车',
-				backLink:'itemdetail.html',
+				backLink:'item.html',
 				button:[{
 					name:'search',
 					link:'search.html'
@@ -19,60 +32,90 @@
 			});
 			var headertitle = new HeaderTitle({
 				tip:'订单总金额：',
-				text:'3641.00元'
+				text:'0元'
 			});
 			var itemlistwithnum = new ItemListWithNum({
-				title:'店铺：店铺1',
-				item:[
-					{
-						image:'/data/upload/sample/sample4.jpg',
-						title:'零食1',
-						summary:'简介简介简介简介简介简介简介简介简介简介简介简介',
-						price:'99900',
-						stock:'40',
-						quantity:1,
-					},
-					{
-						image:'/data/upload/sample/sample5.jpg',
-						summary:'简介简介简介简介简介简介简介简介简介简介简介简介',
-						title:'零食2',
-						price:'99900',
-						stock:'40',
-						quantity:2,
-					},
-				]
+				title:'店铺',
+				item:_.map(shopcart,function(single){
+					return {
+						shopTrollerId:single.shopTrollerId,
+						shopCommodityId:single.shopCommodityId,
+						image:single.icon,
+						title:single.title,
+						summary:single.introduction,
+						price:single.price,
+						stock:single.inventory,
+						quantity:single.quantity,
+					};
+				}),
+				change:whenItemListChange
 			});
-			var itemlistwithnum2 = new ItemListWithNum({
-				title:'店铺：店铺2',
-				item:[
-					{
-						image:'/data/upload/sample/sample5.jpg',
-						title:'零食3',
-						summary:'简介简介简介简介简介简介简介简介简介简介简介简介',
-						price:'99900',
-						stock:'40',
-						quantity:3,
-					},
-				]
-			});
+			function refreshHeaderTitle(){
+				var checkedItemList = itemlistwithnum.getChecked();
+				var orderPrice = 0;
+				for( var i in checkedItemList ){
+					orderPrice += checkedItemList[i].price * checkedItemList[i].quantity;
+				}
+				headertitle.set({text:orderPrice+'元'});
+			}
+			function refreshShopCart(next){
+				var allItemList = itemlistwithnum.getAll();	
+				var shopCommodity = _.map(allItemList,function(single){
+					return {shopCommodityId:single.shopCommodityId,quantity:single.quantity};
+				});
+				$.post('/troller/set',{shopCommodity:shopCommodity},function(data){
+					if( data.code != 0 ){
+						dialog.message(data.msg);
+						return;
+					}
+					next(data.data);
+				});
+			}
+			function goShopCart(next){
+				refreshShopCart(function(isStockChange){
+					if( isStockChange == true ){
+						dialog.message('库存有限，请重新选择商品数量',function(){
+							location.reload();
+						});
+					}else{
+						next();
+					}
+				});
+			}
+			function goAddress(){
+				var checkedItemList = itemlistwithnum.getChecked();
+				var shopTroller  = '';
+				for( var i in checkedItemList ){
+					if( shopTroller != '')
+						shopTroller += '|';
+					shopTroller += checkedItemList[i].shopTrollerId;
+				}
+				if( shopTroller == ''){
+					dialog.message('请选择要结算的商品');
+				}else{
+					location.href = $.url.buildQueryUrl('address.html',{shopTroller:shopTroller});
+				}
+			}
+			function whenItemListChange(){
+				refreshHeaderTitle();
+				refreshShopCart(_.noop);
+			}
 			var footerbutton = new FooterButton([
 				{
 					name:'pay',
-					text:'支付',
+					text:'结算',
 					click:function(){
-						var data = [];
-						data = data.concat(itemlistwithnum.get());
-						data = data.concat(itemlistwithnum2.get());
-						console.log(data);
-						location.href = 'address.html';
+						goShopCart(goAddress);
 					}
 				}
 			]);
-			var pageHtml = header.el + headertitle.el + itemlistwithnum.el + itemlistwithnum2.el+footerbutton.el;
+			var pageHtml = header.el + headertitle.el + itemlistwithnum.el+footerbutton.el;
 			$.page.setGrey();
 			$.page.start(pageHtml);
 		}
-		go();
+		$.checkMustLogin(function(){
+			getShopCart(go);
+		});
 	</script>
 </body>
 <link rel="import" href="footer.html?__inline">

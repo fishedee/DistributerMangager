@@ -214,6 +214,8 @@ create table t_shop_troller(
     clientId integer not null,
     shopCommodityId integer not null,
     quantity integer not null,
+    createTime timestamp not null default CURRENT_TIMESTAMP,
+	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
     primary key(shopTrollerId)
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
 

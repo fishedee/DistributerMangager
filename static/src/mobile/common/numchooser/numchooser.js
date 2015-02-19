@@ -3,6 +3,8 @@
 */
 var $ = require('../core/core.js');
 function numchooser(args){
+	if( _.isUndefined(args.change) == true )
+		args.change = _.noop;
 	args.decreaseClick = decreaseClick;
 	args.increaseClick = increaseClick;
 	args.id = _.uniqueId('common_numchooser_');
@@ -12,11 +14,13 @@ function numchooser(args){
 		var target = $('#'+args.id).find('input');
 		var value = get();
 		target.val(value-1>=1?value-1:1);
+		args.change();
 	}
 	function increaseClick(){
 		var target = $('#'+args.id).find('input');
 		var value = get();
 		target.val(value+1);
+		args.change();
 	}
 	function get(){
 		var target = $('#'+args.id).find('input');

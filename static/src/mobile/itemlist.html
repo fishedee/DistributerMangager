@@ -57,8 +57,10 @@
 			$.page.setGrey();
 			$.page.start(pageHtml);
 		}
-		getCommodityClassify(function(){
-			getCommodity(go);
+		$.checkMustLogin(function(){
+			getCommodityClassify(function(){
+				getCommodity(go);
+			});
 		});
 	</script>
 </body>
