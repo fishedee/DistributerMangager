@@ -847,7 +847,7 @@
             "id": "mobile/common/core/core.less"
         },
         "mobile/common/deallist/deallist.js": {
-            "uri": "/mobile/common/deallist/deallist_96475ef.js",
+            "uri": "/mobile/common/deallist/deallist_702040d.js",
             "type": "js",
             "deps": [
                 "mobile/common/core/core.js",
@@ -861,7 +861,7 @@
             "id": "mobile/common/deallist/deallist.less"
         },
         "mobile/common/deallist/deallistTpl.tpl": {
-            "uri": "/mobile/common/deallist/deallistTpl_a49fe8e.js",
+            "uri": "/mobile/common/deallist/deallistTpl_1bc58f9.js",
             "type": "js"
         },
         "mobile/common/dialog/dialog.js": {
@@ -920,7 +920,7 @@
             "type": "js"
         },
         "mobile/common/header/header.js": {
-            "uri": "/mobile/common/header/header_56f7924.js",
+            "uri": "/mobile/common/header/header_23de960.js",
             "type": "js",
             "deps": [
                 "mobile/common/core/core.js",
@@ -934,7 +934,7 @@
             "id": "mobile/common/header/header.less"
         },
         "mobile/common/header/headerTpl.tpl": {
-            "uri": "/mobile/common/header/headerTpl_7e7a2df.js",
+            "uri": "/mobile/common/header/headerTpl_be24341.js",
             "type": "js"
         },
         "mobile/common/headerbutton/headerbutton.js": {
@@ -1012,7 +1012,7 @@
             "type": "js"
         },
         "mobile/common/itembrief/itembrief.js": {
-            "uri": "/mobile/common/itembrief/itembrief_9857f76.js",
+            "uri": "/mobile/common/itembrief/itembrief_bf37e55.js",
             "type": "js",
             "deps": [
                 "mobile/common/core/core.js",
@@ -1027,7 +1027,7 @@
             "id": "mobile/common/itembrief/itembrief.less"
         },
         "mobile/common/itembrief/itembriefTpl.tpl": {
-            "uri": "/mobile/common/itembrief/itembriefTpl_80f75d7.js",
+            "uri": "/mobile/common/itembrief/itembriefTpl_038985d.js",
             "type": "js"
         },
         "mobile/common/itemdialog/itemdialog.js": {

@@ -6,7 +6,7 @@
 				<div class="info">
 					<div class="id"><span class="tip">订单号：</span><span class="text"><%- list[i].id %></span></div>
 					<div class="state"><span class="tip">订单状态：</span><span class="text"><%- list[i].state %></span></div>
-					<div class="price"><span class="tip">订单金额：</span><span class="text">￥<%- (list[i].price /100 ).toFixed(2)%></span></div>
+					<div class="price"><span class="tip">订单金额：</span><span class="text">￥<%- list[i].price %></span></div>
 				</div>
 			</li>
 		</a>

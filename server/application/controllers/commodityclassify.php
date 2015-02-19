@@ -106,6 +106,25 @@ class CommodityClassify extends CI_Controller
         return $this->commodityClassifyAo->get($shopCommodityClassifyId);
     }
 
+    /**
+    * @view json
+    */
+    public function getDetail(){
+        //检查输入参数
+        $data = $this->argv->checkGet(array(
+            array('userId', 'require'),
+            array('shopCommodityClassifyId', 'require')
+        ));
+        $userId = $data['userId'];
+        $shopCommodityClassifyId = $data['shopCommodityClassifyId'];
+
+        //检查权限
+        $client = $this->clientLoginAo->checkMustLogin($userId);
+
+        //执行业务逻辑
+        return $this->commodityClassifyAo->get($shopCommodityClassifyId);
+    }
+
 	/**
 	* @view json
 	*/

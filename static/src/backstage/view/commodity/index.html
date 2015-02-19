@@ -1,0 +1,96 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>烘焙帮后台管理系统</title>
+	<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+</head>
+<body class="definewidth m10">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		var allClassify = {};
+		var allState = {};
+		function getAllState(next){
+			$.get('/commodity/getState',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				allState = data.data;
+				next();
+			});
+		}
+		function getAllClassify(next){
+			$.get('/commodityclassify/search',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				allClassify[0] = '无分类';
+				for( var i in data.data.data ){
+					allClassify[data.data.data[i].shopCommodityClassifyId] = data.data.data[i].title;
+				}
+				next();
+			});
+		}
+		function go(){
+			query.simpleQuery({
+				id:'container',
+				url:'/commodity/search',
+				column:[
+					{id:'shopCommodityId',type:'text',name:'商品ID'},
+					{id:'title',type:'text',name:'标题'},
+					{id:'introduction',type:'text',name:'简介'},
+					{id:'price',type:'text',name:'价格'},
+					{id:'inventory',type:'text',name:'库存'},
+					{id:'shopCommodityClassifyId',type:'enum',name:'分类',map:allClassify},
+					{id:'state',type:'enum',name:'状态',map:allState},
+					{id:'remark',type:'text',name:'备注'},
+					{id:'createTime',type:'text',name:'创建时间'},
+					{id:'modifyTime',type:'text',name:'修改时间'},
+				],
+				queryColumn:['title','introduction','shopCommodityClassifyId','state'],
+				operate:[
+				{
+					name:'编辑',
+					click:function(data){
+						location.href = 'view.html?shopCommodityId='+data.shopCommodityId;
+					}
+				},
+				{
+					name:'删除',
+					click:function(data){
+						dialog.confirm('确认删除该分类，不可回退操作？!',function(){
+							$.post('/commodity/del',{shopCommodityId:data.shopCommodityId},function(data){
+								data = $.JSON.parse(data);
+								if( data.code != 0 ){
+									dialog.message(data.msg);
+									return;
+								}
+								location.href = 'index.html';
+							});
+						});
+					}
+				}],
+				button:[
+				{
+					name:'添加商品',
+					click:function(){
+						location.href = 'view.html';
+					}
+				}
+				],
+			});
+		}
+		getAllState(function(){
+			getAllClassify(go);
+		});
+	</script>
+ </body>
+</html>

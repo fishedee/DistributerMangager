@@ -193,12 +193,19 @@ create table t_shop_commodity(
     title varchar(128) not null,
     icon varchar(128) not null,
     introduction varchar(128) not null,
+    detail text not null,
     price integer not null,
-    detail varchar(128) not null,
+    oldPrice integer not null,
     inventory integer not null,
-    sort integer not null,
+    state integer not null,
+    remark varchar(128) not null,
+    createTime timestamp not null default CURRENT_TIMESTAMP,
+    modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
     primary key(shopCommodityId)
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
+
+alter table t_shop_commodity add index userIdIndex(userId);
+alter table t_shop_commodity add index shopCommodityClassifyIdIndex(shopCommodityClassifyId);
 
 #创建用户购物车表
 create table t_shop_troller(
@@ -206,11 +213,11 @@ create table t_shop_troller(
     userId integer not null,
     clientId integer not null,
     shopCommodityId integer not null,
+    quantity integer not null,
     primary key(shopTrollerId)
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
 
 alter table t_shop_troller add index matchIndex(userId, clientId);
-
 
 #建立初始数据
 insert into t_user(userId,name,password,company,phone,type) values
@@ -220,7 +227,9 @@ insert into t_user(userId,name,password,company,phone,type) values
 
 insert into t_user_permission(userId,permissionId)values
 (10003,1),
-(10003,2);
+(10003,2),
+(10003,3),
+(10003,4);
 
 insert into t_client(userId,openId,type)values
 (10003,'微信测试用户虚拟OpenId',2);
@@ -263,6 +272,11 @@ insert into t_shop_commodity_classify(userId,title,icon,parent,sort,remark)value
 (10003,'零食','/data/upload/sample/sample5.jpg',10005,7,''),
 (10003,'主食','/data/upload/sample/sample6.jpg',10005,8,'');
 
+insert into t_shop_commodity(userId,shopCommodityClassifyId,icon,title,introduction,detail,price,oldPrice,inventory,state)values
+(10003,10002,'/data/upload/sample/sample4.jpg','商品1','商品简介1','商品描述1',1100,11100,10,1),
+(10003,10003,'/data/upload/sample/sample5.jpg','商品2','商品简介2','商品描述2',2200,22200,10,1),
+(10003,10004,'/data/upload/sample/sample6.jpg','商品3','商品简介3','商品描述3',3300,33300,10,1);
+
 #显示初始数据
 select * from t_user;
 select * from t_user_permission;
@@ -275,3 +289,4 @@ select * from t_user_company_classify;
 select * from t_user_company_article;
 select * from t_user_company_banner;
 select * from t_shop_commodity_classify;
+select * from t_shop_commodity;

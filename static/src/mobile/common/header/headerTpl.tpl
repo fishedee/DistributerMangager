@@ -1,5 +1,5 @@
 <div id="common_header">
-	<a href="<%= backLink %>">
+	<a data-href="<%= backLink %>" onclick="history.back();">
 		<button class="backicon"></button>
 	</a>
 	<% for( var i in button ){ %>

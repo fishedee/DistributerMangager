@@ -10,22 +10,20 @@ class CommodityDb extends CI_Model
 
     public function search($where, $limit){
         foreach($where as $key=>$value){
-            if($key == 'title' || $key == 'introduction' ||
-                $key == 'detail' || $key == 'detail')
+            if($key == 'title' || $key == 'introduction' )
                 $this->db->like($key, $value);
-            else if($key == 'userId' || $key == 'shopCommodityClassifyId')
+            else if($key == 'userId' || $key == 'shopCommodityClassifyId' || $key == 'state')
                 $this->db->where($key, $value);
         }
         $count = $this->db->count_all_results($this->tableName);
 
         foreach($where as $key=>$value){
-            if($key == 'title' || $key == 'introduction' ||
-                $key == 'detail' || $key == 'detail')
+            if($key == 'title' || $key == 'introduction' )
                 $this->db->like($key, $value);
-            else if($key == 'userId' || $key == 'shopCommodityClassifyId')
+            else if($key == 'userId' || $key == 'shopCommodityClassifyId' || $key == 'state')
                 $this->db->where($key, $value);
         }
-        $this->db->order_by('sort', 'asc');  
+        $this->db->order_by('createTime', 'desc');  
 
         if(isset($limit['pageIndex']) && isset($limit['pageSize']))
             $this->db->limit($limit['pageSize'], $limit['pageIndex']);
@@ -49,13 +47,6 @@ class CommodityDb extends CI_Model
         $this->db->delete($this->tableName);
     }
 
-    public function getMaxSortByUser($userId){
-        $this->db->select_max('sort');    
-        $this->db->where('userId', $userId);
-        $result = $this->db->get($this->tableName)->result_array();
-        return $result[0]['sort'];
-    }
-
     public function add($data){
         $this->db->insert($this->tableName, $data);
         return $this->db->insert_id();
@@ -66,7 +57,7 @@ class CommodityDb extends CI_Model
         $this->db->update($this->tableName, $data);
     }
 
-    public function modWhenClassifyDel($shopCommodityClassifyId, $data){
+    public function modByShopCommodityClassifyId($shopCommodityClassifyId, $data){
         $this->db->where('shopCommodityClassifyId', $shopCommodityClassifyId);
         $this->db->update($this->tableName, $data);
     }

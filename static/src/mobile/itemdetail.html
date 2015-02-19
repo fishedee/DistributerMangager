@@ -4,11 +4,25 @@
 <body>
 	<div id="body"></div>
 	<script type="text/javascript">
+		var $ = require('common/core/core.js');
+		var dialog = require('common/dialog/dialog.js');
 		var Header = require('common/header/header.js');
 		var ShopCart = require('common/shopcart/shopcart.js');
 		var ItemArticle = require('common/itemarticle/itemarticle.js');
 		var FooterButton = require('common/footerbutton/footerbutton.js');
 		var ItemDialog = require('common/itemdialog/itemdialog.js');
+		var commodity = {};
+		var shopCommodityId = $.location.getQueryArgv('shopCommodityId');
+		function getCommodity(next){
+			$.get('/commodity/getDetail',{shopCommodityId:shopCommodityId},function(data){
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				commodity = data.data;
+				next();
+			});
+		}
 		function showBuyDialog(){
 			var dialog = new ItemDialog({
 				image:'/data/upload/sample/sample4.jpg',
@@ -43,8 +57,8 @@
 		}
 		function go(){
 			var header = new Header({
-				title:'零食1',
-				backLink:'itemlist.html',
+				title:commodity.title,
+				backLink:'item.html',
 				button:[{
 					name:'search',
 					link:'search.html'
@@ -52,13 +66,13 @@
 			});
 			var shopcart = new ShopCart();
 			var itemarticle = new ItemArticle({
-				image:'/data/upload/sample/sample4.jpg',
-				title:'零食1',
-				summary:'简介简介简介简介简介简介简介简介简介简介简介简介',
-				price:'99900',
-				oldprice:'433000',
-				stock:'40',
-				content:'<p>Hello World</p>',
+				image:commodity.icon,
+				title:commodity.title,
+				summary:commodity.introduction,
+				price:commodity.price,
+				oldprice:commodity.oldPrice,
+				stock:commodity.inventory,
+				content:commodity.detail,
 			});
 			var footerbutton = new FooterButton([
 				{
@@ -79,7 +93,7 @@
 			var pageHtml = header.el + itemarticle.el + footerbutton.el + shopcart.el;
 			$.page.start(pageHtml);
 		}
-		go();
+		getCommodity(go);
 	</script>
 </body>
 <link rel="import" href="footer.html?__inline">

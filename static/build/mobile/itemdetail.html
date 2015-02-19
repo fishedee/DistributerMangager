@@ -26,11 +26,11 @@
 <script type="text/javascript" src="/fishstrap/core/global_0ffe271.js"></script>
 <script type="text/javascript" src="/mobile/common/dialog/dialog_5a39b67.js"></script>
 <script type="text/javascript" src="/mobile/common/core/core_a0a8bb7.js"></script>
-<script type="text/javascript" src="/mobile/common/header/header_56f7924.js"></script>
+<script type="text/javascript" src="/mobile/common/header/header_23de960.js"></script>
 <script type="text/javascript" src="/mobile/common/shopcart/shopcart_6e67c2f.js"></script>
 <script type="text/javascript" src="/fishstrap/util/uedit_466b933.js"></script>
 <script type="text/javascript" src="/mobile/common/numchooser/numchooser_64970f7.js"></script>
-<script type="text/javascript" src="/mobile/common/itembrief/itembrief_9857f76.js"></script>
+<script type="text/javascript" src="/mobile/common/itembrief/itembrief_bf37e55.js"></script>
 <script type="text/javascript" src="/mobile/common/itemarticle/itemarticle_560048e.js"></script>
 <script type="text/javascript" src="/mobile/common/footerbutton/footerbutton_7c867f1.js"></script>
 <script type="text/javascript" src="/mobile/common/itemdialog/itemdialog_b336c91.js"></script>
@@ -39,11 +39,25 @@
 <body>
 	<div id="body"></div>
 	<script type="text/javascript">
+		var $ = require('mobile/common/core/core.js');
+		var dialog = require('mobile/common/dialog/dialog.js');
 		var Header = require('mobile/common/header/header.js');
 		var ShopCart = require('mobile/common/shopcart/shopcart.js');
 		var ItemArticle = require('mobile/common/itemarticle/itemarticle.js');
 		var FooterButton = require('mobile/common/footerbutton/footerbutton.js');
 		var ItemDialog = require('mobile/common/itemdialog/itemdialog.js');
+		var commodity = {};
+		var shopCommodityId = $.location.getQueryArgv('shopCommodityId');
+		function getCommodity(next){
+			$.get('/commodity/getDetail',{shopCommodityId:shopCommodityId},function(data){
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				commodity = data.data;
+				next();
+			});
+		}
 		function showBuyDialog(){
 			var dialog = new ItemDialog({
 				image:'/data/upload/sample/sample4.jpg',
@@ -78,8 +92,8 @@
 		}
 		function go(){
 			var header = new Header({
-				title:'零食1',
-				backLink:'itemlist.html',
+				title:commodity.title,
+				backLink:'item.html',
 				button:[{
 					name:'search',
 					link:'search.html'
@@ -87,13 +101,13 @@
 			});
 			var shopcart = new ShopCart();
 			var itemarticle = new ItemArticle({
-				image:'/data/upload/sample/sample4.jpg',
-				title:'零食1',
-				summary:'简介简介简介简介简介简介简介简介简介简介简介简介',
-				price:'99900',
-				oldprice:'433000',
-				stock:'40',
-				content:'<p>Hello World</p>',
+				image:commodity.icon,
+				title:commodity.title,
+				summary:commodity.introduction,
+				price:commodity.price,
+				oldprice:commodity.oldPrice,
+				stock:commodity.inventory,
+				content:commodity.detail,
 			});
 			var footerbutton = new FooterButton([
 				{
@@ -114,7 +128,7 @@
 			var pageHtml = header.el + itemarticle.el + footerbutton.el + shopcart.el;
 			$.page.start(pageHtml);
 		}
-		go();
+		getCommodity(go);
 	</script>
 </body>
 </html>
