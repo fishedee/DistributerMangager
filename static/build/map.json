@@ -1,16 +1,5 @@
 {
     "res": {
-        "fishstrap/api/netType.js": {
-            "uri": "/fishstrap/api/netType_5384810.js",
-            "type": "js",
-            "deps": [
-                "lib/netType"
-            ]
-        },
-        "fishstrap/api/weixinApi.js": {
-            "uri": "/fishstrap/api/weixinApi_1322501.js",
-            "type": "js"
-        },
         "fishstrap/core/global.js": {
             "uri": "/fishstrap/core/global_0ffe271.js",
             "type": "js",
@@ -593,6 +582,18 @@
             ],
             "id": "fishstrap/page/subPage.js"
         },
+        "fishstrap/sdk/netType.js": {
+            "uri": "/fishstrap/sdk/netType_5384810.js",
+            "type": "js",
+            "deps": [
+                "lib/netType"
+            ]
+        },
+        "fishstrap/sdk/wxsdk.js": {
+            "uri": "/fishstrap/sdk/wxsdk_b078d6a.js",
+            "type": "js",
+            "id": "fishstrap/sdk/wxsdk.js"
+        },
         "fishstrap/ui/chart.js": {
             "uri": "/fishstrap/ui/chart_6d1b004.js",
             "type": "js",
@@ -831,7 +832,7 @@
             "type": "js"
         },
         "mobile/common/core/core.js": {
-            "uri": "/mobile/common/core/core_a0a8bb7.js",
+            "uri": "/mobile/common/core/core_ced14df.js",
             "type": "js",
             "deps": [
                 "fishstrap/lib/fastclick.js",

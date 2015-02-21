@@ -35,6 +35,10 @@ create table t_user_app(
 	userId integer not null,
 	appId varchar(128) not null,
 	appKey varchar(128) not null,
+	mchId varchar(128) not null,
+	mchKey varchar(128) not null,
+	mchSslCert varchar(128) not null,
+	mchSslKey varchar(128) not null,
 	remark varchar(128) not null,
 	createTime timestamp not null default CURRENT_TIMESTAMP,
 	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
@@ -236,8 +240,8 @@ insert into t_user_permission(userId,permissionId)values
 insert into t_client(userId,openId,type)values
 (10003,'微信测试用户虚拟OpenId',2);
 
-insert into t_user_app(userId,appId,appKey,remark)values
-(10003,'wx5cc2d94dfe468c95','adc38d0974b0617023012fef684e9ae6','');
+insert into t_user_app(userId,appId,appKey,mchId,mchKey,remark)values
+(10003,'wx5cc2d94dfe468c95','adc38d0974b0617023012fef684e9ae6','1220218001','56344f19b3b90eb545bf2f07800e7a10','');
 
 insert into t_company_template(title,url,remark)values
 ('metro风格','/data/upload/template/sample1',''),

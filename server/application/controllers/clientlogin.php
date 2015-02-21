@@ -51,11 +51,12 @@ class ClientLogin extends CI_Controller {
 	{
 		//检查输入参数
 		$data = $this->argv->checkGet(array(
-			array('callback','require')
+			array('callback','require'),
+			array('userId','userId')
 		));
 		
 		//业务逻辑
-		$this->clientWxLoginAo->login($data['callback']);
+		$this->clientWxLoginAo->login($data['userId'],$data['callback']);
 	}
 	
 	/**

@@ -11,54 +11,44 @@ class ClientWxLoginAo extends CI_Model {
 		$this->load->model('client/clientTypeEnum','clientTypeEnum');
     }
 
-    private function getUserIdFromUrl($url){
-    	preg_match('/^http:\/\/[^\/]*\/(\d+)/i',$url,$matches);
-    	if( isset($matches[1]) == false )
-    		throw new CI_MyException(1,'不合法的跳转url'.$url);
-
-    	return $matches[1];
-    }
-
     private function initWxSdk($userId){
     	$appInfo = $this->userAppAo->get($userId);
 
     	$wxAppId = $appInfo['appId'];
 		$wxAppKey = $appInfo['appKey'];
-		$wxScope = 'snsapi_base';
-		$wxCallback = 'http://'.$_SERVER['HTTP_HOST'].'/clientlogin/wxlogincallback';
 		
 		if( $wxAppId == '' || $wxAppKey == '')
 			throw new CI_MyException(1,'未设置appId或appKey');
 		$this->load->library('wxSdk',array(
 			'appId'=>$wxAppId,
-			'appKey'=>$wxAppKey,
-			'callback'=>$wxCallback,
-			'scope'=>$wxScope
+			'appKey'=>$wxAppKey
 		),'wxSdk');
     }
 	
-	public function login($callback){
+	public function login($userId,$callback){
 		//初始化sdk
-		$userId = $this->getUserIdFromUrl($callback);
-
 		$this->initWxSdk($userId);
 
 		//获取跳转url
-		$loginUrl = $this->wxSdk->getLoginUrl($callback);
+		$loginUrl = $this->wxSdk->getLoginUrl(
+			'http://'.$_SERVER['HTTP_HOST'].'/clientlogin/wxlogincallback?userId='.$userId,
+			$callback,
+			'snsapi_base'
+		);
 		
 		header('Location: '.$loginUrl);
 	}
 	
 	public function loginCallback(){
 		//初始化sdk
-		$userId = $this->getUserIdFromUrl($_GET['state']);
+		$userId = $_GET['userId'];
 
 		$this->initWxSdk($userId);
 
 		//调用QQ接口获取登录信息
+		$callback = $this->wxSdk->getLoginCallBackInfo();
+
 		$accessToken = $this->wxSdk->getAccessTokenAndOpenId();
-		
-		$callback = $this->wxSdk->getLoginInfo();
 		
 		//第一次登录更新用户信息
 		$clientId = $this->clientAo->addOnce(array(

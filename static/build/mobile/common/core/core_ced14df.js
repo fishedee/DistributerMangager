@@ -8,6 +8,14 @@ var $ = require('fishstrap/core/global.js');
 var dialog = require('mobile/common/dialog/dialog.js');
 //加入FastClick扩展
 window.FastClick.attach(document.body);
+//从当前url分析出userId
+function getUserIdFromUrl(){
+	var userIdRegex = /http:\/\/(.*)?\/([0-9]+)/;
+	var userIdMatch = location.href.match(userIdRegex);
+	if( userIdMatch == null )
+		return null;
+	return userIdMatch[2];
+}
 //修改ajax函数，加入自动转菊花，自动转换json，自动捕捉json错误和网络错误的功能。
 var _dialogAjax = $.ajax;
 $.ajax = function(opt){
@@ -44,9 +52,8 @@ $.ajax = function(opt){
 		if( tempError )
 			tempError(XMLHttpRequest, textStatus, errorThrown);
 	}
-	var userIdRegex = /http:\/\/(.*)?\/([0-9]+)/;
-	var userIdMatch = location.href.match(userIdRegex);
-	if( userIdMatch == null ){
+	var userId = getUserIdFromUrl();
+	if( userId == null ){
 		tempSuccess({
 			'code':1,
 			'msg':'缺少userId参数',
@@ -54,7 +61,6 @@ $.ajax = function(opt){
 		});
 		return;
 	}
-	var userId = userIdMatch[2];
 	opt.data = $.extend(opt.data,{userId:userId});
 	_dialogAjax(opt);
 };
@@ -107,7 +113,7 @@ $.ajax = function(opt){
 	 function checkMustLogin(next){
 	 	$.get('/clientlogin/islogin',{},function(data){
 	 		if( data.code != 0 ){
-	 			location.href = $.url.buildQueryUrl('/clientlogin/wxlogin',{callback:location.href});
+	 			location.href = $.url.buildQueryUrl('/clientlogin/wxlogin',{callback:location.href,userId:getUserIdFromUrl()});
 	 			return;
 	 		}
 	 		next();

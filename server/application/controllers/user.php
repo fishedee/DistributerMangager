@@ -45,6 +45,10 @@ class User extends CI_Controller {
 		$data = $this->argv->checkPost(array(
 			array('appId','require'),
 			array('appKey','require'),
+			array('mchId','require'),
+			array('mchKey','require'),
+			array('mchSslCert','option'),
+			array('mchSslKey','option'),
 			array('remark','require'),
 		));
 

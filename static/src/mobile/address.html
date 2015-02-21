@@ -9,9 +9,30 @@
 		var Header = require('common/header/header.js');
 		var Address = require('common/address/address.js');
 		var FooterButton = require('common/footerbutton/footerbutton.js');
+		var WXSdk = require('fishstrap/sdk/wxsdk.js');
 		var myaddress = {};
 		var mapPaymentIdToName = {1:'微信支付',2:'货到付款'};
 		var mapPaymentNameToId = {'微信支付':1,'货到付款':2};
+		function wxPay(){
+			var data = {
+				dealId:new Date().getTime(),
+				dealDesc:'testdeal',
+				dealFee:1,
+			};
+			$.get('/pay/wxpay',data,function(data){
+				WXSdk.enableDebugMode();
+				WXSdk.ready(function(){
+					WXSdk.pay(data.data,{
+						success:function(msg){
+							alert('支付成功');
+						},
+						fail:function(msg){
+							alert('支付失败');
+						}
+					});
+				});
+			});
+		}
 		function get(next){
 			$.get('/address/getMyAddress',{},function(data){
 				if( data.code != 0 ){
@@ -35,6 +56,7 @@
 					name:'pay',
 					text:'支付',
 					click:function(){
+						wxPay();
 						alert('生成订单，并执行微信支付！');
 					}
 				}

@@ -22,12 +22,13 @@
 <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
 <script type="text/javascript" src="/fishstrap/core/global_0ffe271.js"></script>
 <script type="text/javascript" src="/mobile/common/dialog/dialog_5a39b67.js"></script>
-<script type="text/javascript" src="/mobile/common/core/core_a0a8bb7.js"></script>
+<script type="text/javascript" src="/mobile/common/core/core_ced14df.js"></script>
 <script type="text/javascript" src="/mobile/common/header/header_23de960.js"></script>
 <script type="text/javascript" src="/mobile/common/selectlist/selectlist_d8d9683.js"></script>
 <script type="text/javascript" src="/mobile/common/address/address_e874992.js"></script>
 <script type="text/javascript" src="/fishstrap/util/uedit_466b933.js"></script>
 <script type="text/javascript" src="/mobile/common/footerbutton/footerbutton_7c867f1.js"></script>
+<script type="text/javascript" src="/fishstrap/sdk/wxsdk_b078d6a.js"></script>
 
 </head>
 <body>
@@ -38,9 +39,30 @@
 		var Header = require('mobile/common/header/header.js');
 		var Address = require('mobile/common/address/address.js');
 		var FooterButton = require('mobile/common/footerbutton/footerbutton.js');
+		var WXSdk = require('fishstrap/sdk/wxsdk.js');
 		var myaddress = {};
 		var mapPaymentIdToName = {1:'微信支付',2:'货到付款'};
 		var mapPaymentNameToId = {'微信支付':1,'货到付款':2};
+		function wxPay(){
+			var data = {
+				dealId:new Date().getTime(),
+				dealDesc:'testdeal',
+				dealFee:1,
+			};
+			$.get('/pay/wxpay',data,function(data){
+				WXSdk.enableDebugMode();
+				WXSdk.ready(function(){
+					WXSdk.pay(data.data,{
+						success:function(msg){
+							alert('支付成功');
+						},
+						fail:function(msg){
+							alert('支付失败');
+						}
+					});
+				});
+			});
+		}
 		function get(next){
 			$.get('/address/getMyAddress',{},function(data){
 				if( data.code != 0 ){
@@ -64,6 +86,7 @@
 					name:'pay',
 					text:'支付',
 					click:function(){
+						wxPay();
 						alert('生成订单，并执行微信支付！');
 					}
 				}
