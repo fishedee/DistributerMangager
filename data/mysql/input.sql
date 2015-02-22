@@ -217,6 +217,11 @@ create table t_shop_troller(
     userId integer not null,
     clientId integer not null,
     shopCommodityId integer not null,
+    title varchar(128) not null,
+    icon varchar(128) not null,
+    introduction varchar(128) not null,
+    price integer not null,
+    oldPrice integer not null,
     quantity integer not null,
     createTime timestamp not null default CURRENT_TIMESTAMP,
 	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
@@ -224,6 +229,62 @@ create table t_shop_troller(
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
 
 alter table t_shop_troller add index matchIndex(userId, clientId);
+
+#创建用户订单表
+create table t_shop_order(
+	shopOrderId varchar(32) not null,
+    userId integer not null,
+    clientId integer not null,
+    image varchar(128) not null,
+    description varchar(128) not null,
+   	price integer not null,
+    num integer not null,
+    name varchar(32) not null,
+    wxPrePayId varchar(128) not null,
+    state integer not null,
+    remark varchar(128) not null,
+    createTime timestamp not null default CURRENT_TIMESTAMP,
+	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
+    primary key(shopOrderId)
+)engine=innodb default charset=utf8mb4;
+
+alter table t_shop_order add index matchIndex(userId, clientId);
+
+#创建用户订单商品表
+create table t_shop_order_commodity(
+	shopOrderCommodityId integer not null auto_increment,
+	shopOrderId integer not null,
+	shopCommodityId integer not null,
+	userId integer not null,
+    title varchar(128) not null,
+    icon varchar(128) not null,
+    introduction varchar(128) not null,
+    price integer not null,
+    oldPrice integer not null,
+    quantity integer not null,
+    createTime timestamp not null default CURRENT_TIMESTAMP,
+	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
+    primary key(shopOrderCommodityId)
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+
+alter table t_shop_order_commodity add index shopOrderIdIndex(shopOrderId);
+
+#创建用户订单地址表
+create table t_shop_order_address(
+	shopOrderAddressId integer not null auto_increment,
+	shopOrderId integer not null,
+	name varchar(32) not null,
+    province varchar(32) not null,
+    city varchar(32) not null,
+    address varchar(128) not null,
+    phone varchar(11) not null,
+    payment integer not null,
+    createTime timestamp not null default CURRENT_TIMESTAMP,
+	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
+    primary key(shopOrderAddressId)
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+
+alter table t_shop_order_address add index shopOrderIdIndex(shopOrderId);
 
 #建立初始数据
 insert into t_user(userId,name,password,company,phone,type) values

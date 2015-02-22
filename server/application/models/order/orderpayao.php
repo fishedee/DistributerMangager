@@ -1,11 +1,13 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class WxPay extends CI_Model {
+class OrderPayAo extends CI_Model {
 
     public function __construct()
     {
         parent::__construct();
         $this->load->model('user/userAppAo','userAppAo');
+        $this->load->model('client/clientAo','clientAo');
+        $this->load->model('order/orderWhen','orderWhen');
     }
 
     private function initWxSdk($userId){
@@ -33,28 +35,47 @@ class WxPay extends CI_Model {
 			'mchSslKey'=>$mchSslKey
 		),'wxSdk');
     }
+
+    private function getOpenId($clientId){
+    	$client = $this->clientAo->get($clientId);
+    	return $client['openId'];
+    }
 	
-	public function jsPay($userId,$openId,$dealId,$dealDesc,$dealFee){
+	public function wxPay($userId,$clientId,$dealId,$dealDesc,$dealFee){
 		//初始化sdk
 		$this->initWxSdk($userId);
 
+		//获取openId
+		$openId = $this->getOpenId($clientId);
+
 		//获取js的pay信息
-		return $this->wxSdk->getJsPayInfo(
+		return $this->wxSdk->getOrderPayInfo(
 			$openId,
 			$dealId,
 			$dealDesc,
 			$dealFee,
-			'http://'.$_SERVER['HTTP_HOST'].'/pay/wxpaycallback/'.$userId
+			'http://'.$_SERVER['HTTP_HOST'].'/order/wxpaycallback/'.$userId
 		);
 	}
 
-	public function payCallback($userId){
+	public function wxJsPay($userId,$prepayId){
+		//初始化sdk
+		$this->initWxSdk($userId);
+
+		//获取js的pay信息
+		return $this->wxSdk->getJsPayInfo($prepayId);
+	}
+
+	public function wxPayCallback($userId){
 		//初始化sdk
 		$this->initWxSdk($userId);
 
 		//获取支付回调信息
 		$payCallBackInfo = $this->wxSdk->getPayCallBackInfo();
 
-		return array_merge($payCallBackInfo,array('userId'=>$userId));
+		//通知订单支付成功了
+		$this->orderWhen->whenOrderPay($payCallBackInfo['out_trade_no']);
+
+		return $payCallBackInfo;
 	}
 }

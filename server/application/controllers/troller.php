@@ -28,6 +28,42 @@ class Troller extends CI_Controller
         return $this->trollerAo->getAll($userId,$clientId);
     }
 
+    /**
+    * @view json
+    */
+    public function check(){
+        //检查输入参数
+        $data = $this->argv->checkGet(array(
+            array('userId', 'require')
+        ));
+        $userId = $data['userId'];
+
+         //检查权限
+        $client = $this->clientLoginAo->checkMustLogin($userId);
+        $clientId = $client['clientId'];
+
+        //业务逻辑
+        return $this->trollerAo->checkAll($userId,$clientId);
+    }
+
+    /**
+    * @view json
+    */
+    public function refresh(){
+        //检查输入参数
+        $data = $this->argv->checkGet(array(
+            array('userId', 'require')
+        ));
+        $userId = $data['userId'];
+
+         //检查权限
+        $client = $this->clientLoginAo->checkMustLogin($userId);
+        $clientId = $client['clientId'];
+
+        //业务逻辑
+        return $this->trollerAo->refreshAll($userId,$clientId);
+    }
+
 	/**
     * @view json
     */

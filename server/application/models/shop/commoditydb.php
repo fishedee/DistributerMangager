@@ -72,4 +72,13 @@ class CommodityDb extends CI_Model
         $this->db->where('shopCommodityClassifyId', $shopCommodityClassifyId);
         $this->db->update($this->tableName, $data);
     }
+
+    public function reduceStock($shopCommodityId, $quantity){
+        $sql = 'update '.$this->tableName.
+            'set inventory = inventory - '.$quantity.
+            'where inventory >= '.$quantity.' and shopCommodityId = '.$shopCommodityId;
+        $this->db->query($sql);
+        if( $this->db->affected_rows() != 0 )
+            throw new CI_MyException(1,'扣减库存失败');
+    }
 }

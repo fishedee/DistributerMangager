@@ -20,6 +20,21 @@ class AddressAo extends CI_Model
         }
     }
 
+    public function check($address){
+        if(preg_match_all('/\w{1,}/',$address['name']) == 0 )
+            throw new CI_MyException(1,'收货名字不能为空');
+        if(preg_match_all('/\w{1,}/',$address['province']) == 0 )
+            throw new CI_MyException(1,'收货省份不能为空');
+        if(preg_match_all('/\w{1,}/',$address['city']) == 0 )
+            throw new CI_MyException(1,'收货城市不能为空');
+        if(preg_match_all('/\w{1,}/',$address['address']) == 0 )
+            throw new CI_MyException(1,'收货地址不能为空');
+        if(preg_match_all('/^\d{11}$/',$address['phone']) == 0 )
+            throw new CI_MyException(1,'请输入11位数字的电话号码');
+        if(preg_match_all('/^[12]$/',$address['payment']) == 0 )
+            throw new CI_MyException(1,'请选择微信支付或货到付款');
+    }
+
     public function get($clientId){
 
         $this->addOnce($clientId);
