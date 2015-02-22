@@ -201,6 +201,20 @@ create table t_shop_troller(
 
 alter table t_shop_troller add index matchIndex(userId, clientId);
 
+#创建用户订单表
+create table t_shop_order(
+    shopOrderId integer not null auto_increment,
+    shopOrderNo integer not null,
+    userId integer not null,
+    clientId integer not null,
+    shopCommodityId integer not null,
+    amount integer not null,
+    icon varchar(128) not null,
+    status integer not null,
+    primary key(shopOrderId)
+)engine=inodb default charset=utf8mb4 auto_increment = 10001;
+
+alter table t_shop_order add index userIndex(userId, clientId);
 
 #建立初始数据
 insert into t_user(userId,name,password,company,phone,type) values
