@@ -6,12 +6,21 @@ class Deal extends CI_Controller {
   	{
 		parent::__construct();
 		$this->load->model('order/orderPayAo','orderPayAo');
+		$this->load->model('order/orderStateEnum','orderStateEnum');
 		$this->load->model('order/orderAo','orderAo');
 		$this->load->model('client/clientLoginAo', 'clientLoginAo');
 		$this->load->model('user/loginAo','loginAo');
 		$this->load->model('user/userPermissionEnum','userPermissionEnum');
 		$this->load->library('argv','argv');
   	}
+
+  	/**
+	* @view json
+	*/
+	public function getState()
+	{
+		return $this->orderStateEnum->names;
+	}
 
 	/**
 	* @view json
@@ -185,13 +194,12 @@ class Deal extends CI_Controller {
 	/**
 	* @view json
 	*/
-    public function modState(){
+    public function modhassend(){
         //检查输入参数
         $data = $this->argv->checkPost(array(
             array('shopOrderId', 'require'),
-            array('newState', 'require'),
         ));
-        $shopOrderId == $data['shopOrderId'];
+        $shopOrderId = $data['shopOrderId'];
 
 		//检查权限
 		$user = $this->loginAo->checkMustClient(
@@ -200,7 +208,7 @@ class Deal extends CI_Controller {
         $userId = $user['userId'];
 
         //业务逻辑
-        $this->orderAo->modState($userId, $shopOrderId, $data); 
+        $this->orderAo->modHasSend($userId, $shopOrderId); 
     }
 
 	/**

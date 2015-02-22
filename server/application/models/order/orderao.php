@@ -186,25 +186,14 @@ class OrderAo extends CI_Model
 		return $this->orderPayAo->wxJsPay($userId,$orderInfo['wxPrePayId']);
 	}
 
-	public function modState( $userId,$shopOrderId,$data ){
-        $orderInfo = $this->get->where("shopOrderId", $shopOrderId);
-        $query = $this->orderDb->get($shopOrderId);
-        if( count($query) == 0)
-            throw new CI_MyException(1, "找不到此订单");
+	public function modHasSend( $userId,$shopOrderId ){
+        $shopOrder = $this->orderDb->get($shopOrderId);
+        if($shopOrder['userId'] != $userId)
+        	throw new CI_MyException(1, "非本商城用户无阅读该订单权限");
 
-        if($orderInfo['state'] == $this->OrderStateEnum->NO_PAY && $data['newState'] == $this->OrderStateEnum->NO_SEND){
-            $this->orderDb->mod($shopOrderId, $data);
-            return; 
-        }
-        if($orderInfo['state'] == $this->OrderStateEnum->NO_SEND && $data['newState'] == $this->OrderStateEnum->HAS_SEND){
-            $this->orderDb->mod($shopOrderId, $data);
-            return;
-        }
-        if($orderInfo['state'] == $this->OrderStateEnum->HAS_SEND && $data['newState'] == $this->OrderStateEnum->FINISH){
-            $this->orderDb->mod($shopOrderId, $data);
-            return;
-        }
+        if($shopOrder['state'] == $this->orderStateEnum->NO_PAY)
+         	throw new CI_MyException(1, "该订单未支付，不能扭转为已发货状态");
 
-        throw new CI_MyException(1, "转换状态不符合当前商品状态");
+        $this->orderDb->mod($shopOrderId, array('state'=>$this->orderStateEnum->HAS_SEND));
 	}
 }

@@ -35,74 +35,71 @@
 		var dialog = require('fishstrap/ui/dialog.js');
 		var input = require('fishstrap/ui/input.js');
 		var subPage = require('fishstrap/page/subPage.js');
-		var companyTemplateId = $.location.getQueryArgv('companyTemplateId');
-		var companyTemplate = {};
-		var companyTemplateFile = [];
-		function getCompanyTemplate( next ){
-			$.get('/template/get',{companyTemplateId:companyTemplateId},function(data){
+		var shopOrderId = $.location.getQueryArgv('shopOrderId');
+		var mapPayment = {1:'微信支付',2:'货到付款'};
+		var allState = {};
+		var shopOrder = {};
+		function getAllState(next){
+			$.get('/deal/getState',{},function(data){
 				data = $.JSON.parse(data);
 				if( data.code != 0 ){
 					dialog.message(data.msg);
 					return;
 				}
-				companyTemplate = data.data;
+				allState = data.data;
 				next();
 			});
 		}
-		function getCompanyTemplateFile( next ){
-			$.get('/upload/readdir',{address:companyTemplate.url},function(data){
+		function getOrder(next){
+			$.get('/deal/get',{shopOrderId:shopOrderId},function(data){
 				data = $.JSON.parse(data);
 				if( data.code != 0 ){
 					dialog.message(data.msg);
 					return;
 				}
-				companyTemplate.url = data.data;
+				shopOrder = data.data;
+				shopOrder = $.extend(shopOrder,shopOrder.address);
 				next();
 			});
 		}
 		function go(){
-			input.verticalInput({
+			inputOperation = input.verticalInput({
 				id:'container',
 				field:[
-					{id:'title',type:'text',name:'标题'},
-					{id:'url',type:'compressFile',name:'位置',option:{url:'/upload/compressFile',type:'zip',maxSize:1024*1024*2}},
-					{id:'remark',type:'text',name:'备注'},
+					{id:'shopOrderId',type:'read',name:'订单ID'},
+					{id:'description',type:'read',name:'订单描述'},
+					{id:'priceShow',type:'read',name:'订单金额'},
+					{id:'state',type:'enum',name:'订单状态',map:allState,disabled:true},
+					{id:'commodity',type:'table',name:'订单商品',
+						option:{
+							column:[
+								{name:'图片',type:'image',id:'icon'},
+								{name:'标题',type:'text',id:'title'},
+								{name:'介绍',type:'text',id:'introduction'},
+								{name:'价格',type:'text',id:'priceShow'},
+								{name:'数量',type:'text',id:'quantity'},
+							],
+							operate:[],
+							button:[]
+						}
+					},
+					{id:'name',type:'read',name:'收货人'},
+					{id:'province',type:'read',name:'收货省份'},
+					{id:'city',type:'read',name:'收货城市'},
+					{id:'address',type:'read',name:'收货地址'},
+					{id:'phone',type:'read',name:'收货号码'},
+					{id:'payment',type:'enum',name:'支付方式',map:mapPayment,disabled:true},
 				],
-				value:companyTemplate,
-				submit:function(data){
-					data.url = data.url[0];
-					if( companyTemplateId != null ){
-						data = $.extend({companyTemplateId:companyTemplateId},data);
-						$.post('/template/mod',data,function(data){
-							data = $.JSON.parse(data);
-							if( data.code != 0 ){
-								dialog.message(data.msg);
-								return;
-							}
-							location.href = 'index.html';
-						});
-					}else{
-						$.post('/template/add',data,function(data){
-							data = $.JSON.parse(data);
-							if( data.code != 0 ){
-								dialog.message(data.msg);
-								return;
-							}
-							location.href = 'index.html';
-						});
-					}
-				},
+				value:shopOrder,
+				submit:undefined,
 				cancel:function(){
-					location.href = 'index.html';
-				}
+					history.back();
+				},
 			});
 		}
-		if( companyTemplateId != null )
-			getCompanyTemplate(function(){
-				getCompanyTemplateFile(go);
-			});
-		else
-			go();
+		getAllState(function(){
+			getOrder(go);
+		});
 	</script>
- </body>
+</body>
 </html>
