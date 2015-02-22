@@ -10,9 +10,7 @@ class ClientDb extends CI_Model
 
 	public function search($where,$limit){
 		foreach( $where as $key=>$value ){
-			if( $key == "name" )
-				$this->db->like($key,$value);
-			else if( $key == "type" || $key == 'gender')
+			if(  $key == 'openId'|| $key == 'type' || $key == 'userId')
 				$this->db->where($key,$value);
 			else if( $key == 'clientId')
 				$this->db->where_in($key,$value);
@@ -21,9 +19,7 @@ class ClientDb extends CI_Model
 		$count = $this->db->count_all_results($this->tableName);
 		
 		foreach( $where as $key=>$value ){
-			if( $key == "name" )
-				$this->db->like($key,$value);
-			else if( $key == "type" || $key == 'gender')
+			if(  $key == 'openId'|| $key == 'type' || $key == 'userId')
 				$this->db->where($key,$value);
 			else if( $key == 'clientId')
 				$this->db->where_in($key,$value);
@@ -48,12 +44,6 @@ class ClientDb extends CI_Model
 			throw new CI_MyException(1,'找不到此用户');
 		return $query[0];
 	}
-	
-	public function getByIds($clientId){
-		$this->db->where_in("clientId",$clientId);
-		$query = $this->db->get($this->tableName)->result_array();
-		return $query;
-	}
 
 	public function add( $data ){
 		$this->db->insert($this->tableName,$data);
@@ -63,12 +53,5 @@ class ClientDb extends CI_Model
 	public function mod( $clientId , $data ){
 		$this->db->where("clientId",$clientId);
 		$this->db->update($this->tableName,$data);
-	}
-
-	public function getByTypeAndOpenId( $type , $openId ){
-		$this->db->where("type",$type);
-		$this->db->where("openId",$openId);
-		$query = $this->db->get($this->tableName)->result_array();
-		return $query;
 	}
 }

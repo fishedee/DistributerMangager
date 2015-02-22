@@ -1,0 +1,46 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>烘焙帮后台管理系统</title>
+	<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+</head>
+<body class="definewidth m10">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		var subPage = require('/fishstrap/page/subPage.js');
+		var clientType = {};
+		function getType(next){
+			$.get('/client/getType',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0){
+					dialog.message(data.msg);
+					return;
+				}
+				clientType = data.data;
+				next();
+			});
+		}
+		function go(){
+			query.simpleQuery({
+				id:'container',
+				url:'/client/search',
+				column:[
+					{id:'clientId',type:'text',name:'用户ID'},
+					{id:'openId',type:'text',name:'openId'},
+					{id:'type',type:'enum',name:'类型',map:clientType},
+					{id:'createTime',type:'text',name:'创建时间'},
+					{id:'modifyTime',type:'text',name:'修改时间'},
+				],
+				queryColumn:['type'],
+				operate:[]
+			});
+		}
+		getType(go);
+	</script>
+ </body>
+</html>

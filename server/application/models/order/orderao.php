@@ -1,0 +1,165 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+class OrderAo extends CI_Model 
+{
+
+	public function __construct(){
+		parent::__construct();
+		$this->load->model('commodity/commodityAo','commodityAo');
+		$this->load->model('commodity/trollerAo','trollerAo');
+		$this->load->model('address/addressAo','addressAo');
+		$this->load->model('client/clientAo','clientAo');
+		$this->load->model('order/orderPayAo','orderPayAo');
+		$this->load->model('order/orderDb','orderDb');
+		$this->load->model('order/orderCommodityDb','orderCommodityDb');
+		$this->load->model('order/orderAddressDb','orderAddressDb');
+		$this->load->model('order/orderStateEnum','orderStateEnum');
+		$this->load->model('address/addresspaymentenum','addresspaymentenum');
+	}
+
+	private function addMyOrder($userId,$clientId,$shopCommodity,$address){
+		//计算出订单基本信息
+		$orderPrice = array_reduce($shopCommodity,function($sum,$single){
+			return $sum + $sinlge['price'];
+		},0);
+		$orderProducts = array_map(function($shopCommodity){
+			return $shopCommodity['title'];
+		},$shopCommodity);
+		$orderNum = count($shopCommodity);
+		$orderDesc = $address['name'].'购买的"'.implode('","', $orderProducts).'"';
+		if($address['payment'] == $this->addresspaymentenum->CODPAY)
+			$orderState = $this->orderStateEnum->NO_SEND;
+		else
+			$orderState = $this->orderStateEnum->NO_PAY;
+
+		//添加订单基本信息
+		$orderInfo = array(
+			'shopOrderId'=>md5(uniqid('', true)),
+			'userId'=>$userId,
+			'clientId'=>$clientId,
+			'image'=>$shopCommodity[0]['icon'],
+			'price'=>$orderPrice,
+			'num'=>$orderNum,
+			'name'=>$address['name'],
+			'description'=>$orderDesc,
+			'wxprePayId'=>0,
+			'state'=>$orderState
+		)
+		$this->orderDb->add($orderInfo);
+
+		//添加订单商品信息
+		$this->orderCommodityDb->add(array_map(function($singleShopCommodity)use($shopOrderId){
+			return array(
+				'shopOrderId'=>$shopOrderId,
+				'shopCommodityId'=>$singleShopCommodity['shopCommodityId'],
+				'userId'=>$singleShopCommodity['userId'],
+				'title'=>$singleShopCommodity['title'],
+				'icon'=>$singleShopCommodity['icon'],
+				'introduction'=>$singleShopCommodity['introduction'],
+				'price'=>$singleShopCommodity['price'],
+				'oldPrice'=>$singleShopCommodity['oldPrice'],
+				'quantity'=>$singleShopCommodity['quantity'],
+			);
+		}),$shopCommodity);
+
+		//添加订单地址信息
+    	$this->orderCommodityDb->add(array(
+			'shopOrderId'=>$shopOrderId,
+			'name'=>$address['name'],
+			'province'=>$address['province'],
+			'city'=>$address['city'],
+			'address'=>$address['address'],
+			'phone'=>$address['phone'],
+			'payment'=>$address['payment'],
+		));
+
+    	return $orderInfo;
+	}
+
+	private function addWxOrder($userId,$clientId,$orderInfo){
+		$wxOrderInfo = $this->orderPayAo->wxPay(
+			$userId,
+			$clientId,
+			$orderInfo['shopOrderId'],
+			$orderInfo['description'],
+			$orderInfo['price'],
+		);
+
+		$this->orderDb->mod(
+			$orderInfo['shopOrderId'],
+			array('wxPrePayId',$wxOrderInfo['prepay_id'])
+		);
+	}
+
+	public function search($userId,$dataWhere,$dataLimit){
+		$dataWhere['userId'] = $userId;
+        $data = $this->orderDb->search($dataWhere,$dataLimit);
+        foreach($data['data'] as $key=>$value ){
+            $data['data'][$key]['priceShow'] = $this->commodityAo->getFixedPrice($data['data'][$key]['price']);
+        }
+        return $data;
+	}
+
+	public function getClientOrder($userId,$clientId,$state){
+		return $this->search($userId,array(
+			'clientId'=>'clientId',
+			'state'=>$state
+		))['data'];
+	}
+
+	public function get($userId,$shopOrderId){
+		$shopOrder = $this->orderDb->get($shopOrderId);
+		if($shopOrder['userId'] != $userId)
+			throw new CI_MyException(1,'非本商城用户无阅读该订单权限');
+		$shopOrder['priceShow'] = $this->commodityAo->getFixedPrice($shopOrder['price']);
+
+		$shopOrder['address'] = $this->orderAddressDb->getByShopOrderId($shopOrderId)[0];
+
+		$shopOrder['commodity'] = $this->orderCommodityDb->getByShopOrderId($shopOrderId)[0];
+		return $shopOrder;
+	}
+
+	public function add($userId,$clientId,$shopTrollerId,$address){
+		//获取购物车内的商品信息
+		$shopTroller = $this->trollerAo->getByIds($userId,$clientId,$shopTrollerId);
+
+		//校验购物车内的商品信息
+		foreach($shopTroller as $singleShopTroller){
+			$this->trollerAo->check($singleShopTroller);
+		}
+
+		//校验地址信息
+		$this->addressAo->checkAddress($address);
+		
+		//校验商品信息
+		if( count($shopTroller) == 0 )
+			throw new CI_MyException(1,'订单内的商品不能为空');
+		foreach($shopTroller as $singleShopTroller)
+			if($singleShopTroller['quantity'] <= 0 )
+				throw new CI_MyException(1,'选择的商品数量不能为0');
+
+		//扣库存
+		foreach($shopTroller as $singleShopTroller ){
+			$this->commodityAo->reduceStock($singleShopTroller['userId'],$singleShopTroller['shopCommodityId'],$singleShopTroller['quantity']);
+		}
+
+		//下单
+		$orderInfo = $this->addMyOrder($userId,$clientId,$shopTroller,$address);
+
+		//微信统一下单
+		$this->addWxOrder($userId,$clientId,$orderInfo);
+
+		//删购物车
+		$this->trollerAo->delByIds($shopTrollerId);
+	}
+
+	public function wxJsPay($userId,$clientId,$shopOrderId){
+		$orderInfo = $this->get($userId,$shopOrderId);
+
+		return $this->orderPayAo->wxJsPay($userId,$orderInfo['wxPrePayId']);
+	}
+
+	public function modState( $userId,$shopOrderId,$data ){
+		//FIXME 暂未做
+	}
+}

@@ -4,6 +4,7 @@ class CommodityClassifyAO extends CI_Model {
     public function __construct(){
         parent::__construct();
         $this->load->model('shop/CommodityClassifyDb', 'commodityClassifyDb');
+        $this->load->model('shop/CommodityWhen', 'commodityWhen');
         $this->load->model('shop/CommodityDb', 'commodityDb');
     }
 
@@ -15,6 +16,52 @@ class CommodityClassifyAO extends CI_Model {
     public function get($shopCommodityClassifyId){
         $classify = $this->commodityClassifyDb->get($shopCommodityClassifyId);
         return $classify;
+    }
+
+    public function getPrimaryClassify($userId){
+        //获取所有分类
+        $commodityClassify = $this->commodityClassifyDb->search(array(
+            'userId'=>$userId
+        ), array());
+        $commodityClassify = $commodityClassify['data'];
+
+        //获取所有一级分类
+        $commodityPrimaryClassify = array();
+        $commodityPrimaryClassifyCount = array();
+        foreach($commodityClassify as $singleCommodityClassify ){
+            $parentCommodityClassifyId = $singleCommodityClassify['parent'];
+            if(  $parentCommodityClassifyId == 0 ){
+                $commodityPrimaryClassify[] = $singleCommodityClassify;
+            }else{
+                if( !isset($commodityPrimaryClassifyCount[$parentCommodityClassifyId]))
+                    $commodityPrimaryClassifyCount[$parentCommodityClassifyId] = 0;
+                $commodityPrimaryClassifyCount[$parentCommodityClassifyId] += 1;
+            }
+        }
+
+        foreach($commodityPrimaryClassify as $key=>$value){
+            $childrenCount = 0;
+            if( isset($commodityPrimaryClassifyCount[$value['shopCommodityClassifyId']]))
+                $childrenCount = $commodityPrimaryClassifyCount[$value['shopCommodityClassifyId']];
+            $commodityPrimaryClassify[$key]['childrenCount'] = $childrenCount;
+        }
+
+        return $commodityPrimaryClassify;
+    }
+
+    public function getSecondaryClassify($userId,$shopCommodityClassifyId){
+        //获取本级分类信息
+        $commodityClassify = $this->commodityClassifyDb->get($shopCommodityClassifyId);
+        if($commodityClassify['userId'] != $userId)
+            throw new CI_MyException(1, '非本商城用户无此权限操作');
+
+        //获取二级分类
+        $commodityClassify['children'] = $this->commodityClassifyDb->search(array(
+            'userId'=>$userId,
+            'parent'=>$shopCommodityClassifyId
+        ), array())['data'];
+
+        return $commodityClassify;
     }
 
     public function del($userId, $shopCommodityClassifyId){
@@ -29,10 +76,7 @@ class CommodityClassifyAO extends CI_Model {
         $this->commodityClassifyDb->modByParent($shopCommodityClassifyId,array('parent'=>0));
 
         //通知商品挂载的相关分类被删除了
-        $this->commodityDb->modWhenClassifyDel(
-            $shopCommodityClassifyId, 
-            array('shopCommodityClassifyId'=>0)
-        );
+        $this->commodityWhen->whenShopCommodityClassifyIdDel($shopCommodityClassifyId);
     }
 
     public function add($userId, $data){

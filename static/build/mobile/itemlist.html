@@ -9,36 +9,62 @@
 		<meta name="renderer" content="webkit">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
-	<title>商品列表页面</title>
-<link rel="stylesheet" type="text/css" href="/mobile/common/core/core_7a3400d.css">
+	<title>商品列表</title>
+<link rel="stylesheet" type="text/css" href="/mobile/common/core/core_8488e02.css">
 <link rel="stylesheet" type="text/css" href="/mobile/common/dialog/dialog_09f6162.css">
 <link rel="stylesheet" type="text/css" href="/mobile/common/header/header_b51a32c.css">
 <link rel="stylesheet" type="text/css" href="/mobile/common/shopcart/shopcart_a6ea491.css">
 <link rel="stylesheet" type="text/css" href="/mobile/common/biglist/biglist_dba9b83.css">
+<link rel="stylesheet" type="text/css" href="/mobile/common/numchooser/numchooser_c64b34c.css">
 <link rel="stylesheet" type="text/css" href="/mobile/common/itembrief/itembrief_bc23208.css">
 
 <script type="text/javascript" src="/fishstrap/lib/fastclick.js"></script>
 <script type="text/javascript" src="http://apps.bdimg.com/libs/underscore.js/1.7.0/underscore-min.js"></script>
 <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
 <script type="text/javascript" src="/fishstrap/core/global_0ffe271.js"></script>
-<script type="text/javascript" src="/mobile/common/dialog/dialog_97ae9ce.js"></script>
-<script type="text/javascript" src="/mobile/common/core/core_3837556.js"></script>
-<script type="text/javascript" src="/mobile/common/header/header_56f7924.js"></script>
+<script type="text/javascript" src="/mobile/common/dialog/dialog_5a39b67.js"></script>
+<script type="text/javascript" src="/mobile/common/core/core_ced14df.js"></script>
+<script type="text/javascript" src="/mobile/common/header/header_23de960.js"></script>
 <script type="text/javascript" src="/mobile/common/shopcart/shopcart_6e67c2f.js"></script>
-<script type="text/javascript" src="/mobile/common/itembrief/itembrief_a32a864.js"></script>
+<script type="text/javascript" src="/mobile/common/numchooser/numchooser_faad02f.js"></script>
+<script type="text/javascript" src="/mobile/common/itembrief/itembrief_bf37e55.js"></script>
 <script type="text/javascript" src="/mobile/common/biglist/biglist_32dcb01.js"></script>
 
 </head>
 <body>
 	<div id="body"></div>
 	<script type="text/javascript">
+		var $ = require('mobile/common/core/core.js');
+		var dialog = require('mobile/common/dialog/dialog.js');
 		var Header = require('mobile/common/header/header.js');
 		var ShopCart = require('mobile/common/shopcart/shopcart.js');
 		var BigList = require('mobile/common/biglist/biglist.js');
-
+		var shopCommodityClassifyId = $.location.getQueryArgv('shopCommodityClassifyId');
+		var commodity = [];
+		var commodityClassify = {};
+		function getCommodityClassify(next){
+			$.get('/commodityclassify/getDetail',{shopCommodityClassifyId:shopCommodityClassifyId},function(data){
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				commodityClassify = data.data;
+				next();
+			});
+		}
+		function getCommodity(next){
+			$.get('/commodity/getByCommodityClassify',{shopCommodityClassifyId:shopCommodityClassifyId},function(data){
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				commodity = data.data;
+				next();
+			});
+		}
 		function go(){
 			var header = new Header({
-				title:'零食',
+				title:commodityClassify.title,
 				backLink:'item.html',
 				button:[{
 					name:'search',
@@ -46,40 +72,26 @@
 				}]
 			});
 			var shopcart = new ShopCart();
-			var biglist = new BigList([
-				{
-					link:'itemdetail.html',
-					image:'/data/upload/sample/sample4.jpg',
-					title:'零食1',
-					summary:'简介简介简介简介简介简介简介简介简介简介简介简介',
-					price:'99900',
-					oldprice:'433000',
-					stock:40,
-				},
-				{
-					link:'itemdetail.html',
-					image:'/data/upload/sample/sample5.jpg',
-					title:'零食2',
-					summary:'简介简介简介简介简介简介简介简介简介简介简介简介',
-					price:'99900',
-					oldprice:'433000',
-					stock:40,
-				},
-				{
-					link:'itemdetail.html',
-					image:'/data/upload/sample/sample6.jpg',
-					title:'零食3',
-					summary:'简介简介简介简介简介简介简介简介简介简介简介简介',
-					price:'99900',
-					oldprice:'433000',
-					stock:40,
+			var biglist = new BigList(_.map(commodity,function(single){
+				return {
+					link:$.url.buildQueryUrl('itemdetail.html',{shopCommodityId:single.shopCommodityId}),
+					image:single.icon,
+					title:single.title,
+					summary:single.introduction,
+					price:single.price,
+					oldprice:single.oldPrice,
+					stock:single.inventory
 				}
-			]);
+			}));
 			var pageHtml = header.el + biglist.el + shopcart.el;
 			$.page.setGrey();
 			$.page.start(pageHtml);
 		}
-		go();
+		$.checkMustLogin(function(){
+			getCommodityClassify(function(){
+				getCommodity(go);
+			});
+		});
 	</script>
 </body>
 </html>

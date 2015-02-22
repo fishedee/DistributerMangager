@@ -1,0 +1,119 @@
+/*背景常量*/
+/*背景颜色常量*/
+/*线条颜色变量*/
+/*字体颜色常量*/
+/*字体大小常量*/
+/*层级大小*/
+/*全局css*/
+* {
+  margin: 0px;
+  padding: 0px;
+  border: 0px;
+  border-radius: 0px;
+  text-decoration: none;
+  list-style: none;
+  background: transparent;
+  font-weight: normal;
+  font-family: "Helvetica Neue", Helvetica, STHeiTi, sans-serif;
+  /*IE浏览器的字体*/
+  -webkit-touch-callout: none;
+  -webkit-highlight: none;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+#body {
+  padding-bottom: 16px;
+}
+.body_grey {
+  background: #dcdcdc;
+}
+/*float布局的常用css*/
+.common_global_row {
+  overflow: hidden;
+  zoom: 1;
+}
+.common_global_leftcol {
+  float: left;
+}
+.common_global_rightcol {
+  float: right;
+}
+.common_global_centercol {
+  overflow: auto;
+  zoom: 1;
+  margin: 0 auto;
+}
+/*absolue布局的常用css*/
+.common_global_abfull {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  margin: auto auto;
+}
+.common_global_ableft {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  margin: auto 0;
+}
+.common_global_abright {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  margin: auto 0;
+}
+.common_global_abtop {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  margin: 0 auto;
+}
+.common_global_abbottom {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  margin: 0 auto;
+}
+/*fix布局的常用css*/
+.common_global_fixfull {
+  position: fixed;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  margin: auto auto;
+}
+.common_global_fixleft {
+  position: fixed;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  margin: auto 0;
+}
+.common_global_fixright {
+  position: fixed;
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  margin: auto 0;
+}
+.common_global_fixtop {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  margin: 0 auto;
+}
+.common_global_fixbottom {
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  margin: 0 auto;
+}

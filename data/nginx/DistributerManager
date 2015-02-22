@@ -1,8 +1,9 @@
 server {
-	listen   8080; ## listen for ipv4; this line is default and implied
+	listen   80; ## listen for ipv4; this line is default and implied
+	listen 	 8080;
 
 	root /var/www/DistributerMangager/;
-	server_name localhost;
+	server_name shop.test.fishedee.com,localhost;
 
 	rewrite ^/data/upload/(.*) /data/upload/$1 last;
 	rewrite ^/backstage/(.*\.(html|css|js|map|jpg|jpeg|png|gif|mp3|midi|swf|ico)) /static/build/backstage/$1 last;

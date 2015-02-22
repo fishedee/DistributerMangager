@@ -1,0 +1,47 @@
+<link rel="import" href="header.html?__inline">
+	<title>商品页面</title>
+</head>
+<body>
+	<div id="body"></div>
+	<script type="text/javascript">
+		var $ = require('common/core/core.js');
+		var dialog = require('common/dialog/dialog.js');
+		var Header = require('common/header/header.js');
+		var ShopCart = require('common/shopcart/shopcart.js');
+		var LittleList = require('common/littlelist/littlelist.js');
+		var commodityclassify = [];
+		var shopCommodityClassifyId = $.location.getQueryArgv('shopCommodityClassifyId');
+		function get(next){
+			$.get('/commodityclassify/getSecondaryClassify',{shopCommodityClassifyId:shopCommodityClassifyId},function(data){
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				commodityclassify = data.data;
+				next();
+			});
+		}
+		function go(){
+			var header = new Header({
+				title:commodityclassify.title,
+				backLink:'item.html',
+				button:[{
+					name:'search',
+					link:'search.html'
+				}]
+			});
+			var shopcart = new ShopCart();
+			var littlelist = new LittleList(_.map(commodityclassify.children,function(single){
+				var link = $.url.buildQueryUrl('itemlist.html',{shopCommodityClassifyId:single.shopCommodityClassifyId});
+				return {link:link,image:single.icon,text:single.title};
+			}));
+			
+			var pageHtml = header.el + littlelist.el + shopcart.el;
+			$.page.start(pageHtml);
+		}
+		$.checkMustLogin(function(){
+			get(go);
+		});
+	</script>
+</body>
+<link rel="import" href="footer.html?__inline">

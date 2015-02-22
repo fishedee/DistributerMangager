@@ -10,7 +10,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
 	<title>商品页面</title>
-<link rel="stylesheet" type="text/css" href="/mobile/common/core/core_7a3400d.css">
+<link rel="stylesheet" type="text/css" href="/mobile/common/core/core_8488e02.css">
 <link rel="stylesheet" type="text/css" href="/mobile/common/dialog/dialog_09f6162.css">
 <link rel="stylesheet" type="text/css" href="/mobile/common/footer/footer_442a17a.css">
 <link rel="stylesheet" type="text/css" href="/mobile/common/headersearch/headersearch_3a1092d.css">
@@ -21,8 +21,8 @@
 <script type="text/javascript" src="http://apps.bdimg.com/libs/underscore.js/1.7.0/underscore-min.js"></script>
 <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
 <script type="text/javascript" src="/fishstrap/core/global_0ffe271.js"></script>
-<script type="text/javascript" src="/mobile/common/dialog/dialog_97ae9ce.js"></script>
-<script type="text/javascript" src="/mobile/common/core/core_3837556.js"></script>
+<script type="text/javascript" src="/mobile/common/dialog/dialog_5a39b67.js"></script>
+<script type="text/javascript" src="/mobile/common/core/core_ced14df.js"></script>
 <script type="text/javascript" src="/mobile/common/footer/footer_b27c0d4.js"></script>
 <script type="text/javascript" src="/mobile/common/headersearch/headersearch_43df09b.js"></script>
 <script type="text/javascript" src="/mobile/common/shopcart/shopcart_6e67c2f.js"></script>
@@ -32,34 +32,43 @@
 <body>
 	<div id="body"></div>
 	<script type="text/javascript">
+		var $ = require('mobile/common/core/core.js');
+		var dialog = require('mobile/common/dialog/dialog.js');
 		var Footer = require('mobile/common/footer/footer.js');
 		var HeaderSearch = require('mobile/common/headersearch/headersearch.js');
 		var ShopCart = require('mobile/common/shopcart/shopcart.js');
 		var LittleList = require('mobile/common/littlelist/littlelist.js');
-
-		var headersearch = new HeaderSearch();
-		var footer = new Footer('item');
-		var shopcart = new ShopCart();
-		var littlelist = new LittleList([
-			{
-				link:'itemlist.html',
-				image:'/data/upload/sample/sample4.jpg',
-				text:'衣服',
-			},
-			{
-				link:'itemlist.html',
-				image:'/data/upload/sample/sample5.jpg',
-				text:'零食',
-			},
-			{
-				link:'itemlist.html',
-				image:'/data/upload/sample/sample6.jpg',
-				text:'电器',
-			}
-		]);
-		
-		var pageHtml = headersearch.el + littlelist.el+ footer.el + shopcart.el;
-		$.page.start(pageHtml);
+		var commodityclassify = [];
+		function get(next){
+			$.get('/commodityclassify/getPrimaryClassify',{},function(data){
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				commodityclassify = data.data;
+				next();
+			});
+		}
+		function go(){
+			var headersearch = new HeaderSearch();
+			var footer = new Footer('item');
+			var shopcart = new ShopCart();
+			var littlelist = new LittleList(_.map(commodityclassify,function(single){
+				var link;
+				if( single.childrenCount == 0 ){
+					link = $.url.buildQueryUrl('itemlist.html',{shopCommodityClassifyId:single.shopCommodityClassifyId});
+				}else{
+					link = $.url.buildQueryUrl('classify.html',{shopCommodityClassifyId:single.shopCommodityClassifyId});
+				}
+				return {link:link,image:single.icon,text:single.title};
+			}));
+			
+			var pageHtml = headersearch.el + littlelist.el+ footer.el + shopcart.el;
+			$.page.start(pageHtml);
+		}
+		$.checkMustLogin(function(){
+			get(go);
+		});
 	</script>
 </body>
 </html>

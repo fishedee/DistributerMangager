@@ -5,8 +5,9 @@ class User extends CI_Controller {
 	public function __construct()
     {
         parent::__construct();
-		$this->load->model('user/userAo','userAo');
 		$this->load->model('user/loginAo','loginAo');
+		$this->load->model('user/userAo','userAo');
+		$this->load->model('user/userAppAo','userAppAo');
 		$this->load->model('user/userPermissionEnum','userPermissionEnum');
 		$this->load->model('user/userTypeEnum','userTypeEnum');
 		$this->load->library('argv','argv');
@@ -19,6 +20,48 @@ class User extends CI_Controller {
 	{
 		return $this->userTypeEnum->names;
 	}
+
+	/**
+	* @view json
+	*/
+	public function getAppInfo()
+	{
+		//检查权限
+		$user = $this->loginAo->checkMustClient(
+			$this->userPermissionEnum->COMPANY_INTRODUCE
+		);
+		$userId = $user['userId'];
+
+		//业务逻辑
+		return $this->userAppAo->get($userId);
+	}
+
+	/**
+	* @view json
+	*/
+	public function modAppInfo()
+	{
+		//检查输入参数
+		$data = $this->argv->checkPost(array(
+			array('appId','require'),
+			array('appKey','require'),
+			array('mchId','require'),
+			array('mchKey','require'),
+			array('mchSslCert','option'),
+			array('mchSslKey','option'),
+			array('remark','require'),
+		));
+
+		//检查权限
+		$user = $this->loginAo->checkMustClient(
+			$this->userPermissionEnum->COMPANY_INTRODUCE
+		);
+		$userId = $user['userId'];
+
+		//业务逻辑
+		return $this->userAppAo->mod($userId,$data);
+	}
+	
 	
 	/**
 	* @view json

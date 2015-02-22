@@ -1,0 +1,19 @@
+.common_headertitle {
+  overflow: hidden;
+  zoom: 1;
+}
+.common_headertitle {
+  background: #dcdcdc;
+  height: 45px;
+  padding-left: 12px;
+}
+.common_headertitle .tip {
+  font-size: 18px;
+  line-height: 45px;
+  color: #000000;
+}
+.common_headertitle .text {
+  font-size: 18px;
+  line-height: 45px;
+  color: #ca191d;
+}

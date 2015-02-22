@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>烘焙帮后台管理系统</title>
+	<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+</head>
+<body class="definewidth m10">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var appInfo;
+		function get(next){
+			$.get('/user/getappinfo',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				appInfo = data.data;
+				next();
+			});
+		}
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'appId',type:'text',name:'appId'},
+					{id:'appKey',type:'text',name:'appKey'},
+					{id:'mchId',type:'text',name:'mchId'},
+					{id:'mchKey',type:'text',name:'mchKey'},
+					{id:'remark',type:'text',name:'备注'},
+				],
+				value:appInfo,
+				submit:function(data){
+					$.post('/user/modappinfo',data,function(data){
+						data = $.JSON.parse(data);
+						if( data.code != 0 ){
+							dialog.message(data.msg);
+							return;
+						}
+						dialog.message('修改成功！',function(){
+							location.href = 'index.html';
+						});
+					});
+				},
+				cancel:undefined
+			});
+		}
+		get(go);
+	</script>
+ </body>
+</html>

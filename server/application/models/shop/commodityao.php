@@ -1,98 +1,102 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class CommodityAO extends CI_Model
+class CommodityAo extends CI_Model
 {
     public function __construct(){
         parent::__construct();
-        $this->load->model('shop/CommodityDb', 'commodityDb');
+        $this->load->library('argv','','argv');
+        $this->load->model('shop/commodityDb', 'commodityDb');
+        $this->load->model('shop/commodityStateEnum', 'commodityStateEnum');
+    }
+    
+    public function getFixedPrice($price){
+        return sprintf("%.2f", $price/100);
     }
 
-    public function search($dataWhere, $dataLimit){
-        return $this->commodityDb->search($dataWhere, $dataLimit);
+    public function search($userId,$dataWhere, $dataLimit){
+        $dataWhere['userId'] = $userId;
+        $data =  $this->commodityDb->search($dataWhere, $dataLimit);
+        foreach($data['data'] as $key=>$value ){
+            $data['data'][$key]['priceShow'] = $this->getFixedPrice($data['data'][$key]['price']);
+            $data['data'][$key]['oldPriceShow'] = $this->getFixedPrice($data['data'][$key]['oldPrice']);
+        }
+        return $data;
     }
 
-    public function get($commodityId){
-        $commodity = $this->commodityDb->get($commodityId);
-        return $commodity;
+    public function check($shopCommodity){
+        if($shopCommodity['title'] <= 0 )
+            throw new CI_MyException(1,'价格不能少于或等于0');
+        if($shopCommodity['price'] <= 0 )
+            throw new CI_MyException(1,'价格不能少于或等于0');
+        if($shopCommodity['oldPrice'] <= 0 )
+            throw new CI_MyException(1,'原价格不能少于或等于0');
     }
 
-    public function del($userId, $commodityId){
-        $commodity = $this->commodityDb->get($commodityId);
-        if($commodity['userId'] != $userId)
-            throw new CI_MyException(1, '本商城用户无此权限');
+    public function get($userId,$shopCommodityId){
+        $shopCommodity = $this->commodityDb->get($shopCommodityId);
+        if( $shopCommodity['userId'] != $userId)
+            throw new CI_MyException(1,'非本商城用户无此权限');
+        $shopCommodity['priceShow'] = $this->getFixedPrice($shopCommodity['price']);;
+        $shopCommodity['oldPriceShow'] = $this->getFixedPrice($shopCommodity['oldPrice']);;
+        return $shopCommodity;
+    }
 
-        $this->commodityDb->del($commodityId);
+    public function getByIds($userId,$shopCommodityId){
+        $data = $this->search($userId,array('shopCommodityId'=>$shopCommodityId),array())['data'];
+        $map = array();
+        foreach($data as $singleData){
+            $map[$singleData['shopCommodityId']] = $singleData;
+        }
+        return $map;
+    }
+
+    public function getOnStoreByClassify($userId,$shopCommodityClassifyId){
+        return $this->search($userId,array(
+            'shopCommodityClassifyId'=>$shopCommodityClassifyId,
+            'state'=>$this->commodityStateEnum->ON_STORAGE
+            ),
+            array()
+        )['data'];
+        return $data;
+    }
+
+    public function del($userId, $shopCommodityId){
+        $shopCommodity = $this->commodityDb->get($shopCommodityId);
+        if($shopCommodity['userId'] != $userId)
+            throw new CI_MyException(1, '非本商城用户无此权限');
+
+        $this->commodityDb->del($shopCommodityId);
     }
 
     public function add($userId, $data){
-        $maxSort = $this->commodityDb->getMaxSortByUser($userId);
-
+        $data['price'] = $data['priceShow']*100;
+        $data['oldPrice'] = $data['oldPriceShow']*100;
         $data['userId'] = $userId;
-        if($maxSort == null)
-            $data['sort'] = 1;
-        else
-            $data['sort'] = $maxSort + 1;
-
-        $data['userId'] = $userId;
+        unset($data['priceShow']);
+        unset($data['oldPriceShow']);
+        $this->check($data);
         $this->commodityDb->add($data);
     }
 
-    public function mod($userId, $commodityId, $data){
-        $commodity = $this->commodityDb->get($commodityId);
-        if($commodity['userId'] != $userId)
+    public function mod($userId, $shopCommodityId, $data){
+        $data['price'] = $data['priceShow']*100;
+        $data['oldPrice'] = $data['oldPriceShow']*100;
+        unset($data['priceShow']);
+        unset($data['oldPriceShow']);
+        $this->check($data);
+        $shopCommodity = $this->commodityDb->get($shopCommodityId);
+        if($shopCommodity['userId'] != $userId)
             throw new CI_MyException(1, '非本商城用户无权限操作');
 
-        $this->commodityDb->mod($commodityId, $data);
+        $this->commodityDb->mod($shopCommodityId, $data);
     }
 
-    public function searchByClassify($userId, $commodityClassifyId, $dataLimit){
-        $dataWhere = array(
-            'userId'=>$userId,
-            'commodityClassifyId'=>$commodityClassifyId
-        );
-        return $this->commodityDb->search($dataWhere, $dataLimit);
-    }
+    public function reduceStock($userId, $shopCommodityId, $quantity){
+        $shopCommodity = $this->commodityDb->get($shopCommodityId);
+        if($shopCommodity['userId'] != $userId)
+            throw new CI_MyException(1, '非本商城用户无此权限');
 
-    public function move($userId, $shopCommodityId, $direction){
-        //取出所有商品
-        $dataWhere['userId'] = $userId;
-        $allCommodity = $this->commodityDb->search($dataWhere, array());
-        $allCommodity = $allCommodity['data'];
-
-        //计算上一个商品，和下一个商品
-        $index = -1;
-        foreach($allCommodity as $key=>$singleCommodity){
-            if($singleCommodity['shopCommodityId'] == $shopCommodityId){
-                $index = $key;
-                break;
-            }
-        }
-        if($index == -1)
-            throw new CI_MyException(1, '不存在此分类');
-        $currentCommodity = $allCommodity[$index];
-
-        //调整sort
-        if($direction == 'up'){
-            if($index - 1 < 0)
-                throw new CI_MyException(1, '不能再往上调整');
-            $prevCommodity = $allCommodity[$index - 1];
-            $newCurrentSort = $prevCommodity['sort'];
-            $newCurrentId = $currentCommodity['shopCommodityId'];
-            $newOtherSort = $currentCommodity['sort'];
-            $newOtherId = $prevCommodity['shopCommodityId'];
-        }else{
-            if($index + 1 >= count($allCommodity))
-                throw new CI_MyException(1, '不能再往下调整');
-            $nextCommodity = $allCommodity[$index + 1];
-            $newCurrentSort = $nextCommodity['sort'];
-            $newCurrentId = $currentCommodity['shopCommodityId'];
-            $newOtherSort = $currentCommodity['sort'];
-            $newOtherId = $nextCommodity['shopCommodityId'];
-        }
-
-        //更新数据库
-        $this->commodityDb->mod($newOtherId, array('sort'=>$newOtherSort));
-        $this->commodityDb->mod($newCurrentId, array('sort'=>$newCurrentSort));
+        $this->commodityDb->reduceStock($shopCommodityId, $quantity);
     }
 }
 

@@ -1,3 +1,4 @@
+<div id="common_footerbutton_padding"></div>
 <ul id="common_footerbutton">
 	<% for( var i in list ){ %>
 	<% var width = 1/list.length * 100 ; %>

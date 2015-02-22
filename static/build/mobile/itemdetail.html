@@ -10,76 +10,107 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
 	<title>商品详情页面</title>
-<link rel="stylesheet" type="text/css" href="/mobile/common/core/core_7a3400d.css">
+<link rel="stylesheet" type="text/css" href="/mobile/common/core/core_8488e02.css">
 <link rel="stylesheet" type="text/css" href="/mobile/common/dialog/dialog_09f6162.css">
 <link rel="stylesheet" type="text/css" href="/mobile/common/header/header_b51a32c.css">
 <link rel="stylesheet" type="text/css" href="/mobile/common/shopcart/shopcart_a6ea491.css">
+<link rel="stylesheet" type="text/css" href="/mobile/common/numchooser/numchooser_c64b34c.css">
 <link rel="stylesheet" type="text/css" href="/mobile/common/itembrief/itembrief_bc23208.css">
 <link rel="stylesheet" type="text/css" href="/mobile/common/itemarticle/itemarticle_cf5c6d1.css">
-<link rel="stylesheet" type="text/css" href="/mobile/common/footerbutton/footerbutton_e42fd46.css">
+<link rel="stylesheet" type="text/css" href="/mobile/common/footerbutton/footerbutton_eea48c6.css">
 <link rel="stylesheet" type="text/css" href="/mobile/common/itemdialog/itemdialog_c3c938c.css">
-<link rel="stylesheet" type="text/css" href="/mobile/common/numchooser/numchooser_c64b34c.css">
 
 <script type="text/javascript" src="/fishstrap/lib/fastclick.js"></script>
 <script type="text/javascript" src="http://apps.bdimg.com/libs/underscore.js/1.7.0/underscore-min.js"></script>
 <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
 <script type="text/javascript" src="/fishstrap/core/global_0ffe271.js"></script>
-<script type="text/javascript" src="/mobile/common/dialog/dialog_97ae9ce.js"></script>
-<script type="text/javascript" src="/mobile/common/core/core_3837556.js"></script>
-<script type="text/javascript" src="/mobile/common/header/header_56f7924.js"></script>
+<script type="text/javascript" src="/mobile/common/dialog/dialog_5a39b67.js"></script>
+<script type="text/javascript" src="/mobile/common/core/core_ced14df.js"></script>
+<script type="text/javascript" src="/mobile/common/header/header_23de960.js"></script>
 <script type="text/javascript" src="/mobile/common/shopcart/shopcart_6e67c2f.js"></script>
 <script type="text/javascript" src="/fishstrap/util/uedit_466b933.js"></script>
-<script type="text/javascript" src="/mobile/common/itembrief/itembrief_a32a864.js"></script>
+<script type="text/javascript" src="/mobile/common/numchooser/numchooser_faad02f.js"></script>
+<script type="text/javascript" src="/mobile/common/itembrief/itembrief_bf37e55.js"></script>
 <script type="text/javascript" src="/mobile/common/itemarticle/itemarticle_560048e.js"></script>
-<script type="text/javascript" src="/mobile/common/footerbutton/footerbutton_8b1ae61.js"></script>
-<script type="text/javascript" src="/mobile/common/numchooser/numchooser_64970f7.js"></script>
+<script type="text/javascript" src="/mobile/common/footerbutton/footerbutton_7c867f1.js"></script>
 <script type="text/javascript" src="/mobile/common/itemdialog/itemdialog_b336c91.js"></script>
 
 </head>
 <body>
 	<div id="body"></div>
 	<script type="text/javascript">
+		var $ = require('mobile/common/core/core.js');
+		var dialog = require('mobile/common/dialog/dialog.js');
 		var Header = require('mobile/common/header/header.js');
 		var ShopCart = require('mobile/common/shopcart/shopcart.js');
 		var ItemArticle = require('mobile/common/itemarticle/itemarticle.js');
 		var FooterButton = require('mobile/common/footerbutton/footerbutton.js');
 		var ItemDialog = require('mobile/common/itemdialog/itemdialog.js');
-		function showBuyDialog(){
-			var dialog = new ItemDialog({
-				image:'/data/upload/sample/sample4.jpg',
-				title:'零食1',
-				summary:'简介简介简介简介简介简介简介简介简介简介简介简介',
-				price:'99900',
-				oldprice:'433000',
-				stock:'40',
-				confirmName:'buy',
-				confirmText:'立即购买',
-				confirmClick:function(data){
-					location.href = 'shopcart.html';
+		var commodity = {};
+		var shopCommodityId = $.location.getQueryArgv('shopCommodityId');
+		function getCommodity(next){
+			$.get('/commodity/getDetail',{shopCommodityId:shopCommodityId},function(data){
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
 				}
-			}).el;
-			$.page.append(dialog);
+				commodity = data.data;
+				next();
+			});
+		}
+		function showDialog(name,next){
+			var dialogArgv = {
+				image:commodity.icon,
+				title:commodity.title,
+				summary:commodity.introduction,
+				price:commodity.price,
+				oldprice:commodity.oldPrice,
+				stock:commodity.inventory,
+			};
+			if(name=='buy'){
+				dialogArgv = $.extend(dialogArgv,{confirmName:'buy',confirmText:'立即购买',confirmClick:next});
+			}else{
+				dialogArgv = $.extend(dialogArgv,{confirmName:'cart',confirmText:'加入购物车',confirmClick:next});
+			}
+			$.page.append(new ItemDialog(dialogArgv).el);
+		}
+		function showBuyDialog(){
+			showDialog('buy',function(quantity){
+				$.post('/troller/add',{shopCommodityId:shopCommodityId,quantity:quantity},function(data){
+					if(data.code != 0 ){
+						dialog.message(data.msg);
+						return;
+					}
+					var newQuantity = data.data;
+					if( newQuantity > 0 ){
+						location.href = 'shopcart.html';
+					}else{
+						dialog.message('库存不足，添加商品到购物车失败');
+					}
+				});
+			});
 		}
 		function showCartDialog(){
-			var dialog = new ItemDialog({
-				image:'/data/upload/sample/sample4.jpg',
-				title:'零食1',
-				summary:'简介简介简介简介简介简介简介简介简介简介简介简介',
-				price:'99900',
-				oldprice:'433000',
-				stock:'40',
-				confirmName:'cart',
-				confirmText:'加入购物车',
-				confirmClick:function(data){
-					alert('加入'+data+'件商品到购物车成功');
-				}
-			}).el;
-			$.page.append(dialog);
+			showDialog('cart',function(quantity){
+				$.post('/troller/add',{shopCommodityId:shopCommodityId,quantity:quantity},function(data){
+					if(data.code != 0 ){
+						dialog.message(data.msg);
+						return;
+					}
+					var newQuantity = data.data;
+					if( newQuantity == quantity ){
+						dialog.message('成功添加'+newQuantity+'件商品到购物车');
+					}else{
+						dialog.message('库存不足，只能添加'+newQuantity+'商品到购物车');
+					}
+					
+				});
+			});
 		}
 		function go(){
 			var header = new Header({
-				title:'零食1',
-				backLink:'itemlist.html',
+				title:commodity.title,
+				backLink:'item.html',
 				button:[{
 					name:'search',
 					link:'search.html'
@@ -87,13 +118,13 @@
 			});
 			var shopcart = new ShopCart();
 			var itemarticle = new ItemArticle({
-				image:'/data/upload/sample/sample4.jpg',
-				title:'零食1',
-				summary:'简介简介简介简介简介简介简介简介简介简介简介简介',
-				price:'99900',
-				oldprice:'433000',
-				stock:'40',
-				content:'<p>Hello World</p>',
+				image:commodity.icon,
+				title:commodity.title,
+				summary:commodity.introduction,
+				price:commodity.price,
+				oldprice:commodity.oldPrice,
+				stock:commodity.inventory,
+				content:commodity.detail,
 			});
 			var footerbutton = new FooterButton([
 				{
@@ -114,7 +145,9 @@
 			var pageHtml = header.el + itemarticle.el + footerbutton.el + shopcart.el;
 			$.page.start(pageHtml);
 		}
-		go();
+		$.checkMustLogin(function(){
+			getCommodity(go);
+		});
 	</script>
 </body>
 </html>
