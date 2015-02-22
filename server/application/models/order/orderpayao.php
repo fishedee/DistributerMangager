@@ -36,8 +36,10 @@ class OrderPayAo extends CI_Model {
 		),'wxSdk');
     }
 
-    private function getOpenId($clientId){
-    	$client = $this->clientAo->get($clientId);
+    private function getOpenId($userId,$clientId){
+    	//return 'oMhf-txr18KIBU1GZ0TXpxToaoH8';
+
+    	$client = $this->clientAo->get($userId,$clientId);
     	return $client['openId'];
     }
 	
@@ -46,7 +48,7 @@ class OrderPayAo extends CI_Model {
 		$this->initWxSdk($userId);
 
 		//获取openId
-		$openId = $this->getOpenId($clientId);
+		$openId = $this->getOpenId($userId,$clientId);
 
 		//获取js的pay信息
 		return $this->wxSdk->getOrderPayInfo(
@@ -54,7 +56,7 @@ class OrderPayAo extends CI_Model {
 			$dealId,
 			$dealDesc,
 			$dealFee,
-			'http://'.$_SERVER['HTTP_HOST'].'/order/wxpaycallback/'.$userId
+			'http://'.$_SERVER['HTTP_HOST'].'/deal/wxpaycallback/'.$userId
 		);
 	}
 

@@ -253,7 +253,7 @@ alter table t_shop_order add index matchIndex(userId, clientId);
 #创建用户订单商品表
 create table t_shop_order_commodity(
 	shopOrderCommodityId integer not null auto_increment,
-	shopOrderId integer not null,
+	shopOrderId varchar(32) not null,
 	shopCommodityId integer not null,
 	userId integer not null,
     title varchar(128) not null,
@@ -272,7 +272,7 @@ alter table t_shop_order_commodity add index shopOrderIdIndex(shopOrderId);
 #创建用户订单地址表
 create table t_shop_order_address(
 	shopOrderAddressId integer not null auto_increment,
-	shopOrderId integer not null,
+	shopOrderId varchar(32) not null,
 	name varchar(32) not null,
     province varchar(32) not null,
     city varchar(32) not null,
@@ -300,6 +300,9 @@ insert into t_user_permission(userId,permissionId)values
 
 insert into t_client(userId,openId,type)values
 (10003,'微信测试用户虚拟OpenId',2);
+
+insert into t_address(clientId,name,province,city,address,phone,payment)values
+(10001,'黎锦伟','广东','佛山','某地','15018749403',1);
 
 insert into t_user_app(userId,appId,appKey,mchId,mchKey,remark)values
 (10003,'wx5cc2d94dfe468c95','adc38d0974b0617023012fef684e9ae6','1220218001','56344f19b3b90eb545bf2f07800e7a10','');
@@ -340,9 +343,9 @@ insert into t_shop_commodity_classify(userId,title,icon,parent,sort,remark)value
 (10003,'主食','/data/upload/sample/sample6.jpg',10005,8,'');
 
 insert into t_shop_commodity(userId,shopCommodityClassifyId,icon,title,introduction,detail,price,oldPrice,inventory,state)values
-(10003,10002,'/data/upload/sample/sample4.jpg','商品1','商品简介1','商品描述1',1100,11100,10,1),
-(10003,10003,'/data/upload/sample/sample5.jpg','商品2','商品简介2','商品描述2',2200,22200,10,1),
-(10003,10004,'/data/upload/sample/sample6.jpg','商品3','商品简介3','商品描述3',3300,33300,10,1);
+(10003,10002,'/data/upload/sample/sample4.jpg','商品1','商品简介1','商品描述1',1,11100,10,1),
+(10003,10003,'/data/upload/sample/sample5.jpg','商品2','商品简介2','商品描述2',2,22200,10,1),
+(10003,10004,'/data/upload/sample/sample6.jpg','商品3','商品简介3','商品描述3',3,33300,10,1);
 
 #显示初始数据
 select * from t_user;

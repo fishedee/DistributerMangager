@@ -21,7 +21,7 @@
 <script type="text/javascript" src="http://apps.bdimg.com/libs/underscore.js/1.7.0/underscore-min.js"></script>
 <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
 <script type="text/javascript" src="/fishstrap/core/global_0ffe271.js"></script>
-<script type="text/javascript" src="/mobile/common/dialog/dialog_5a39b67.js"></script>
+<script type="text/javascript" src="/mobile/common/dialog/dialog_e661e90.js"></script>
 <script type="text/javascript" src="/mobile/common/core/core_ced14df.js"></script>
 <script type="text/javascript" src="/mobile/common/header/header_23de960.js"></script>
 <script type="text/javascript" src="/mobile/common/selectlist/selectlist_d8d9683.js"></script>
@@ -43,24 +43,41 @@
 		var myaddress = {};
 		var mapPaymentIdToName = {1:'微信支付',2:'货到付款'};
 		var mapPaymentNameToId = {'微信支付':1,'货到付款':2};
-		function wxPay(){
-			var data = {
-				dealId:new Date().getTime(),
-				dealDesc:'testdeal',
-				dealFee:1,
-			};
-			$.get('/pay/wxpay',data,function(data){
+		function orderPay(shopOrderId,next){
+			$.get('/deal/wxjspay',{shopOrderId:shopOrderId},function(data){
+				if(data.code!=0){
+					dialog.message(data.msg);
+					return;
+				}
 				WXSdk.enableDebugMode();
 				WXSdk.ready(function(){
 					WXSdk.pay(data.data,{
 						success:function(msg){
-							alert('支付成功');
+							next();
 						},
 						fail:function(msg){
-							alert('支付失败');
+							dialog.message('用户取消支付',function(){
+								next();
+							});
 						}
 					});
 				});
+			});
+		}
+		function order(shopTroller,address,next){
+			$.post('/deal/order',{shopTroller:shopTroller,address:address},function(data){
+				if(data.code!=0){
+					dialog.message(data.msg,function(){
+						location.href = 'shopcart.html';
+					});
+					return;
+				}
+				shopOrderId = data.data;
+				if( address.payment == 1 ){
+					orderPay(shopOrderId,next)
+				}else{
+					next();
+				}
 			});
 		}
 		function get(next){
@@ -86,8 +103,12 @@
 					name:'pay',
 					text:'支付',
 					click:function(){
-						wxPay();
-						alert('生成订单，并执行微信支付！');
+						var shopTroller = $.location.getQueryArgv('shopTroller').split('|');
+						var addressInput = address.get();
+						addressInput.payment = mapPaymentNameToId[addressInput.payment];
+						order(shopTroller,addressInput,function(shopOrderId){
+							location.href = 'deal.html';
+						});
 					}
 				}
 			]);

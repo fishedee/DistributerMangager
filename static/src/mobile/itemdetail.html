@@ -28,8 +28,8 @@
 				image:commodity.icon,
 				title:commodity.title,
 				summary:commodity.introduction,
-				price:commodity.price,
-				oldprice:commodity.oldPrice,
+				price:commodity.priceShow,
+				oldprice:commodity.oldPriceShow,
 				stock:commodity.inventory,
 			};
 			if(name=='buy'){
@@ -46,12 +46,7 @@
 						dialog.message(data.msg);
 						return;
 					}
-					var newQuantity = data.data;
-					if( newQuantity > 0 ){
-						location.href = 'shopcart.html';
-					}else{
-						dialog.message('库存不足，添加商品到购物车失败');
-					}
+					location.href = 'shopcart.html';
 				});
 			});
 		}
@@ -62,13 +57,7 @@
 						dialog.message(data.msg);
 						return;
 					}
-					var newQuantity = data.data;
-					if( newQuantity == quantity ){
-						dialog.message('成功添加'+newQuantity+'件商品到购物车');
-					}else{
-						dialog.message('库存不足，只能添加'+newQuantity+'商品到购物车');
-					}
-					
+					dialog.message('成功添加商品到购物车');
 				});
 			});
 		}
@@ -86,8 +75,8 @@
 				image:commodity.icon,
 				title:commodity.title,
 				summary:commodity.introduction,
-				price:commodity.price,
-				oldprice:commodity.oldPrice,
+				price:commodity.priceShow,
+				oldprice:commodity.oldPriceShow,
 				stock:commodity.inventory,
 				content:commodity.detail,
 			});

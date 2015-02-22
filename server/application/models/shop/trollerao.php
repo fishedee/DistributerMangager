@@ -30,11 +30,11 @@ class TrollerAo extends CI_Model
     }
 
     public function delByIds($userId,$clientId,$shopTrollerId){
-        $this->trollerDb->delByUserIdAndClientIdAndShopTrollerId(array(
-            'userId'=>$userId,
-            'clientId'=>$clientId,
-            'shopTrollerId'=>$shopTrollerId
-        ));
+        $this->trollerDb->delByUserIdAndClientIdAndShopTrollerId(
+            $userId,
+            $clientId,
+            $shopTrollerId
+        );
     }
 
     public function getAll($userId,$clientId){
@@ -43,6 +43,14 @@ class TrollerAo extends CI_Model
             'clientId'=>$clientId,
         ),array())['data'];
 
+        //取出库存信息
+        foreach( $shopTroller as $key=>$singleShopTroller ){
+            $shopTroller[$key]['inventory'] = $this->commodityAo->get(
+                $singleShopTroller['userId'],
+                $singleShopTroller['shopCommodityId']
+            )['inventory'];
+        }
+        
         return $shopTroller;
     }
 
@@ -74,7 +82,7 @@ class TrollerAo extends CI_Model
             return $singleShopTroller['shopCommodityId'];
         },$shopTroller);
 
-        $this->delByUserIdAndClientIdAndNotCommodityId(
+        $this->trollerDb->delByUserIdAndClientIdAndNotCommodityId(
             $userId,
             $clientId,
             $shopCommodityId
@@ -94,6 +102,9 @@ class TrollerAo extends CI_Model
         if($commodity['price'] != $shopTroller['price'] )
             throw new CI_MyException (1,'商品价格发生变更');
 
+        if($commodity['oldPrice'] != $shopTroller['oldPrice'] )
+            throw new CI_MyException (1,'商品原价格发生变更');
+
         if($commodity['inventory'] < $shopTroller['quantity'] )
             throw new CI_MyException (1,'商品库存不足');
 
@@ -108,8 +119,6 @@ class TrollerAo extends CI_Model
         if($commodity['inventory'] < $shopTroller['quantity'])
             $shopTroller['quantity'] = $commodity['inventory'];
         $this->trollerDb->mod($shopTroller['shopTrollerId'],array(
-            'userId'=>$commodity['userId'],
-            'clientId'=>$commodity['clientId'],
             'shopCommodityId'=>$commodity['shopCommodityId'],
             'title'=>$commodity['title'],
             'icon'=>$commodity['icon'],
@@ -133,7 +142,7 @@ class TrollerAo extends CI_Model
             );
             $this->trollerDb->add(array(
                 'userId'=>$commodity['userId'],
-                'clientId'=>$commodity['clientId'],
+                'clientId'=>$clientId,
                 'shopCommodityId'=>$commodity['shopCommodityId'],
                 'title'=>$commodity['title'],
                 'icon'=>$commodity['icon'],

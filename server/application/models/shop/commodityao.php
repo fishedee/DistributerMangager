@@ -24,8 +24,8 @@ class CommodityAo extends CI_Model
     }
 
     public function check($shopCommodity){
-        if($shopCommodity['title'] <= 0 )
-            throw new CI_MyException(1,'价格不能少于或等于0');
+        if($shopCommodity['title'] == '' )
+            throw new CI_MyException(1,'商品标题不能为空');
         if($shopCommodity['price'] <= 0 )
             throw new CI_MyException(1,'价格不能少于或等于0');
         if($shopCommodity['oldPrice'] <= 0 )
@@ -99,26 +99,3 @@ class CommodityAo extends CI_Model
         $this->commodityDb->reduceStock($shopCommodityId, $quantity);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

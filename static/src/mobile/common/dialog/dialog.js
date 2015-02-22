@@ -3,14 +3,19 @@
 */
 var $ = require('/fishstrap/core/global.js');
 var body = $('#body');
-var loadingDiv;
+var loadingDiv = null;
 function loadingBegin(){
-	var template = __inline('dialogLoadingTpl.tpl');
-	loadingDiv = $(template());
-	body.append(loadingDiv);
+	if( loadingDiv == null ){
+		var template = __inline('dialogLoadingTpl.tpl');
+		loadingDiv = $(template());
+		body.append(loadingDiv);
+	}
 }
 function loadingEnd(){
-	loadingDiv.remove();
+	if( loadingDiv != null ){
+		loadingDiv.remove();
+		loadingDiv = null;
+	}
 }
 function message(text,next){
 	alert(text);

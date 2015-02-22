@@ -13,7 +13,7 @@ class OrderWhen extends CI_Model
 		//计算出订单基本信息
 		$this->orderDb->mod(
 			$shopOrderId,
-			$this->orderStateEnum->NO_SEND
+			array('state'=>$this->orderStateEnum->NO_SEND)
 		);
 	}
 }

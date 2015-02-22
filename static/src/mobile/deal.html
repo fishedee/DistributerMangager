@@ -4,62 +4,64 @@
 <body>
 	<div id="body"></div>
 	<script type="text/javascript">
+		var $ = require('common/core/core.js');
+		var dialog = require('common/dialog/dialog.js');
 		var Footer = require('common/footer/footer.js');
 		var HeaderButton = require('common/headerbutton/headerbutton.js');
 		var DealList = require('common/deallist/deallist.js');
+		var state = $.location.getQueryArgv('state');
+		var orderStateIdToName = {0:'全部',1:'未支付',2:'待发货',3:'已发货'};
+		var orderStateList = [0,1,2,3];
+		var orderCount = {};
+		var orderList = [];
+		var orderState = (state == null)?0:state;
+		function getOrderCount(next){
+			$.get('/deal/getMyOrderCount',{},function(data){
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				orderCount = data.data;
+				next();
+			});
+		}
+		function getOrderList(next){
+			$.get('/deal/getMyOrderList',{state:orderState},function(data){
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				orderList = data.data;
+				next();
+			});
+		}
 		function go(){
 			var footer = new Footer('deal');
-			var headerbutton = new HeaderButton([
-				{
-					name:'全部订单',
-					number:3,
+			var headerbutton = new HeaderButton(_.map(orderStateList,function(key){
+				return {
+					name:orderStateIdToName[key],
+					number:orderCount[key],
 					click:function(){
-						alert('全部订单');
+						location.href = 'deal.html?state='+key;
 					}
-				},
-				{
-					name:'未支付',
-					number:1,
-					click:function(){
-						alert('未支付');
-					}
-				},
-				{
-					name:'待发货',
-					number:3,
-					click:function(){
-						alert('待发货');
-					}
-				},
-				{
-					name:'已发货',
-					number:5,
-					click:function(){
-						alert('已发货');
-					}
-				},
-			]);
-			var deallist = new DealList([
-				{
-					image:'/data/upload/sample/sample4.jpg',
-					id:'10001',
-					state:'已支付',
-					price:'350000',
-					link:'dealdetail.html'			
-				},
-				{
-					image:'/data/upload/sample/sample5.jpg',
-					id:'10002',
-					state:'未支付',
-					price:'360000',
-					link:'dealdetail.html'				
-				},
-			]);
+				};	
+			}));
+			var deallist = new DealList(_.map(orderList,function(single){
+				return {
+					image:single.image,
+					id:single.shopOrderId,
+					state:orderStateIdToName[single.state],
+					price:single.priceShow,
+					link:$.url.buildQueryUrl('dealdetail.html',{shopOrderId:single.shopOrderId})
+				};
+			}));
 			var pageHtml = headerbutton.el + deallist.el + footer.el;
 			$.page.setGrey();
 			$.page.start(pageHtml);
 		}
-		go();
+		getOrderCount(function(){
+			getOrderList(go);
+		});
 	</script>
 </body>
 <link rel="import" href="footer.html?__inline">

@@ -11,6 +11,22 @@
 		var ItemListWithNum = require('common/itemlistwithnum/itemlistwithnum.js');
 		var FooterButton = require('common/footerbutton/footerbutton.js');
 		var shopcart = {};
+		function checkShopCart(nochangenext,changenext){
+			$.get('/troller/check',{},function(data){
+				if(data.code != 0 ){
+					dialog.message(data.msg);
+					$.get('/troller/refresh',{},function(data){
+						if(data.code != 0 ){
+							dialog.message(data.msg);
+							return;
+						}
+						changenext();
+					});
+					return;
+				}
+				nochangenext();
+			});
+		}
 		function getShopCart(next){
 			$.get('/troller/get',{},function(data){
 				if(data.code != 0 ){
@@ -43,7 +59,7 @@
 						image:single.icon,
 						title:single.title,
 						summary:single.introduction,
-						price:single.price,
+						price:single.priceShow,
 						stock:single.inventory,
 						quantity:single.quantity,
 					};
@@ -71,15 +87,11 @@
 					next(data.data);
 				});
 			}
-			function goShopCart(next){
-				refreshShopCart(function(isStockChange){
-					if( isStockChange == true ){
-						dialog.message('库存有限，请重新选择商品数量',function(){
-							location.reload();
-						});
-					}else{
-						next();
-					}
+			function goShopCart(){
+				checkShopCart(function(){
+					goAddress();
+				},function(){
+					location.reload();
 				});
 			}
 			function goAddress(){
@@ -93,7 +105,7 @@
 				if( shopTroller == ''){
 					dialog.message('请选择要结算的商品');
 				}else{
-					location.href = $.url.buildQueryUrl('address.html',{shopTroller:shopTroller});
+					location.href = $.url.buildQueryUrl('address.html',{shopTroller:shopTroller,showwxpaytitle:1});
 				}
 			}
 			function whenItemListChange(){
@@ -105,7 +117,7 @@
 					name:'pay',
 					text:'结算',
 					click:function(){
-						goShopCart(goAddress);
+						goShopCart();
 					}
 				}
 			]);
@@ -114,7 +126,11 @@
 			$.page.start(pageHtml);
 		}
 		$.checkMustLogin(function(){
-			getShopCart(go);
+			checkShopCart(function(){
+				getShopCart(go);
+			},function(){
+				getShopCart(go);
+			});
 		});
 	</script>
 </body>
