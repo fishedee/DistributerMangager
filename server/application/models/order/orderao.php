@@ -187,6 +187,24 @@ class OrderAo extends CI_Model
 	}
 
 	public function modState( $userId,$shopOrderId,$data ){
-		//FIXME 暂未做
+        $orderInfo = $this->get->where("shopOrderId", $shopOrderId);
+        $query = $this->orderDb->get($shopOrderId);
+        if( count($query) == 0)
+            throw new CI_MyException(1, "找不到此订单");
+
+        if($orderInfo['state'] == $this->OrderStateEnum->NO_PAY && $data['newState'] == $this->OrderStateEnum->NO_SEND){
+            $this->orderDb->mod($shopOrderId, $data);
+            return; 
+        }
+        if($orderInfo['state'] == $this->OrderStateEnum->NO_SEND && $data['newState'] == $this->OrderStateEnum->HAS_SEND){
+            $this->orderDb->mod($shopOrderId, $data);
+            return;
+        }
+        if($orderInfo['state'] == $this->OrderStateEnum->HAS_SEND && $data['newState'] == $this->OrderStateEnum->FINISH){
+            $this->orderDb->mod($shopOrderId, $data);
+            return;
+        }
+
+        throw new CI_MyException(1, "转换状态不符合当前商品状态");
 	}
 }

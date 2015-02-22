@@ -185,6 +185,27 @@ class Deal extends CI_Controller {
 	/**
 	* @view json
 	*/
+    public function modState(){
+        //检查输入参数
+        $data = $this->argv->checkPost(array(
+            array('shopOrderId', 'require'),
+            array('newState', 'require'),
+        ));
+        $shopOrderId == $data['shopOrderId'];
+
+		//检查权限
+		$user = $this->loginAo->checkMustClient(
+            $this->userPermissionEnum->COMMODITY_MANAGE
+        );
+        $userId = $user['userId'];
+
+        //业务逻辑
+        $this->orderAo->modState($userId, $shopOrderId, $data); 
+    }
+
+	/**
+	* @view json
+	*/
 	public function wxjspay(){
 		//检查输入参数
 		$data = $this->argv->checkGet(array(
