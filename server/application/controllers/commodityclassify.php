@@ -31,7 +31,7 @@ class CommodityClassify extends CI_Controller
 
         //检查权限
         $user = $this->loginAo->checkMustClient(
-            $this->userPermissionEnum->COMMODITY_CLASSIFY
+            $this->userPermissionEnum->COMPANY_SHOP
         );
         $userId = $user['userId'];
 
@@ -138,7 +138,7 @@ class CommodityClassify extends CI_Controller
 
         //检查权限
         $user = $this->loginAo->checkMustClient(
-            $this->userPermissionEnum->COMMODITY_CLASSIFY
+            $this->userPermissionEnum->COMPANY_SHOP
         );
         $userId = $user['userId'];
 
@@ -158,7 +158,7 @@ class CommodityClassify extends CI_Controller
 
         //检查权限
         $user = $this->loginAo->checkMustClient(
-            $this->userPermissionEnum->COMMODITY_CLASSIFY
+            $this->userPermissionEnum->COMPANY_SHOP
         );
         $userId = $user['userId'];
 
@@ -184,7 +184,7 @@ class CommodityClassify extends CI_Controller
 
         //检查权限
         $user = $this->loginAo->checkMustClient(
-            $this->userPermissionEnum->COMMODITY_CLASSIFY
+            $this->userPermissionEnum->COMPANY_SHOP
         );
         $userId = $user['userId'];
         
@@ -205,7 +205,7 @@ class CommodityClassify extends CI_Controller
         
         //检查权限
         $user = $this->loginAo->checkMustClient(
-            $this->userPermissionEnum->COMMODITY_CLASSIFY
+            $this->userPermissionEnum->COMPANY_SHOP
         );
         $userId = $user['userId'];
         
@@ -226,7 +226,7 @@ class CommodityClassify extends CI_Controller
         
         //检查权限
         $user = $this->loginAo->checkMustClient(
-            $this->userPermissionEnum->COMMODITY_CLASSIFY
+            $this->userPermissionEnum->COMPANY_SHOP
         );
         $userId = $user['userId'];
         

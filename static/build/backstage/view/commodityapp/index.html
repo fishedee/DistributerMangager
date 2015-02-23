@@ -24,10 +24,11 @@
 <script type="text/javascript" src="/fishstrap/util/upload_4a3b05c.js"></script>
 <script type="text/javascript" src="/fishstrap/page/subPage_238d144.js"></script>
 <script type="text/javascript" src="/fishstrap/util/jqueryDatetimePicker_56d10bc.js"></script>
-<script type="text/javascript" src="/fishstrap/ui/input_f71bf06.js"></script>
+<script type="text/javascript" src="/fishstrap/ui/input_fba84ea.js"></script>
 
 </head>
 <body class="definewidth m10">
+	<div class="alert alert-danger" role="alert">注意！为了正常使用商城功能，请将微信后台的appId,appKey,mchId,mchKey正确地复制过来，并且将OAuth2.0授权回调页面域名和微信支付授权目录填入到微信后台</div>
 	<div id="container">
 	</div>
 	<script type="text/javascript">
@@ -50,6 +51,9 @@
 			input.verticalInput({
 				id:'container',
 				field:[
+					{id:'shop',type:'read',name:'商城地址'},
+					{id:'logincallback',type:'read',name:'OAuth2.0授权回调页面域名'},
+					{id:'paycallback',type:'read',name:'微信支付授权目录'},
 					{id:'appId',type:'text',name:'appId'},
 					{id:'appKey',type:'text',name:'appKey'},
 					{id:'mchId',type:'text',name:'mchId'},

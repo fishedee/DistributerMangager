@@ -31,7 +31,7 @@ class ClientWxLoginAo extends CI_Model {
 
 		//获取跳转url
 		$loginUrl = $this->wxSdk->getLoginUrl(
-			'http://'.$_SERVER['HTTP_HOST'].'/clientlogin/wxlogincallback?userId='.$userId,
+			'http://'.$_SERVER['HTTP_HOST'].'/clientlogin/wxlogincallback/'.$userId,
 			$callback,
 			'snsapi_base'
 		);
@@ -39,10 +39,8 @@ class ClientWxLoginAo extends CI_Model {
 		header('Location: '.$loginUrl);
 	}
 	
-	public function loginCallback(){
+	public function loginCallback($userId){
 		//初始化sdk
-		$userId = $_GET['userId'];
-
 		$this->initWxSdk($userId);
 
 		//调用QQ接口获取登录信息

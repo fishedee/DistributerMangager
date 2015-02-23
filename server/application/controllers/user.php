@@ -28,7 +28,7 @@ class User extends CI_Controller {
 	{
 		//检查权限
 		$user = $this->loginAo->checkMustClient(
-			$this->userPermissionEnum->COMPANY_INTRODUCE
+			$this->userPermissionEnum->COMPANY_SHOP
 		);
 		$userId = $user['userId'];
 
@@ -54,7 +54,7 @@ class User extends CI_Controller {
 
 		//检查权限
 		$user = $this->loginAo->checkMustClient(
-			$this->userPermissionEnum->COMPANY_INTRODUCE
+			$this->userPermissionEnum->COMPANY_SHOP
 		);
 		$userId = $user['userId'];
 

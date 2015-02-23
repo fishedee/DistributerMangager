@@ -35,7 +35,6 @@
 .common_deallist > a > li > .info > .state,
 .common_deallist > a > li > .info > .price {
   margin-top: 10px;
-  word-wrap: break-word;
 }
 .common_deallist > a > li > .info > .id .tip,
 .common_deallist > a > li > .info > .text .tip,
@@ -43,7 +42,7 @@
 .common_deallist > a > li > .info > .price .tip {
   font-size: 16px;
   color: #000000;
-  word-wrap: break-word;
+  word-break: break-all;
 }
 .common_deallist > a > li > .info > .id .text,
 .common_deallist > a > li > .info > .text .text,
@@ -51,5 +50,5 @@
 .common_deallist > a > li > .info > .price .text {
   font-size: 16px;
   color: #ca191d;
-  word-wrap: break-word;
+  word-break: break-all;
 }
