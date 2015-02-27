@@ -15,7 +15,25 @@ class ClientLogin extends CI_Controller {
 	*/
 	public function islogin()
 	{
-		 $this->clientLoginAo->checkMustLogin();
+		//检查输入参数
+		$data = $this->argv->checkGet(array(
+			array('userId','require')
+		));
+
+		$this->clientLoginAo->checkMustLogin($data['userId']);
+	}
+
+	/**
+	* @view json
+	*/
+	public function testlogin()
+	{
+		//检查输入参数
+		$data = $this->argv->checkGet(array(
+			array('userId','require')
+		));
+
+		$this->clientLoginAo->login($data['userId'],10001);
 	}
 	
 	/**
@@ -33,11 +51,12 @@ class ClientLogin extends CI_Controller {
 	{
 		//检查输入参数
 		$data = $this->argv->checkGet(array(
-			array('callback','require')
+			array('callback','require'),
+			array('userId','userId')
 		));
 		
 		//业务逻辑
-		$this->clientWxLoginAo->login($data['callback']);
+		$this->clientWxLoginAo->login($data['userId'],$data['callback']);
 	}
 	
 	/**

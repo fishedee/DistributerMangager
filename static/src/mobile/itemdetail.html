@@ -4,47 +4,78 @@
 <body>
 	<div id="body"></div>
 	<script type="text/javascript">
+		var $ = require('common/core/core.js');
+		var dialog = require('common/dialog/dialog.js');
 		var Header = require('common/header/header.js');
 		var ShopCart = require('common/shopcart/shopcart.js');
 		var ItemArticle = require('common/itemarticle/itemarticle.js');
 		var FooterButton = require('common/footerbutton/footerbutton.js');
 		var ItemDialog = require('common/itemdialog/itemdialog.js');
-		function showBuyDialog(){
-			var dialog = new ItemDialog({
-				image:'/data/upload/sample/sample4.jpg',
-				title:'零食1',
-				summary:'简介简介简介简介简介简介简介简介简介简介简介简介',
-				price:'99900',
-				oldprice:'433000',
-				stock:'40',
-				confirmName:'buy',
-				confirmText:'立即购买',
-				confirmClick:function(data){
-					location.href = 'shopcart.html';
+		var commodity = {};
+		var shopCommodityId = $.location.getQueryArgv('shopCommodityId');
+		function getCommodity(next){
+			$.get('/commodity/getDetail',{shopCommodityId:shopCommodityId},function(data){
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
 				}
-			}).el;
-			$.page.append(dialog);
+				commodity = data.data;
+				next();
+			});
+		}
+		function showDialog(name,next){
+			var dialogArgv = {
+				image:commodity.icon,
+				title:commodity.title,
+				summary:commodity.introduction,
+				price:commodity.price,
+				oldprice:commodity.oldPrice,
+				stock:commodity.inventory,
+			};
+			if(name=='buy'){
+				dialogArgv = $.extend(dialogArgv,{confirmName:'buy',confirmText:'立即购买',confirmClick:next});
+			}else{
+				dialogArgv = $.extend(dialogArgv,{confirmName:'cart',confirmText:'加入购物车',confirmClick:next});
+			}
+			$.page.append(new ItemDialog(dialogArgv).el);
+		}
+		function showBuyDialog(){
+			showDialog('buy',function(quantity){
+				$.post('/troller/add',{shopCommodityId:shopCommodityId,quantity:quantity},function(data){
+					if(data.code != 0 ){
+						dialog.message(data.msg);
+						return;
+					}
+					var newQuantity = data.data;
+					if( newQuantity > 0 ){
+						location.href = 'shopcart.html';
+					}else{
+						dialog.message('库存不足，添加商品到购物车失败');
+					}
+				});
+			});
 		}
 		function showCartDialog(){
-			var dialog = new ItemDialog({
-				image:'/data/upload/sample/sample4.jpg',
-				title:'零食1',
-				summary:'简介简介简介简介简介简介简介简介简介简介简介简介',
-				price:'99900',
-				oldprice:'433000',
-				stock:'40',
-				confirmName:'cart',
-				confirmText:'加入购物车',
-				confirmClick:function(data){
-					alert('加入'+data+'件商品到购物车成功');
-				}
-			}).el;
-			$.page.append(dialog);
+			showDialog('cart',function(quantity){
+				$.post('/troller/add',{shopCommodityId:shopCommodityId,quantity:quantity},function(data){
+					if(data.code != 0 ){
+						dialog.message(data.msg);
+						return;
+					}
+					var newQuantity = data.data;
+					if( newQuantity == quantity ){
+						dialog.message('成功添加'+newQuantity+'件商品到购物车');
+					}else{
+						dialog.message('库存不足，只能添加'+newQuantity+'商品到购物车');
+					}
+					
+				});
+			});
 		}
 		function go(){
 			var header = new Header({
-				title:'零食1',
-				backLink:'itemlist.html',
+				title:commodity.title,
+				backLink:'item.html',
 				button:[{
 					name:'search',
 					link:'search.html'
@@ -52,13 +83,13 @@
 			});
 			var shopcart = new ShopCart();
 			var itemarticle = new ItemArticle({
-				image:'/data/upload/sample/sample4.jpg',
-				title:'零食1',
-				summary:'简介简介简介简介简介简介简介简介简介简介简介简介',
-				price:'99900',
-				oldprice:'433000',
-				stock:'40',
-				content:'<p>Hello World</p>',
+				image:commodity.icon,
+				title:commodity.title,
+				summary:commodity.introduction,
+				price:commodity.price,
+				oldprice:commodity.oldPrice,
+				stock:commodity.inventory,
+				content:commodity.detail,
 			});
 			var footerbutton = new FooterButton([
 				{
@@ -79,7 +110,9 @@
 			var pageHtml = header.el + itemarticle.el + footerbutton.el + shopcart.el;
 			$.page.start(pageHtml);
 		}
-		go();
+		$.checkMustLogin(function(){
+			getCommodity(go);
+		});
 	</script>
 </body>
 <link rel="import" href="footer.html?__inline">

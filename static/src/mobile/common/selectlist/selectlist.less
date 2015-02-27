@@ -1,0 +1,20 @@
+@import (reference) '../core/core.less';
+.common_selectlist{
+	position:relative;
+
+	select{
+		width:100%;
+		height:100%;
+	}
+
+	.downicon{
+		&:extend(.common_global_abright);
+		padding-right:10px;
+		width:30px;
+		height:100%;
+		background-image:url(down.png);
+		background-position:center center;
+		background-size:30px 30px;
+		background-repeat:no-repeat;
+	}
+}

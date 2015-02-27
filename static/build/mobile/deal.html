@@ -10,29 +10,82 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
 	<title>订单页面</title>
-<link rel="stylesheet" type="text/css" href="/mobile/common/core/core_7a3400d.css">
+<link rel="stylesheet" type="text/css" href="/mobile/common/core/core_8488e02.css">
 <link rel="stylesheet" type="text/css" href="/mobile/common/dialog/dialog_09f6162.css">
 <link rel="stylesheet" type="text/css" href="/mobile/common/footer/footer_442a17a.css">
+<link rel="stylesheet" type="text/css" href="/mobile/common/headerbutton/headerbutton_1f1e145.css">
+<link rel="stylesheet" type="text/css" href="/mobile/common/deallist/deallist_ebf2fe6.css">
 
 <script type="text/javascript" src="/fishstrap/lib/fastclick.js"></script>
 <script type="text/javascript" src="http://apps.bdimg.com/libs/underscore.js/1.7.0/underscore-min.js"></script>
 <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
 <script type="text/javascript" src="/fishstrap/core/global_0ffe271.js"></script>
-<script type="text/javascript" src="/mobile/common/dialog/dialog_97ae9ce.js"></script>
-<script type="text/javascript" src="/mobile/common/core/core_3837556.js"></script>
+<script type="text/javascript" src="/mobile/common/dialog/dialog_5a39b67.js"></script>
+<script type="text/javascript" src="/mobile/common/core/core_ced14df.js"></script>
 <script type="text/javascript" src="/mobile/common/footer/footer_b27c0d4.js"></script>
-<script type="text/javascript" src="/mobile/common/test/test_11dc573.js"></script>
+<script type="text/javascript" src="/mobile/common/headerbutton/headerbutton_66cb55f.js"></script>
+<script type="text/javascript" src="/mobile/common/deallist/deallist_702040d.js"></script>
 
 </head>
 <body>
 	<div id="body"></div>
 	<script type="text/javascript">
 		var Footer = require('mobile/common/footer/footer.js');
-		var footer = new Footer('deal');
-		var Test = require('mobile/common/test/test.js');
-		var test = new Test('订单页面，第二期工作');
-		var pageHtml = test.el + footer.el;
-		$.page.start(pageHtml);
+		var HeaderButton = require('mobile/common/headerbutton/headerbutton.js');
+		var DealList = require('mobile/common/deallist/deallist.js');
+		function go(){
+			var footer = new Footer('deal');
+			var headerbutton = new HeaderButton([
+				{
+					name:'全部订单',
+					number:3,
+					click:function(){
+						alert('全部订单');
+					}
+				},
+				{
+					name:'未支付',
+					number:1,
+					click:function(){
+						alert('未支付');
+					}
+				},
+				{
+					name:'待发货',
+					number:3,
+					click:function(){
+						alert('待发货');
+					}
+				},
+				{
+					name:'已发货',
+					number:5,
+					click:function(){
+						alert('已发货');
+					}
+				},
+			]);
+			var deallist = new DealList([
+				{
+					image:'/data/upload/sample/sample4.jpg',
+					id:'10001',
+					state:'已支付',
+					price:'350000',
+					link:'dealdetail.html'			
+				},
+				{
+					image:'/data/upload/sample/sample5.jpg',
+					id:'10002',
+					state:'未支付',
+					price:'360000',
+					link:'dealdetail.html'				
+				},
+			]);
+			var pageHtml = headerbutton.el + deallist.el + footer.el;
+			$.page.setGrey();
+			$.page.start(pageHtml);
+		}
+		go();
 	</script>
 </body>
 </html>

@@ -1,0 +1,34 @@
+#common_address,
+#common_address > li,
+#common_address > li > .input {
+  overflow: hidden;
+  zoom: 1;
+}
+#common_address > li > span {
+  float: left;
+}
+#common_address > li {
+  margin-top: 16px;
+  margin-left: 12px;
+  margin-right: 12px;
+}
+#common_address > li > span {
+  display: block;
+  line-height: 35px;
+  width: 80px;
+  font-size: 16px;
+  color: #000000;
+}
+#common_address > li > .input {
+  height: 35px;
+  padding-left: 10px;
+  border: 1px solid #000000;
+}
+#common_address > li > .input > .common_selectlist select,
+#common_address > li > .input > input {
+  width: 100%;
+  height: 100%;
+  line-height: 35px;
+  font-size: 16px;
+  color: #000000;
+}

@@ -5,115 +5,104 @@ class Troller extends CI_Controller
     public function __construct(){
         parent::__construct();
         $this->load->model('user/loginAo', 'loginAo');
-        $this->load->model('user/userPermissionEnum', 'userPermissionEnum');
         $this->load->model('shop/trollerAo', 'trollerAo');
-        $this->load->model('shop/commodityAo', 'commodityAo');
+        $this->load->model('client/clientLoginAo', 'clientLoginAo');
         $this->load->library('argv', 'argv');
     }
 
 	/**
 	* @view json
 	*/
-    public function getByUserId(){
-        //检查权限
-        $user = $this->loginAo->checkMustLogin();    
-        $userId = $user['userId'];
-        $query = $this->trollerAo->getByUserId($userId);
-
-        $commodityOfClient = array();
-        foreach($query as $key=>$value){
-            $commodityOfClient[ $value['clientId'] ] = array();
-        }
-        foreach($query as $key=>$value){
-            $commodity = $this->commodityAo->get($value['shopCommodityId']);  
-            $commodity['shopTrollerId'] = $value['shopTrollerId'];
-            $commodityOfClient[ $value['clientId'] ][] = $commodity;
-        }
-
-        $data = array(
-            'userId'=>$userId,
-            'commodityOfClient'=>$commodityOfClient
-        );
-
-        return $data;
-    }
-
-	/**
-	* @view json
-	*/
-    public function getByUserIdClientId(){
+    public function get(){
         //检查输入参数
         $data = $this->argv->checkGet(array(
-            array('clientId', 'require')
+            array('userId', 'require')
         ));
-        $clientId = $data['clientId'];
+        $userId = $data['userId'];
 
-        //检查权限
-        $user = $this->loginAo->checkMustLogin();
-        $userId = $user['userId'];
-        $query = $this->trollerAo->getByUserId($userId, $clientId);
+         //检查权限
+        $client = $this->clientLoginAo->checkMustLogin($userId);
+        $clientId = $client['clientId'];
 
-        $commodityInTroller = array();
-        foreach($query as $key=>$value){
-            $commodity = $this->$commodityAo->get($value['shopCommodityId']);
-            $commodity['shopTrollerId'] = $value['shopTrollerId'];
-            $commodityInTroller[] = $commodity;
-        }
-
-        return $commodityInTroller;
+        //业务逻辑
+        return $this->trollerAo->getAll($userId,$clientId);
     }
 
+    /**
+    * @view json
+    */
+    public function check(){
+        //检查输入参数
+        $data = $this->argv->checkGet(array(
+            array('userId', 'require')
+        ));
+        $userId = $data['userId'];
+
+         //检查权限
+        $client = $this->clientLoginAo->checkMustLogin($userId);
+        $clientId = $client['clientId'];
+
+        //业务逻辑
+        return $this->trollerAo->checkAll($userId,$clientId);
+    }
+
+    /**
+    * @view json
+    */
+    public function refresh(){
+        //检查输入参数
+        $data = $this->argv->checkGet(array(
+            array('userId', 'require')
+        ));
+        $userId = $data['userId'];
+
+         //检查权限
+        $client = $this->clientLoginAo->checkMustLogin($userId);
+        $clientId = $client['clientId'];
+
+        //业务逻辑
+        return $this->trollerAo->refreshAll($userId,$clientId);
+    }
 
 	/**
-	* @view json
-	*/
+    * @view json
+    */
     public function add(){
         //检查输入参数
         $data = $this->argv->checkPost(array(
-            array('clientId', 'require'),
-            array('shopCommodityId', 'require')
+            array('userId', 'require'),
+            array('shopCommodityId', 'require'),
+            array('quantity', 'require'),
         ));
-        $clientId = $data['clientId'];
+        $userId = $data['userId'];
         $shopCommodityId = $data['shopCommodityId'];
+        $quantity = $data['quantity'];
 
-        //检查权限
-        $user = $this->loginAo->checkMustLogin();
-        $userId = $user['userId'];
+         //检查权限
+        $client = $this->clientLoginAo->checkMustLogin($userId);
+        $clientId = $client['clientId'];
 
-        //执行业务逻辑
-        return $this->trollerAo->add($userId, $clientId, $shopCommodityId);
+        //业务逻辑
+        return $this->trollerAo->addCommodity($userId,$clientId,$shopCommodityId,$quantity);
     }
 
-    
-	/**
-	* @view json
-	*/
-    public function del(){
+    /**
+    * @view json
+    */
+    public function set(){
         //检查输入参数
         $data = $this->argv->checkPost(array(
-            array('shopTrollerId', 'require')
+            array('userId', 'require'),
+            array('shopCommodity', 'option',array()),
         ));
-        $shopTrollerId = $data['shopTrollerId'];
+        $userId = $data['userId'];
+        $shopCommodity = $data['shopCommodity'];
 
-        //检查权限
-        $user = $this->loginAo->checkMustLogin();
-        $userId = $user['userId'];
+         //检查权限
+        $client = $this->clientLoginAo->checkMustLogin($userId);
+        $clientId = $client['clientId'];
 
-        //执行业务逻辑
-        return $this->trollerAo->del($userId, $shopTrollerId);
-    } 
-
-        
-
-
-
-
-
-
-
-
-
-
-
-    
+        //业务逻辑
+        return $this->trollerAo->setAll($userId,$clientId,$shopCommodity);
+    }
 }

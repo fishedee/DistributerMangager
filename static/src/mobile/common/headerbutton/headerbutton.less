@@ -1,0 +1,27 @@
+@import (reference) '../core/core.less';
+.common_headerbutton{
+	&:extend(.common_global_row);
+	background:@background_white;
+	border-bottom:1px solid @line_grey;
+	
+	> li{
+		&:extend(.common_global_leftcol);
+		height:50px;
+		text-align:center;
+
+		> .number{
+			&:extend(.common_global_row);
+			margin-top:5px;
+			font-size:@font_h2;
+			color:@font_red;
+		}
+
+		> .name{
+			&:extend(.common_global_row);
+			margin-top:3px;
+			font-size:@font_h2;
+			color:@font_grey;
+		}
+
+	}
+}

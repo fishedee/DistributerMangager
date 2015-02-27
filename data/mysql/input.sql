@@ -29,17 +29,29 @@ create table t_user(
 
 alter table t_user add index nameIndex(name,password);
 
+#创建用户AppId与AppKey入口
+create table t_user_app(
+	userAppId integer not null auto_increment,
+	userId integer not null,
+	appId varchar(128) not null,
+	appKey varchar(128) not null,
+	mchId varchar(128) not null,
+	mchKey varchar(128) not null,
+	mchSslCert varchar(128) not null,
+	mchSslKey varchar(128) not null,
+	remark varchar(128) not null,
+	createTime timestamp not null default CURRENT_TIMESTAMP,
+	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
+	primary key( userAppId )
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+
+alter table t_user_app add index userIdIndex(userId);
+
 #创建客户表
 create table t_client(
 	clientId integer not null auto_increment,
-	name varchar(128) not null,
-	gender integer not null,
-	image varchar(128) not null,
+	userId integer not null,
 	openId varchar(128) not null,
-	district varchar(128) not null,
-	mail varchar(128) not null,
-	sign varchar(2056) not null,
-	year integer not null,
 	type integer not null,
 	createTime timestamp not null default CURRENT_TIMESTAMP,
 	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
@@ -47,15 +59,15 @@ create table t_client(
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
 
 alter table t_client add index openIdIndex(openId);
+alter table t_client add index userIdIndex(userId);
 
 #创建地址表
 create table t_address(
     addressId integer not null auto_increment,
-    userId integer not null,
+    clientId integer not null,
     name varchar(32) not null,
     province varchar(32) not null,
     city varchar(32) not null,
-    district varchar(32) not null,
     address varchar(128) not null,
     phone varchar(11) not null,
     payment integer not null,
@@ -63,6 +75,8 @@ create table t_address(
     modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
     primary key(addressId)
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
+
+alter table t_address add index clientIdIndex(clientId);
 
 #创建用户权限表
 create table t_user_permission(
@@ -183,12 +197,19 @@ create table t_shop_commodity(
     title varchar(128) not null,
     icon varchar(128) not null,
     introduction varchar(128) not null,
+    detail text not null,
     price integer not null,
-    detail varchar(128) not null,
+    oldPrice integer not null,
     inventory integer not null,
-    sort integer not null,
+    state integer not null,
+    remark varchar(128) not null,
+    createTime timestamp not null default CURRENT_TIMESTAMP,
+    modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
     primary key(shopCommodityId)
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
+
+alter table t_shop_commodity add index userIdIndex(userId);
+alter table t_shop_commodity add index shopCommodityClassifyIdIndex(shopCommodityClassifyId);
 
 #创建用户购物车表
 create table t_shop_troller(
@@ -196,6 +217,14 @@ create table t_shop_troller(
     userId integer not null,
     clientId integer not null,
     shopCommodityId integer not null,
+    title varchar(128) not null,
+    icon varchar(128) not null,
+    introduction varchar(128) not null,
+    price integer not null,
+    oldPrice integer not null,
+    quantity integer not null,
+    createTime timestamp not null default CURRENT_TIMESTAMP,
+	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
     primary key(shopTrollerId)
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
 
@@ -203,18 +232,59 @@ alter table t_shop_troller add index matchIndex(userId, clientId);
 
 #创建用户订单表
 create table t_shop_order(
-    shopOrderId integer not null auto_increment,
-    shopOrderNo integer not null,
+	shopOrderId varchar(32) not null,
     userId integer not null,
     clientId integer not null,
-    shopCommodityId integer not null,
-    amount integer not null,
-    icon varchar(128) not null,
-    status integer not null,
+    image varchar(128) not null,
+    description varchar(128) not null,
+   	price integer not null,
+    num integer not null,
+    name varchar(32) not null,
+    wxPrePayId varchar(128) not null,
+    state integer not null,
+    remark varchar(128) not null,
+    createTime timestamp not null default CURRENT_TIMESTAMP,
+	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
     primary key(shopOrderId)
-)engine=inodb default charset=utf8mb4 auto_increment = 10001;
+)engine=innodb default charset=utf8mb4;
 
-alter table t_shop_order add index userIndex(userId, clientId);
+alter table t_shop_order add index matchIndex(userId, clientId);
+
+#创建用户订单商品表
+create table t_shop_order_commodity(
+	shopOrderCommodityId integer not null auto_increment,
+	shopOrderId integer not null,
+	shopCommodityId integer not null,
+	userId integer not null,
+    title varchar(128) not null,
+    icon varchar(128) not null,
+    introduction varchar(128) not null,
+    price integer not null,
+    oldPrice integer not null,
+    quantity integer not null,
+    createTime timestamp not null default CURRENT_TIMESTAMP,
+	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
+    primary key(shopOrderCommodityId)
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+
+alter table t_shop_order_commodity add index shopOrderIdIndex(shopOrderId);
+
+#创建用户订单地址表
+create table t_shop_order_address(
+	shopOrderAddressId integer not null auto_increment,
+	shopOrderId integer not null,
+	name varchar(32) not null,
+    province varchar(32) not null,
+    city varchar(32) not null,
+    address varchar(128) not null,
+    phone varchar(11) not null,
+    payment integer not null,
+    createTime timestamp not null default CURRENT_TIMESTAMP,
+	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
+    primary key(shopOrderAddressId)
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+
+alter table t_shop_order_address add index shopOrderIdIndex(shopOrderId);
 
 #建立初始数据
 insert into t_user(userId,name,password,company,phone,type) values
@@ -224,7 +294,15 @@ insert into t_user(userId,name,password,company,phone,type) values
 
 insert into t_user_permission(userId,permissionId)values
 (10003,1),
-(10003,2);
+(10003,2),
+(10003,3),
+(10003,4);
+
+insert into t_client(userId,openId,type)values
+(10003,'微信测试用户虚拟OpenId',2);
+
+insert into t_user_app(userId,appId,appKey,mchId,mchKey,remark)values
+(10003,'wx5cc2d94dfe468c95','adc38d0974b0617023012fef684e9ae6','1220218001','56344f19b3b90eb545bf2f07800e7a10','');
 
 insert into t_company_template(title,url,remark)values
 ('metro风格','/data/upload/template/sample1',''),
@@ -252,14 +330,25 @@ insert into t_user_company_banner(userId,image,title,url,sort)values
 (10003,'/data/upload/sample/sample3.jpg','广告3','http://www.sina.com',2);
 
 insert into t_shop_commodity_classify(userId,title,icon,parent,sort,remark)values
-(10003,'分类1','/data/upload/sample/sample1.jpg',0,1,''),
-(10003,'分类2','/data/upload/sample/sample2.jpg',0,2,''),
-(10003,'分类3','/data/upload/sample/sample3.jpg',0,3,'');
+(10003,'汽车','/data/upload/sample/sample1.jpg',0,1,''),
+(10003,'宝马','/data/upload/sample/sample4.jpg',10001,2,''),
+(10003,'大众','/data/upload/sample/sample5.jpg',10001,3,''),
+(10003,'奥迪','/data/upload/sample/sample6.jpg',10001,4,''),
+(10003,'饮食','/data/upload/sample/sample2.jpg',0,5,''),
+(10003,'饮料','/data/upload/sample/sample4.jpg',10005,6,''),
+(10003,'零食','/data/upload/sample/sample5.jpg',10005,7,''),
+(10003,'主食','/data/upload/sample/sample6.jpg',10005,8,'');
+
+insert into t_shop_commodity(userId,shopCommodityClassifyId,icon,title,introduction,detail,price,oldPrice,inventory,state)values
+(10003,10002,'/data/upload/sample/sample4.jpg','商品1','商品简介1','商品描述1',1100,11100,10,1),
+(10003,10003,'/data/upload/sample/sample5.jpg','商品2','商品简介2','商品描述2',2200,22200,10,1),
+(10003,10004,'/data/upload/sample/sample6.jpg','商品3','商品简介3','商品描述3',3300,33300,10,1);
 
 #显示初始数据
 select * from t_user;
 select * from t_user_permission;
 select * from t_user_client;
+select * from t_user_app;
 select * from t_company_template;
 select * from t_user_company_template;
 select * from t_user_company_template;
@@ -267,3 +356,4 @@ select * from t_user_company_classify;
 select * from t_user_company_article;
 select * from t_user_company_banner;
 select * from t_shop_commodity_classify;
+select * from t_shop_commodity;

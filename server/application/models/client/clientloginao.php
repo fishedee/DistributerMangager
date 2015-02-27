@@ -8,10 +8,12 @@ class ClientLoginAo extends CI_Model {
 		$this->load->model('client/clientAo','clientAo');
     }
 	
-	public function islogin(){
+	public function islogin($userId){
 		$clientId = $this->session->userdata('clientId');
-		if( $clientId >= 10000 ){
-			return $this->clientAo->get($clientId);
+		$inUserId = $this->session->userdata('userId');
+
+		if( $clientId >= 10000 && $inUserId == $userId ){
+			return $this->clientAo->get($userId,$clientId);
 		}else{
 			return false;
 		}
@@ -19,16 +21,18 @@ class ClientLoginAo extends CI_Model {
 	
 	public function logout(){
 		$this->session->unset_userdata('clientId');
+		$this->session->unset_userdata('userId');
 	}
 	
-	public function login($clientId){
+	public function login($userId,$clientId){
+		$this->session->set_userdata('userId',$userId);
 		$this->session->set_userdata('clientId',$clientId);
 	}
 	
-	public function checkMustLogin(){
-		$client = $this->islogin();
+	public function checkMustLogin($userId){
+		$client = $this->islogin($userId);
 		if( $client === false )
-			throw new CI_MyException(1,'帐号未登录');
+			throw new CI_MyException(1,'手机帐号未登录');
 		return $client;
 	}
 }

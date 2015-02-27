@@ -1,0 +1,99 @@
+<link rel="import" href="header.html?__inline">
+	<title>购物车页面</title>
+</head>
+<body>
+	<div id="body"></div>
+	<script type="text/javascript">
+		var Header = require('common/header/header.js');
+		var HeaderTitle = require('common/headertitle/headertitle.js');
+		var BigList = require('common/biglist/biglist.js');
+		var FooterButton = require('common/footerbutton/footerbutton.js');
+		function go(){
+			var header = new Header({
+				title:'订单详情',
+				backLink:'deal.html',
+				button:[]
+			});
+			var dealIdTitle = new HeaderTitle({
+				tip:'订单编号：',
+				text:'10001'
+			});
+			var dealStateTitle = new HeaderTitle({
+				tip:'订单状态：',
+				text:'未支付'
+			});
+			var dealPriceTitle = new HeaderTitle({
+				tip:'订单金额：',
+				text:'￥1300.00'
+			});
+			var nameTitle = new HeaderTitle({
+				tip:'收货人：',
+				text:'fish'
+			});
+			var phoneTitle = new HeaderTitle({
+				tip:'手机号码：',
+				text:'150XX'
+			});
+			var addressTitle = new HeaderTitle({
+				tip:'地址：',
+				text:'广东省佛山市XXOO'
+			});
+			var payTitle = new HeaderTitle({
+				tip:'支付：',
+				text:'微信支付'
+			});
+			var biglist = new BigList([
+				{
+					link:'#',
+					image:'/data/upload/sample/sample4.jpg',
+					title:'零食1',
+					summary:'简介简介简介简介简介简介简介简介简介简介简介简介',
+					price:'99900',
+					oldprice:'433000',
+					stock:40,
+				},
+				{
+					link:'#',
+					image:'/data/upload/sample/sample5.jpg',
+					title:'零食2',
+					summary:'简介简介简介简介简介简介简介简介简介简介简介简介',
+					price:'99900',
+					oldprice:'433000',
+					stock:40,
+				},
+				{
+					link:'#',
+					image:'/data/upload/sample/sample6.jpg',
+					title:'零食3',
+					summary:'简介简介简介简介简介简介简介简介简介简介简介简介',
+					price:'99900',
+					oldprice:'433000',
+					stock:40,
+				}
+			]);
+			var footerbutton = new FooterButton([
+				{
+					name:'pay',
+					text:'支付',
+					click:function(){
+						var data = [];
+						data = data.concat(itemlistwithnum.get());
+						data = data.concat(itemlistwithnum2.get());
+						console.log(data);
+						location.href = 'address.html';
+					}
+				}
+			]);
+			var pageHtml = header.el + 
+				dealIdTitle.el + dealStateTitle.el + dealPriceTitle.el+
+
+				biglist.el +
+				 nameTitle.el + addressTitle.el + phoneTitle.el + payTitle.el+
+				footerbutton.el;
+			$.page.setGrey();
+			$.page.start(pageHtml);
+		}
+		go();
+	</script>
+</body>
+<link rel="import" href="footer.html?__inline">

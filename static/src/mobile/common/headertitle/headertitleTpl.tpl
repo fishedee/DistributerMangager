@@ -1,0 +1,1 @@
+<h1 class="common_headertitle" id="<%- id %>"><span class="tip"><%- tip %></span><span class="text"><%- text %></span></h1>

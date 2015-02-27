@@ -7,7 +7,6 @@ class Client extends CI_Controller {
         parent::__construct();
 		$this->load->model('client/clientAo','clientAo');
 		$this->load->model('client/clientTypeEnum','clientTypeEnum');
-		$this->load->model('client/clientGenderEnum','clientGenderEnum');
 		$this->load->model('user/loginAo','loginAo');
 		$this->load->library('argv','argv');
     }
@@ -23,21 +22,11 @@ class Client extends CI_Controller {
 	/**
 	* @view json
 	*/
-	public function getGender()
-	{
-		return $this->clientGenderEnum->names;
-	}
-	
-	/**
-	* @view json
-	*/
 	public function search()
 	{
 		//检查输入参数
 		$dataWhere = $this->argv->checkGet(array(
-			array('name','option'),
 			array('type','option'),
-			array('gender','option'),
 		));
 		
 		$dataLimit = $this->argv->checkGet(array(
@@ -46,10 +35,13 @@ class Client extends CI_Controller {
 		));
 		
 		//检查权限
-		$this->loginAo->checkMustLogin();
+		$user = $this->loginAo->checkMustClient(
+			$this->userPermissionEnum->COMPANY_INTRODUCE
+		);
+		$userId = $user['userId'];
 			
 		//执行业务逻辑
-		return $this->clientAo->search($dataWhere,$dataLimit);
+		return $this->clientAo->search($userId,$dataWhere,$dataLimit);
 	}
 	
 	/**
@@ -64,10 +56,14 @@ class Client extends CI_Controller {
 		$clientId = $data["clientId"];
 		
 		//检查权限
-		$this->loginAo->checkMustLogin();
+		$user = $this->loginAo->checkMustClient(
+			$this->userPermissionEnum->COMPANY_INTRODUCE
+		);
+		$userId = $user['userId'];
 		
 		//执行业务逻辑
 		return $this->clientAo->get(
+			$userId,
 			$clientId
 		);
 	}

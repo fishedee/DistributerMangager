@@ -1,0 +1,21 @@
+@import (reference) '../core/core.less';
+.common_buttonlist{
+	&:extend(.common_global_row);
+	padding-left:@body_left;
+	padding-right:@body_right;
+
+	> a > li{
+		margin-top:@section_margin;
+		height:65px;
+		line-height:65px;
+		font-size:@font_h1;
+		color:@font_red;
+		background-color:@background_light_grey;
+		padding-left:15px;
+
+		background-image:url(right.png);
+		background-position:95% center;
+		background-repeat:no-repeat;
+		background-size:25px 25px;
+	}
+}

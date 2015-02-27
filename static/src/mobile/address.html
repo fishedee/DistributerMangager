@@ -1,0 +1,72 @@
+<link rel="import" href="header.html?__inline">
+	<title>收货地址</title>
+</head>
+<body>
+	<div id="body"></div>
+	<script type="text/javascript">
+		var $ = require('common/core/core.js');
+		var dialog = require('common/dialog/dialog.js');
+		var Header = require('common/header/header.js');
+		var Address = require('common/address/address.js');
+		var FooterButton = require('common/footerbutton/footerbutton.js');
+		var WXSdk = require('fishstrap/sdk/wxsdk.js');
+		var myaddress = {};
+		var mapPaymentIdToName = {1:'微信支付',2:'货到付款'};
+		var mapPaymentNameToId = {'微信支付':1,'货到付款':2};
+		function wxPay(){
+			var data = {
+				dealId:new Date().getTime(),
+				dealDesc:'testdeal',
+				dealFee:1,
+			};
+			$.get('/pay/wxpay',data,function(data){
+				WXSdk.enableDebugMode();
+				WXSdk.ready(function(){
+					WXSdk.pay(data.data,{
+						success:function(msg){
+							alert('支付成功');
+						},
+						fail:function(msg){
+							alert('支付失败');
+						}
+					});
+				});
+			});
+		}
+		function get(next){
+			$.get('/address/getMyAddress',{},function(data){
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				myaddress = data.data;
+				next();
+			});
+		}
+		function go(){
+			var header = new Header({
+				title:'收货地址',
+				backLink:'me.html',
+				button:[]
+			});
+
+			var address = new Address(_.extend(myaddress,{payment:mapPaymentIdToName[myaddress.payment]}));
+			var footerbutton = new FooterButton([
+				{
+					name:'pay',
+					text:'支付',
+					click:function(){
+						wxPay();
+						alert('生成订单，并执行微信支付！');
+					}
+				}
+			]);
+			var pageHtml = header.el + address.el + footerbutton.el;
+			$.page.start(pageHtml);
+		}
+		$.checkMustLogin(function(){
+			get(go);
+		});
+	</script>
+</body>
+<link rel="import" href="footer.html?__inline">

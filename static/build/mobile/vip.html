@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=medium-dpi">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+	<title>会员卡页面</title>
+<link rel="stylesheet" type="text/css" href="/mobile/common/core/core_8488e02.css">
+<link rel="stylesheet" type="text/css" href="/mobile/common/dialog/dialog_09f6162.css">
+<link rel="stylesheet" type="text/css" href="/mobile/common/header/header_b51a32c.css">
+
+<script type="text/javascript" src="/fishstrap/lib/fastclick.js"></script>
+<script type="text/javascript" src="http://apps.bdimg.com/libs/underscore.js/1.7.0/underscore-min.js"></script>
+<script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="/fishstrap/core/global_0ffe271.js"></script>
+<script type="text/javascript" src="/mobile/common/dialog/dialog_5a39b67.js"></script>
+<script type="text/javascript" src="/mobile/common/core/core_ced14df.js"></script>
+<script type="text/javascript" src="/mobile/common/header/header_23de960.js"></script>
+<script type="text/javascript" src="/mobile/common/test/test_11dc573.js"></script>
+
+</head>
+<body>
+	<div id="body"></div>
+	<script type="text/javascript">
+		var Header = require('mobile/common/header/header.js');
+		var header = new Header({
+				title:'会员卡',
+				backLink:'me.html',
+				button:[]
+			});
+		var Test = require('mobile/common/test/test.js');
+		var test = new Test('会员卡页面，第四期工作');
+		var pageHtml = header.el + test.el;
+		$.page.start(pageHtml);
+	</script>
+</body>
+</html>

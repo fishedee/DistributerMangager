@@ -1,0 +1,121 @@
+<link rel="import" href="header.html?__inline">
+	<title>购物车页面</title>
+</head>
+<body>
+	<div id="body"></div>
+	<script type="text/javascript">
+		var $ = require('common/core/core.js');
+		var dialog = require('common/dialog/dialog.js');
+		var Header = require('common/header/header.js');
+		var HeaderTitle = require('common/headertitle/headertitle.js');
+		var ItemListWithNum = require('common/itemlistwithnum/itemlistwithnum.js');
+		var FooterButton = require('common/footerbutton/footerbutton.js');
+		var shopcart = {};
+		function getShopCart(next){
+			$.get('/troller/get',{},function(data){
+				if(data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				shopcart = data.data;
+				next();
+			});
+		}
+		function go(){
+			var header = new Header({
+				title:'购物车',
+				backLink:'item.html',
+				button:[{
+					name:'search',
+					link:'search.html'
+				}]
+			});
+			var headertitle = new HeaderTitle({
+				tip:'订单总金额：',
+				text:'0元'
+			});
+			var itemlistwithnum = new ItemListWithNum({
+				title:'店铺',
+				item:_.map(shopcart,function(single){
+					return {
+						shopTrollerId:single.shopTrollerId,
+						shopCommodityId:single.shopCommodityId,
+						image:single.icon,
+						title:single.title,
+						summary:single.introduction,
+						price:single.price,
+						stock:single.inventory,
+						quantity:single.quantity,
+					};
+				}),
+				change:whenItemListChange
+			});
+			function refreshHeaderTitle(){
+				var checkedItemList = itemlistwithnum.getChecked();
+				var orderPrice = 0;
+				for( var i in checkedItemList ){
+					orderPrice += checkedItemList[i].price * checkedItemList[i].quantity;
+				}
+				headertitle.set({text:orderPrice+'元'});
+			}
+			function refreshShopCart(next){
+				var allItemList = itemlistwithnum.getAll();	
+				var shopCommodity = _.map(allItemList,function(single){
+					return {shopCommodityId:single.shopCommodityId,quantity:single.quantity};
+				});
+				$.post('/troller/set',{shopCommodity:shopCommodity},function(data){
+					if( data.code != 0 ){
+						dialog.message(data.msg);
+						return;
+					}
+					next(data.data);
+				});
+			}
+			function goShopCart(next){
+				refreshShopCart(function(isStockChange){
+					if( isStockChange == true ){
+						dialog.message('库存有限，请重新选择商品数量',function(){
+							location.reload();
+						});
+					}else{
+						next();
+					}
+				});
+			}
+			function goAddress(){
+				var checkedItemList = itemlistwithnum.getChecked();
+				var shopTroller  = '';
+				for( var i in checkedItemList ){
+					if( shopTroller != '')
+						shopTroller += '|';
+					shopTroller += checkedItemList[i].shopTrollerId;
+				}
+				if( shopTroller == ''){
+					dialog.message('请选择要结算的商品');
+				}else{
+					location.href = $.url.buildQueryUrl('address.html',{shopTroller:shopTroller});
+				}
+			}
+			function whenItemListChange(){
+				refreshHeaderTitle();
+				refreshShopCart(_.noop);
+			}
+			var footerbutton = new FooterButton([
+				{
+					name:'pay',
+					text:'结算',
+					click:function(){
+						goShopCart(goAddress);
+					}
+				}
+			]);
+			var pageHtml = header.el + headertitle.el + itemlistwithnum.el+footerbutton.el;
+			$.page.setGrey();
+			$.page.start(pageHtml);
+		}
+		$.checkMustLogin(function(){
+			getShopCart(go);
+		});
+	</script>
+</body>
+<link rel="import" href="footer.html?__inline">

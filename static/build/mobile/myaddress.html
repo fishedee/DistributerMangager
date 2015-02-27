@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=medium-dpi">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="format-detection" content="telephone=no">
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+	<title>地址页面</title>
+<link rel="stylesheet" type="text/css" href="/mobile/common/core/core_8488e02.css">
+<link rel="stylesheet" type="text/css" href="/mobile/common/dialog/dialog_09f6162.css">
+<link rel="stylesheet" type="text/css" href="/mobile/common/header/header_b51a32c.css">
+<link rel="stylesheet" type="text/css" href="/mobile/common/selectlist/selectlist_fa971e1.css">
+<link rel="stylesheet" type="text/css" href="/mobile/common/address/address_b1877e4.css">
+<link rel="stylesheet" type="text/css" href="/mobile/common/footerbutton/footerbutton_eea48c6.css">
+
+<script type="text/javascript" src="/fishstrap/lib/fastclick.js"></script>
+<script type="text/javascript" src="http://apps.bdimg.com/libs/underscore.js/1.7.0/underscore-min.js"></script>
+<script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="/fishstrap/core/global_0ffe271.js"></script>
+<script type="text/javascript" src="/mobile/common/dialog/dialog_5a39b67.js"></script>
+<script type="text/javascript" src="/mobile/common/core/core_ced14df.js"></script>
+<script type="text/javascript" src="/mobile/common/header/header_23de960.js"></script>
+<script type="text/javascript" src="/mobile/common/selectlist/selectlist_d8d9683.js"></script>
+<script type="text/javascript" src="/mobile/common/address/address_e874992.js"></script>
+<script type="text/javascript" src="/fishstrap/util/uedit_466b933.js"></script>
+<script type="text/javascript" src="/mobile/common/footerbutton/footerbutton_7c867f1.js"></script>
+
+</head>
+<body>
+	<div id="body"></div>
+	<script type="text/javascript">
+		var $ = require('mobile/common/core/core.js');
+		var dialog = require('mobile/common/dialog/dialog.js');
+		var Header = require('mobile/common/header/header.js');
+		var Address = require('mobile/common/address/address.js');
+		var FooterButton = require('mobile/common/footerbutton/footerbutton.js');
+		var myaddress = {};
+		var mapPaymentIdToName = {1:'微信支付',2:'货到付款'};
+		var mapPaymentNameToId = {'微信支付':1,'货到付款':2};
+		function get(next){
+			$.get('/address/getMyAddress',{},function(data){
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				myaddress = data.data;
+				next();
+			});
+		}
+		function mod(data,next){
+			data = $.extend(data,{payment:mapPaymentNameToId[data.payment]});
+			$.post('/address/modMyAddress',data,function(data){
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				next();
+			});
+		}
+		function go(){
+			var header = new Header({
+				title:'常用地址',
+				backLink:'me.html',
+				button:[]
+			});
+
+			var address = new Address(_.extend(myaddress,{payment:mapPaymentIdToName[myaddress.payment]}));
+			var footerbutton = new FooterButton([
+				{
+					name:'confirm',
+					text:'确认',
+					click:function(){
+						mod(address.get(),function(){
+							alert('修改成功');
+							location.href = 'me.html';
+						});
+					}
+				},
+				{
+					name:'cancel',
+					text:'取消',
+					click:function(){
+						location.href = 'me.html';
+					}
+				}
+			]);
+			var pageHtml = header.el + address.el + footerbutton.el;
+			$.page.start(pageHtml);
+		}
+		$.checkMustLogin(function(){
+			get(go);
+		});
+	</script>
+</body>
+</html>
