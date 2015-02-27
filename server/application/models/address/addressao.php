@@ -21,13 +21,13 @@ class AddressAo extends CI_Model
     }
 
     public function check($address){
-        if(preg_match_all('/\w{1,}/',$address['name']) == 0 )
+        if(strlen($address['name']) == 0 )
             throw new CI_MyException(1,'收货名字不能为空');
-        if(preg_match_all('/\w{1,}/',$address['province']) == 0 )
+        if(strlen($address['province']) == 0 )
             throw new CI_MyException(1,'收货省份不能为空');
-        if(preg_match_all('/\w{1,}/',$address['city']) == 0 )
+        if(strlen($address['city']) == 0 )
             throw new CI_MyException(1,'收货城市不能为空');
-        if(preg_match_all('/\w{1,}/',$address['address']) == 0 )
+        if(strlen($address['address']) == 0 )
             throw new CI_MyException(1,'收货地址不能为空');
         if(preg_match_all('/^\d{11}$/',$address['phone']) == 0 )
             throw new CI_MyException(1,'请输入11位数字的电话号码');

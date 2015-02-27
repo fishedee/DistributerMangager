@@ -2,7 +2,7 @@
 
 class OrderDb extends CI_Model 
 {
-	var $tableName = "t_order";
+	var $tableName = "t_shop_order";
 
 	public function __construct(){
 		parent::__construct();
@@ -52,5 +52,14 @@ class OrderDb extends CI_Model
 	public function mod( $shopOrderId , $data ){
 		$this->db->where("shopOrderId",$shopOrderId);
 		$this->db->update($this->tableName,$data);
+	}
+
+	public function getCountByUserIdAndClientId($userId,$clientId){
+		$sql = 'select count(*) as count,state '.
+			'from '.$this->tableName.' '.
+			'where userId = ? and clientId = ? '.
+			'group by state';
+		$argv = array($userId,$clientId);
+		return $this->db->query($sql,$argv)->result_array();
 	}
 }

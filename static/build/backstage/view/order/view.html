@@ -34,43 +34,72 @@
 		var $ = require('fishstrap/core/global.js');
 		var dialog = require('fishstrap/ui/dialog.js');
 		var input = require('fishstrap/ui/input.js');
-		var inputOperation;
-		function whenWindowClose(state,operation){
-			if( state == 'confirm'){
-				var data = inputOperation.get();
-				if( data.password != data.password2 ){
-					dialog.message('两次输入密码不一致');
+		var subPage = require('fishstrap/page/subPage.js');
+		var shopOrderId = $.location.getQueryArgv('shopOrderId');
+		var mapPayment = {1:'微信支付',2:'货到付款'};
+		var allState = {};
+		var shopOrder = {};
+		function getAllState(next){
+			$.get('/deal/getState',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
 					return;
 				}
-				$.post('/user/add',data,function(data){
-					data = $.JSON.parse(data);
-					if( data.code != 0 ){
-						dialog.message(data.msg);
-						return;
-					}
-					dialog.message('注册成功，请使用帐号密码登入开始你的商城',function(){
-						operation.close();
-					});
-				});
-			}else{
-				operation.close();
-			}
+				allState = data.data;
+				next();
+			});
+		}
+		function getOrder(next){
+			$.get('/deal/get',{shopOrderId:shopOrderId},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				shopOrder = data.data;
+				shopOrder = $.extend(shopOrder,shopOrder.address);
+				next();
+			});
 		}
 		function go(){
 			inputOperation = input.verticalInput({
 				id:'container',
 				field:[
-					{id:'name',type:'text',name:'姓名'},
-					{id:'password',type:'password',name:'密码'},
-					{id:'password2',type:'password',name:'再次密码'},
-					{id:'company',type:'text',name:'公司'},
-					{id:'phone',type:'text',name:'电话'},
+					{id:'shopOrderId',type:'read',name:'订单ID'},
+					{id:'description',type:'read',name:'订单描述'},
+					{id:'priceShow',type:'read',name:'订单金额'},
+					{id:'state',type:'enum',name:'订单状态',map:allState,disabled:true},
+					{id:'commodity',type:'table',name:'订单商品',
+						option:{
+							column:[
+								{name:'图片',type:'image',id:'icon'},
+								{name:'标题',type:'text',id:'title'},
+								{name:'介绍',type:'text',id:'introduction'},
+								{name:'价格',type:'text',id:'priceShow'},
+								{name:'数量',type:'text',id:'quantity'},
+							],
+							operate:[],
+							button:[]
+						}
+					},
+					{id:'name',type:'read',name:'收货人'},
+					{id:'province',type:'read',name:'收货省份'},
+					{id:'city',type:'read',name:'收货城市'},
+					{id:'address',type:'read',name:'收货地址'},
+					{id:'phone',type:'read',name:'收货号码'},
+					{id:'payment',type:'enum',name:'支付方式',map:mapPayment,disabled:true},
 				],
+				value:shopOrder,
 				submit:undefined,
-				cancel:undefined
+				cancel:function(){
+					history.back();
+				},
 			});
 		}
-		go();
+		getAllState(function(){
+			getOrder(go);
+		});
 	</script>
- </body>
+</body>
 </html>

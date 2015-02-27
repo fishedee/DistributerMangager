@@ -13,7 +13,7 @@
 <link rel="stylesheet" type="text/css" href="/mobile/common/core/core_8488e02.css">
 <link rel="stylesheet" type="text/css" href="/mobile/common/dialog/dialog_09f6162.css">
 <link rel="stylesheet" type="text/css" href="/mobile/common/header/header_b51a32c.css">
-<link rel="stylesheet" type="text/css" href="/mobile/common/headertitle/headertitle_aca84ff.css">
+<link rel="stylesheet" type="text/css" href="/mobile/common/headertitle/headertitle_440e394.css">
 <link rel="stylesheet" type="text/css" href="/mobile/common/itemlistwithnum/itemlistwithnum_b80b523.css">
 <link rel="stylesheet" type="text/css" href="/mobile/common/numchooser/numchooser_c64b34c.css">
 <link rel="stylesheet" type="text/css" href="/mobile/common/itembrief/itembrief_bc23208.css">
@@ -23,12 +23,12 @@
 <script type="text/javascript" src="http://apps.bdimg.com/libs/underscore.js/1.7.0/underscore-min.js"></script>
 <script type="text/javascript" src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
 <script type="text/javascript" src="/fishstrap/core/global_0ffe271.js"></script>
-<script type="text/javascript" src="/mobile/common/dialog/dialog_5a39b67.js"></script>
+<script type="text/javascript" src="/mobile/common/dialog/dialog_e661e90.js"></script>
 <script type="text/javascript" src="/mobile/common/core/core_ced14df.js"></script>
 <script type="text/javascript" src="/mobile/common/header/header_23de960.js"></script>
 <script type="text/javascript" src="/mobile/common/headertitle/headertitle_9a8434f.js"></script>
 <script type="text/javascript" src="/mobile/common/numchooser/numchooser_faad02f.js"></script>
-<script type="text/javascript" src="/mobile/common/itembrief/itembrief_bf37e55.js"></script>
+<script type="text/javascript" src="/mobile/common/itembrief/itembrief_6ce8ed8.js"></script>
 <script type="text/javascript" src="/mobile/common/itemlistwithnum/itemlistwithnum_0a8800b.js"></script>
 <script type="text/javascript" src="/fishstrap/util/uedit_466b933.js"></script>
 <script type="text/javascript" src="/mobile/common/footerbutton/footerbutton_7c867f1.js"></script>
@@ -44,6 +44,22 @@
 		var ItemListWithNum = require('mobile/common/itemlistwithnum/itemlistwithnum.js');
 		var FooterButton = require('mobile/common/footerbutton/footerbutton.js');
 		var shopcart = {};
+		function checkShopCart(nochangenext,changenext){
+			$.get('/troller/check',{},function(data){
+				if(data.code != 0 ){
+					dialog.message(data.msg);
+					$.get('/troller/refresh',{},function(data){
+						if(data.code != 0 ){
+							dialog.message(data.msg);
+							return;
+						}
+						changenext();
+					});
+					return;
+				}
+				nochangenext();
+			});
+		}
 		function getShopCart(next){
 			$.get('/troller/get',{},function(data){
 				if(data.code != 0 ){
@@ -76,7 +92,7 @@
 						image:single.icon,
 						title:single.title,
 						summary:single.introduction,
-						price:single.price,
+						price:single.priceShow,
 						stock:single.inventory,
 						quantity:single.quantity,
 					};
@@ -104,15 +120,11 @@
 					next(data.data);
 				});
 			}
-			function goShopCart(next){
-				refreshShopCart(function(isStockChange){
-					if( isStockChange == true ){
-						dialog.message('库存有限，请重新选择商品数量',function(){
-							location.reload();
-						});
-					}else{
-						next();
-					}
+			function goShopCart(){
+				checkShopCart(function(){
+					goAddress();
+				},function(){
+					location.reload();
 				});
 			}
 			function goAddress(){
@@ -126,7 +138,7 @@
 				if( shopTroller == ''){
 					dialog.message('请选择要结算的商品');
 				}else{
-					location.href = $.url.buildQueryUrl('address.html',{shopTroller:shopTroller});
+					location.href = $.url.buildQueryUrl('address.html',{shopTroller:shopTroller,showwxpaytitle:1});
 				}
 			}
 			function whenItemListChange(){
@@ -138,7 +150,7 @@
 					name:'pay',
 					text:'结算',
 					click:function(){
-						goShopCart(goAddress);
+						goShopCart();
 					}
 				}
 			]);
@@ -147,7 +159,11 @@
 			$.page.start(pageHtml);
 		}
 		$.checkMustLogin(function(){
-			getShopCart(go);
+			checkShopCart(function(){
+				getShopCart(go);
+			},function(){
+				getShopCart(go);
+			});
 		});
 	</script>
 </body>

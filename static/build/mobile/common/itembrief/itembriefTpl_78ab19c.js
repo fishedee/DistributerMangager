@@ -20,6 +20,12 @@ __p+='<span class="old">￥'+
 '</span>';
  } 
 __p+='</div>\n\t\t';
+ if( _.isUndefined(this.buyQuantity) == false ){ 
+__p+='\n\t\t\t<div class="stock">购买数量：<span class="current">'+
+((__t=( buyQuantity ))==null?'':_.escape(__t))+
+'</span></div>\n\t\t';
+ } 
+__p+='\n\t\t';
  if( _.isUndefined(this.stock) == false ){ 
 __p+='\n\t\t\t<div class="stock">库存：<span class="current">'+
 ((__t=( stock ))==null?'':_.escape(__t))+

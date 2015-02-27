@@ -1,17 +1,26 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Order extends CI_Controller {
+class Deal extends CI_Controller {
 
 	public function __construct()
   	{
 		parent::__construct();
 		$this->load->model('order/orderPayAo','orderPayAo');
+		$this->load->model('order/orderStateEnum','orderStateEnum');
 		$this->load->model('order/orderAo','orderAo');
 		$this->load->model('client/clientLoginAo', 'clientLoginAo');
 		$this->load->model('user/loginAo','loginAo');
 		$this->load->model('user/userPermissionEnum','userPermissionEnum');
 		$this->load->library('argv','argv');
   	}
+
+  	/**
+	* @view json
+	*/
+	public function getState()
+	{
+		return $this->orderStateEnum->names;
+	}
 
 	/**
 	* @view json
@@ -63,7 +72,7 @@ class Order extends CI_Controller {
 
 		//检查权限
 		$user = $this->loginAo->checkMustClient(
-            $this->userPermissionEnum->COMMODITY_MANAGE
+            $this->userPermissionEnum->COMPANY_SHOP
         );
         $userId = $user['userId'];
 
@@ -84,9 +93,70 @@ class Order extends CI_Controller {
 
 		//检查权限
 		$user = $this->loginAo->checkMustClient(
-            $this->userPermissionEnum->COMMODITY_MANAGE
+            $this->userPermissionEnum->COMPANY_SHOP
         );
         $userId = $user['userId'];
+
+		//执行业务逻辑
+		return $this->orderAo->get($userId,$shopOrderId);
+	}
+
+	/**
+	* @view json
+	*/
+	public function getMyOrderCount()
+	{
+		//检查输入参数    
+		$data = $this->argv->checkGet(array(
+			array('userId','require'),
+		));
+		$userId = $data['userId'];
+
+		//检查权限
+		$client = $this->clientLoginAo->checkMustLogin($userId);
+		$clientId = $client['clientId'];
+
+		//执行业务逻辑
+		return $this->orderAo->getClientOrder($userId,$clientId);
+	}
+
+	/**
+	* @view json
+	*/
+	public function getMyOrderList()
+	{
+		//检查输入参数    
+		$data = $this->argv->checkGet(array(
+			array('userId','require'),
+			array('state','require'),
+		));
+		$userId = $data['userId'];
+		$state = $data['state'];
+
+		//检查权限
+		$client = $this->clientLoginAo->checkMustLogin($userId);
+		$clientId = $client['clientId'];
+
+		//执行业务逻辑
+		return $this->orderAo->getClientOrderDetail($userId,$clientId,$state);
+	}
+
+	/**
+	* @view json
+	*/
+	public function getMyOrderDetail()
+	{
+		//检查输入参数    
+		$data = $this->argv->checkGet(array(
+			array('userId','require'),
+			array('shopOrderId','require'),
+		));
+		$userId = $data['userId'];
+		$shopOrderId = $data['shopOrderId'];
+
+		//检查权限
+		$client = $this->clientLoginAo->checkMustLogin($userId);
+		$clientId = $client['clientId'];
 
 		//执行业务逻辑
 		return $this->orderAo->get($userId,$shopOrderId);
@@ -95,16 +165,17 @@ class Order extends CI_Controller {
 
 	/**
 	* @view json
+	* @trans true
 	*/
 	public function order(){
 		//检查输入参数
 		$data = $this->argv->checkPost(array(
 			array('userId', 'require'),
-			array('shopTrollerId', 'option',array()),
+			array('shopTroller', 'option',array()),
 			array('address', 'option',array()),
 		));
 		$userId = $data['userId'];
-		$shopTrollerId = $data['shopTrollerId'];
+		$shopTroller = $data['shopTroller'];
 		$address = $data['address'];
 
 		//检查权限
@@ -112,10 +183,10 @@ class Order extends CI_Controller {
 		$clientId = $client['clientId'];
 	   
 		//业务逻辑
-		$this->orderAo->add(
+		return $this->orderAo->add(
 			$userId,
 			$clientId,
-			$shopTrollerId,
+			$shopTroller,
 			$address
 		);
 	}
@@ -123,22 +194,21 @@ class Order extends CI_Controller {
 	/**
 	* @view json
 	*/
-    public function modState(){
+    public function modhassend(){
         //检查输入参数
         $data = $this->argv->checkPost(array(
             array('shopOrderId', 'require'),
-            array('newState', 'require'),
         ));
-        $shopOrderId == $data['shopOrderId'];
+        $shopOrderId = $data['shopOrderId'];
 
 		//检查权限
 		$user = $this->loginAo->checkMustClient(
-            $this->userPermissionEnum->COMMODITY_MANAGE
+            $this->userPermissionEnum->COMPANY_SHOP
         );
         $userId = $user['userId'];
 
         //业务逻辑
-        $this->orderAo->modState($userId, $shopOrderId, $data); 
+        $this->orderAo->modHasSend($userId, $shopOrderId); 
     }
 
 	/**
@@ -146,9 +216,9 @@ class Order extends CI_Controller {
 	*/
 	public function wxjspay(){
 		//检查输入参数
-		$data = $this->argv->checkPost(array(
+		$data = $this->argv->checkGet(array(
 			array('userId', 'require'),
-			array('shopOrderId', 'require',array()),
+			array('shopOrderId', 'require'),
 		));
 		$userId = $data['userId'];
 		$shopOrderId = $data['shopOrderId'];
@@ -173,7 +243,7 @@ class Order extends CI_Controller {
 		//业务逻辑
 		$data = $this->orderPayAo->wxPayCallback($userId);
 
-		log_message('debug','wxpaycallback:'.json_encode($data));
+		log_message('info','wxpaycallback:'.json_encode($data));
 	}
 
 }

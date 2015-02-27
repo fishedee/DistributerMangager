@@ -6,6 +6,9 @@
 			<p><%- summary %></p>
 		<% } %>
 		<div class="price">价格：<span class="current">￥<%- price %></span><% if( _.isUndefined(this.oldprice) == false ){ %><span class="old">￥<%- oldprice %></span><% } %></div>
+		<% if( _.isUndefined(this.buyQuantity) == false ){ %>
+			<div class="stock">购买数量：<span class="current"><%- buyQuantity %></span></div>
+		<% } %>
 		<% if( _.isUndefined(this.stock) == false ){ %>
 			<div class="stock">库存：<span class="current"><%- stock %></span></div>
 		<% } %>

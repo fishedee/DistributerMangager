@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>烘焙帮后台管理系统</title>
+	<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+</head>
+<body class="definewidth m10">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var subPage = require('/fishstrap/page/subPage.js');
+		var shopOrderId = $.location.getQueryArgv('shopOrderId');
+		var mapPayment = {1:'微信支付',2:'货到付款'};
+		var allState = {};
+		var shopOrder = {};
+		function getAllState(next){
+			$.get('/deal/getState',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				allState = data.data;
+				next();
+			});
+		}
+		function getOrder(next){
+			$.get('/deal/get',{shopOrderId:shopOrderId},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				shopOrder = data.data;
+				shopOrder = $.extend(shopOrder,shopOrder.address);
+				next();
+			});
+		}
+		function go(){
+			inputOperation = input.verticalInput({
+				id:'container',
+				field:[
+					{id:'shopOrderId',type:'read',name:'订单ID'},
+					{id:'description',type:'read',name:'订单描述'},
+					{id:'priceShow',type:'read',name:'订单金额'},
+					{id:'state',type:'enum',name:'订单状态',map:allState,disabled:true},
+					{id:'commodity',type:'table',name:'订单商品',
+						option:{
+							column:[
+								{name:'图片',type:'image',id:'icon'},
+								{name:'标题',type:'text',id:'title'},
+								{name:'介绍',type:'text',id:'introduction'},
+								{name:'价格',type:'text',id:'priceShow'},
+								{name:'数量',type:'text',id:'quantity'},
+							],
+							operate:[],
+							button:[]
+						}
+					},
+					{id:'name',type:'read',name:'收货人'},
+					{id:'province',type:'read',name:'收货省份'},
+					{id:'city',type:'read',name:'收货城市'},
+					{id:'address',type:'read',name:'收货地址'},
+					{id:'phone',type:'read',name:'收货号码'},
+					{id:'payment',type:'enum',name:'支付方式',map:mapPayment,disabled:true},
+				],
+				value:shopOrder,
+				submit:undefined,
+				cancel:function(){
+					history.back();
+				},
+			});
+		}
+		getAllState(function(){
+			getOrder(go);
+		});
+	</script>
+</body>
+</html>

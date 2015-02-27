@@ -62,10 +62,10 @@ class ClientLogin extends CI_Controller {
 	/**
 	* @view json
 	*/
-	public function wxlogincallback()
+	public function wxlogincallback($userId=0)
 	{
 		//业务逻辑
-		$this->clientWxLoginAo->loginCallback();
+		$this->clientWxLoginAo->loginCallback($userId);
 	}
 }
 

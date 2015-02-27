@@ -6,6 +6,7 @@
 	<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
 </head>
 <body class="definewidth m10">
+	<div class="alert alert-danger" role="alert">注意！为了正常使用商城功能，请将微信后台的appId,appKey,mchId,mchKey正确地复制过来，并且将OAuth2.0授权回调页面域名和微信支付授权目录填入到微信后台</div>
 	<div id="container">
 	</div>
 	<script type="text/javascript">
@@ -28,6 +29,9 @@
 			input.verticalInput({
 				id:'container',
 				field:[
+					{id:'shop',type:'read',name:'商城地址'},
+					{id:'logincallback',type:'read',name:'OAuth2.0授权回调页面域名'},
+					{id:'paycallback',type:'read',name:'微信支付授权目录'},
 					{id:'appId',type:'text',name:'appId'},
 					{id:'appKey',type:'text',name:'appKey'},
 					{id:'mchId',type:'text',name:'mchId'},

@@ -37,7 +37,7 @@ class Commodity extends CI_Controller
 
          //检查权限
         $user = $this->loginAo->checkMustClient(
-            $this->userPermissionEnum->COMMODITY_MANAGE
+            $this->userPermissionEnum->COMPANY_SHOP
         );
         $userId = $user['userId'];
 
@@ -58,7 +58,7 @@ class Commodity extends CI_Controller
 
         //检查权限
         $user = $this->loginAo->checkMustClient(
-            $this->userPermissionEnum->COMMODITY_MANAGE
+            $this->userPermissionEnum->COMPANY_SHOP
         );
         $userId = $user['userId'];
 
@@ -117,8 +117,8 @@ class Commodity extends CI_Controller
             array('icon', 'require'),
             array('introduction', 'require'),
             array('detail', 'require'),
-            array('price', 'require'),
-            array('oldPrice', 'require'),
+            array('priceShow', 'require'),
+            array('oldPriceShow', 'require'),
             array('inventory', 'require'),
             array('state', 'require'),
             array('remark', 'require'),
@@ -126,7 +126,7 @@ class Commodity extends CI_Controller
 
         //检查权限
         $user = $this->loginAo->checkMustClient(
-            $this->userPermissionEnum->COMMODITY_MANAGE
+            $this->userPermissionEnum->COMPANY_SHOP
         );
         $userId = $user['userId'];
 
@@ -145,7 +145,7 @@ class Commodity extends CI_Controller
 
         //检查权限
         $user = $this->loginAo->checkMustClient(
-            $this->userPermissionEnum->COMMODITY_MANAGE
+            $this->userPermissionEnum->COMPANY_SHOP
         );
         $userId = $user['userId'];
 
@@ -169,15 +169,15 @@ class Commodity extends CI_Controller
             array('icon', 'require'),
             array('introduction', 'require'),
             array('detail', 'require'),
-            array('price', 'require'),
-            array('oldPrice', 'require'),
+            array('priceShow', 'require'),
+            array('oldPriceShow', 'require'),
             array('inventory', 'require'),
             array('state', 'require'),
             array('remark', 'require'),
         ));
         //检查权限
         $user = $this->loginAo->checkMustClient(
-            $this->userPermissionEnum->COMMODITY_MANAGE
+            $this->userPermissionEnum->COMPANY_SHOP
         );
         $userId = $user['userId'];
 

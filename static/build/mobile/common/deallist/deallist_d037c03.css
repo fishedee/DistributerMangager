@@ -42,6 +42,7 @@
 .common_deallist > a > li > .info > .price .tip {
   font-size: 16px;
   color: #000000;
+  word-break: break-all;
 }
 .common_deallist > a > li > .info > .id .text,
 .common_deallist > a > li > .info > .text .text,
@@ -49,4 +50,5 @@
 .common_deallist > a > li > .info > .price .text {
   font-size: 16px;
   color: #ca191d;
+  word-break: break-all;
 }

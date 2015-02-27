@@ -11,9 +11,13 @@ class OrderWhen extends CI_Model
 
 	public function whenOrderPay($shopOrderId){
 		//计算出订单基本信息
+		$shopOrder = $this->orderDb->get($shopOrderId);
+		if($shopOrder['state'] != $this->orderStateEnum->NO_PAY)
+			return;
+
 		$this->orderDb->mod(
 			$shopOrderId,
-			$this->orderStateEnum->NO_SEND
+			array('state'=>$this->orderStateEnum->NO_SEND)
 		);
 	}
 }

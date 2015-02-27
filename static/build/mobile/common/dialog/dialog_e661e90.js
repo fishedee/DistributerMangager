@@ -5,20 +5,25 @@ define('mobile/common/dialog/dialog.js', function(require, exports, module){
 */
 var $ = require('fishstrap/core/global.js');
 var body = $('#body');
-var loadingDiv;
+var loadingDiv = null;
 function loadingBegin(){
-	var template = function(obj){
+	if( loadingDiv == null ){
+		var template = function(obj){
 var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 with(obj||{}){
 __p+='<div id="common_dialog_loading">\n</div>';
 }
 return __p;
 };
-	loadingDiv = $(template());
-	body.append(loadingDiv);
+		loadingDiv = $(template());
+		body.append(loadingDiv);
+	}
 }
 function loadingEnd(){
-	loadingDiv.remove();
+	if( loadingDiv != null ){
+		loadingDiv.remove();
+		loadingDiv = null;
+	}
 }
 function message(text,next){
 	alert(text);

@@ -14,27 +14,28 @@ class OrderAo extends CI_Model
 		$this->load->model('order/orderCommodityDb','orderCommodityDb');
 		$this->load->model('order/orderAddressDb','orderAddressDb');
 		$this->load->model('order/orderStateEnum','orderStateEnum');
-		$this->load->model('address/addresspaymentenum','addresspaymentenum');
+		$this->load->model('address/addressPayMentEnum','addressPayMentEnum');
 	}
 
 	private function addMyOrder($userId,$clientId,$shopCommodity,$address){
 		//计算出订单基本信息
 		$orderPrice = array_reduce($shopCommodity,function($sum,$single){
-			return $sum + $sinlge['price'];
+			return $sum + $single['price']*$single['quantity'];
 		},0);
 		$orderProducts = array_map(function($shopCommodity){
 			return $shopCommodity['title'];
 		},$shopCommodity);
 		$orderNum = count($shopCommodity);
 		$orderDesc = $address['name'].'购买的"'.implode('","', $orderProducts).'"';
-		if($address['payment'] == $this->addresspaymentenum->CODPAY)
+		if($address['payment'] == $this->addressPayMentEnum->CODPAY)
 			$orderState = $this->orderStateEnum->NO_SEND;
 		else
 			$orderState = $this->orderStateEnum->NO_PAY;
 
 		//添加订单基本信息
+		$shopOrderId = date('YmdHis').$clientId.rand(10000,99999);
 		$orderInfo = array(
-			'shopOrderId'=>md5(uniqid('', true)),
+			'shopOrderId'=>$shopOrderId,
 			'userId'=>$userId,
 			'clientId'=>$clientId,
 			'image'=>$shopCommodity[0]['icon'],
@@ -44,12 +45,11 @@ class OrderAo extends CI_Model
 			'description'=>$orderDesc,
 			'wxprePayId'=>0,
 			'state'=>$orderState
-        );
-
+		);
 		$this->orderDb->add($orderInfo);
 
 		//添加订单商品信息
-		$this->orderCommodityDb->add(array_map(function($singleShopCommodity)use($shopOrderId){
+		$this->orderCommodityDb->addBatch(array_map(function($singleShopCommodity)use($shopOrderId){
 			return array(
 				'shopOrderId'=>$shopOrderId,
 				'shopCommodityId'=>$singleShopCommodity['shopCommodityId'],
@@ -61,10 +61,10 @@ class OrderAo extends CI_Model
 				'oldPrice'=>$singleShopCommodity['oldPrice'],
 				'quantity'=>$singleShopCommodity['quantity'],
 			);
-		}),$shopCommodity);
+		},$shopCommodity));
 
 		//添加订单地址信息
-    	$this->orderCommodityDb->add(array(
+    	$this->orderAddressDb->add(array(
 			'shopOrderId'=>$shopOrderId,
 			'name'=>$address['name'],
 			'province'=>$address['province'],
@@ -88,7 +88,7 @@ class OrderAo extends CI_Model
 
 		$this->orderDb->mod(
 			$orderInfo['shopOrderId'],
-			array('wxPrePayId',$wxOrderInfo['prepay_id'])
+			array('wxPrePayId'=>$wxOrderInfo['prepay_id'])
 		);
 	}
 
@@ -101,22 +101,46 @@ class OrderAo extends CI_Model
         return $data;
 	}
 
-	public function getClientOrder($userId,$clientId,$state){
-		return $this->search($userId,array(
-			'clientId'=>'clientId',
-			'state'=>$state
-		))['data'];
+	public function getClientOrder($userId,$clientId){
+		$orderNum = $this->orderDb->getCountByUserIdAndClientId($userId,$clientId);
+		$result = array();
+
+		foreach($orderNum as $single){
+			$result[$single['state']] = intval($single['count']);
+		}
+
+		foreach($this->orderStateEnum->names as $key=>$value){
+			if(isset($result[$key]) == false )
+				$result[$key] = 0;
+		}
+
+		$result[0] = array_reduce($result,function($sum,$single){
+			return $sum+$single;
+		},0);
+		return $result;
+	}
+	public function getClientOrderDetail($userId,$clientId,$state){
+		$dataWhere = array('clientId'=>$clientId);
+		if( $state != 0 )
+			$dataWhere['state'] = $state;
+		return $this->search($userId,$dataWhere,array())['data'];
 	}
 
 	public function get($userId,$shopOrderId){
 		$shopOrder = $this->orderDb->get($shopOrderId);
 		if($shopOrder['userId'] != $userId)
 			throw new CI_MyException(1,'非本商城用户无阅读该订单权限');
+
 		$shopOrder['priceShow'] = $this->commodityAo->getFixedPrice($shopOrder['price']);
 
 		$shopOrder['address'] = $this->orderAddressDb->getByShopOrderId($shopOrderId)[0];
 
-		$shopOrder['commodity'] = $this->orderCommodityDb->getByShopOrderId($shopOrderId)[0];
+		$shopOrder['commodity'] = $this->orderCommodityDb->getByShopOrderId($shopOrderId);
+		foreach($shopOrder['commodity'] as $key=>$value){
+			$shopOrder['commodity'][$key]['priceShow'] = $this->commodityAo->getFixedPrice(
+				$shopOrder['commodity'][$key]['price']
+			);
+		}
 		return $shopOrder;
 	}
 
@@ -130,7 +154,7 @@ class OrderAo extends CI_Model
 		}
 
 		//校验地址信息
-		$this->addressAo->checkAddress($address);
+		$this->addressAo->check($address);
 		
 		//校验商品信息
 		if( count($shopTroller) == 0 )
@@ -151,7 +175,9 @@ class OrderAo extends CI_Model
 		$this->addWxOrder($userId,$clientId,$orderInfo);
 
 		//删购物车
-		$this->trollerAo->delByIds($shopTrollerId);
+		$this->trollerAo->delByIds($userId,$clientId,$shopTrollerId);
+
+		return $orderInfo['shopOrderId'];
 	}
 
 	public function wxJsPay($userId,$clientId,$shopOrderId){
@@ -160,25 +186,14 @@ class OrderAo extends CI_Model
 		return $this->orderPayAo->wxJsPay($userId,$orderInfo['wxPrePayId']);
 	}
 
-	public function modState( $userId,$shopOrderId,$data ){
-        $orderInfo = $this->get($userId, $shopOrderId);
-		if($orderInfo['userId'] != $userId)
-			throw new CI_MyException(1,'非本商城用户无阅读该订单权限');
+	public function modHasSend( $userId,$shopOrderId ){
+        $shopOrder = $this->orderDb->get($shopOrderId);
+        if($shopOrder['userId'] != $userId)
+        	throw new CI_MyException(1, "非本商城用户无阅读该订单权限");
 
-        if($orderInfo['state'] == $this->OrderStateEnum->NO_PAY && $data['newState'] == $this->OrderStateEnum->NO_SEND){
-            $this->orderDb->mod($shopOrderId, $data);
-            return 0;
-        }
+        if($shopOrder['state'] == $this->orderStateEnum->NO_PAY)
+         	throw new CI_MyException(1, "该订单未支付，不能扭转为已发货状态");
 
-        if($orderInfo['state'] == $this->OrderStateEnum->NO_SEND && $data['newState'] == $this->OrderStateEnum->HAS_SEND){
-            $this->orderDb->mod($shopOrderId, $data);
-            return 0;
-        }
-        if($orderInfo['state'] == $this->OrderStateEnum->HAS_SEND && $data['newState'] == $this->OrderStateEnum->FINISH){
-            $this->orderDb->mod($shopOrderId, $data);
-            return 0;
-        }
-
-        throw new CI_MyException(1, '转换状态不符合当前商品状态');
+        $this->orderDb->mod($shopOrderId, array('state'=>$this->orderStateEnum->HAS_SEND));
 	}
 }
