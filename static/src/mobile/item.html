@@ -14,7 +14,7 @@
 		function get(next){
 			$.get('/commodityclassify/getPrimaryClassify',{},function(data){
 				if( data.code != 0 ){
-					dialog.message(data.msg);
+					//dialog.message(data.msg);
 					return;
 				}
 				commodityclassify = data.data;
