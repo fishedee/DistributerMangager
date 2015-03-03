@@ -124,6 +124,7 @@
 			var pageHtml = header.el + headertitle.el + itemlistwithnum.el+footerbutton.el;
 			$.page.setGrey();
 			$.page.start(pageHtml);
+			refreshHeaderTitle();
 		}
 		$.checkMustLogin(function(){
 			checkShopCart(function(){

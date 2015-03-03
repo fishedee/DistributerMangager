@@ -4,7 +4,7 @@
 		<% for( var i in item ){ %>
 			<li data="<%- i %>">
 				<div class="info" onclick="<%= $.func.invoke(item[i].checkClick) %>">
-					<div class="checked"></div>
+					<div class="checked active"></div>
 					<%= item[i].itembriefEl %>
 				</div>
 				<div class="numinfo">

@@ -66,10 +66,14 @@
 		}
 		function order(shopTroller,address,next){
 			$.post('/deal/order',{shopTroller:shopTroller,address:address},function(data){
-				if(data.code!=0){
+				if(data.code == 20001){
 					dialog.message(data.msg,function(){
 						location.href = 'shopcart.html';
 					});
+					return;
+				}
+				if(data.code!=0){
+					dialog.message(data.msg);
 					return;
 				}
 				shopOrderId = data.data;

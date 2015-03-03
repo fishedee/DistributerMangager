@@ -29,7 +29,7 @@
 <script type="text/javascript" src="/mobile/common/headertitle/headertitle_9a8434f.js"></script>
 <script type="text/javascript" src="/mobile/common/numchooser/numchooser_faad02f.js"></script>
 <script type="text/javascript" src="/mobile/common/itembrief/itembrief_6ce8ed8.js"></script>
-<script type="text/javascript" src="/mobile/common/itemlistwithnum/itemlistwithnum_0a8800b.js"></script>
+<script type="text/javascript" src="/mobile/common/itemlistwithnum/itemlistwithnum_cf6e42c.js"></script>
 <script type="text/javascript" src="/fishstrap/util/uedit_466b933.js"></script>
 <script type="text/javascript" src="/mobile/common/footerbutton/footerbutton_7c867f1.js"></script>
 
@@ -157,6 +157,7 @@
 			var pageHtml = header.el + headertitle.el + itemlistwithnum.el+footerbutton.el;
 			$.page.setGrey();
 			$.page.start(pageHtml);
+			refreshHeaderTitle();
 		}
 		$.checkMustLogin(function(){
 			checkShopCart(function(){

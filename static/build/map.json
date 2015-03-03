@@ -1052,7 +1052,7 @@
             "type": "js"
         },
         "mobile/common/itemlistwithnum/itemlistwithnum.js": {
-            "uri": "/mobile/common/itemlistwithnum/itemlistwithnum_0a8800b.js",
+            "uri": "/mobile/common/itemlistwithnum/itemlistwithnum_cf6e42c.js",
             "type": "js",
             "deps": [
                 "mobile/common/itemlistwithnum/itemlistwithnum.less",
@@ -1069,7 +1069,7 @@
             "id": "mobile/common/itemlistwithnum/itemlistwithnum.less"
         },
         "mobile/common/itemlistwithnum/itemlistwithnumTpl.tpl": {
-            "uri": "/mobile/common/itemlistwithnum/itemlistwithnumTpl_4f5fb25.js",
+            "uri": "/mobile/common/itemlistwithnum/itemlistwithnumTpl_15c8c90.js",
             "type": "js"
         },
         "mobile/common/littlelist/littlelist.js": {

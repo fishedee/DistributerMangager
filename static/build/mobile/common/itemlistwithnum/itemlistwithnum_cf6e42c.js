@@ -51,7 +51,7 @@ __p+='\n\t\t\t<li data="'+
 ((__t=( i ))==null?'':_.escape(__t))+
 '">\n\t\t\t\t<div class="info" onclick="'+
 ((__t=( $.func.invoke(item[i].checkClick) ))==null?'':__t)+
-'">\n\t\t\t\t\t<div class="checked"></div>\n\t\t\t\t\t'+
+'">\n\t\t\t\t\t<div class="checked active"></div>\n\t\t\t\t\t'+
 ((__t=( item[i].itembriefEl ))==null?'':__t)+
 '\n\t\t\t\t</div>\n\t\t\t\t<div class="numinfo">\n\t\t\t\t\t<div class="del" onclick="'+
 ((__t=( $.func.invoke(item[i].delClick) ))==null?'':__t)+
