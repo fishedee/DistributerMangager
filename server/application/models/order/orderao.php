@@ -10,6 +10,7 @@ class OrderAo extends CI_Model
 		$this->load->model('address/addressAo','addressAo');
 		$this->load->model('client/clientAo','clientAo');
 		$this->load->model('order/orderPayAo','orderPayAo');
+		$this->load->model('user/userAppAo', 'userAppAo');
 		$this->load->model('order/orderDb','orderDb');
 		$this->load->model('order/orderCommodityDb','orderCommodityDb');
 		$this->load->model('order/orderAddressDb','orderAddressDb');
@@ -93,6 +94,8 @@ class OrderAo extends CI_Model
 	}
 
 	public function search($userId,$dataWhere,$dataLimit){
+		$this->userAppAo->checkByUserId($userId);
+		
 		$dataWhere['userId'] = $userId;
         $data = $this->orderDb->search($dataWhere,$dataLimit);
         foreach($data['data'] as $key=>$value ){

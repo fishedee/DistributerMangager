@@ -5,9 +5,12 @@ class ClientAo extends CI_Model {
 	public function __construct(){
 		parent::__construct();
 		$this->load->model('client/clientDb','clientDb');
+		$this->load->model('user/UserAppAo', 'userAppAo');
 	}
 
 	public function search($userId,$where,$limit){
+		$this->userAppAo->checkByUserId($userId);
+		
 		$where['userId'] = $userId;
 		return $this->clientDb->search($where,$limit);
 	}

@@ -6,9 +6,12 @@ class CommodityClassifyAO extends CI_Model {
         $this->load->model('shop/CommodityClassifyDb', 'commodityClassifyDb');
         $this->load->model('shop/CommodityWhen', 'commodityWhen');
         $this->load->model('shop/CommodityDb', 'commodityDb');
+        $this->load->model('user/UserAppAo', 'userAppAo');
     }
 
     public function search($userId, $dataWhere, $dataLimit){
+        $this->userAppAo->checkByUserId($userId);
+
         $dataWhere['userId'] = $userId;
         return $this->commodityClassifyDb->search($dataWhere, $dataLimit);
     }

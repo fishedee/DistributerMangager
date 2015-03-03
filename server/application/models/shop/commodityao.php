@@ -7,6 +7,7 @@ class CommodityAo extends CI_Model
         $this->load->library('argv','','argv');
         $this->load->model('shop/commodityDb', 'commodityDb');
         $this->load->model('shop/commodityStateEnum', 'commodityStateEnum');
+        $this->load->model('user/UserAppAo', 'userAppAo');
     }
     
     public function getFixedPrice($price){
@@ -14,6 +15,8 @@ class CommodityAo extends CI_Model
     }
 
     public function search($userId,$dataWhere, $dataLimit){
+        $this->userAppAo->checkByUserId($userId);
+        
         $dataWhere['userId'] = $userId;
         $data =  $this->commodityDb->search($dataWhere, $dataLimit);
         foreach($data['data'] as $key=>$value ){

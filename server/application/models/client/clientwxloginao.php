@@ -14,14 +14,11 @@ class ClientWxLoginAo extends CI_Model {
     private function initWxSdk($userId){
     	$appInfo = $this->userAppAo->get($userId);
 
-    	$wxAppId = $appInfo['appId'];
-		$wxAppKey = $appInfo['appKey'];
-		
-		if( $wxAppId == '' || $wxAppKey == '')
-			throw new CI_MyException(1,'未设置appId或appKey');
+    	$this->userAppAo->check($appInfo);
+    	
 		$this->load->library('wxSdk',array(
-			'appId'=>$wxAppId,
-			'appKey'=>$wxAppKey
+			'appId'=>$appInfo['appId'],
+			'appKey'=>$appInfo['appKey']
 		),'wxSdk');
     }
 	

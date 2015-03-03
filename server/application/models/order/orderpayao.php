@@ -13,26 +13,15 @@ class OrderPayAo extends CI_Model {
     private function initWxSdk($userId){
     	$appInfo = $this->userAppAo->get($userId);
 
-    	$appId = $appInfo['appId'];
-		$appKey = $appInfo['appKey'];
-		$mchId = $appInfo['mchId'];
-		$mchKey = $appInfo['mchKey'];
-		$mchSslCert = $appInfo['mchSslCert'];
-		$mchSslKey = $appInfo['mchSslKey'];
-		
-		if( $appId == '' || $appKey == '')
-			throw new CI_MyException(1,'未设置appId或appKey');
-
-		if( $mchId == '' || $mchKey == '')
-			throw new CI_MyException(1,'未设置mchId或mchKey');
+    	$this->userAppAo->check($appInfo);
 
 		$this->load->library('wxSdk',array(
-			'appId'=>$appId,
-			'appKey'=>$appKey,
-			'mchId'=>$mchId,
-			'mchKey'=>$mchKey,
-			'mchSslCert'=>$mchSslCert,
-			'mchSslKey'=>$mchSslKey
+			'appId'=>$appInfo['appId'],
+			'appKey'=>$appInfo['appKey'],
+			'mchId'=>$appInfo['mchId'],
+			'mchKey'=>$appInfo['mchKey'],
+			'mchSslCert'=>$appInfo['mchSslCert'],
+			'mchSslKey'=>$appInfo['mchSslKey']
 		),'wxSdk');
     }
 
