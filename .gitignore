@@ -1,5 +1,6 @@
 /data/log/*
 /data/upload/*
+/static/build
 !/data/log/.gitignore
 !/data/upload/.gitignore
 !/data/upload/sample.jpg
