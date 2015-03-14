@@ -42,27 +42,37 @@ class DistributionAo extends CI_Model
 
     
 
-    var $path = array();
-    var $restult_path = array();
+    private $path = array();
+    private $result_path = array();
     
     private function dfs($originUserId, $userId){
-        if($originUserId == $userId){
-            $result_path = $path;
-            return;
+	if($originUserId == $userId){
+		$this->result_path = $this->path;
+		return;
 	}
 
-        $upUserIds = $this->distributionDb->getUpUser($userId);
-        foreach($upUserIds as $upUserId){
-            $path[$upUserId] = 1;
-            $this->dfs($upUserId);
-            unset($path[$upUserId]);
-        }
+	$where = array(
+		'upUserId'=>$originUserId
+	);
+	$response = $this->search($where, array());
+	$distributions = $response['data'];
+	foreach($distributions as $distribution){
+		log_message('error', $distribution['downUserId']);
+		log_message('error', $userId);
+		$this->path[$distribution['downUserId']] = 1;
+		$this->dfs($distribution['downUserId'], $userId);	
+		unset($this->path[$distribution['downUserId']]);
+	}
     }
 
     public function getLink($originUserId, $userId){
         $this->path = array(); 
+	$this->result_path = array();
+	$this->path[$originUserId] = 1;
         $this->dfs($originUserId, $userId);
-        return $result_path;
+	foreach($this->result_path as $key=>$value)
+		$map[] = $key;
+        return $map;
     }
 }
 
