@@ -345,11 +345,11 @@ insert into t_shop_commodity_classify(userId,title,icon,parent,sort,remark)value
 (10003,'零食','/data/upload/sample/sample5.jpg',10005,7,''),
 (10003,'主食','/data/upload/sample/sample6.jpg',10005,8,'');
 
-insert into t_shop_commodity(userId,shopCommodityClassifyId,icon,title,introduction,detail,price,oldPrice,inventory,state)values
-(10003,10002,'/data/upload/sample/sample4.jpg','商品1','商品简介1','商品描述1',1,11100,10,1),
-(10003,10003,'/data/upload/sample/sample5.jpg','商品2','商品简介2','商品描述2',2,22200,10,1),
-(10003,10004,'/data/upload/sample/sample6.jpg','商品3','商品简介3','商品描述3',3,33300,10,1),
-(10004,10001,'','','','',1,1,1,1);
+insert into t_shop_commodity(userId,shopLinkCommodityId, isLink, shopCommodityClassifyId,icon,title,introduction,detail,price,oldPrice,inventory,state)values
+(10003,0, 0, 10002,'/data/upload/sample/sample4.jpg','商品1','商品简介1','商品描述1',1,11100,10,1),
+(10003,0, 0, 10003,'/data/upload/sample/sample5.jpg','商品2','商品简介2','商品描述2',2,22200,10,1),
+(10003,0, 0, 10004,'/data/upload/sample/sample6.jpg','商品3','商品简介3','商品描述3',3,33300,10,1),
+(10003,10001, 1, 10001,'','','','',1,1,1,1);
 
 #显示初始数据
 select * from t_user;
