@@ -288,6 +288,19 @@ create table t_shop_order_address(
 
 alter table t_shop_order_address add index shopOrderIdIndex(shopOrderId);
 
+
+#创建分成关系表
+create table t_distribution(
+    distributionId integer not null auto_increment,
+    upUserId integer not null,
+    downUserId integer not null,
+    state integer not null,
+    createTime timestamp not null default CURRENT_TIMESTAMP,
+    modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    primary key(distributionId)
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+
+
 #建立初始数据
 insert into t_user(userId,name,password,company,phone,type) values
 (10001,"fish","$2y$10$xKsYkwOJFQo2Ack68DqZuebTX99IgHL0lYBKmpwQpkxqzhJbKYgMG",'烘焙帮信息科技有限公司','15018749403',1),
