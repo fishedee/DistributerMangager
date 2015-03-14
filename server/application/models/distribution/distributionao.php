@@ -2,9 +2,9 @@
 
 class DistributionAo extends CI_Model
 {
-    public function __contruct(){
+    public function __construct(){
         parent::__construct();
-        $this->load->model('distribution/distributionDb', 'distributionDb');
+	$this->load->model('distribution/distributionDb', 'distributionDb');
     }
 
     public function search($where, $limit){
@@ -16,7 +16,7 @@ class DistributionAo extends CI_Model
     }
 
     public function get($userId, $distributionId){
-        $distribution = $this->distributionDb->get($distribution);
+        $distribution = $this->distributionDb->get($distributionId);
         if($distribution['upUserId'] != $userId && $distribution['downUserId'] != $userId)
             throw new CI_MyException(1, "无权查询此非本用户的分成关系");
         else
@@ -42,8 +42,8 @@ class DistributionAo extends CI_Model
 
     
 
-    private $path = array();
-    private $restult_path = array();
+    var $path = array();
+    var $restult_path = array();
     
     private function dfs($originUserId, $userId){
         if($originUserId == $userId){
