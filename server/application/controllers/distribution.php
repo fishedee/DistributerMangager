@@ -85,7 +85,7 @@ class Distribution extends CI_Controller
             'downUserId'=>$data['downUserId']
         );
 
-        $response = $this->distributionAo->search($where);
+        $response = $this->distributionAo->search($where, array());
         if($response['count'] == 0)
             throw new CI_MyException(1, "没有相应的分成关系请求");
         $distribution = $response['data'][0];

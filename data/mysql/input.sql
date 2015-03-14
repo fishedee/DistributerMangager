@@ -217,7 +217,6 @@ alter table t_shop_commodity add index shopCommodityClassifyIdIndex(shopCommodit
 #创建用户购物车表
 create table t_shop_troller(
     shopTrollerId integer not null auto_increment,
-    userId integer not null,
     clientId integer not null,
     shopCommodityId integer not null,
     title varchar(128) not null,
@@ -231,7 +230,7 @@ create table t_shop_troller(
     primary key(shopTrollerId)
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
 
-alter table t_shop_troller add index matchIndex(userId, clientId);
+alter table t_shop_troller add index clientIdIndex(clientId);
 
 #创建用户订单表
 create table t_shop_order(
@@ -362,7 +361,7 @@ insert into t_shop_commodity(userId,shopLinkCommodityId, isLink, shopCommodityCl
 (10003,0, 0, 10002,'/data/upload/sample/sample4.jpg','商品1','商品简介1','商品描述1',1,11100,10,1),
 (10003,0, 0, 10003,'/data/upload/sample/sample5.jpg','商品2','商品简介2','商品描述2',2,22200,10,1),
 (10003,0, 0, 10004,'/data/upload/sample/sample6.jpg','商品3','商品简介3','商品描述3',3,33300,10,1),
-(10003,10001, 1, 10001,'','','','',1,1,1,1);
+(10003,10001, 1, 10002,'','','','',1,1,1,1);
 
 #显示初始数据
 select * from t_user;

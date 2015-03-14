@@ -10,7 +10,7 @@ class TrollerDb extends CI_Model
 
     public function search($where, $limit){
         foreach($where as $key=>$value){
-            if($key == 'userId' || $key == 'clientId' )
+            if($key == 'clientId' )
                 $this->db->where($key, $value);
             else if($key == 'shopTrollerId' || $key == 'shopCommodityId' )
                 $this->db->where_in($key,$value);
@@ -18,7 +18,7 @@ class TrollerDb extends CI_Model
         $count = $this->db->count_all_results($this->tableName);
 
         foreach($where as $key=>$value){
-            if($key == 'userId' || $key == 'clientId' )
+            if($key == 'clientId' )
                 $this->db->where($key, $value);
             else if($key == 'shopTrollerId' || $key == 'shopCommodityId')
                 $this->db->where_in($key,$value);
@@ -42,8 +42,7 @@ class TrollerDb extends CI_Model
         return $query[0];
     }
 
-    public function getByUserIdAndClientIdAndCommodityId($userId,$clientId,$shopCommodityId){
-        $this->db->where("userId", $userId);
+    public function getByClientIdAndCommodityId($clientId,$shopCommodityId){
         $this->db->where("clientId", $clientId);
         $this->db->where("shopCommodityId", $shopCommodityId);
         return $this->db->get($this->tableName)->result_array();
@@ -54,23 +53,20 @@ class TrollerDb extends CI_Model
         $this->db->delete($this->tableName);
     }
 
-    public function delByUserIdAndClientIdAndCommodityId($userId,$clientId,$shopCommodityId){
-        $this->db->where("userId", $userId);
+    public function delByClientIdAndCommodityId($clientId,$shopCommodityId){
         $this->db->where("clientId", $clientId);
         $this->db->where("shopCommodityId", $shopCommodityId);
         $this->db->delete($this->tableName);
     }
 
-    public function delByUserIdAndClientIdAndNotCommodityId($userId,$clientId,$shopCommodityId){
-        $this->db->where("userId", $userId);
+    public function delByClientIdAndNotCommodityId($clientId,$shopCommodityId){
         $this->db->where("clientId", $clientId);
         if( count($shopCommodityId) != 0 )
             $this->db->where_not_in("shopCommodityId", $shopCommodityId);
         $this->db->delete($this->tableName);
     }
 
-    public function delByUserIdAndClientIdAndShopTrollerId($userId,$clientId,$shopTrollerId){
-        $this->db->where("userId", $userId);
+    public function delByClientIdAndShopTrollerId($clientId,$shopTrollerId){
         $this->db->where("clientId", $clientId);
         $this->db->where_in("shopTrollerId", $shopTrollerId);
         $this->db->delete($this->tableName);
@@ -86,8 +82,7 @@ class TrollerDb extends CI_Model
         $this->db->update($this->tableName, $data);
     }
 
-    public function modByUserIdAndClientIdAndCommodityId($userId,$clientId,$shopCommodityId, $data){
-        $this->db->where("userId", $userId);
+    public function modByClientIdAndCommodityId($clientId,$shopCommodityId, $data){
         $this->db->where("clientId", $clientId);
         $this->db->where("shopCommodityId", $shopCommodityId);
         $this->db->update($this->tableName, $data);

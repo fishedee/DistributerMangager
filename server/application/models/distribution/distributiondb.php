@@ -1,11 +1,11 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class CommodityDb extends CI_Model
+class DistributionDb extends CI_Model
 {
     var $tableName = 't_distribution';
 
     public function __construct(){
-        parrent::__construct();
+        parent::__construct();
     }
 
     public function add($upUserId, $downUserId, $state){
@@ -20,7 +20,7 @@ class CommodityDb extends CI_Model
     }
 
     public function mod($distributionId, $data){
-        $this->db->where('distributionId', $distritionId);
+        $this->db->where('distributionId', $distributionId);
         $this->db->update($this->tableName, $data);
     }
 
@@ -72,8 +72,9 @@ class CommodityDb extends CI_Model
             $this->db->limit($limit['pageSize'], $limit['pageIndex']);
         $query = $this->db->get($this->tableName)->result_array();
         return array(
-            'count'=>$count,
+            'count'=>count($query),
             'data'=>$query
         );
     }
+
 }
