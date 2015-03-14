@@ -32,10 +32,13 @@ class CommodityAo extends CI_Model
         $dataWhere['userId'] = $userId;
         $response = $this->commodityDb->search($dataWhere, $dataLimit);
 
-        $data = array();
+        $data = array(
+		'count'=>$response['count'],
+		'data'=>array()
+	);
         foreach($response['data'] as $key=>$value){
             $originCommodity = $this->findOriginCommodity($value);
-            $data[] = $originCommodity;
+            $data['data'][] = $originCommodity;
         } 
         
         foreach($data['data'] as $key=>$value ){
@@ -123,19 +126,20 @@ class CommodityAo extends CI_Model
             'shopLinkCommodityId'=>$shopLinkCommodityId,
             'userId'=>$userId,
             'shopCommodityClassifyId'=>$shopCommodityClassifyId,
-            'title'=>'',
-            'icon'=>'',
-            'introduction'=>'',
-            'detail'=>'',
+            'title'=>'link',
+            'icon'=>'link',
+            'introduction'=>'link',
+            'detail'=>'link',
             'price'=>1,
             'oldPrice'=>1,
             'inventory'=>0,
             'state'=>0,
-            'remark'=>''
+            'remark'=>'link'
         );
         
         $this->check($data);
         $this->commodityDb->add($data); 
+	log_message("error", "sucess");
     }
 
     public function modLink($userId, $shopCommodityId, $shopLinkCommodityId,

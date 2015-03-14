@@ -182,7 +182,7 @@ module.exports = {
 		}
 		img.src = defaultOption._fileAddress;//imageCompresser.getFileObjectURL(file);
 	},
-	_uploadImage:function( file,defaultOption  ){
+	_startUploadProgres:function(file,defaultOption,nextStep){
 		//制作虚假的进度条，1000毫秒自动往上增加5%
 		defaultOption._progress = 1;
 		defaultOption._progressInterval = 0;
@@ -196,9 +196,53 @@ module.exports = {
 			defaultOption._progress += 5 ;
 			defaultOption.onProgress(defaultOption._progress);
 		},1000);
-		//构造数据，提交表单
+		nextStep();
+	},
+	_cloudImageUpload:function(file,defaultOption){
+		var data = defaultOption._uploadData;
+		var progress = function(e) {
+			if(e.lengthComputable){
+				defaultOption._progress = Math.ceil(100 * (e.loaded / e.total));
+				defaultOption.onProgress(defaultOption._progress);
+			}
+		}
+		var complete = function(e) {
+			var response = $.JSON.parse(e.target.response);
+			if( _.isUndefined(response.error) == false ){
+				defaultOption.onFail(response.error);
+				return;
+			}
+			var result = {
+				code:0,
+				msg:'',
+				data:'http://'+defaultOption.url+'/'+response.key
+			};
+			defaultOption.onSuccess($.JSON.stringify(result));
+		}
+		var failed = function() {
+			defaultOption.onFail('网络断开，请稍后重新操作');
+		}
+		var abort = function() {
+			defaultOption.onFail('上传已取消');
+		}
+		var httpReuqest = new XMLHttpRequest();
+		if( httpReuqest.upload ){
+			httpReuqest.upload.addEventListener('progress',progress, false);
+		}
+		httpReuqest.open("POST", "http://upload.qiniu.com/putb64/-1",true);
+		httpReuqest.addEventListener('progress',progress, false);
+		httpReuqest.addEventListener("load", complete, false);
+		httpReuqest.addEventListener("abort", abort, false);
+		httpReuqest.addEventListener("error", failed, false);
+		httpReuqest.setRequestHeader("Authorization", "UpToken "+defaultOption.urlToken); 
+		httpReuqest.setRequestHeader("Content-Type","application/octet-stream"); 
+		httpReuqest.send(data);
+	},
+	_localImageUpload:function(file,defaultOption){
+		//构造数据
 		var formData = new FormData();
 		formData.append('data', defaultOption._uploadData);
+		//提交表单
 		var progress = function(e) {
 			if(e.lengthComputable){
 				defaultOption._progress = Math.ceil(100 * (e.loaded / e.total));
@@ -218,12 +262,19 @@ module.exports = {
 		if( httpReuqest.upload ){
 			httpReuqest.upload.addEventListener('progress',progress, false);
 		}
+		httpReuqest.open("POST", defaultOption.url + '?t=' + Date.now(),true);
 		httpReuqest.addEventListener('progress',progress, false);
 		httpReuqest.addEventListener("load", complete, false);
 		httpReuqest.addEventListener("abort", abort, false);
 		httpReuqest.addEventListener("error", failed, false);
-		httpReuqest.open("POST", defaultOption.url + '?t=' + Date.now(),true);
 		httpReuqest.send(formData);
+	},
+	_uploadImage:function( file,defaultOption  ){
+		var self = this;
+		if( defaultOption.urlType == 'local')
+			self._localImageUpload(file,defaultOption);	
+		else
+			self._cloudImageUpload(file,defaultOption);	
 	},
 	_iframeUpload:function(frameId,formId,defaultOption){
 		//制作虚假的进度条，1000毫秒自动往上增加5%
@@ -253,9 +304,7 @@ module.exports = {
 			maxSize:null,
 			accept:null,
 		};
-		for( var i in option ){
-			defaultOption[i] = option[i];
-		}
+		defaultOption = $.extend(defaultOption,option);
 		//绘制图形
 		var div = "";
 		var formId = $.uniqueNum();
@@ -306,6 +355,8 @@ module.exports = {
 		var self = this;
 		var defaultOption = {
 			url:'',
+			urlToken:'',
+			urlType:'local',
 			field:'',
 			width:null,
 			height:null,
@@ -319,9 +370,7 @@ module.exports = {
 			onFail:function(msg){
 			},
 		};
-		for( var i in option ){
-			defaultOption[i] = option[i];
-		}
+		defaultOption = $.extend(defaultOption,option);
 		defaultOption.type = 'png|jpg|jpeg|gif|bmp';
 		defaultOption.id = _.uniqueId('upload_');
 		defaultOption.onUpload = function (file){
@@ -330,7 +379,9 @@ module.exports = {
 					self._checkFileType( file , defaultOption , function(){
 						self._readImage( file , defaultOption , function(){
 							self._compressImage( file , defaultOption , function(){
-								self._uploadImage( file,defaultOption);
+								self._startUploadProgres(file,defaultOption,function(){
+									self._uploadImage( file,defaultOption);
+								});
 							});
 						});
 					});
@@ -359,6 +410,8 @@ module.exports = {
 		//初始化option
 		var defaultOption = {
 			url:'',
+			urlToken:'',
+			urlType:'local',
 			target:'',
 			field:'',
 			width:null,
@@ -373,9 +426,7 @@ module.exports = {
 			onFail:function(msg){
 			},
 		};
-		for( var i in option ){
-			defaultOption[i] = option[i];
-		}
+		defaultOption = $.extend(defaultOption,option);
 		defaultOption.type = 'png|jpg|jpeg|gif|bmp';
 		//绘制图形
 		var div = "";
