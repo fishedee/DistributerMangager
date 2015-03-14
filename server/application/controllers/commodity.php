@@ -134,6 +134,49 @@ class Commodity extends CI_Controller
         $this->commodityAo->add($userId, $data);
     }
 
+    /**
+     * $view json
+     */
+    public function addLink(){
+        //检查输入参数
+        $data = $this->argv->checkPost(array(
+            array('shopLinkCommodityId', 'require'),
+            array('shopCommodityClassifyId', 'require'),
+        ));
+
+        //检查权限
+        $user = $this->loginAo->checkMustClient(
+            $this->userPermissionEnum->COMPANY_SHOP
+        );
+        $userId = $user['userId'];
+
+        //执行业务逻辑
+        $this->commodityAo->addLink($userId, $data['shopLinkCommodityId'],
+            $data['shopCommodityClassifyId']);
+    }
+
+	/**
+	* @view json
+	*/
+    public function modLink(){
+        //检查输入参数
+        $data = $this->argv->checkPost(array(
+            array('shopCommodityId', 'require'),
+            array('shopLinkCommodityId', 'require'),
+            array('shopCommodityClassifyId', 'require'),
+        ));
+
+        //检查权限
+        $user = $this->loginAo->checkMustClient(
+            $this->userPermissionEnum->COMPANY_SHOP
+        );
+        $userId = $user['userId'];
+
+        //执行业务逻辑
+        $this->commodityAo->modLink($userId, $data['shopCommodityId'], 
+            $data['shopLinkCommodityId'], $data['shopCommodityClassifyId']);
+    }
+
 	/**
 	* @view json
 	*/
