@@ -107,3 +107,16 @@ class Distribution extends CI_Controller
 
         $this->distributionAo->del($userId, $data['distributionId']);
     }
+
+    /**
+     * @view json
+     */
+    public function getLink(){
+        //检查参数
+        $data = $this->argv->checkGet(array(
+            array('upUserId', 'require'),
+            array('downUserId', 'require')
+        ));
+
+        return $this->distributionAo->getLink($data['upUserId'], $data['downUserId']);
+    }
