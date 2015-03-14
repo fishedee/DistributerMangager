@@ -120,3 +120,4 @@ class Distribution extends CI_Controller
 
         return $this->distributionAo->getLink($data['upUserId'], $data['downUserId']);
     }
+}
