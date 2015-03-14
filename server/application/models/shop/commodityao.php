@@ -30,16 +30,24 @@ class CommodityAo extends CI_Model
         $this->userAppAo->checkByUserId($userId);
         
         $dataWhere['userId'] = $userId;
-        $response = $this->commodityDb->search($dataWhere, $dataLimit);
+        $data = $this->commodityDb->search($dataWhere, $dataLimit);
 
-        $data = array(
-		'count'=>$response['count'],
-		'data'=>array()
-	);
-        foreach($response['data'] as $key=>$value){
-            $originCommodity = $this->findOriginCommodity($value);
-            $data['data'][] = $originCommodity;
-        } 
+        foreach($data['data'] as $key=>$value)
+            $data['data'][$key] = $this->findOriginCommodity($value);
+        
+        foreach($data['data'] as $key=>$value ){
+            $data['data'][$key]['priceShow'] = $this->getFixedPrice($data['data'][$key]['price']);
+            $data['data'][$key]['oldPriceShow'] = $this->getFixedPrice($data['data'][$key]['oldPrice']);
+        }
+
+        return $data;
+    }
+
+    public function searchAll($dataWhere, $dataLimit){
+        $data = $this->commodityDb->search($dataWhere, $dataLimit);
+
+        foreach($data['data'] as $key=>$value)
+            $data['data'][$key] = $this->findOriginCommodity($value);
         
         foreach($data['data'] as $key=>$value ){
             $data['data'][$key]['priceShow'] = $this->getFixedPrice($data['data'][$key]['price']);
@@ -137,9 +145,7 @@ class CommodityAo extends CI_Model
             'remark'=>'link'
         );
         
-        $this->check($data);
         $this->commodityDb->add($data); 
-	log_message("error", "sucess");
     }
 
     public function modLink($userId, $shopCommodityId, $shopLinkCommodityId,
