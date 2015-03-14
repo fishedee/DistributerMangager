@@ -193,6 +193,8 @@ alter table t_shop_commodity_classify add index userIdIndex(userId);
 create table t_shop_commodity(
     shopCommodityId integer not null auto_increment,
     userId integer not null,
+    isLink integer not null,
+    shopLinkCommodityId integer not null,
     shopCommodityClassifyId integer not null,
     title varchar(128) not null,
     icon varchar(128) not null,
