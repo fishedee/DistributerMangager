@@ -9,6 +9,13 @@
 |	http://codeigniter.com/user_guide/general/hooks.html
 |
 */
+$hook['post_controller_constructor'] = array(
+	'class'    => 'PostControllerConstructorHook',
+	'function' => 'setUserId',
+	'filename' => 'PostControllerConstructorHook.php',
+	'filepath' => 'hooks',
+	'params'   => ''
+);
 
 
 

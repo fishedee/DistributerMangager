@@ -54,6 +54,7 @@ class Commodity extends CI_Controller
             array('title', 'option'),
             array('introduction', 'option'),
             array('state', 'option'),
+            array('appName', 'option'),
             array('shopCommodityClassifyId', 'option'),
         ));
         $dataLimit = $this->argv->checkGet(array(
@@ -155,7 +156,7 @@ class Commodity extends CI_Controller
     }
 
     /**
-     * $view json
+     * @view json
      */
     public function addLink(){
         //检查输入参数
