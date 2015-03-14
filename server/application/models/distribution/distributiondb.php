@@ -24,18 +24,16 @@ class CommodityDb extends CI_Model
         $this->db->update($this->tableName, $data);
     }
 
-    public function del($upUserId, $downUserId){
-        $this->db->where('upUserId', $upUserId);
-        $this->db->where('downUserId', $downUserId);
+    public function del($distributionId){
+        $this->db->where('distributionId', $distributionId);
         $this->db->delete($this->tableName);
     }
 
-    public function get($upUserId, $downUserId){
-        $this->db->where('upUserId', $upUserId);
-        $this->db->where('downUserId', $downUserId);
+    public function get($distributionId){
+        $this->db->where('distributionId', $distributionId);
         $query = $this->db->get($this->tableName)->result_array();
         if(count($query) == 0)
-            return 0;
+            throw new CI_MyException(1, "不存在此条关系");
         else
             return $query[0];
     }
@@ -52,7 +50,7 @@ class CommodityDb extends CI_Model
         return $query;
     }
 
-    public search($where, $limit){
+    public function search($where, $limit){
         if( isset($where['upUserId']) && count($where['upUserId']) == 0)
             return array(
                 'count'=>0,
