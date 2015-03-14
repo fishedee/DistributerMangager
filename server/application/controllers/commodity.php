@@ -45,6 +45,26 @@ class Commodity extends CI_Controller
         return $this->commodityAo->search($userId,$dataWhere, $dataLimit);
     }
 
+	/**
+	* @view json
+	*/
+    public function searchAll(){
+        //检查输入参数
+        $dataWhere = $this->argv->checkGet(array(
+            array('title', 'option'),
+            array('introduction', 'option'),
+            array('state', 'option'),
+            array('shopCommodityClassifyId', 'option'),
+        ));
+        $dataLimit = $this->argv->checkGet(array(
+            array('pageIndex', 'require'),
+            array('pageSize', 'require')
+        ));
+
+        //业务逻辑
+        return $this->commodityAo->searchAll($userId,$dataWhere, $dataLimit);
+    }
+
     /**
     * @view json
     */

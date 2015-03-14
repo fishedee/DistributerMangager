@@ -19,6 +19,7 @@ class CommodityAo extends CI_Model
         while($originCommodity['isLink'] == 1)
             $originCommodity = $this->commodityDb->get($originCommodity['shopLinkCommodityId']);
             
+        $originCommodity['originCommodityId'] = $originCommodity['shopCommodityId'];
         $originCommodity['shopCommodityId'] = $shopCommodity['shopCommodityId'];
         $originCommodity['userId'] = $shopCommodity['userId'];
         $originCommodity['shopCommodityClassifyId'] = $shopCommodity['shopCommodityClassifyId'];
