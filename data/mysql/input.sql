@@ -195,7 +195,6 @@ create table t_shop_commodity(
     userId integer not null,
     isLink integer not null,
     shopLinkCommodityId integer not null,
-    originCommodityId integer not null,
     shopCommodityClassifyId integer not null,
     title varchar(128) not null,
     icon varchar(128) not null,
