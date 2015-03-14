@@ -25,7 +25,7 @@ class Troller extends CI_Controller
         $clientId = $client['clientId'];
 
         //业务逻辑
-        return $this->trollerAo->getAll($userId,$clientId);
+        return $this->trollerAo->getAll($clientId);
     }
 
     /**
@@ -43,7 +43,7 @@ class Troller extends CI_Controller
         $clientId = $client['clientId'];
 
         //业务逻辑
-        return $this->trollerAo->checkAll($userId,$clientId);
+        return $this->trollerAo->checkAll($clientId);
     }
 
     /**
@@ -61,7 +61,7 @@ class Troller extends CI_Controller
         $clientId = $client['clientId'];
 
         //业务逻辑
-        return $this->trollerAo->refreshAll($userId,$clientId);
+        return $this->trollerAo->refreshAll($clientId);
     }
 
 	/**
@@ -83,7 +83,7 @@ class Troller extends CI_Controller
         $clientId = $client['clientId'];
 
         //业务逻辑
-        return $this->trollerAo->addCommodity($userId,$clientId,$shopCommodityId,$quantity);
+        return $this->trollerAo->addCommodity($clientId,$shopCommodityId,$quantity);
     }
 
     /**
@@ -103,6 +103,6 @@ class Troller extends CI_Controller
         $clientId = $client['clientId'];
 
         //业务逻辑
-        return $this->trollerAo->setAll($userId,$clientId,$shopCommodity);
+        return $this->trollerAo->setAll($clientId,$shopCommodity);
     }
 }

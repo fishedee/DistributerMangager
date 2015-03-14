@@ -107,3 +107,4 @@ class Distribution extends CI_Controller
 
         $this->distributionAo->del($userId, $data['distributionId']);
     }
+}

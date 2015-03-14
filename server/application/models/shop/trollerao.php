@@ -9,9 +9,8 @@ class TrollerAo extends CI_Model
         $this->load->model('common/commonErrorEnum', 'commonErrorEnum');
     }
 
-    private function search($userId,$dataWhere,$dataLimit){
+    private function search($dataWhere,$dataLimit){
         //取出所有数据
-        $dataWhere['userId'] = $userId;
         $data = $this->trollerDb->search($dataWhere,$dataLimit);
         foreach($data['data'] as $key=>$value ){
             $data['data'][$key]['priceShow'] = $this->commodityAo->getFixedPrice($data['data'][$key]['price']);
@@ -20,9 +19,9 @@ class TrollerAo extends CI_Model
         return $data;
     }
 
-    public function getByIds($userId,$clientId,$shopTrollerId){
+    public function getByIds($clientId,$shopTrollerId){
         //取出所有数据
-        $shopTroller = $this->search($userId,array(
+        $shopTroller = $this->search(array(
             'clientId'=>$clientId,
             'shopTrollerId'=>$shopTrollerId
         ),array())['data'];
@@ -30,24 +29,22 @@ class TrollerAo extends CI_Model
         return $shopTroller;
     }
 
-    public function delByIds($userId,$clientId,$shopTrollerId){
-        $this->trollerDb->delByUserIdAndClientIdAndShopTrollerId(
-            $userId,
+    public function delByIds($clientId,$shopTrollerId){
+        $this->trollerDb->delByClientIdAndShopTrollerId(
             $clientId,
             $shopTrollerId
         );
     }
 
-    public function getAll($userId,$clientId){
+    public function getAll($clientId){
         //取出所有数据
-        $shopTroller = $this->search($userId,array(
+        $shopTroller = $this->search(array(
             'clientId'=>$clientId,
         ),array())['data'];
 
         //取出库存信息
         foreach( $shopTroller as $key=>$singleShopTroller ){
-            $shopTroller[$key]['inventory'] = $this->commodityAo->get(
-                $singleShopTroller['userId'],
+            $shopTroller[$key]['inventory'] = $this->commodityAo->getByOnlyId(
                 $singleShopTroller['shopCommodityId']
             )['inventory'];
         }
@@ -55,24 +52,23 @@ class TrollerAo extends CI_Model
         return $shopTroller;
     }
 
-    public function checkAll($userId,$clientId){
-        $shopTroller = $this->getAll($userId,$clientId);
+    public function checkAll($clientId){
+        $shopTroller = $this->getAll($clientId);
         foreach($shopTroller as $singleShopTroller){
             $this->check($singleShopTroller);
         }
     }
 
-    public function refreshAll($userId,$clientId){
-        $shopTroller = $this->getAll($userId,$clientId);
+    public function refreshAll($clientId){
+        $shopTroller = $this->getAll($clientId);
         foreach($shopTroller as $singleShopTroller){
             $this->refresh($singleShopTroller);
         }
     }
 
-    public function setAll($userId,$clientId,$shopTroller){
+    public function setAll($clientId,$shopTroller){
         foreach($shopTroller as $singleShopTroller){
             $this->setCommodity(
-                $userId,
                 $clientId,
                 $singleShopTroller['shopCommodityId'],
                 $singleShopTroller['quantity']
@@ -83,16 +79,14 @@ class TrollerAo extends CI_Model
             return $singleShopTroller['shopCommodityId'];
         },$shopTroller);
 
-        $this->trollerDb->delByUserIdAndClientIdAndNotCommodityId(
-            $userId,
+        $this->trollerDb->delByClientIdAndNotCommodityId(
             $clientId,
             $shopCommodityId
         );
     }
 
     public function check($shopTroller){
-        $commodity = $this->commodityAo->get(
-            $shopTroller['userId'],
+        $commodity = $this->commodityAo->getByOnlyId(
             $shopTroller['shopCommodityId']
         );
         if($commodity['title'] != $shopTroller['title']
@@ -113,8 +107,7 @@ class TrollerAo extends CI_Model
     }
 
     public function refresh($shopTroller){
-        $commodity = $this->commodityAo->get(
-            $shopTroller['userId'],
+        $commodity = $this->commodityAo->getByOnlyId(
             $shopTroller['shopCommodityId']
         );
         if($commodity['inventory'] < $shopTroller['quantity'])
@@ -130,21 +123,22 @@ class TrollerAo extends CI_Model
         ));
     }
 
-    public function addCommodity($userId,$clientId,$shopCommodityId,$quantity){
-        $troller =  $this->trollerDb->getByUserIdAndClientIdAndCommodityId(
-            $userId,
+    public function addCommodity($clientId,$shopCommodityId,$quantity){
+        //拉出真正的商品
+        $commodity = $this->commodityAo->getByOnlyId(
+            $shopCommodityId
+        );
+        $shopCommodityId = $commodity['originShopCommodityId'];
+
+        //在真正的商品上操作
+        $troller =  $this->trollerDb->getByClientIdAndCommodityId(
             $clientId,
             $shopCommodityId
         );
         if( count($troller) == 0 ){
-            $commodity = $this->commodityAo->get(
-                $userId,
-                $shopCommodityId
-            );
             $this->trollerDb->add(array(
-                'userId'=>$commodity['userId'],
                 'clientId'=>$clientId,
-                'shopCommodityId'=>$commodity['shopCommodityId'],
+                'shopCommodityId'=>$shopCommodityId,
                 'title'=>$commodity['title'],
                 'icon'=>$commodity['icon'],
                 'introduction'=>$commodity['introduction'],
@@ -153,8 +147,7 @@ class TrollerAo extends CI_Model
                 'quantity'=>$quantity
             ));
         }else{
-            $this->trollerDb->modByUserIdAndClientIdAndCommodityId(
-                $userId,
+            $this->trollerDb->modByClientIdAndCommodityId(
                 $clientId,
                 $shopCommodityId,
                 array('quantity'=>$quantity+$troller[0]['quantity'])
@@ -162,17 +155,15 @@ class TrollerAo extends CI_Model
         }
     }
 
-    public function delCommodity($userId,$clientId,$shopCommodityId){
-        $this->trollerDb->delByUserIdAndClientIdAndCommodityId(
-            $userId,
+    public function delCommodity($clientId,$shopCommodityId){
+        $this->trollerDb->delByClientIdAndCommodityId(
             $clientId,
             $shopCommodityId
         );
     }
 
-    public function setCommodity($userId,$clientId,$shopCommodityId,$quantity){
-        $this->trollerDb->modByUserIdAndClientIdAndCommodityId(
-            $userId,
+    public function setCommodity($clientId,$shopCommodityId,$quantity){
+        $this->trollerDb->modByClientIdAndCommodityId(
             $clientId,
             $shopCommodityId,
             array('quantity'=>$quantity)

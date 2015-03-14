@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class CommodityDb extends CI_Model
+class DistributionDb extends CI_Model
 {
     var $tableName = 't_distribution';
 

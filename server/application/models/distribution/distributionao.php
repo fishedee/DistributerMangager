@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class CommodityAo extends CI_Model
+class DistributionAo extends CI_Model
 {
     public function __contruct(){
         parent::__construct();
@@ -45,10 +45,11 @@ class CommodityAo extends CI_Model
     private $path = array();
     private $restult_path = array();
     
-    private dfs($originUserId, $userId){
+    private function dfs($originUserId, $userId){
         if($originUserId == $userId){
             $result_path = $path;
             return;
+	}
 
         $upUserIds = $this->distributionDb->getUpUser($userId);
         foreach($upUserIds as $upUserId){
