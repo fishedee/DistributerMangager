@@ -22,13 +22,14 @@ class CommodityAo extends CI_Model
             
         $originCommodity['originShopCommodityId'] = $originCommodity['shopCommodityId'];
         $originCommodity['originUserId'] = $originCommodity['userId'];
-        $originCommodity['originUserAppName'] = $this->userAppAo->get($originCommodity['userId'])['appName'];
+        $originCommodity['originUserAppName'] = $this->userAppAo->get($originCommodity['originUserId'])['appName'];
         $originCommodity['isLink'] = $shopCommodity['isLink'];
         $originCommodity['shopCommodityId'] = $shopCommodity['shopCommodityId'];
         $originCommodity['userId'] = $shopCommodity['userId'];
-        if(isset($shopCommodity['userAppName']))
-            $originCommodity['userAppName'] = $shopCommodity['appName'];
+        $originCommodity['appName'] = $this->userAppAo->get($originCommodity['userId'])['appName'];
         $originCommodity['shopCommodityClassifyId'] = $shopCommodity['shopCommodityClassifyId'];
+        $originCommodity['priceShow'] = $this->getFixedPrice($originCommodity['price']);
+        $originCommodity['oldPriceShow'] = $this->getFixedPrice($originCommodity['oldPrice']);
 
         return $originCommodity;
     }
@@ -41,11 +42,6 @@ class CommodityAo extends CI_Model
 
         foreach($data['data'] as $key=>$value)
             $data['data'][$key] = $this->findOriginCommodity($value);
-        
-        foreach($data['data'] as $key=>$value ){
-            $data['data'][$key]['priceShow'] = $this->getFixedPrice($data['data'][$key]['price']);
-            $data['data'][$key]['oldPriceShow'] = $this->getFixedPrice($data['data'][$key]['oldPrice']);
-        }
 
         return $data;
     }
@@ -55,11 +51,6 @@ class CommodityAo extends CI_Model
 
         foreach($data['data'] as $key=>$value)
             $data['data'][$key] = $this->findOriginCommodity($value);
-        
-        foreach($data['data'] as $key=>$value ){
-            $data['data'][$key]['priceShow'] = $this->getFixedPrice($data['data'][$key]['price']);
-            $data['data'][$key]['oldPriceShow'] = $this->getFixedPrice($data['data'][$key]['oldPrice']);
-        }
 
         return $data;
     }
@@ -83,8 +74,6 @@ class CommodityAo extends CI_Model
             throw new CI_MyException(1,'非本商城用户无此权限');
 
         $originCommodity = $this->findOriginCommodity($shopCommodity);
-        $originCommodity['priceShow'] = $this->getFixedPrice($originCommodity['price']);;
-        $originCommodity['oldPriceShow'] = $this->getFixedPrice($originCommodity['oldPrice']);;
         return $originCommodity;
     }
 

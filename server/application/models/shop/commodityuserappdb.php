@@ -59,7 +59,7 @@ class CommodityUserAppDb extends CI_Model {
 			oldPrice,
 			inventory,
 			state,
-			appName as userAppName, 
+			appName, 
 			t_shop_commodity.remark as remark,
 			t_shop_commodity.createTime as createTime,
 			t_shop_commodity.modifyTime as modifyTime');
