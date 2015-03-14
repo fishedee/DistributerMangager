@@ -45,6 +45,7 @@
 				url:'/commodity/search',
 				column:[
 					{id:'shopCommodityId',type:'text',name:'商品ID'},
+					{id:'isLink',type:'enum',name:'类型',map:{0:'普通商品',1:'导入商品'}},
 					{id:'title',type:'text',name:'标题'},
 					{id:'introduction',type:'text',name:'简介'},
 					{id:'priceShow',type:'text',name:'价格'},
@@ -61,13 +62,17 @@
 				{
 					name:'编辑',
 					click:function(data){
-						location.href = 'view.html?shopCommodityId='+data.shopCommodityId;
+						if( data.isLink == "导入商品" ){
+							location.href = 'viewLink.html?shopCommodityId='+data.shopCommodityId;
+						}else{
+							location.href = 'view.html?shopCommodityId='+data.shopCommodityId;
+						}
 					}
 				},
 				{
 					name:'删除',
 					click:function(data){
-						dialog.confirm('确认删除该分类，不可回退操作？!',function(){
+						dialog.confirm('确认删除该商品，不可回退操作？!',function(){
 							$.post('/commodity/del',{shopCommodityId:data.shopCommodityId},function(data){
 								data = $.JSON.parse(data);
 								if( data.code != 0 ){
@@ -84,6 +89,12 @@
 					name:'添加商品',
 					click:function(){
 						location.href = 'view.html';
+					}
+				},
+				{
+					name:'导入商品',
+					click:function(){
+						location.href = 'viewLink.html';
 					}
 				}
 				],

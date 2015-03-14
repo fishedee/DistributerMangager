@@ -18,9 +18,9 @@ class UserAppAo extends CI_Model{
 		
 		$user = $this->userAppDb->getByUser($userId)[0];
 
-		$user['shop'] = 'http://'.$_SERVER['HTTP_HOST'].'/'.$userId.'/item.html';
-		$user['logincallback'] = $_SERVER['HTTP_HOST'];
-		$user['paycallback'] = 'http://'.$_SERVER['HTTP_HOST'].'/'.$userId;
+		$user['shop'] = 'http://'.$userId.'.'.$_SERVER['HTTP_HOST'].'/'.$userId.'/item.html';
+		$user['logincallback'] = $userId.'.'.$_SERVER['HTTP_HOST'];
+		$user['paycallback'] = 'http://'.$userId.'.'.$_SERVER['HTTP_HOST'].'/'.$userId;
 		return $user;
 	}
 

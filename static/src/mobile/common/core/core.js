@@ -50,16 +50,16 @@ $.ajax = function(opt){
 		if( tempError )
 			tempError(XMLHttpRequest, textStatus, errorThrown);
 	}
-	var userId = getUserIdFromUrl();
-	if( userId == null ){
+	var entrancUserId = getUserIdFromUrl();
+	if( entrancUserId == null ){
 		tempSuccess({
 			'code':1,
-			'msg':'缺少userId参数',
+			'msg':'缺少entrancUserId参数',
 			'data':''
 		});
 		return;
 	}
-	opt.data = $.extend(opt.data,{userId:userId});
+	opt.data = $.extend(opt.data,{entrancUserId:entrancUserId});
 	_dialogAjax(opt);
 };
 //单页面入口

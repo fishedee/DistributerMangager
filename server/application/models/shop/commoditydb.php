@@ -55,6 +55,12 @@ class CommodityDb extends CI_Model
         return $query[0];
     }
 
+    public function getByShopLinkCommodityId($shopLinkCommodityId){
+        $this->db->where("shopLinkCommodityId", $shopLinkCommodityId);    
+        $query = $this->db->get($this->tableName)->result_array();
+        return $query;
+    }
+
     public function del($shopCommodityId){
         $this->db->where("shopCommodityId", $shopCommodityId);
         $this->db->delete($this->tableName);

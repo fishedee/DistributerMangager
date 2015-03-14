@@ -1,0 +1,124 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>烘焙帮后台管理系统</title>
+	<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+</head>
+<body class="definewidth m10">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var subPage = require('/fishstrap/page/subPage.js');
+		var shopCommodityId = $.location.getQueryArgv('shopCommodityId');
+		var allClassify = {};
+		var shopCommodity = {};
+		function getAllClassify(next){
+			$.get('/commodityclassify/search',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				allClassify[0] = '无分类';
+				for( var i in data.data.data ){
+					allClassify[data.data.data[i].shopCommodityClassifyId] = data.data.data[i].title;
+				}
+				next();
+			});
+		}
+		function getCommodity(next){
+			$.get('/commodity/get',{shopCommodityId:shopCommodityId},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				shopCommodity = data.data;
+				shopCommodity.shopLinkCommodity = [{
+					shopCommodityId:shopCommodity.originShopCommodityId,
+					title:shopCommodity.title,
+					introduction:shopCommodity.introduction,
+					priceShow:shopCommodity.priceShow,
+					oldPriceShow:shopCommodity.oldPriceShow
+				}];
+				next();
+			});
+		}
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'shopCommodityClassifyId',type:'enum',name:'分类',map:allClassify},
+					{id:'shopLinkCommodity',type:'table',name:'链接商品',
+						option:{
+							column:[
+								{name:'商品ID',type:'text',id:'shopCommodityId'},
+								{id:'title',type:'text',name:'标题'},
+								{id:'introduction',type:'text',name:'简介'},
+								{id:'priceShow',type:'text',name:'价格'},
+								{id:'oldPriceShow',type:'text',name:'原价格'},
+							],
+							operate:[],
+							button:[{
+								name:'选择',
+								click:function(operation){
+									subPage.open({
+										title:'选择商品',
+										url:'indexAll.html?check=true',
+										close:function(state,data){
+											if( state == 'confirm' && data.length != 0  ){
+												operation.clear();
+												operation.add([data[0]]);
+											}
+										}
+									});
+								}
+							}]
+						}
+					},
+				],
+				value:shopCommodity,
+				submit:function(data){
+					if( data.shopLinkCommodity.length == 0 ){
+						dialog.message('请选择导入商品');
+						return;
+					}
+					data.shopLinkCommodityId = data.shopLinkCommodity[0].shopCommodityId;
+					if( shopCommodityId != null ){
+						$.post('/commodity/modLink',$.extend({shopCommodityId:shopCommodityId},data),function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							location.href = 'index.html';
+						});
+					}else{
+						$.post('/commodity/addLink',data,function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							location.href = 'index.html';
+						});
+					}
+				},
+				cancel:function(){
+					location.href = 'index.html';
+				}
+			});
+		}
+		getAllClassify(function(){
+			if( shopCommodityId != null )
+				getCommodity(go);
+			else
+				go();
+		});
+	</script>
+ </body>
+</html>

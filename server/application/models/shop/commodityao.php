@@ -6,8 +6,9 @@ class CommodityAo extends CI_Model
         parent::__construct();
         $this->load->library('argv','','argv');
         $this->load->model('shop/commodityDb', 'commodityDb');
+        $this->load->model('shop/commodityUserAppDb', 'commodityUserAppDb');
         $this->load->model('shop/commodityStateEnum', 'commodityStateEnum');
-        $this->load->model('user/UserAppAo', 'userAppAo');
+        $this->load->model('user/userAppAo', 'userAppAo');
     }
     
     public function getFixedPrice($price){
@@ -20,9 +21,12 @@ class CommodityAo extends CI_Model
             $originCommodity = $this->commodityDb->get($originCommodity['shopLinkCommodityId']);
             
         $originCommodity['originShopCommodityId'] = $originCommodity['shopCommodityId'];
-	$originCommodity['originUserId'] = $originCommodity['userId'];
+	    $originCommodity['originUserId'] = $originCommodity['userId'];
+        $originCommodity['isLink'] = $shopCommodity['isLink'];
         $originCommodity['shopCommodityId'] = $shopCommodity['shopCommodityId'];
         $originCommodity['userId'] = $shopCommodity['userId'];
+        if(isset($shopCommodity['appName']))
+            $originCommodity['appName'] = $shopCommodity['appName'];
         $originCommodity['shopCommodityClassifyId'] = $shopCommodity['shopCommodityClassifyId'];
 
         return $originCommodity;
@@ -46,7 +50,7 @@ class CommodityAo extends CI_Model
     }
 
     public function searchAll($dataWhere, $dataLimit){
-        $data = $this->commodityDb->search($dataWhere, $dataLimit);
+        $data = $this->commodityUserAppDb->search($dataWhere, $dataLimit);
 
         foreach($data['data'] as $key=>$value)
             $data['data'][$key] = $this->findOriginCommodity($value);
@@ -66,6 +70,10 @@ class CommodityAo extends CI_Model
             throw new CI_MyException(1,'价格不能少于或等于0');
         if($shopCommodity['oldPrice'] <= 0 )
             throw new CI_MyException(1,'原价格不能少于或等于0');
+    }
+
+    public function checkLink($shopCommodityId){
+        $this->commodityDb->get($shopCommodityId);
     }
 
     public function get($userId,$shopCommodityId){
@@ -100,13 +108,10 @@ class CommodityAo extends CI_Model
     }
     
     private function dfsDelCommodity($shopCommodityId){
-        $response = $this->commodityDb->getLinks($shopCommodityId);
-        $count = $response['count'];
-        $links = $response['data'];
+        $links = $this->commodityDb->getByShopLinkCommodityId($shopCommodityId);
         $this->commodityDb->del($shopCommodityId);
-        if( $count != 0 )
-            foreach($links as $link)
-                $this->dfsDelCommodity($link['shopCommodityId']);
+        foreach($links as $link)
+            $this->dfsDelCommodity($link['shopCommodityId']);
     }
 
     public function del($userId, $shopCommodityId){
@@ -131,6 +136,9 @@ class CommodityAo extends CI_Model
     }
 
     public function addLink($userId, $shopLinkCommodityId, $shopCommodityClassifyId){
+
+        $this->checkLink($shopLinkCommodityId);
+
         $data = array(
             'isLink'=>1,
             'shopLinkCommodityId'=>$shopLinkCommodityId,
@@ -148,6 +156,8 @@ class CommodityAo extends CI_Model
             throw new CI_MyException(1, '非本商城用户无权限操作');
         if($shopCommodity['isLink'] != 1)
             throw new CI_MyException(1, '此商品不是导入商品');
+
+        $this->checkLink($shopLinkCommodityId);
          
         $data = array(
             'shopLinkCommodityId'=>$shopLinkCommodityId,

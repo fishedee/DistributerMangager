@@ -43,6 +43,7 @@ class User extends CI_Controller {
 	{
 		//检查输入参数
 		$data = $this->argv->checkPost(array(
+			array('appName','require'),
 			array('appId','require'),
 			array('appKey','require'),
 			array('mchId','require'),
