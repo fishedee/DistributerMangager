@@ -21,12 +21,13 @@ class CommodityAo extends CI_Model
             $originCommodity = $this->commodityDb->get($originCommodity['shopLinkCommodityId']);
             
         $originCommodity['originShopCommodityId'] = $originCommodity['shopCommodityId'];
-	    $originCommodity['originUserId'] = $originCommodity['userId'];
+        $originCommodity['originUserId'] = $originCommodity['userId'];
+        $originCommodity['originUserAppName'] = $this->userAppAo->get($originCommodity['userId'])['appName'];
         $originCommodity['isLink'] = $shopCommodity['isLink'];
         $originCommodity['shopCommodityId'] = $shopCommodity['shopCommodityId'];
         $originCommodity['userId'] = $shopCommodity['userId'];
-        if(isset($shopCommodity['appName']))
-            $originCommodity['appName'] = $shopCommodity['appName'];
+        if(isset($shopCommodity['userAppName']))
+            $originCommodity['userAppName'] = $shopCommodity['appName'];
         $originCommodity['shopCommodityClassifyId'] = $shopCommodity['shopCommodityClassifyId'];
 
         return $originCommodity;
