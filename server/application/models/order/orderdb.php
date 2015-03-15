@@ -54,12 +54,12 @@ class OrderDb extends CI_Model
 		$this->db->update($this->tableName,$data);
 	}
 
-	public function getCountByUserIdAndClientId($userId,$clientId){
+	public function getCountByClientId($clientId){
 		$sql = 'select count(*) as count,state '.
 			'from '.$this->tableName.' '.
-			'where userId = ? and clientId = ? '.
+			'where clientId = ? '.
 			'group by state';
-		$argv = array($userId,$clientId);
+		$argv = array($clientId);
 		return $this->db->query($sql,$argv)->result_array();
 	}
 }

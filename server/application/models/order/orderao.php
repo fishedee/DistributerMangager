@@ -16,6 +16,7 @@ class OrderAo extends CI_Model
 		$this->load->model('order/orderAddressDb','orderAddressDb');
 		$this->load->model('order/orderStateEnum','orderStateEnum');
 		$this->load->model('address/addressPayMentEnum','addressPayMentEnum');
+		$this->load->model('common/commonErrorEnum', 'commonErrorEnum');
 	}
 
 	private function addMyOrder($userId,$clientId,$shopCommodity,$address){
@@ -54,7 +55,6 @@ class OrderAo extends CI_Model
 			return array(
 				'shopOrderId'=>$shopOrderId,
 				'shopCommodityId'=>$singleShopCommodity['shopCommodityId'],
-				'userId'=>$singleShopCommodity['userId'],
 				'title'=>$singleShopCommodity['title'],
 				'icon'=>$singleShopCommodity['icon'],
 				'introduction'=>$singleShopCommodity['introduction'],
@@ -93,10 +93,9 @@ class OrderAo extends CI_Model
 		);
 	}
 
-	public function search($userId,$dataWhere,$dataLimit){
+	public function search($dataWhere,$dataLimit){
 		$this->userAppAo->checkByUserId($userId);
 		
-		$dataWhere['userId'] = $userId;
         $data = $this->orderDb->search($dataWhere,$dataLimit);
         foreach($data['data'] as $key=>$value ){
             $data['data'][$key]['priceShow'] = $this->commodityAo->getFixedPrice($data['data'][$key]['price']);
@@ -104,8 +103,8 @@ class OrderAo extends CI_Model
         return $data;
 	}
 
-	public function getClientOrder($userId,$clientId){
-		$orderNum = $this->orderDb->getCountByUserIdAndClientId($userId,$clientId);
+	public function getClientOrder($clientId){
+		$orderNum = $this->orderDb->getCountByClientId($clientId);
 		$result = array();
 
 		foreach($orderNum as $single){
@@ -122,17 +121,15 @@ class OrderAo extends CI_Model
 		},0);
 		return $result;
 	}
-	public function getClientOrderDetail($userId,$clientId,$state){
+	public function getClientOrderDetail($clientId,$state){
 		$dataWhere = array('clientId'=>$clientId);
 		if( $state != 0 )
 			$dataWhere['state'] = $state;
-		return $this->search($userId,$dataWhere,array())['data'];
+		return $this->search($dataWhere,array())['data'];
 	}
 
-	public function get($userId,$shopOrderId){
+	public function get($shopOrderId){
 		$shopOrder = $this->orderDb->get($shopOrderId);
-		if($shopOrder['userId'] != $userId)
-			throw new CI_MyException(1,'非本商城用户无阅读该订单权限');
 
 		$shopOrder['priceShow'] = $this->commodityAo->getFixedPrice($shopOrder['price']);
 
@@ -147,9 +144,9 @@ class OrderAo extends CI_Model
 		return $shopOrder;
 	}
 
-	public function add($userId,$clientId,$shopTrollerId,$address){
+	public function add($clientId,$shopTrollerId,$address){
 		//获取购物车内的商品信息
-		$shopTroller = $this->trollerAo->getByIds($userId,$clientId,$shopTrollerId);
+		$shopTroller = $this->trollerAo->getByIds($clientId,$shopTrollerId);
 
 		//校验购物车内的商品信息
 		foreach($shopTroller as $singleShopTroller){
@@ -165,6 +162,10 @@ class OrderAo extends CI_Model
 		foreach($shopTroller as $singleShopTroller)
 			if($singleShopTroller['quantity'] <= 0 )
 				throw new CI_MyException(1,'选择的商品数量不能为0');
+		$userId = $shopTroller[0]['userId'];
+		foreach($shopTroller as $singleShopTroller)
+			if($singleShopTroller['userId'] != $userId)
+				throw new CI_MyException ($this->commonErrorEnum->SHOP_CART_CHECK_ERROR,'只能购买同一商城内的商品');
 
 		//扣库存
 		foreach($shopTroller as $singleShopTroller ){
@@ -178,22 +179,19 @@ class OrderAo extends CI_Model
 		$this->addWxOrder($userId,$clientId,$orderInfo);
 
 		//删购物车
-		$this->trollerAo->delByIds($userId,$clientId,$shopTrollerId);
+		$this->trollerAo->delByIds($clientId,$shopTrollerId);
 
 		return $orderInfo['shopOrderId'];
 	}
 
-	public function wxJsPay($userId,$clientId,$shopOrderId){
-		$orderInfo = $this->get($userId,$shopOrderId);
+	public function wxJsPay($clientId,$shopOrderId){
+		$orderInfo = $this->get($shopOrderId);
 
-		return $this->orderPayAo->wxJsPay($userId,$orderInfo['wxPrePayId']);
+		return $this->orderPayAo->wxJsPay($orderInfo['userId'],$orderInfo['wxPrePayId']);
 	}
 
-	public function modHasSend( $userId,$shopOrderId ){
+	public function modHasSend( $shopOrderId ){
         $shopOrder = $this->orderDb->get($shopOrderId);
-        if($shopOrder['userId'] != $userId)
-        	throw new CI_MyException(1, "非本商城用户无阅读该订单权限");
-
         if($shopOrder['state'] == $this->orderStateEnum->NO_PAY)
          	throw new CI_MyException(1, "该订单未支付，不能扭转为已发货状态");
 

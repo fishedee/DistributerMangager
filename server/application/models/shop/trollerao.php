@@ -17,6 +17,20 @@ class TrollerAo extends CI_Model
             $data['data'][$key]['priceShow'] = $this->commodityAo->getFixedPrice($data['data'][$key]['price']);
             $data['data'][$key]['oldPriceShow'] = $this->commodityAo->getFixedPrice($data['data'][$key]['oldPrice']);
         }
+
+        //取出库存等信息
+        foreach( $data['data'] as $key=>$singleShopTroller ){
+            $commodity = $this->commodityAo->getByOnlyId(
+                $singleShopTroller['shopCommodityId']
+            );
+            $userApp = $this->userAppAo->get(
+                $commodity['userId']
+            );
+            $data['data'][$key]['inventory'] = $commodity['inventory'];
+            $data['data'][$key]['appName'] = $userApp['appName'];
+            $data['data'][$key]['userId'] = $userApp['userId'];
+        }
+        
         return $data;
     }
 
@@ -43,19 +57,6 @@ class TrollerAo extends CI_Model
             'clientId'=>$clientId,
         ),array())['data'];
 
-        //取出库存信息
-        foreach( $shopTroller as $key=>$singleShopTroller ){
-            $commodity = $this->commodityAo->getByOnlyId(
-                $singleShopTroller['shopCommodityId']
-            );
-            $userApp = $this->userAppAo->get(
-                $commodity['userId']
-            );
-            $shopTroller[$key]['inventory'] = $commodity['inventory'];
-            $shopTroller[$key]['appName'] = $userApp['appName'];
-            $shopTroller[$key]['userId'] = $userApp['userId'];
-        }
-        
         return $shopTroller;
     }
 

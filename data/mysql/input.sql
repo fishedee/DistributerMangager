@@ -257,7 +257,6 @@ create table t_shop_order_commodity(
 	shopOrderCommodityId integer not null auto_increment,
 	shopOrderId varchar(32) not null,
 	shopCommodityId integer not null,
-	userId integer not null,
     title varchar(128) not null,
     icon varchar(128) not null,
     introduction varchar(128) not null,

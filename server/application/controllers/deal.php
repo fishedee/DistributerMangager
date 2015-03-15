@@ -74,10 +74,10 @@ class Deal extends CI_Controller {
 		$user = $this->loginAo->checkMustClient(
             $this->userPermissionEnum->COMPANY_SHOP
         );
-        $userId = $user['userId'];
+        $dataWhere['userId'] = $user['userId']
 
 		//执行业务逻辑
-		return $this->orderAo->search($userId,$dataWhere,$dataLimit);
+		return $this->orderAo->search($dataWhere,$dataLimit);
 	}
 
 	/**
@@ -98,7 +98,7 @@ class Deal extends CI_Controller {
         $userId = $user['userId'];
 
 		//执行业务逻辑
-		return $this->orderAo->get($userId,$shopOrderId);
+		return $this->orderAo->get($shopOrderId);
 	}
 
 	/**
@@ -117,7 +117,7 @@ class Deal extends CI_Controller {
 		$clientId = $client['clientId'];
 
 		//执行业务逻辑
-		return $this->orderAo->getClientOrder($userId,$clientId);
+		return $this->orderAo->getClientOrder($clientId);
 	}
 
 	/**
@@ -138,7 +138,7 @@ class Deal extends CI_Controller {
 		$clientId = $client['clientId'];
 
 		//执行业务逻辑
-		return $this->orderAo->getClientOrderDetail($userId,$clientId,$state);
+		return $this->orderAo->getClientOrderDetail($clientId,$state);
 	}
 
 	/**
@@ -159,7 +159,7 @@ class Deal extends CI_Controller {
 		$clientId = $client['clientId'];
 
 		//执行业务逻辑
-		return $this->orderAo->get($userId,$shopOrderId);
+		return $this->orderAo->get($shopOrderId);
 	}
 
 
@@ -184,7 +184,6 @@ class Deal extends CI_Controller {
 	   
 		//业务逻辑
 		return $this->orderAo->add(
-			$userId,
 			$clientId,
 			$shopTroller,
 			$address
@@ -208,7 +207,7 @@ class Deal extends CI_Controller {
         $userId = $user['userId'];
 
         //业务逻辑
-        $this->orderAo->modHasSend($userId, $shopOrderId); 
+        $this->orderAo->modHasSend($shopOrderId); 
     }
 
 	/**
@@ -229,7 +228,6 @@ class Deal extends CI_Controller {
 	   
 		//业务逻辑
 		return $this->orderAo->wxJsPay(
-			$userId,
 			$clientId,
 			$shopOrderId
 		);
