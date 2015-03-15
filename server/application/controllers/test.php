@@ -11,6 +11,26 @@ class Test extends CI_Controller
     /**
      * @view json
      */
+    public function search($where, $limit){
+        $dataWhere = $this->argv->checkGet(array(
+            array('distributionOrderId', 'option'),
+            array('upUserId', 'option'),
+            array('downUserId', 'option'),
+            array('price', 'option'),
+            array('state', 'option')
+        ));
+
+        $dataLimit = $this->argv->checkGet(array(
+            array('pageSize', 'require'),
+            array('pageIndex', 'require')
+        ));
+
+        return $this->distributionOrderAo->search($dataWhere, $dataLimit);
+    }
+
+    /**
+     * @view json
+     */
     public function add(){
         //检查参数
         $data = $this->argv->checkPost(array(
