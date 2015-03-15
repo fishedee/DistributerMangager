@@ -65,11 +65,6 @@ class CommodityAo extends CI_Model
             throw new CI_MyException(1,'原价格不能少于或等于0');
     }
 
-    public function checkLink($shopCommodityId){
-        $this->commodityDb->get($shopCommodityId);
-        
-    }
-
     public function get($userId,$shopCommodityId){
         $shopCommodity = $this->commodityDb->get($shopCommodityId);
         if( $shopCommodity['userId'] != $userId)
@@ -134,9 +129,13 @@ class CommodityAo extends CI_Model
         $this->commodityDb->add($data);
     }
 
+    public function checkLink($shopCommodityId){
+        $this->commodityDb->get($shopCommodityId);
+    }
+
     public function addLink($userId, $shopLinkCommodityId, $shopCommodityClassifyId){
 
-        $this->checkLink(0,$shopLinkCommodityId);
+        $this->checkLink($shopLinkCommodityId);
 
         $data = array(
             'isLink'=>1,
