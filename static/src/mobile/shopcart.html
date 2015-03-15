@@ -8,7 +8,7 @@
 		var dialog = require('common/dialog/dialog.js');
 		var Header = require('common/header/header.js');
 		var HeaderTitle = require('common/headertitle/headertitle.js');
-		var ItemListWithNum = require('common/itemlistwithnum/itemlistwithnum.js');
+		var ItemListWithNumList = require('control/itemlistwithnumlist/itemlistwithnumlist.js');
 		var FooterButton = require('common/footerbutton/footerbutton.js');
 		var shopcart = {};
 		function checkShopCart(nochangenext,changenext){
@@ -50,22 +50,10 @@
 				tip:'订单总金额：',
 				text:'0元'
 			});
-			var itemlistwithnum = new ItemListWithNum({
-				title:'店铺',
-				item:_.map(shopcart,function(single){
-					return {
-						shopTrollerId:single.shopTrollerId,
-						shopCommodityId:single.shopCommodityId,
-						image:single.icon,
-						title:single.title,
-						summary:single.introduction,
-						price:single.priceShow,
-						stock:single.inventory,
-						quantity:single.quantity,
-					};
-				}),
-				change:whenItemListChange
-			});
+			var itemlistwithnum = new ItemListWithNumList(
+				shopcart,
+				whenItemListChange
+			);
 			function refreshHeaderTitle(){
 				var checkedItemList = itemlistwithnum.getChecked();
 				var orderPrice = 0;
@@ -96,17 +84,25 @@
 			}
 			function goAddress(){
 				var checkedItemList = itemlistwithnum.getChecked();
+				//校验购物车非空，以及同一商城购买
+				if( checkedItemList.length == 0 ){
+					dialog.message('请选择要结算的商品');
+					return;
+				}
+				var userId = checkedItemList[0].userId;
+				for( var i = 1 ; i < checkedItemList.length ; ++i )
+					if( checkedItemList[i].userId != userId){
+						dialog.message('请选择同一商城的商品进行结算');
+						return;
+					}
+				//购买
 				var shopTroller  = '';
 				for( var i in checkedItemList ){
 					if( shopTroller != '')
 						shopTroller += '|';
 					shopTroller += checkedItemList[i].shopTrollerId;
 				}
-				if( shopTroller == ''){
-					dialog.message('请选择要结算的商品');
-				}else{
-					location.href = $.url.buildQueryUrl('address.html',{shopTroller:shopTroller,showwxpaytitle:1});
-				}
+				location.href = $.url.buildQueryUrl('address.html',{shopTroller:shopTroller,showwxpaytitle:1});
 			}
 			function whenItemListChange(){
 				refreshHeaderTitle();

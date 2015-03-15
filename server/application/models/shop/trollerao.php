@@ -7,6 +7,7 @@ class TrollerAo extends CI_Model
         $this->load->model('shop/trollerDb', 'trollerDb');
         $this->load->model('shop/commodityAo', 'commodityAo');
         $this->load->model('common/commonErrorEnum', 'commonErrorEnum');
+        $this->load->model('user/userAppAo','userAppAo');
     }
 
     private function search($dataWhere,$dataLimit){
@@ -44,9 +45,15 @@ class TrollerAo extends CI_Model
 
         //取出库存信息
         foreach( $shopTroller as $key=>$singleShopTroller ){
-            $shopTroller[$key]['inventory'] = $this->commodityAo->getByOnlyId(
+            $commodity = $this->commodityAo->getByOnlyId(
                 $singleShopTroller['shopCommodityId']
-            )['inventory'];
+            );
+            $userApp = $this->userAppAo->get(
+                $commodity['userId']
+            );
+            $shopTroller[$key]['inventory'] = $commodity['inventory'];
+            $shopTroller[$key]['appName'] = $userApp['appName'];
+            $shopTroller[$key]['userId'] = $userApp['userId'];
         }
         
         return $shopTroller;
