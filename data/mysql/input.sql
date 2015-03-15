@@ -300,6 +300,18 @@ create table t_distribution(
     primary key(distributionId)
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
 
+#创建分成订单表
+create table t_distribution_order(
+    distributionOrderId integer not null auto_increment,
+    upUserId integer not null,
+    downUserId integer not null,
+    shopOrderId integer not null,
+    price integer not null,
+    state integer not null,
+    createTime timestamp not null default CURRENT_TIMESTAMP,
+    modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    primary key(distributionOrderId)
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
 
 #建立初始数据
 insert into t_user(userId,name,password,company,phone,type) values

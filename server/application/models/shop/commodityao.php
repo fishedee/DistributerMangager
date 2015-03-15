@@ -67,6 +67,7 @@ class CommodityAo extends CI_Model
 
     public function checkLink($shopCommodityId){
         $this->commodityDb->get($shopCommodityId);
+        
     }
 
     public function get($userId,$shopCommodityId){
@@ -158,6 +159,12 @@ class CommodityAo extends CI_Model
             throw new CI_MyException(1, '不能导入自己的商品');
         
         $this->checkLink($shopLinkCommodityId);
+        $tempLink = $this->get($shopLinkCommodityId);
+        $while($tempLink['isLink'] != 0){
+            if($tempLink['shopCommodityId'] == $shopCommodityId)
+                throw new CI_MyException(1, '循环导入商品出错');
+            $tempLink = $this->get($tempLink['shopLinkCommodityId']);
+        }
          
         $data = array(
             'shopLinkCommodityId'=>$shopLinkCommodityId,
