@@ -11,7 +11,7 @@ class Test extends CI_Controller
     /**
      * @view json
      */
-    public function search($where, $limit){
+    public function search(){
         $dataWhere = $this->argv->checkGet(array(
             array('distributionOrderId', 'option'),
             array('upUserId', 'option'),
@@ -65,7 +65,7 @@ class Test extends CI_Controller
     /**
      * @view json
      */
-    public function payOrder($distributionOrderId){
+    public function payOrder(){
         $data = $this->argv->checkPost(array(
             array('distributionOrderId', 'require')
         ));  
@@ -76,7 +76,7 @@ class Test extends CI_Controller
     /**
      * @view json
      */
-    public function confirm($distributionOrderId){
+    public function confirm(){
         $data = $this->argv->checkPost(array(
             array('distributionOrderId', 'require')
         ));  
@@ -87,7 +87,7 @@ class Test extends CI_Controller
     /**
      * @view json
      */
-    public function del($distributionOrderId){
+    public function del(){
         $data = $this->argv->checkPost(array(
             array('distributionOrderId', 'require')
         ));

@@ -28,16 +28,17 @@ class DistributionOrderAo extends CI_Model
         $response = $this->distributionAo->search($where, array());
         if($response['count'] == 0)
             throw new CI_MyException(1, '用户间不存在分成关系');
-
+	$data['price'] = $data['price']*100;
         $this->distributionOrderDb->add($upUserId, $downUserId, $data);
     }
 
     public function mod($distributionOrderId, $data){
-        $data['price'] = $data['priceShow']*100;   
-        unset($data['priceShow']);
-        if($data['price'] <= 0)
-            throw new CI_MyException(1, '价格不能少于或等于0');       
-        $this->distributionOrderDb->mod($distributionId, $data);
+	if( isset($data['price']) ){
+        	$data['price'] = $data['price']*100;   
+        	if($data['price'] <= 0)
+            		throw new CI_MyException(1, '价格不能少于或等于0');       
+	}
+        $this->distributionOrderDb->mod($distributionOrderId, $data);
     }
 
     public function payOrder($distributionOrderId){
