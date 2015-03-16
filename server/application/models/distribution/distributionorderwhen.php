@@ -7,16 +7,14 @@ class DistributionOrderWhen extends CI_Model
         $this->load->model('distribution/distributionOrderDb', 'distributionOrderDb');
         $this->load->model('distribution/distributionCommodityAo', 'distributionCommodityAo');
         $this->load->model('order/orderCommodityAo', 'orderCommodityAo');
-        $this->load->model('order/orderAo', 'orderAo');
     }
 
-    public function whenGenerateOrder($entranceUserId, $shopOrderId){
-        $order = $this->orderAo->get($shopOrderId);                             
-        $clientId = $order['clientId'];
+    public function whenGenerateOrder($entranceUserId, $shopOrder){
+        $clientId = $shopOrder['clientId'];
         $linkUsers = $this->distributionAo->getLink($userId, $entranceUserId);
         $data = array(
             'price'=>1,
-            'shopOrderId'=>$shopOrderId,
+            'shopOrderId'=>$shopOrder['shopOrderId'],
             'state'=>$this->distributionOrderStateEnum->UN_PAY
         );
 
@@ -25,7 +23,7 @@ class DistributionOrderWhen extends CI_Model
                 $linkUsers[$i + 1], $data);
 
             $where = array(
-                'shopOrderId'=>$shopOrderId
+                'shopOrderId'=>$shopOrder['shopOrderId']
             );
 
             $response = $this->orderCommodityAo->search($where, array());
@@ -33,7 +31,7 @@ class DistributionOrderWhen extends CI_Model
             foreach($commoditys as $commodity){
                 $data = array(
                     'distributionOrderId' =>$distributionOrderId,
-                    'shopOrderId'=>$shopOrderId,
+                    'shopOrderId'=>$shopOrder['shopOrderId'],
                     'shopCommodityId'=>$commodity['shopCommodityId'],
                     'price'=>0
                 );
