@@ -181,7 +181,7 @@ class OrderAo extends CI_Model
 		$this->trollerAo->delByIds($clientId,$shopTrollerId);
 
 		//触发分成订单
-		$this->distributionOrderWhen->whenGenerateOrder($orderInfo['shopOrderId']);
+		$this->distributionOrderWhen->whenGenerateOrder($entranceUserId,$this->get($orderInfo['shopOrderId']));
 
 		return $orderInfo['shopOrderId'];
 	}
