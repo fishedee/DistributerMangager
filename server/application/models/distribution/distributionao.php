@@ -90,7 +90,6 @@ class DistributionAo extends CI_Model
 
     
     private function dfs($originUserId, $userId){
-<<<<<<< HEAD
         //记录路径
         $this->path[$originUserId] = 1;
         $this->result_path[] = $originUserId;
@@ -116,38 +115,13 @@ class DistributionAo extends CI_Model
         unset($this->path[$originUserId]);
         array_pop($this->result_path);
         return false;
-=======
-	if($originUserId == $userId){
-		$this->result_path = $this->path;
-		return;
-	}
-
-	$where = array(
-		'upUserId'=>$originUserId,
-        'state'=>$distributionStateEnum->ON_ACCEPT
-	);
-	$response = $this->search($where, array());
-	$distributions = $response['data'];
-	foreach($distributions as $distribution){
-		$this->path[] = $distribution['downUserId'];
-		$this->dfs($distribution['downUserId'], $userId);	
-        unset($this[ count($this->path) - 1]);
-	}
->>>>>>> master
     }
 
     public function getLink($originUserId, $userId){
         $this->path = array(); 
-<<<<<<< HEAD
     	$this->result_path = array();
         $this->dfs($originUserId, $userId);
         return $this->result_path;
-=======
-	    $this->result = array();
-        $this->path[] = $originUserId;
-        $this->dfs($originUserId, $userId);
-        return $this->result;
->>>>>>> master
     }
 }
 
