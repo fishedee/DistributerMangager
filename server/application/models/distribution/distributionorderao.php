@@ -27,7 +27,6 @@ class DistributionOrderAo extends CI_Model
 
     public function get($distributionOrderId){
         $distributionOrder = $this->distributionOrderDb->get($distributionOrderId);
-        return $distributionOrder;
         $order = $this->orderAo->get($distributionOrder['shopOrderId']);
         $commodity = $this->distributionCommodityAo->get($distributionOrderId);
         $data = array(

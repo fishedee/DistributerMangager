@@ -6,7 +6,6 @@ class DistributionOrderWhen extends CI_Model
         parent::__construct();
         $this->load->model('distribution/distributionOrderDb', 'distributionOrderDb');
         $this->load->model('distribution/distributionCommodityAo', 'distributionCommodityAo');
-        $this->load->model('order/orderCommodityAo', 'orderCommodityAo');
     }
 
     public function whenGenerateOrder($entranceUserId, $shopOrder){

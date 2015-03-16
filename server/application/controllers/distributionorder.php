@@ -45,7 +45,7 @@ class DistributionOrder extends CI_Controller
             array('distributionOrderId', 'require')
         ));
         $distributionOrder = $this->distributionOrderAo->get($dataWhere['distributionOrderId']);
-        
+   	return $distributionOrder;     
     }
 
     /**
