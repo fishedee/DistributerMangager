@@ -25,9 +25,6 @@ class DistributionOrder extends CI_Controller
     public function search(){
         $dataWhere = $this->argv->checkGet(array(
             array('distributionOrderId', 'option'),
-            array('upUserId', 'option'),
-            array('downUserId', 'option'),
-            array('price', 'option'),
             array('state', 'option')
         ));
 
@@ -36,7 +33,9 @@ class DistributionOrder extends CI_Controller
             array('pageIndex', 'require')
         ));
 
-        return $this->distributionOrderAo->search($dataWhere, $dataLimit);
+        $user = $this->loginAo->checkMustLogin();
+
+        return $this->distributionOrderAo->search($user['userId'], $dataWhere, $dataLimit);
     }
 
     /**
@@ -89,7 +88,8 @@ class DistributionOrder extends CI_Controller
      */
     public function payOrder(){
         $data = $this->argv->checkPost(array(
-            array('distributionOrderId', 'require')
+            array('distributionOrderId', 'require'),
+            array('price', 'require')
         ));  
         $user = $this->loginAo->checkMustLogin();
 
@@ -120,14 +120,5 @@ class DistributionOrder extends CI_Controller
         $this->distributionOrderAo->confirm($user['userId'], $data['distributionOrderId']);
     }
 
-    /**
-     * @view json
-     */
-    //public function del(){
-    //    $data = $this->argv->checkPost(array(
-    //        array('distributionOrderId', 'require')
-    //    ));
-    //    $this->distributionAo->del($data['distributionOrderId']);
-    //}
 }
 

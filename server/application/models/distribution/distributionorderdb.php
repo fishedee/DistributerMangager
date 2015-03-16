@@ -48,7 +48,9 @@ class DistributionOrderDb extends CI_Model
             );
 
         foreach($where as $key=>$value){
-            if($key == 'upUserId' || $key == 'downUserId' || $key == 'state')
+            if($key == 'upUserId' || $key == 'downUserId')
+                $this->db->or_where($key, $value);
+            else if($key == 'state')
                 $this->db->where($key, $value);
             else if($key == 'shopOrderId' || $key == 'distributionOrderId')
                 $this->db->where_in($key, $value);

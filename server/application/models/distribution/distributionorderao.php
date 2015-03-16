@@ -15,7 +15,10 @@ class DistributionOrderAo extends CI_Model
         return sprintf("%.2f", $price/100);
     }
 
-    public function search($where, $limit){
+    public function search($userId, $where, $limit){
+        $where['upUserId'] = $userId;
+        $where['downUserId'] = $userId;
+
         $data = $this->distributionOrderDb->search($where, $limit);
         foreach($data['data'] as $key=>$value)
             $data['data'][$key]['priceShow'] = $this->getFixedPrice($value['price']);
