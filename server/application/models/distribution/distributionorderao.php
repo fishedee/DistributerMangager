@@ -6,6 +6,7 @@ class DistributionOrderAo extends CI_Model
         parent::__construct();
         $this->load->model('distribution/distributionorderDb', 'distributionOrderDb');
         $this->load->model('distribution/distributionAo', 'distributionAo');
+        $this->load->model('order/orderAo', 'orderAo');
     }
 
     public function getFixedPrice($price){
@@ -16,6 +17,16 @@ class DistributionOrderAo extends CI_Model
         $data = $this->distributionOrderDb->search($where, $limit);
         foreach($data['data'] as $key=>$value)
             $data['data'][$key]['priceShow'] = $this->getFixedPrice($value['price']);
+        return $data;
+    }
+
+    public function get($distributionOrderId){
+        $distributionOrder = $this->distributionOrderDb->get($distributionOrderId);
+        $order = $this->orderAo->get($distributionOrder['shopOrderId']);
+        $data = array(
+            'distributionOrder'=>$distributionOrder,
+            'shopOrder'=>$order
+        );
         return $data;
     }
 
@@ -75,5 +86,20 @@ class DistributionOrderAo extends CI_Model
      
     public function del($distributionOrderId){
         $this->distributionOrderDb->del($distributionOrderId);
+    }
+
+    public function whenGenerateOrder($entranceUserId, $shopOrderId){
+        $order = $this->orderAo->get($shopOrderId);                             
+        $clientId = $order['clientId'];
+        $linkUsers = $this->distributionAo->getLink($clientId, $entranceUserId);
+        $data = array(
+            'price'=>1,
+            'shopOrderId'=>$shopOrderId,
+            'state'=>$this->distributionOrderStateEnum->UN_PAY
+        );
+
+        for($i = 0; $i < count($linkUsers)-1; ++$i){
+            $this->add($linkUsers[$i], $linkUsers[$i + 1], $data);
+        }        
     }
 }

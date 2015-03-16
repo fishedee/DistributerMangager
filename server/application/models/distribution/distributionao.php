@@ -39,7 +39,8 @@ class DistributionAo extends CI_Model
     
 
     private $path = array();
-    private $result_path = array();
+    private $result = array();
+
     
     private function dfs($originUserId, $userId){
 	if($originUserId == $userId){
@@ -54,22 +55,18 @@ class DistributionAo extends CI_Model
 	$response = $this->search($where, array());
 	$distributions = $response['data'];
 	foreach($distributions as $distribution){
-		log_message('error', $distribution['downUserId']);
-		log_message('error', $userId);
-		$this->path[$distribution['downUserId']] = 1;
+		$this->path[] = $distribution['downUserId'];
 		$this->dfs($distribution['downUserId'], $userId);	
-		unset($this->path[$distribution['downUserId']]);
+        unset($this[ count($this->path) - 1]);
 	}
     }
 
     public function getLink($originUserId, $userId){
         $this->path = array(); 
-	$this->result_path = array();
-	$this->path[$originUserId] = 1;
+	    $this->result = array();
+        $this->path[] = $originUserId;
         $this->dfs($originUserId, $userId);
-	foreach($this->result_path as $key=>$value)
-		$map[] = $key;
-        return $map;
+        return $this->result;
     }
 }
 
