@@ -43,7 +43,7 @@ class DistributionCommodityDb extends CI_Model
         
         if(isset($limit['pageIndex']) && isset($limit['pageSize']))
             $this->db->limit($limit['pageSize'], $limit['pageIndex']);
-        $query =$this->db->get($this->tableName)->resutl_array();
+        $query =$this->db->get($this->tableName)->result_array();
 
         return array(
             'count'=>$count,

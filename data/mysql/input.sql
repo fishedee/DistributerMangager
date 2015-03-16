@@ -408,29 +408,18 @@ insert into t_shop_commodity(userId,shopLinkCommodityId, isLink, shopCommodityCl
 (10004,0, 0, 10009,'/data/upload/sample/sample6.jpg','商品4','商品简介4','商品描述4',4,44400,10,1),
 (10004,10001, 1, 10009,'/data/upload/sample/sample6.jpg','商品4','商品简介4','商品描述4',4,44400,10,1);
 
+insert into t_shop_order_address(shopOrderId, name, province, city, address, phone, payment)values
+(10001, 'fish', '广东', '广州', '广州大学城', '15593728362', 1);
 
-insert into t_shop_order(userId, clientId, image, description, price, num, name, wxPrePayId, state, remark)values
-(10003, 10002, '/data/upload/sample/sample4.jpg', '测试订单', 100, 2, '测试订单', '12323213', 0, '测试订单');
+insert into t_shop_order(shopOrderId, userId, clientId, image, description, price, num, name, wxPrePayId, state, remark)values
+(10001, 10003, 10001, '/data/upload/sample/sample4.jpg', '测试订单', 100, 2, '测试订单', '12323213', 0, '测试订单');
 
 insert into t_shop_order_commodity(shopOrderId, shopCommodityId, title, icon, introduction, price, OldPrice, quantity)values
 (10001, 10001, '测试商品1', '/data/upload/sample/sample6.jpg', '测试商品1', 30, 50, 2),
 (10001, 10002, '测试商品2', '/data/upload/sample/sample6.jpg', '测试商品2', 40, 50, 1);
 
-#创建分成订单表
-create table t_distribution_order(
-    distributionOrderId integer not null auto_increment,
-    upUserId integer not null,
-    downUserId integer not null,
-    shopOrderId integer not null,
-    price integer not null,
-    state integer not null,
-    createTime timestamp not null default CURRENT_TIMESTAMP,
-    modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-    primary key(distributionOrderId)
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-
 insert into t_distribution_order(upUserId, downUserId, shopOrderId, price, state)values
-(10002, 10003, 10001, 100, 0);
+(10003, 10002, 10001, 100, 0);
 
 insert into t_distribution_commodity(distributionOrderId, shopOrderId, shopCommodityId, price)values
 (10001, 10001, 10001, 5),
