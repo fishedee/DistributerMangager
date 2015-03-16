@@ -1,10 +1,11 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Test extends CI_Controller
+class DistributionOrder extends CI_Controller
 {
     public function __construct(){
         parent::__construct();
         $this->load->model('distribution/distributionorderAo', 'distributionOrderAo');
+        $this->load->model('user/loginAo', 'loginAo');
         $this->load->library('argv', 'argv');
     }
 
@@ -40,6 +41,7 @@ class Test extends CI_Controller
 
     /**
      * @view json
+     * @test
      */
     public function add(){
         //检查参数
@@ -79,8 +81,9 @@ class Test extends CI_Controller
         $data = $this->argv->checkPost(array(
             array('distributionOrderId', 'require')
         ));  
+        $user = $this->loginAo->checkMustLogin();
 
-        $this->distributionOrderAo->payOrder($data['distributionOrderId']);
+        $this->distributionOrderAo->payOrder($user['userId'], $data['distributionOrderId']);
     }
 
     /**
@@ -91,7 +94,8 @@ class Test extends CI_Controller
             array('distributionOrderId', 'require')
         ));
 
-        $this->distributionOrderAo->HasPayOrder($data['distributionOrderId']);
+        $user = $this->loginAo->checkMustLogin();
+        $this->distributionOrderAo->HasPayOrder($user['userId'], $data['distributionOrderId']);
     }
 
     /**
@@ -102,17 +106,18 @@ class Test extends CI_Controller
             array('distributionOrderId', 'require')
         ));  
 
-        $this->distributionOrderAo->confirm($data['distributionOrderId']);
+        $user = $this->loginAo->checkMustLogin();
+        $this->distributionOrderAo->confirm($user['userId'], $data['distributionOrderId']);
     }
 
     /**
      * @view json
      */
-    public function del(){
-        $data = $this->argv->checkPost(array(
-            array('distributionOrderId', 'require')
-        ));
-        $this->distributionAo->del($data['distributionOrderId']);
-    }
+    //public function del(){
+    //    $data = $this->argv->checkPost(array(
+    //        array('distributionOrderId', 'require')
+    //    ));
+    //    $this->distributionAo->del($data['distributionOrderId']);
+    //}
 }
 

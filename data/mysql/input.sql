@@ -313,6 +313,18 @@ create table t_distribution_order(
     primary key(distributionOrderId)
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
 
+#创建分成订单商品表
+create table_distribution_commodity(
+    distributionCommodityId  integer not null auto_increment,
+    distributionOrderId integer not null,
+    shopOrderId integer not null,
+    shopCommodityId integer not null,
+    price integer not null,
+    createTime timestamp not null default CURRENT_TIMESTAMP,
+    modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    primary key(distributionCommodityId)
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+
 #建立初始数据
 insert into t_user(userId,name,password,company,phone,type) values
 (10001,"fish","$2y$10$xKsYkwOJFQo2Ack68DqZuebTX99IgHL0lYBKmpwQpkxqzhJbKYgMG",'烘焙帮信息科技有限公司','15018749403',1),
