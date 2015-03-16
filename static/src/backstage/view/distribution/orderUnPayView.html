@@ -1,0 +1,137 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>烘焙帮后台管理系统</title>
+	<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+</head>
+<body class="definewidth m10">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var subPage = require('/fishstrap/page/subPage.js');
+		var distributionOrderId = $.location.getQueryArgv('distributionOrderId');
+		var distributionOrderState = {};
+		var distributionOrder = {};
+		function getAllState(next){
+			$.get('/distributionorder/getAllState',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				distributionOrderState = data.data;
+				next();
+			});
+		}
+		function getOrder(next){
+			distributionOrder = {
+				commodity:[
+					{
+						shopCommodityId:10001,
+						icon:'/data/upload/sample1.jpg',
+						title:'标题1',
+						priceShow:'11.00',
+						quantity:'1',
+						distributionPrecent:'30%',
+						distributionPrice:'30.00',
+					}
+					
+				]
+			};
+			next();
+			return;
+			$.get('/distributionorder/get',{distributionOrderId:distributionOrderId},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				distributionOrder = data.data;
+				distributionOrder = $.extend(distributionOrder);
+				next();
+			});
+		}
+		function go(){
+			function refreshPrice(){
+				var data = inputOperation.get();
+				var price = _.reduce(data.commodity,function(meno,single){
+					return meno + $.format.floatval(single.distributionPrice);
+				},0);
+				inputOperation.set({
+					price:price.toFixed(2)
+				})
+			}
+			var inputOperation = input.verticalInput({
+				id:'container',
+				field:[
+					{id:'distributionOrderId',type:'read',name:'分成订单ID'},
+					{id:'orderId',type:'read',name:'订单ID'},
+					{id:'upUserCompany',type:'read',name:'上级分成名称'},
+					{id:'downUserCompany',type:'read',name:'下级分成名称'},
+					{id:'orderPriceShow',type:'read',name:'订单金额'},
+					{id:'price',type:'read',name:'分成总金额'},
+					{id:'commodity',type:'table',name:'订单商品',
+						option:{
+							column:[
+								{name:'商品ID',type:'text',id:'shopCommodityId'},
+								{name:'图片',type:'image',id:'icon'},
+								{name:'标题',type:'text',id:'title'},
+								{name:'价格',type:'text',id:'priceShow'},
+								{name:'数量',type:'text',id:'quantity'},
+								{name:'分成比例',type:'textInput',id:'distributionPrecent',change:function(data,operation){
+									operation.mod({
+										distributionPrice:$.format.floatval(data.priceShow*data.quantity*data.distributionPrecent).toFixed(2)
+									});
+									refreshPrice();
+								}},
+								{name:'分成金额',type:'textInput',id:'distributionPrice',change:function(data,operation){
+									operation.mod({
+										distributionPrecent:$.format.floatval(data.distributionPrice/(data.priceShow*data.quantity)).toFixed(2)
+									});
+									refreshPrice();
+								}},
+							],
+							operate:[],
+							button:[]
+						}
+					},
+					{id:'state',type:'enum',name:'分成订单状态',map:distributionOrderState},
+				],
+				value:distributionOrder,
+				submit:function(data){
+					if(data.state!=1){
+						dialog.message('只能扭转订单为付款中状态');
+						return;
+					}
+					var data = {
+						distributionOrderId:distributionOrderId,
+						commodity:_.map(data.commodity,function(single){
+							return {shopCommodityId:single.shopCommodityId,price:single.price};
+						})
+					};
+					dialog.confirm('确认扭转订单为付款中状态，不可回退操作？!',function(){
+						$.post('/distributionorder/payOrder',data,function(data){
+							data = $.JSON.parse(data);
+							if(data.code!=0){
+								dialog.message(data.msg);
+								return;
+							}
+							history.back();
+						});
+					});
+				},
+				cancel:function(){
+					history.back();
+				},
+			});
+		}
+		getAllState(function(){
+			getOrder(go);
+		});
+	</script>
+</body>
+</html>

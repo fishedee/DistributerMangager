@@ -17,6 +17,7 @@ class OrderAo extends CI_Model
 		$this->load->model('order/orderStateEnum','orderStateEnum');
 		$this->load->model('address/addressPayMentEnum','addressPayMentEnum');
 		$this->load->model('common/commonErrorEnum', 'commonErrorEnum');
+		$this->load->model('distribution/distributionOrderWhen', 'distributionOrderWhen');
 	}
 
 	private function addMyOrder($userId,$clientId,$shopCommodity,$address){
@@ -142,7 +143,7 @@ class OrderAo extends CI_Model
 		return $shopOrder;
 	}
 
-	public function add($clientId,$loginClientId,$shopTrollerId,$address){
+	public function add($entranceUserId,$clientId,$loginClientId,$shopTrollerId,$address){
 		//获取购物车内的商品信息
 		$shopTroller = $this->trollerAo->getByIds($clientId,$shopTrollerId);
 
@@ -178,6 +179,9 @@ class OrderAo extends CI_Model
 
 		//删购物车
 		$this->trollerAo->delByIds($clientId,$shopTrollerId);
+
+		//触发分成订单
+		$this->distributionOrderWhen->whenGenerateOrder($orderInfo['shopOrderId']);
 
 		return $orderInfo['shopOrderId'];
 	}

@@ -1,11 +1,19 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Test extends CI_Controller
+class DistributionOrder extends CI_Controller
 {
     public function __construct(){
         parent::__construct();
-        $this->load->model('distribution/distributionorderAo', 'distributionOrderAo');
+        //$this->load->model('distribution/distributionorderAo', 'distributionOrderAo');
+        $this->load->model('distribution/distributionOrderStateEnum', 'distributionOrderStateEnum');
         $this->load->library('argv', 'argv');
+    }
+
+    /**
+     * @view json
+     */
+    public function getAllState(){
+        return $this->distributionOrderStateEnum->names;
     }
 
     /**
@@ -86,7 +94,7 @@ class Test extends CI_Controller
     /**
      * @view json
      */
-    public function HasPayOrder(){
+    public function hasPayOrder(){
         $data = $this->argv->checkPost(array(
             array('distributionOrderId', 'require')
         ));
