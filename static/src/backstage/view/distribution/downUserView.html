@@ -1,0 +1,72 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>烘焙帮后台管理系统</title>
+	<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+</head>
+<body class="definewidth m10">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var distributionId = $.location.getQueryArgv('distributionId');
+		var distributionState = {};
+		var distribution = {};
+		function getAllState(next){
+			$.get('/distribution/getAllState',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				distributionState = data.data;
+				next();
+			});
+		}
+		function getDistribution(next){
+			$.get('/distribution/get',{distributionId:distributionId},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				distribution = data.data;
+				next();
+			});
+		}
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'userId',type:'read',name:'下级分成ID'},
+					{id:'company',type:'read',name:'下级名称'},
+					{id:'distributionPercent',type:'text',name:'默认分成比例'},
+					{id:'state',type:'enum',name:'状态',map:distributionState},
+				],
+				value:distribution,
+				submit:function(data){
+					$.post('/distribution/mod',data,function(data){
+						data = $.JSON.parse(data);
+						if( data.code != 0 ){
+							dialog.message(data.msg);
+							return;
+						}
+						history.back();
+					});
+				},
+				cancel:function(){
+					history.back();
+				}
+			});
+		}
+		getAllState(function(){
+			getDistribution(function(){
+					go();
+			});
+		});
+	</script>
+ </body>
+</html>

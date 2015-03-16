@@ -28,7 +28,7 @@
 							next();
 						},
 						fail:function(msg){
-							alert('用户取消支付');
+							alert('用户取消支付'+JSON.stringify(msg));
 						}
 					});
 				});
@@ -132,6 +132,7 @@
 			$.page.setGrey();
 			$.page.start(pageHtml);
 		}
+		$.debug.enable();
 		$.checkMustLogin(function(){
 			getShopOrder(go);
 		});

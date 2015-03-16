@@ -14,6 +14,7 @@
 		var query = require('/fishstrap/ui/query.js');
 		var subPage = require('/fishstrap/page/subPage.js');
 		var isCheck = ($.location.getQueryArgv('check') != null);
+		var isClient = ($.location.getQueryArgv('isClient') != null);
 		var userType = {};
 		var tableOperation = {};
 		function getAllType(next){
@@ -36,7 +37,7 @@
 		function go(){
 			tableOperation = query.simpleQuery({
 				id:'container',
-				url:'/user/search',
+				url:'/user/search'+(isClient?'?type=3':''),
 				checkAll:isCheck,
 				column:[
 					{id:'userId',type:'text',name:'用户ID'},

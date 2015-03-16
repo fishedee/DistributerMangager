@@ -53,7 +53,7 @@
 					state:orderStateIdToName[single.state],
 					price:single.priceShow,
 					link:$.url.buildQueryUrl(
-						'http://'+single.userId+'.'+$.getTopDomain()+'/'+$.getEntranceUserId()+'/dealdetail.html',
+						'http://'+single.userId+'.'+$.getTopDomain()+'/'+single.userId+'/dealdetail.html',
 						{shopOrderId:single.shopOrderId}
 					)
 				};

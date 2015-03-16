@@ -20,7 +20,7 @@ class UserAppAo extends CI_Model{
 
 		$user['shop'] = 'http://'.$userId.'.'.$_SERVER['HTTP_HOST'].'/'.$userId.'/item.html';
 		$user['logincallback'] = $userId.'.'.$_SERVER['HTTP_HOST'];
-		$user['paycallback'] = 'http://'.$userId.'.'.$_SERVER['HTTP_HOST'].'/';
+		$user['paycallback'] = 'http://'.$userId.'.'.$_SERVER['HTTP_HOST'].'/'.$userId.'/';
 		return $user;
 	}
 

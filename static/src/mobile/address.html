@@ -26,7 +26,7 @@
 							next();
 						},
 						fail:function(msg){
-							dialog.message('用户取消支付',function(){
+							dialog.message('用户取消支付'+JSON.stringify(msg),function(){
 								next();
 							});
 						}
@@ -34,8 +34,8 @@
 				});
 			});
 		}
-		function order(clientId,shopTroller,address,next){
-			$.post('/deal/order',{shopTroller:shopTroller,address:address,clientId:clientId},function(data){
+		function order(clientId,entranceUserId,shopTroller,address,next){
+			$.post('/deal/order',{shopTroller:shopTroller,entranceUserId:entranceUserId,address:address,clientId:clientId},function(data){
 				if(data.code == 20001){
 					dialog.message(data.msg,function(){
 						location.href = 'shopcart.html';
@@ -79,10 +79,16 @@
 					click:function(){
 						var shopTroller = $.location.getQueryArgv('shopTroller').split('|');
 						var clientId = $.location.getQueryArgv('clientId');
+						var entranceUserId = $.location.getQueryArgv('entranceUserId');
+						var userId = $.location.getQueryArgv('userId');
 						var addressInput = address.get();
 						addressInput.payment = mapPaymentNameToId[addressInput.payment];
-						order(clientId,shopTroller,addressInput,function(shopOrderId){
-							location.href = 'deal.html';
+						order(clientId,entranceUserId,shopTroller,addressInput,function(shopOrderId){
+							var target = $.url.buildQueryUrl(
+								'http://'+userId+'.'+$.getTopDomain()+'/'+entranceUserId+'/deal.html',
+								{}
+							);
+							location.href = target;
 						});
 					}
 				}

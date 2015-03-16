@@ -103,11 +103,13 @@
 					shopTroller += checkedItemList[i].shopTrollerId;
 				}
 				location.href = $.url.buildQueryUrl(
-					'http://'+userId+'.'+$.getTopDomain()+'/'+$.getEntranceUserId()+'/address.html',
+					'http://'+userId+'.'+$.getTopDomain()+'/'+userId+'/address.html',
 					{
 						shopTroller:shopTroller,
 						showwxpaytitle:1,
-						clientId:$.getClientId()
+						clientId:$.getClientId(),
+						entranceUserId:$.getEntranceUserId(),
+						userId:$.getUserId()
 					}
 				);
 			}
