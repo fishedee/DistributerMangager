@@ -45,7 +45,7 @@ class DistributionOrder extends CI_Controller
     public function get(){
         $dataWhere = $this->argv->checkGet(array(
             array('distributionOrderId', 'require')
-        );
+        ));
         $distributionOrder = $this->distributionOrderAo->get($dataWhere['distributionOrderId']);
         $shopOrder = $this->orderAo->get($distributionOrder['shopOrderId']);
         $distributionCommodity = $this->distributionCommodityAo->get($dataWhere['distributionOrderId']);
@@ -63,12 +63,11 @@ class DistributionOrder extends CI_Controller
         return array(
             'distributionOrder'=>$distributionOrder,
             'distributionCommodity'=>$distributionCommodity
-        )
+        );
     }
 
     /**
      * @view json
-     * @test
      */
     public function add(){
         //检查参数

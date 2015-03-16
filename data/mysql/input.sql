@@ -314,7 +314,7 @@ create table t_distribution_order(
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
 
 #创建分成订单商品表
-create table_distribution_commodity(
+create table t_distribution_commodity(
     distributionCommodityId  integer not null auto_increment,
     distributionOrderId integer not null,
     shopOrderId integer not null,

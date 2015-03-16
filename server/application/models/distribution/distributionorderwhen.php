@@ -2,16 +2,15 @@
 
 class DistributionOrderWhen extends CI_Model
 {
-    parent::__construct(){
+    public function __construct(){
         parent::__construct();
         $this->load->model('distribution/distributionOrderDb', 'distributionOrderDb');
         $this->load->model('distribution/distributionCommodityAo', 'distributionCommodityAo');
-        $this->load->model('order/orderCommodityAo', 'orderCommodityAo');
-        $this->load->model('order/orderAo', 'orderAo');
+        $this->load->model('order/orderDb', 'orderDb');
     }
 
     public function whenGenerateOrder($entranceUserId, $shopOrderId){
-        $order = $this->orderAo->get($shopOrderId);                             
+        $order = $this->orderDb->get($shopOrderId);                             
         $clientId = $order['clientId'];
         $linkUsers = $this->distributionAo->getLink($userId, $entranceUserId);
         $data = array(
@@ -28,7 +27,7 @@ class DistributionOrderWhen extends CI_Model
                 'shopOrderId'=>$shopOrderId
             );
 
-            $response = $this->orderCommodityAo->search($where, array());
+            $response = $this->orderAo->search($where, array());
             $commoditys = $response['data'];
             foreach($commoditys as $commodity){
                 $data = array(
@@ -37,7 +36,8 @@ class DistributionOrderWhen extends CI_Model
                     'shopCommodityId'=>$commodity['shopCommodityId'],
                     'price'=>0
                 );
-            $this->distributionCommodityAo->add($data);
+            	$this->distributionCommodityAo->add($data);
+            }
         }
     }
 }
