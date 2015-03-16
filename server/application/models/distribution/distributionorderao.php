@@ -16,10 +16,8 @@ class DistributionOrderAo extends CI_Model
     }
 
     public function search($userId, $where, $limit){
-	if( isset($where['upUserId']) && $where['upUserId'] != $userId)
-		throw new CI_MyException(1, '非本用户无法获取分成订单');
-	if( isset($where['downUserId']) && $where['downUserId'] != $userId)
-		throw new CI_MyException(1, '非本用户无法获取分成订单');
+        $where['upUserId'] = $userId;
+        $where['downUserId'] = $userId;
 
         $data = $this->distributionOrderDb->search($where, $limit);
         foreach($data['data'] as $key=>$value)
@@ -81,19 +79,21 @@ class DistributionOrderAo extends CI_Model
         if($userId != $order['upUserId'])
             throw new CI_MyException(1, '无权操作此分成订单');
 
-        $commodity = $this->distributionCommodityAo->get($distributionOrderId);
-        $price = 0;
-        foreach($commodity as $value)
-            $price += $value['price'];
         $data = array(
-            'state'=>$this->distributionOrderStateEnum->IN_PAY,
-            'price'=>$price
+            'state'=>$this->distributionOrderStateEnum->IN_PAY
         );
         $this->mod($distributionOrderId, $data);
     }
 
     public function hasPayOrder($userId, $distributionOrderId){
         $order = $this->distributionOrderDb->get($distributionOrderId);
+        if($order['state'] != $this->distributionOrderStateEnum->IN_PAY)
+            throw new CI_MyException(1, '此分成订单不能设置已付款状态');
+        if($userId != $order['upUserId'])
+            throw new CI_MyException(1, '无权操作此分成订单');
+        $data = array(
+            'state'=>$this->distributionOrderStateEnum->HAS_PAY
+        );
         if($order['state'] != $this->distributionOrderStateEnum->IN_PAY)
             throw new CI_MyException(1, '此分成订单不能设置已付款状态');
         if($userId != $order['upUserId'])
@@ -113,10 +113,5 @@ class DistributionOrderAo extends CI_Model
         $data = array(
             'state'=>$this->distributionOrderStateEnum->HAS_CONFIRM
         );
-        $this->mod($distributionOrderId, $data);
-    }
-     
-    public function del($distributionOrderId){
-        $this->distributionOrderDb->del($distributionOrderId);
     }
 }

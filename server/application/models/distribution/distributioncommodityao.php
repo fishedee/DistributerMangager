@@ -5,6 +5,7 @@ class DistributionCommodityAo extends CI_Model
     public function __construct(){
         parent::__construct();
         $this->load->model('distribution/distributionCommodityDb', 'distributionCommodityDb');
+	$this->load->model('distribution/distributionOrderDb', 'distributionOrderDb');
     }
 
     public function check($data){
@@ -18,12 +19,18 @@ class DistributionCommodityAo extends CI_Model
         return $this->distributionCommodityDb->add($data);
     }
 
-    public function mod($distributionCommodityId, $data){
+    public function mod($userId, $distributionCommodityId, $data){
         $this->check($data);
         if( isset($data['price']) )
             $data['price'] = $data['price'] * 100;
+	$distributionCommodity = $this->distributionCommodityDb->get(
+		$distributionCommodityId);
+	$distributionOrder = $this->distributionOrderDb->get(
+		$distributionCommodity['distributionOrderId']);
+	if($distributionOrder['upUserId'] != $userId)
+		throw new CI_MyException(1, "本用户无权限修改此分成商品");
 
-        $this->db->mod($distributionCommodityId, $data);
+        $this->distributionCommodityDb->mod($distributionCommodityId, $data);
     }
 
 

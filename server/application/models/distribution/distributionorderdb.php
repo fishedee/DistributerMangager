@@ -49,21 +49,16 @@ class DistributionOrderDb extends CI_Model
 
         foreach($where as $key=>$value){
             if($key == 'upUserId' || $key == 'downUserId')
-                $this->db->where($key, $value);
+                $this->db->or_where($key, $value);
             else if($key == 'state')
                 $this->db->where($key, $value);
-	    else if($key == 'distributionOrderId' || $key == 'shopOrderId')
-		$this->db->where($key, $value);
         }
-
         $count = $this->db->count_all_results($this->tableName);
 
         foreach($where as $key=>$value){
             if($key == 'upUserId' || $key == 'downUserId')
-                $this->db->where($key, $value);
+                $this->db->or_where($key, $value);
 	    if($key == 'state')
-		$this->db->where($key, $value);
-	    else if($key == 'distributionOrderId' || $key == 'shopOrderId')
 		$this->db->where($key, $value);
         }
 
