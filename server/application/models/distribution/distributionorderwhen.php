@@ -13,7 +13,7 @@ class DistributionOrderWhen extends CI_Model
         $clientId = $shopOrder['clientId'];
         $linkUsers = $this->distributionAo->getLink($userId, $entranceUserId);
         $data = array(
-            'price'=>1,
+            'price'=>0,
             'shopOrderId'=>$shopOrder['shopOrderId'],
             'state'=>$this->distributionOrderStateEnum->UN_PAY
         );
