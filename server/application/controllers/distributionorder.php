@@ -24,6 +24,7 @@ class DistributionOrder extends CI_Controller
     public function search(){
         $dataWhere = $this->argv->checkGet(array(
             array('distributionOrderId', 'option'),
+	    array('direction', 'require'),
             array('state', 'option')
         ));
 
@@ -33,8 +34,17 @@ class DistributionOrder extends CI_Controller
         ));
 
         $user = $this->loginAo->checkMustLogin();
+	$userId = $user['userId'];
 
-        return $this->distributionOrderAo->search($user['userId'], $dataWhere, $dataLimit);
+	if($dataWhere['direction'] == 'up')
+	     $dataWhere['downUserId'] = $userId;
+        else if($dataWhere['direction'] == 'down')
+	    $dataWhere['upUserId'] = $userId;
+        else
+	    throw new CI_MyException(1, "无效的direction参数");
+	unset($dataWhere['direction']);
+
+        return $this->distributionOrderAo->search($userId, $dataWhere, $dataLimit);
     }
 
     /**

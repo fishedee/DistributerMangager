@@ -49,20 +49,24 @@ class DistributionOrderDb extends CI_Model
 
         foreach($where as $key=>$value){
             if($key == 'upUserId' || $key == 'downUserId')
-                $this->db->or_where($key, $value);
+                $this->db->where($key, $value);
             else if($key == 'state')
                 $this->db->where($key, $value);
-            else if($key == 'shopOrderId' || $key == 'distributionOrderId')
-                $this->db->where_in($key, $value);
+	    else if($key == 'distributionOrderId' || $key == 'shopOrderId')
+		$this->db->where($key, $value);
         }
+
         $count = $this->db->count_all_results($this->tableName);
 
         foreach($where as $key=>$value){
-            if($key == 'upUserId' || $key == 'downUserId' || $key == 'state')
+            if($key == 'upUserId' || $key == 'downUserId')
                 $this->db->where($key, $value);
-            else if($key == 'shopOrderId' || $key == 'distributionOrderId')
-                $this->db->where_in($key, $value);
+	    if($key == 'state')
+		$this->db->where($key, $value);
+	    else if($key == 'distributionOrderId' || $key == 'shopOrderId')
+		$this->db->where($key, $value);
         }
+
         if(isset($limit['pageIndex']) && isset($limit['pageSize']))
             $this->db->limit($limit['pageSize'], $limit['pageIndex']);
         $query = $this->db->get($this->tableName)->result_array();

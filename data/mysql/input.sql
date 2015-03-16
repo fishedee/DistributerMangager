@@ -421,6 +421,9 @@ insert into t_shop_order_commodity(shopOrderId, shopCommodityId, title, icon, in
 insert into t_distribution_order(upUserId, downUserId, shopOrderId, price, state)values
 (10003, 10002, 10001, 100, 0);
 
+insert into t_distribution_order(upUserId, downUserId, shopOrderId, price, state)values
+(10002, 10003, 10001, 100, 1);
+
 insert into t_distribution_commodity(distributionOrderId, shopOrderId, shopCommodityId, price)values
 (10001, 10001, 10001, 5),
 (10001, 10001, 10002, 10);

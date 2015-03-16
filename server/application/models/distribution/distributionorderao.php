@@ -16,8 +16,10 @@ class DistributionOrderAo extends CI_Model
     }
 
     public function search($userId, $where, $limit){
-        $where['upUserId'] = $userId;
-        $where['downUserId'] = $userId;
+	if( isset($where['upUserId']) && $where['upUserId'] != $userId)
+		throw new CI_MyException(1, '非本用户无法获取分成订单');
+	if( isset($where['downUserId']) && $where['downUserId'] != $userId)
+		throw new CI_MyException(1, '非本用户无法获取分成订单');
 
         $data = $this->distributionOrderDb->search($where, $limit);
         foreach($data['data'] as $key=>$value)
