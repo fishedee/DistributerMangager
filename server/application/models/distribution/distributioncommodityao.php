@@ -5,7 +5,7 @@ class DistributionCommodityAo extends CI_Model
     public function __construct(){
         parent::__construct();
         $this->load->model('distribution/distributionCommodityDb', 'distributionCommodityDb');
-        $this->load->model('shop/commodityAo', 'commodityAo');
+       // $this->load->model('shop/commodityAo', 'commodityAo');
     }
 
     public function check($data){
@@ -35,8 +35,8 @@ class DistributionCommodityAo extends CI_Model
         $response = $this->distributionCommodityDb->search(
             $where, array());
         $distributionCommodity = $response['data'];
-        foreach($distributionCommodity as $key=>$value)
-            $distributionCommodity[$key]['priceShow'] = $this->commodityAo->getFixedPrice($distributionCommodity[$key]['price'];
+       // foreach($distributionCommodity as $key=>$value)
+       //     $distributionCommodity[$key]['priceShow'] = $this->commodityAo->getFixedPrice($distributionCommodity[$key]['price']);
 
         return $distribuComodity;
     }

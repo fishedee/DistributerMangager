@@ -2,7 +2,7 @@
 
 class DistributionOrderWhen extends CI_Model
 {
-    parent::__construct(){
+    public function __construct(){
         parent::__construct();
         $this->load->model('distribution/distributionOrderDb', 'distributionOrderDb');
         $this->load->model('distribution/distributionCommodityAo', 'distributionCommodityAo');
@@ -26,8 +26,7 @@ class DistributionOrderWhen extends CI_Model
                 'shopOrderId'=>$shopOrder['shopOrderId']
             );
 
-            $response = $this->orderCommodityAo->search($where, array());
-            $commoditys = $response['data'];
+            $commoditys = $shopOrder['commodity'];
             foreach($commoditys as $commodity){
                 $data = array(
                     'distributionOrderId' =>$distributionOrderId,
@@ -35,7 +34,8 @@ class DistributionOrderWhen extends CI_Model
                     'shopCommodityId'=>$commodity['shopCommodityId'],
                     'price'=>0
                 );
-            $this->distributionCommodityAo->add($data);
+            	$this->distributionCommodityAo->add($data);
+            }
         }
     }
 }

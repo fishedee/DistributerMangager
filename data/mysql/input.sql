@@ -314,7 +314,7 @@ create table t_distribution_order(
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
 
 #创建分成订单商品表
-create table_distribution_commodity(
+create table t_distribution_commodity(
     distributionCommodityId  integer not null auto_increment,
     distributionOrderId integer not null,
     shopOrderId integer not null,
@@ -330,7 +330,9 @@ insert into t_user(userId,name,password,company,phone,type) values
 (10001,"fish","$2y$10$xKsYkwOJFQo2Ack68DqZuebTX99IgHL0lYBKmpwQpkxqzhJbKYgMG",'烘焙帮信息科技有限公司','15018749403',1),
 (10002,"fish_agent","$2y$10$xKsYkwOJFQo2Ack68DqZuebTX99IgHL0lYBKmpwQpkxqzhJbKYgMG",'烘焙帮信息科技有限公司','15018749403',2),
 (10003,"fish_client","$2y$10$xKsYkwOJFQo2Ack68DqZuebTX99IgHL0lYBKmpwQpkxqzhJbKYgMG",'烘焙帮信息科技有限公司','15018749403',3),
-(10004,"fish_client2","$2y$10$xKsYkwOJFQo2Ack68DqZuebTX99IgHL0lYBKmpwQpkxqzhJbKYgMG",'烘焙帮信息科技有限公司','15018749403',3);
+(10004,"fish_client2","$2y$10$xKsYkwOJFQo2Ack68DqZuebTX99IgHL0lYBKmpwQpkxqzhJbKYgMG",'烘焙帮信息科技有限公司','15018749403',3),
+(10005,"fish_client3","$2y$10$xKsYkwOJFQo2Ack68DqZuebTX99IgHL0lYBKmpwQpkxqzhJbKYgMG",'烘焙帮信息科技有限公司','15018749403',3),
+(10006,"fish_client4","$2y$10$xKsYkwOJFQo2Ack68DqZuebTX99IgHL0lYBKmpwQpkxqzhJbKYgMG",'烘焙帮信息科技有限公司','15018749403',3);
 
 insert into t_user_permission(userId,permissionId)values
 (10003,1),
@@ -340,7 +342,15 @@ insert into t_user_permission(userId,permissionId)values
 (10004,1),
 (10004,2),
 (10004,3),
-(10004,4);
+(10004,4),
+(10005,1),
+(10005,2),
+(10005,3),
+(10005,4),
+(10006,1),
+(10006,2),
+(10006,3),
+(10006,4);
 
 insert into t_client(userId,openId,type)values
 (10003,'微信测试用户虚拟OpenId',2),

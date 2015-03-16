@@ -6,7 +6,7 @@ class DistributionOrderAo extends CI_Model
         parent::__construct();
         $this->load->model('distribution/distributionorderDb', 'distributionOrderDb');
         $this->load->model('distribution/distributionAo', 'distributionAo');
-        $this->load->model('order/orderAo', 'orderAo');
+        //$this->load->model('order/orderAo', 'orderAo');
     }
 
     public function getFixedPrice($price){
@@ -33,7 +33,7 @@ class DistributionOrderAo extends CI_Model
 
 
     public function check($data){
-        if( isset($data['price'] ){
+        if( isset($data['price']) ){
             if($data['price'] < 0)
         	    throw new CI_MyException(1, '价格不能少于0');       
         }
@@ -82,7 +82,7 @@ class DistributionOrderAo extends CI_Model
     public function hasPayOrder($userId, $distributionOrderId){
         $order = $this->distributionOrderDb->get($distributionOrderId);
         if($order['state'] != $this->distributionOrderStateEnum->IN_PAY)
-            throw new CI_MyException(1, '此分成订单不能设置已付款状态';
+            throw new CI_MyException(1, '此分成订单不能设置已付款状态');
         if($userId != $order['upUserId'])
             throw new CI_MyException(1, '无权操作此分成订单');
         $data = array(
