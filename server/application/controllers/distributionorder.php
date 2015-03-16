@@ -76,6 +76,17 @@ class Test extends CI_Controller
     /**
      * @view json
      */
+    public function HasPayOrder(){
+        $data = $this->argv->checkPost(array(
+            array('distributionOrderId', 'require')
+        ));
+
+        $this->distributionOrderAo->HasPayOrder($data['distributionOrderId']);
+    }
+
+    /**
+     * @view json
+     */
     public function confirm(){
         $data = $this->argv->checkPost(array(
             array('distributionOrderId', 'require')

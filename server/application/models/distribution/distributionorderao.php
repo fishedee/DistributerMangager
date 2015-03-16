@@ -43,22 +43,32 @@ class DistributionOrderAo extends CI_Model
 
     public function payOrder($distributionOrderId){
         $order = $this->distributionOrderDb->get($distributionOrderId);
-        if($order['state'] != 0)
-            throw new CI_MyException(1, '此分成不能执行付款操作');
+        if($order['state'] != $this->distributionOrderStateEnum->UN_PAY)
+            throw new CI_MyException(1, '此分成不能设置付款中状态');
 
         $data = array(
-            'state'=>1
+            'state'=>$this->distributionOrderStateEnum->IN_PAY
+        );
+        $this->mod($distributionOrderId, $data);
+    }
+
+    public function hasPayOrder($distributionOrderId){
+        $order = $this->distributionOrderDb->get($distributionOrderId);
+        if($order['state'] != $this->distributionOrderStateEnum->IN_PAY)
+            throw new CI_MyException(1, '此分成不能设置已付款状态'
+        $data = array(
+            'state'=>$this->distributionOrderStateEnum->HAS_PAY
         );
         $this->mod($distributionOrderId, $data);
     }
 
     public function confirm($distributionOrderId){
         $order = $this->distributionOrderDb->get($distributionOrderId);
-        if($order['state'] != 1)
-            throw new CI_MyException(1, '此分成不能执行付款操作');
+        if($order['state'] != $this->distributionOrderStateEnum->HAS_PAY)
+            throw new CI_MyException(1, '此分成不能设置确认付款状态');
 
         $data = array(
-            'state'=>2
+            'state'=>$this->distributionOrderStateEnum->HAS_CONFIRM
         );
         $this->mod($distributionOrderId, $data);
     }

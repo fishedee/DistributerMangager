@@ -4,7 +4,8 @@ class DistributionAo extends CI_Model
 {
     public function __construct(){
         parent::__construct();
-	$this->load->model('distribution/distributionDb', 'distributionDb');
+	    $this->load->model('distribution/distributionDb', 'distributionDb');
+        $this->load->model('distribution/distributionstateEnum', 'distributionStateEnum');
     }
 
     public function search($where, $limit){
@@ -22,9 +23,9 @@ class DistributionAo extends CI_Model
         else
             return $distribution;
     }
-    public function add($upUserId, $downUserId, $state){
+    public function add($upUserId, $downUserId, $data){
         $this->check($upUserId, $downUserId);
-        $this->distributionDb->add($upUserId, $downUserId, $state); 
+        $this->distributionDb->add($upUserId, $downUserId, $data); 
     }
 
     public function del($userId, $distributionId){
@@ -32,14 +33,9 @@ class DistributionAo extends CI_Model
         $this->distributionDb->del($distribution['distributionId']);
     }
 
-    public function mod($distributionId, $state){
-        $data = array(
-            'state'=>$state
-        );
-
+    public function mod($distributionId, $data){
         $this->distributionDb->mod($distributionId, $data);
     }
-
     
 
     private $path = array();
@@ -52,7 +48,8 @@ class DistributionAo extends CI_Model
 	}
 
 	$where = array(
-		'upUserId'=>$originUserId
+		'upUserId'=>$originUserId,
+        'state'=>$distributionStateEnum->ON_ACCEPT
 	);
 	$response = $this->search($where, array());
 	$distributions = $response['data'];

@@ -293,6 +293,7 @@ create table t_distribution(
     distributionId integer not null auto_increment,
     upUserId integer not null,
     downUserId integer not null,
+    distributionPercent integer not null,
     state integer not null,
     createTime timestamp not null default CURRENT_TIMESTAMP,
     modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
