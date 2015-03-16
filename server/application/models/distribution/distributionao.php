@@ -6,10 +6,27 @@ class DistributionAo extends CI_Model
         parent::__construct();
 	    $this->load->model('distribution/distributionDb', 'distributionDb');
         $this->load->model('distribution/distributionstateEnum', 'distributionStateEnum');
+        $this->load->model('user/userAo','userAo');
+    }
+
+    public function getFixedPrice($price){
+        return sprintf("%.2f", $price);
+    }
+
+    private function getOtherInfo($distribution){
+        $distribution['upUserCompany'] = $this->userAo->get($distribution['upUserId'])['company'];
+        $distribution['downUserCompany'] = $this->userAo->get($distribution['downUserId'])['company'];
+        $distribution['distributionPercentShow'] = $this->getFixedPrice($distribution['distributionPercent']/100).'%';
+        return $distribution;
     }
 
     public function search($where, $limit){
-        return $this->distributionDb->search($where, $limit);
+        $data = $this->distributionDb->search($where, $limit);
+
+        foreach($data['data'] as $key=>$value){
+            $data['data'][$key] = $this->getOtherInfo($data['data'][$key]);
+        }
+        return $data;
     }
 
     private function check($upUserId, $downUserId){
@@ -20,12 +37,13 @@ class DistributionAo extends CI_Model
         $distribution = $this->distributionDb->get($distributionId);
         if($distribution['upUserId'] != $userId && $distribution['downUserId'] != $userId)
             throw new CI_MyException(1, "无权查询此非本用户的分成关系");
-        else
-            return $distribution;
+         
+        $distribution = $this->getOtherInfo($distribution);
+        return $distribution;
     }
-    public function add($upUserId, $downUserId, $data){
-        $this->check($upUserId, $downUserId);
-        $this->distributionDb->add($upUserId, $downUserId, $data); 
+
+    public function mod($distributionId, $data){
+        $this->distributionDb->mod($distributionId, $data);
     }
 
     public function del($userId, $distributionId){
@@ -33,43 +51,76 @@ class DistributionAo extends CI_Model
         $this->distributionDb->del($distribution['distributionId']);
     }
 
-    public function mod($distributionId, $data){
-        $this->distributionDb->mod($distributionId, $data);
+    public function request($upUserId, $downUserId){
+        $this->check($upUserId, $downUserId);
+        $this->distributionDb->add(array(
+            'upUserId'=>$upUserId,
+            'downUserId'=>$downUserId,
+            'state'=>$this->distributionStateEnum->ON_REQUEST
+        )); 
     }
-    
+
+    public function accept($userId,$distributionId){
+        $distribution = $this->get($userId, $distributionId);
+        if($distribution['upUserId'] != $userId)
+            throw new CI_MyException(1, "无权同意本用户的分成关系");
+        $this->distributionDb->mod($distributionId,array(
+            'state'=>$this->distributionStateEnum->ON_ACCEPT
+        ));
+    }
+
+    public function modPrecent($userId,$distributionId,$distributionPercentShow){
+        $distribution = $this->get($userId, $distributionId);
+        if($distribution['upUserId'] != $userId)
+            throw new CI_MyException(1, "无权同意本用户的分成关系");
+
+        $distributionPercent = intval(floatval($distributionPercentShow)*100);
+        if($distributionPercent >= 10000)
+            throw new CI_MyException(1, "默认分成比例不能大于100%");
+        if($distributionPercent < 0)
+            throw new CI_MyException(1, "默认分成比例不能少于0");
+
+        $this->distributionDb->mod($distributionId,array(
+            'distributionPercent'=>$distributionPercent
+        ));
+    }
 
     private $path = array();
     private $result_path = array();
     
     private function dfs($originUserId, $userId){
-	if($originUserId == $userId){
-		$this->result_path = $this->path;
-		return;
-	}
+        //记录路径
+        $this->path[$originUserId] = 1;
+        $this->result_path[] = $originUserId;
+    	if($originUserId == $userId){
+    		return true;
+    	}
 
-	$where = array(
-		'upUserId'=>$originUserId,
-        'state'=>$distributionStateEnum->ON_ACCEPT
-	);
-	$response = $this->search($where, array());
-	$distributions = $response['data'];
-	foreach($distributions as $distribution){
-		log_message('error', $distribution['downUserId']);
-		log_message('error', $userId);
-		$this->path[$distribution['downUserId']] = 1;
-		$this->dfs($distribution['downUserId'], $userId);	
-		unset($this->path[$distribution['downUserId']]);
-	}
+        //遍历下级分类
+    	$where = array(
+    		'upUserId'=>$originUserId,
+            'state'=>$distributionStateEnum->ON_ACCEPT
+    	);
+    	$response = $this->search($where, array());
+
+    	foreach($response['data'] as $distribution){
+            if( isset($this->path[$distribution['downUserId']]) )
+                continue;
+    		if( $this->dfs($distribution['downUserId'], $userId) == true)
+                return true;
+    	}
+
+        //删除路径
+        unset($this->path[$originUserId]);
+        array_pop($this->result_path);
+        return false;
     }
 
     public function getLink($originUserId, $userId){
         $this->path = array(); 
-	$this->result_path = array();
-	$this->path[$originUserId] = 1;
+    	$this->result_path = array();
         $this->dfs($originUserId, $userId);
-	foreach($this->result_path as $key=>$value)
-		$map[] = $key;
-        return $map;
+        return $this->result_path;
     }
 }
 

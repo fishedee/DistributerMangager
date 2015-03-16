@@ -7,8 +7,15 @@ class Distribution extends CI_Controller
         $this->load->model('user/loginAo', 'loginAo');
         $this->load->model('client/clientLoginAo', 'clientLoginAo');
         $this->load->model('distribution/distributionAo', 'distributionAo');
-        $this->load->model('distribution/distributionstateEnum', 'distributionStateEnum');
+        $this->load->model('distribution/distributionStateEnum', 'distributionStateEnum');
         $this->load->library('argv', 'argv');
+    }
+
+    /**
+     * @view json
+     */
+    public function getAllState(){
+        return $this->distributionStateEnum->names;
     }
 
     /**
@@ -17,7 +24,8 @@ class Distribution extends CI_Controller
     public function search(){
         //检查参数
         $dataWhere = $this->argv->checkGet(array(
-            array('direction', 'require')
+            array('direction', 'require'),
+            array('state', 'option')
         ));
 
         $dataLimit = $this->argv->checkGet(array(
@@ -28,14 +36,17 @@ class Distribution extends CI_Controller
         //检查权限
         $user = $this->loginAo->checkMustLogin();
 
-        if($dataWhere['direction'] == 'up')
+        if($dataWhere['direction'] == 'down')
             $where = array(
                 'upUserId'=>$user['userId']
             );
-        else if($dataWhere['direction'] == 'down')
+        else 
             $where = array(
                 'downUserId'=>$user['userId']
             );
+        if( isset($dataWhere['state']))
+            $where['state'] = $dataWhere['state'];
+        //var_dump($dataWhere);
         return $this->distributionAo->search($where, $dataLimit);
     }
 
@@ -44,19 +55,14 @@ class Distribution extends CI_Controller
      */
     public function get(){
         //检查参数
-        $dataWhere = $this->argv->checkGet(array(
+        $data = $this->argv->checkGet(array(
             array('distributionId', 'require')
         ));
         
         //检查权限
-        $user = $this->loginAo->checkeMustLogin();
+        $user = $this->loginAo->checkMustLogin();
 
-        $distribution = $this->distributionAo->get($user['userId'], $distributionId);
-        $upUser = $this->loginAo->get($distribution['upUserId']);
-        $downUser = $this->loginAo->get($distribution['downUserId']);
-        $distribution['upUserCompany'] = $upUser['company'];
-        $distribution['downUserCompany'] = $downUser['company'];
-        return $distribution;
+        return $this->distributionAo->get($user['userId'], $data['distributionId']);
     }
 
     /**
@@ -71,11 +77,7 @@ class Distribution extends CI_Controller
         //检查权限
         $user = $this->loginAo->checkMustLogin();
 
-        $data = array(
-            'state'=>$this->distributionStateEnum->ON_REQUEST
-        );
-
-        $this->distributionAo->add($data['upUserId'], $user['userId'], $data);
+        $this->distributionAo->request($data['upUserId'], $user['userId']);
     } 
 
     /**
@@ -84,37 +86,37 @@ class Distribution extends CI_Controller
     public function accept(){
         //检查参数
         $data = $this->argv->checkPost(array(
-            array('distributionId', 'require'),
-            array('distributionPercent' 'require')
+            array('distributionId', 'require')
         ));
         
         //检查权限
         $user = $this->loginAo->checkMustLogin();
 
-        $distribution = $this->distributionAo->get($user['userId'], $data['distributionId']);
-        if($distribution['upUserId'] != $user['userId'])
-            throw new CI_MyException(1, "没有相应的分成关系请求");
-        $acceptData = array(
-            'state'=>$this->distributionStateEnum->ON_ACCEPT,
-            'distributionPercent'=>$data['distributionPercent']
-        );
-
-        $this->distributionAo->mod($distribution['distributionId'], 
-            $acceptData);
+        $this->distributionAo->accept($user['userId'],$data['distributionId']);
     }
 
     /**
      * @view json
      */
     public function mod(){
+        //检查参数
         $data = $this->argv->checkPost(array(
-            array('distributionId', 'require'),
-            array('distributionPercent', 'require')
+            array('distributionId', 'require')
         ));
-        
         $distributionId = $data['distributionId'];
-        unset($data['distributionId']);
-        $this->distributionAo->mod($distributionId, $data);
+
+        $data = $this->argv->checkPost(array(
+            array('distributionPercentShow', 'require')
+        ));
+
+        //检查权限
+        $user = $this->loginAo->checkMustLogin();
+
+        $this->distributionAo->modPrecent(
+            $user['userId'],
+            $distributionId,
+            $data['distributionPercentShow']
+        );
     }
 
     /**

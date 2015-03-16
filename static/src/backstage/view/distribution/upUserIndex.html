@@ -28,17 +28,16 @@
 			query.simpleQuery({
 				id:'container',
 				url:'/distribution/search?direction=up',
-				checkAll:isCheck,
 				column:[
 					{id:'distributionId',type:'text',name:'分成关系ID'},
-					{id:'userId',type:'text',name:'上级分成ID'},
-					{id:'appName',type:'text',name:'上级分成名称'},
-					{id:'url',type:'text',name:'上级分成URL'},
+					{id:'upUserId',type:'text',name:'上级分成ID'},
+					{id:'upUserCompany',type:'text',name:'上级分成名称'},
+					{id:'link',type:'text',name:'上级分成URL'},
 					{id:'state',type:'enum',name:'状态',map:distributionState},
 					{id:'createTime',type:'text',name:'创建时间'},
 					{id:'modifyTime',type:'text',name:'修改时间'},
 				],
-				queryColumn:[],
+				queryColumn:['state'],
 				operate:[
 				{
 					name:'删除',

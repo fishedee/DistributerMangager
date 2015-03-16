@@ -12,6 +12,7 @@
 		var $ = require('/fishstrap/core/global.js');
 		var dialog = require('/fishstrap/ui/dialog.js');
 		var input = require('/fishstrap/ui/input.js');
+		var subPage = require('/fishstrap/page/subPage.js');
 		var distributionState = {};
 		function getAllState(next){
 			$.get('/distribution/getAllState',{},function(data){
@@ -40,7 +41,7 @@
 								click:function(operation){
 									subPage.open({
 										title:'选择上级分成',
-										url:'../user/index.html?isCheck=true&isClient=true',
+										url:'../user/index.html?check=true&isClient=true',
 										close:function(state,data){
 											if( state == 'confirm' && data.length != 0  ){
 												operation.clear();
@@ -55,7 +56,11 @@
 				],
 				value:{},
 				submit:function(data){
-					$.post('/distribution/add',data,function(data){
+					if( data.user.length == 0 ){
+						dialog.message('请选择上级分类');
+						return;
+					}
+					$.post('/distribution/request',{upUserId:data.user[0].userId},function(data){
 						data = $.JSON.parse(data);
 						if( data.code != 0 ){
 							dialog.message(data.msg);

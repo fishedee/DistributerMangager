@@ -8,9 +8,7 @@ class DistributionDb extends CI_Model
         parent::__construct();
     }
 
-    public function add($upUserId, $downUserId, $data){
-        $data['upUserId'] = $upUserId;
-        $data['downUserId'] = $downUserId;
+    public function add($data){
         $this->db->insert($this->tableName, $data);
         return $this->db->insert_id();
     }
