@@ -29,7 +29,62 @@ class DistributionAo extends CI_Model
         return $data;
     }
 
+    private function checkSingleTree($distributionMap,&$isVisit,$topUserId,$userId){
+        if( isset($isVisit[$userId])){
+            $link = $this->getLink($topUserId,$userId);
+            throw new CI_MyException(1,'在'.$topUserId.'->'.$userId.'之间已经有一条路径，禁止再增加分成关系<br/>原分成关系为：'.implode($link,'->'));
+        }
+        $isVisit[$userId] = true;
+
+        if( isset($distributionMap[$userId]) == false )
+            return;
+
+        foreach($distributionMap[$userId] as $downUserId=>$temp ){
+            $this->checkSingleTree($distributionMap,$isVisit,$topUserId,$downUserId);
+        }
+
+    }
+
     private function check($upUserId, $downUserId){
+        //校验是否有相同的边
+        if($upUserId == $downUserId)
+            throw new CI_MyException(1,'禁止建立自己指向自己的分成关系');
+
+        //校验是否有相同的边
+        $data = $this->distributionDb->search(array(
+            'upUserId'=>$upUserId,
+            'downUserId'=>$downUserId,
+            'state'=>$this->distributionStateEnum->ON_ACCEPT
+        ),array());
+        if($data['count'] != 0 )
+            throw new CI_MyException(1,'已经存在'.$upUserId.'->'.$downUserId.'之间的分成关系，请勿重复添加');
+
+        //取出所有边的数据
+        $data = $this->distributionDb->search(array(
+            'state'=>$this->distributionStateEnum->ON_ACCEPT
+        ),array());
+
+        //建立分成关系映射图
+        $distributionMap = array();
+        foreach($data['data'] as $key=>$value )
+            $distributionMap[$value['upUserId']][$value['downUserId']] = true;   
+        $distributionMap[$upUserId][$downUserId] = true;
+
+        //计算分成关系的顶端
+        $topDistributionUser = array();
+        foreach($distributionMap as $upUserId=>$downUserIds){
+            $topDistributionUser[$upUserId] = true;
+        }
+        foreach($distributionMap as $upUserId=>$downUserIds){
+            foreach($downUserIds as $downUserId=>$temp )
+                unset($topDistributionUser[$downUserId]);
+        }
+
+        //遍历分成关系顶端，计算是否两点之间有多条路径
+        foreach($topDistributionUser as $topUserId=>$temp ){
+            $isVisit = array();
+            $this->checkSingleTree($distributionMap,$isVisit,$topUserId,$topUserId);
+        }
         return 0;
     }
 
@@ -53,6 +108,7 @@ class DistributionAo extends CI_Model
 
     public function request($upUserId, $downUserId){
         $this->check($upUserId, $downUserId);
+
         $this->distributionDb->add(array(
             'upUserId'=>$upUserId,
             'downUserId'=>$downUserId,
@@ -64,6 +120,8 @@ class DistributionAo extends CI_Model
         $distribution = $this->get($userId, $distributionId);
         if($distribution['upUserId'] != $userId)
             throw new CI_MyException(1, "无权同意本用户的分成关系");
+        $this->check($distribution['upUserId'], $distribution['downUserId']);
+
         $this->distributionDb->mod($distributionId,array(
             'state'=>$this->distributionStateEnum->ON_ACCEPT
         ));
@@ -100,7 +158,7 @@ class DistributionAo extends CI_Model
         //遍历下级分类
     	$where = array(
     		'upUserId'=>$originUserId,
-            'state'=>$distributionStateEnum->ON_ACCEPT
+            'state'=>$this->distributionStateEnum->ON_ACCEPT
     	);
     	$response = $this->search($where, array());
 
