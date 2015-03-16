@@ -6,7 +6,15 @@ class DistributionOrder extends CI_Controller
         parent::__construct();
         $this->load->model('distribution/distributionorderAo', 'distributionOrderAo');
         $this->load->model('user/loginAo', 'loginAo');
+        $this->load->model('distribution/distributionOrderStateEnum', 'distributionOrderStateEnum');
         $this->load->library('argv', 'argv');
+    }
+
+    /**
+     * @view json
+     */
+    public function getAllState(){
+        return $this->distributionOrderStateEnum->names;
     }
 
     /**
@@ -89,7 +97,7 @@ class DistributionOrder extends CI_Controller
     /**
      * @view json
      */
-    public function HasPayOrder(){
+    public function hasPayOrder(){
         $data = $this->argv->checkPost(array(
             array('distributionOrderId', 'require')
         ));

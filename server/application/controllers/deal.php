@@ -171,11 +171,13 @@ class Deal extends CI_Controller {
 		//检查输入参数
 		$data = $this->argv->checkPost(array(
 			array('userId', 'require'),
+			array('entranceUserId', 'require'),
 			array('shopTroller', 'option',array()),
 			array('address', 'option',array()),
 			array('clientId', 'option',0),
 		));
 		$userId = $data['userId'];
+		$entranceUserId = $data['entranceUserId'];
 		$shopTroller = $data['shopTroller'];
 		$address = $data['address'];
 		$clientId = $data['clientId'];
@@ -188,6 +190,7 @@ class Deal extends CI_Controller {
 	   
 		//业务逻辑
 		return $this->orderAo->add(
+			$entranceUserId,
 			$clientId,
 			$loginClientId,
 			$shopTroller,
