@@ -7,6 +7,8 @@ class DistributionOrder extends CI_Controller
         $this->load->model('distribution/distributionorderAo', 'distributionOrderAo');
         $this->load->model('user/loginAo', 'loginAo');
         $this->load->model('distribution/distributionOrderStateEnum', 'distributionOrderStateEnum');
+        $this->load->model('distribution/distributionCommodityAo', 'distributionCommodityAo');
+        $this->load->model('order/orderAo', 'orderAo');
         $this->load->library('argv', 'argv');
     }
 
@@ -44,7 +46,24 @@ class DistributionOrder extends CI_Controller
         $dataWhere = $this->argv->checkGet(array(
             array('distributionOrderId', 'require')
         );
-        return $this->distributionOrderAo->get($dataWhere['distributionOrderId']);
+        $distributionOrder = $this->distributionOrderAo->get($dataWhere['distributionOrderId']);
+        $shopOrder = $this->orderAo->get($distributionOrder['shopOrderId']);
+        $distributionCommodity = $this->distributionCommodityAo->get($dataWhere['distributionOrderId']);
+        foreach($distributionCommodity as $key=>$value){
+            foreach($shopOrder['commodity'] as $commodity){
+                if($commodity['shopCommodityId'] == $value['shopCommodityId'])
+                    $distributionCommodity[$key]['shopCommodityId'] = $commodity['shopCommodityId'];
+                    $distributionCommodity[$key]['title'] = $commodity['shopCommodityId'];
+                    $distributionCommodity[$key]['icon'] = $commodity['icon'];
+                    $distributionCommodity[$key]['priceShow'] = $commodity['priceSho'];
+                    $distributionCommodity[$key]['quantity'] = $commodity['quantity'];
+            }  
+        }
+
+        return array(
+            'distributionOrder'=>$distributionOrder,
+            'distributionCommodity'=>$distributionCommodity
+        )
     }
 
     /**

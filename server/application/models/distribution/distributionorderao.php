@@ -22,12 +22,13 @@ class DistributionOrderAo extends CI_Model
 
     public function get($distributionOrderId){
         $distributionOrder = $this->distributionOrderDb->get($distributionOrderId);
-        $order = $this->orderAo->get($distributionOrder['shopOrderId']);
-        $data = array(
-            'distributionOrder'=>$distributionOrder,
-            'shopOrder'=>$order
-        );
-        return $data;
+        return $distributionOrder;
+        //$order = $this->orderAo->get($distributionOrder['shopOrderId']);
+        //$data = array(
+        //    'distributionOrder'=>$distributionOrder,
+        //    'shopOrder'=>$order
+        //);
+        //return $data;
     }
 
 
