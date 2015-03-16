@@ -7,7 +7,6 @@ class DistributionOrder extends CI_Controller
         $this->load->model('distribution/distributionorderAo', 'distributionOrderAo');
         $this->load->model('user/loginAo', 'loginAo');
         $this->load->model('distribution/distributionOrderStateEnum', 'distributionOrderStateEnum');
-        $this->load->model('distribution/distributionCommodityAo', 'distributionCommodityAo');
         $this->load->model('order/orderAo', 'orderAo');
         $this->load->library('argv', 'argv');
     }
@@ -89,7 +88,6 @@ class DistributionOrder extends CI_Controller
     public function payOrder(){
         $data = $this->argv->checkPost(array(
             array('distributionOrderId', 'require'),
-            array('price', 'require')
         ));  
         $user = $this->loginAo->checkMustLogin();
 
@@ -119,6 +117,5 @@ class DistributionOrder extends CI_Controller
         $user = $this->loginAo->checkMustLogin();
         $this->distributionOrderAo->confirm($user['userId'], $data['distributionOrderId']);
     }
-
 }
 

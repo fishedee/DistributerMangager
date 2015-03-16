@@ -319,7 +319,7 @@ create table t_distribution_commodity(
     distributionOrderId integer not null,
     shopOrderId integer not null,
     shopCommodityId integer not null,
-    distributionPrice integer not null,
+    price integer not null,
     createTime timestamp not null default CURRENT_TIMESTAMP,
     modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
     primary key(distributionCommodityId)

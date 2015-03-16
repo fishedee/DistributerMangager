@@ -80,8 +80,13 @@ class DistributionOrderAo extends CI_Model
         if($userId != $order['upUserId'])
             throw new CI_MyException(1, '无权操作此分成订单');
 
+        $commodity = $this->distributionCommodityAo->get($distributionOrderId);
+        $price = 0;
+        foreach($commodity as $value)
+            $price += $value['price'];
         $data = array(
-            'state'=>$this->distributionOrderStateEnum->IN_PAY
+            'state'=>$this->distributionOrderStateEnum->IN_PAY,
+            'price'=>$price
         );
         $this->mod($distributionOrderId, $data);
     }

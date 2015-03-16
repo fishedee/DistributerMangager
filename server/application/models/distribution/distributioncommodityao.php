@@ -5,13 +5,11 @@ class DistributionCommodityAo extends CI_Model
     public function __construct(){
         parent::__construct();
         $this->load->model('distribution/distributionCommodityDb', 'distributionCommodityDb');
-       // $this->load->model('shop/commodityAo', 'commodityAo');
     }
 
     public function check($data){
-        if( isset($data['price']) )
-            if($data['price']  < 0)
-                throw new CI_MyException(1, "商品金额不能为零");     
+        if( !isset($data['price']) || $data['price']  < 0)
+            throw new CI_MyException(1, "商品金额不能为零");     
     }
 
     public function add($data){
@@ -22,6 +20,9 @@ class DistributionCommodityAo extends CI_Model
 
     public function mod($distributionCommodityId, $data){
         $this->check($data);
+        if( isset($data['price']) )
+            $data['price'] = $data['price'] * 100;
+
         $this->db->mod($distributionCommodityId, $data);
     }
 
