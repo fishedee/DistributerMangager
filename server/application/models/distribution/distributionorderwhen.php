@@ -27,7 +27,7 @@ class DistributionOrderWhen extends CI_Model
                 'shopOrderId'=>$shopOrderId
             );
 
-            $response = $this->orderAo->search($where, array());
+            $response = $this->orderDb->search($where, array());
             $commoditys = $response['data'];
             foreach($commoditys as $commodity){
                 $data = array(
