@@ -26,7 +26,7 @@ class DistributionCommodityAo extends CI_Model
     }
 
 
-    public function get($distributionOrderId){
+    public function get($distributionOrderId, $shopOrderId){
         $where = array(
             'distributionOrderId'=>$distributionOrderId,
             'shopOrderId'=>$shopOrderId
@@ -35,8 +35,8 @@ class DistributionCommodityAo extends CI_Model
         $response = $this->distributionCommodityDb->search(
             $where, array());
         $distributionCommodity = $response['data'];
-       // foreach($distributionCommodity as $key=>$value)
-       //     $distributionCommodity[$key]['priceShow'] = $this->commodityAo->getFixedPrice($distributionCommodity[$key]['price']);
+        foreach($distributionCommodity as $key=>$value)
+            $distributionCommodity[$key]['priceShow'] = $this->commodityAo->getFixedPrice($distributionCommodity[$key]['price']);
 
         return $distribuComodity;
     }

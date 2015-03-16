@@ -6,7 +6,9 @@ class DistributionOrderAo extends CI_Model
         parent::__construct();
         $this->load->model('distribution/distributionorderDb', 'distributionOrderDb');
         $this->load->model('distribution/distributionAo', 'distributionAo');
-        //$this->load->model('order/orderAo', 'orderAo');
+        $this->load->model('distribution/distributionCommodityAo', 
+            'distributionCommodityAo');
+        $this->load->model('order/orderAo', 'orderAo');
     }
 
     public function getFixedPrice($price){
@@ -23,12 +25,14 @@ class DistributionOrderAo extends CI_Model
     public function get($distributionOrderId){
         $distributionOrder = $this->distributionOrderDb->get($distributionOrderId);
         return $distributionOrder;
-        //$order = $this->orderAo->get($distributionOrder['shopOrderId']);
-        //$data = array(
-        //    'distributionOrder'=>$distributionOrder,
-        //    'shopOrder'=>$order
-        //);
-        //return $data;
+        $order = $this->orderAo->get($distributionOrder['shopOrderId']);
+        $commodity = $this->distributionCommodityAo->get($distributionOrderId);
+        $data = array(
+            'distributionOrder'=>$distributionOrder,
+            'shopOrder'=>$order,
+            'commodity'=>$commodity
+        );
+        return $data;
     }
 
 

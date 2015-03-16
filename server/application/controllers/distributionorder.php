@@ -47,23 +47,7 @@ class DistributionOrder extends CI_Controller
             array('distributionOrderId', 'require')
         ));
         $distributionOrder = $this->distributionOrderAo->get($dataWhere['distributionOrderId']);
-        $shopOrder = $this->orderAo->get($distributionOrder['shopOrderId']);
-        $distributionCommodity = $this->distributionCommodityAo->get($dataWhere['distributionOrderId']);
-        foreach($distributionCommodity as $key=>$value){
-            foreach($shopOrder['commodity'] as $commodity){
-                if($commodity['shopCommodityId'] == $value['shopCommodityId'])
-                    $distributionCommodity[$key]['shopCommodityId'] = $commodity['shopCommodityId'];
-                    $distributionCommodity[$key]['title'] = $commodity['shopCommodityId'];
-                    $distributionCommodity[$key]['icon'] = $commodity['icon'];
-                    $distributionCommodity[$key]['priceShow'] = $commodity['priceSho'];
-                    $distributionCommodity[$key]['quantity'] = $commodity['quantity'];
-            }  
-        }
-
-        return array(
-            'distributionOrder'=>$distributionOrder,
-            'distributionCommodity'=>$distributionCommodity
-        );
+        
     }
 
     /**
