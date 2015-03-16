@@ -330,21 +330,23 @@ insert into t_user_permission(userId,permissionId)values
 (10004,4);
 
 insert into t_client(userId,openId,type)values
-(10003,'微信测试用户虚拟OpenId',2);
+(10003,'微信测试用户虚拟OpenId',2),
+(10004,'微信测试用户虚拟OpenId',2);
 
 insert into t_address(clientId,name,province,city,address,phone,payment)values
 (10001,'黎锦伟','广东','佛山','某地','15018749403',1);
 
 insert into t_user_app(userId,appName,appId,appKey,mchId,mchKey,remark)values
 (10003,'至高商城','wx5cc2d94dfe468c95','adc38d0974b0617023012fef684e9ae6','1220218001','56344f19b3b90eb545bf2f07800e7a10',''),
-(10004,'至强商城','test','test','1220218001','56344f19b3b90eb545bf2f07800e7a10','');
+(10004,'至强商城','testAppId','testAppKey','testMchId','testMchKey','');
 
 insert into t_company_template(title,url,remark)values
 ('metro风格','/data/upload/template/sample1',''),
 ('简约风格(测试用)','/data/upload/template/sample2','');
 
 insert into t_user_company_template(userId,companyTemplateId)values
-(10003,10001);
+(10003,10001),
+(10004,10001);
 
 insert into t_user_company_classify(userId,title,icon,sort,remark)values
 (10003,'行业新闻','/data/upload/sample/earth.png',1,''),
@@ -372,14 +374,16 @@ insert into t_shop_commodity_classify(userId,title,icon,parent,sort,remark)value
 (10003,'饮食','/data/upload/sample/sample2.jpg',0,5,''),
 (10003,'饮料','/data/upload/sample/sample4.jpg',10005,6,''),
 (10003,'零食','/data/upload/sample/sample5.jpg',10005,7,''),
-(10003,'主食','/data/upload/sample/sample6.jpg',10005,8,'');
+(10003,'主食','/data/upload/sample/sample6.jpg',10005,8,''),
+(10004,'商品','/data/upload/sample/sample2.jpg',0,1,'');
 
 insert into t_shop_commodity(userId,shopLinkCommodityId, isLink, shopCommodityClassifyId,icon,title,introduction,detail,price,oldPrice,inventory,state)values
 (10003,0, 0, 10002,'/data/upload/sample/sample4.jpg','商品1','商品简介1','商品描述1',1,11100,10,1),
 (10003,0, 0, 10003,'/data/upload/sample/sample5.jpg','商品2','商品简介2','商品描述2',2,22200,10,1),
 (10003,0, 0, 10004,'/data/upload/sample/sample6.jpg','商品3','商品简介3','商品描述3',3,33300,10,1),
 (10003,10005, 1, 10002,'','','','',1,1,1,1),
-(10004,0, 0, 0,'/data/upload/sample/sample6.jpg','商品4','商品简介4','商品描述4',4,44400,10,1);
+(10004,0, 0, 10009,'/data/upload/sample/sample6.jpg','商品4','商品简介4','商品描述4',4,44400,10,1),
+(10004,10001, 1, 10009,'/data/upload/sample/sample6.jpg','商品4','商品简介4','商品描述4',4,44400,10,1);
 
 #显示初始数据
 select * from t_user;

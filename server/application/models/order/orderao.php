@@ -94,8 +94,6 @@ class OrderAo extends CI_Model
 	}
 
 	public function search($dataWhere,$dataLimit){
-		$this->userAppAo->checkByUserId($userId);
-		
         $data = $this->orderDb->search($dataWhere,$dataLimit);
         foreach($data['data'] as $key=>$value ){
             $data['data'][$key]['priceShow'] = $this->commodityAo->getFixedPrice($data['data'][$key]['price']);
@@ -144,7 +142,7 @@ class OrderAo extends CI_Model
 		return $shopOrder;
 	}
 
-	public function add($clientId,$shopTrollerId,$address){
+	public function add($clientId,$loginClientId,$shopTrollerId,$address){
 		//获取购物车内的商品信息
 		$shopTroller = $this->trollerAo->getByIds($clientId,$shopTrollerId);
 
@@ -176,7 +174,7 @@ class OrderAo extends CI_Model
 		$orderInfo = $this->addMyOrder($userId,$clientId,$shopTroller,$address);
 
 		//微信统一下单
-		$this->addWxOrder($userId,$clientId,$orderInfo);
+		$this->addWxOrder($userId,$loginClientId,$orderInfo);
 
 		//删购物车
 		$this->trollerAo->delByIds($clientId,$shopTrollerId);

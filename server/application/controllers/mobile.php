@@ -15,8 +15,9 @@ class Mobile extends CI_Controller {
 	/**
 	* @view
 	*/
-	public function file($userId,$url1='',$url2='',$url3='')
+	public function file($userInfo,$url1='',$url2='',$url3='')
 	{
+		$userId = $_GET['userId'];
 		$url = '';
 		if( $url1 != '')
 			$url .= '/'.$url1;
@@ -25,7 +26,7 @@ class Mobile extends CI_Controller {
 		if( $url3 != '')
 			$url .= '/'.$url3;
 		if( $url == ''){
-			header("Location: /$userId/company.html");
+			header("Location: /$userInfo/company.html");
 		}
 		//根据后缀名输出Content-Type
 		$pos = strripos($url,'.');

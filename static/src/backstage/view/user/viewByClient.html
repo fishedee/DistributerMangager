@@ -47,7 +47,6 @@
 				}
 				user = data.data;
 				user.typeName = userType[user.type];
-				user.url = 'http://'+user.userId+'.'+location.host+'/'+userId;
 				next();
 			});
 		}

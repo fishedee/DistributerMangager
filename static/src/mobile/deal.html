@@ -52,15 +52,20 @@
 					id:single.shopOrderId,
 					state:orderStateIdToName[single.state],
 					price:single.priceShow,
-					link:$.url.buildQueryUrl('dealdetail.html',{shopOrderId:single.shopOrderId})
+					link:$.url.buildQueryUrl(
+						'http://'+single.userId+'.'+$.getTopDomain()+'/'+$.getEntranceUserId()+'/dealdetail.html',
+						{shopOrderId:single.shopOrderId}
+					)
 				};
 			}));
 			var pageHtml = headerbutton.el + deallist.el + footer.el;
 			$.page.setGrey();
 			$.page.start(pageHtml);
 		}
-		getOrderCount(function(){
-			getOrderList(go);
+		$.checkMustLogin(function(){
+			getOrderCount(function(){
+				getOrderList(go);
+			});
 		});
 	</script>
 </body>

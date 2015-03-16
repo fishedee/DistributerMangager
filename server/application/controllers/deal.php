@@ -74,7 +74,7 @@ class Deal extends CI_Controller {
 		$user = $this->loginAo->checkMustClient(
             $this->userPermissionEnum->COMPANY_SHOP
         );
-        $dataWhere['userId'] = $user['userId']
+        $dataWhere['userId'] = $user['userId'];
 
 		//执行业务逻辑
 		return $this->orderAo->search($dataWhere,$dataLimit);
@@ -173,18 +173,23 @@ class Deal extends CI_Controller {
 			array('userId', 'require'),
 			array('shopTroller', 'option',array()),
 			array('address', 'option',array()),
+			array('clientId', 'option',0),
 		));
 		$userId = $data['userId'];
 		$shopTroller = $data['shopTroller'];
 		$address = $data['address'];
+		$clientId = $data['clientId'];
 
 		//检查权限
 		$client = $this->clientLoginAo->checkMustLogin($userId);
-		$clientId = $client['clientId'];
+		$loginClientId = $client['clientId'];
+		if($clientId == 0 )
+			$clientId = $loginClientId;
 	   
 		//业务逻辑
 		return $this->orderAo->add(
 			$clientId,
+			$loginClientId,
 			$shopTroller,
 			$address
 		);

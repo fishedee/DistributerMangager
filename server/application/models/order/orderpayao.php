@@ -26,7 +26,7 @@ class OrderPayAo extends CI_Model {
     }
 
     private function getOpenId($userId,$clientId){
-    	//return 'oMhf-txr18KIBU1GZ0TXpxToaoH8';
+    	return 'oMhf-txr18KIBU1GZ0TXpxToaoH8';
 
     	$client = $this->clientAo->get($userId,$clientId);
     	return $client['openId'];

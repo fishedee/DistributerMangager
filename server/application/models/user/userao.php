@@ -39,7 +39,7 @@ class UserAo extends CI_Model {
 			return $single['clientUserId'];
 		},$userClient);
 		$user['client'] = $this->userDb->getByIds($userClientIds);
-		
+		$user['url'] = 'http://'.$userId.'.'.$_SERVER['HTTP_HOST'].'/'.$userId;
 		return $user;
 	}
 	

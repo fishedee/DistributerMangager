@@ -13,7 +13,7 @@
 		var myaddress = {};
 		var mapPaymentIdToName = {1:'微信支付',2:'货到付款'};
 		var mapPaymentNameToId = {'微信支付':1,'货到付款':2};
-		function orderPay(shopOrderId,next){
+		function orderPay(hopOrderId,next){
 			$.get('/deal/wxjspay',{shopOrderId:shopOrderId},function(data){
 				if(data.code!=0){
 					dialog.message(data.msg);
@@ -34,8 +34,8 @@
 				});
 			});
 		}
-		function order(shopTroller,address,next){
-			$.post('/deal/order',{shopTroller:shopTroller,address:address},function(data){
+		function order(clientId,shopTroller,address,next){
+			$.post('/deal/order',{shopTroller:shopTroller,address:address,clientId:clientId},function(data){
 				if(data.code == 20001){
 					dialog.message(data.msg,function(){
 						location.href = 'shopcart.html';
@@ -78,9 +78,10 @@
 					text:'支付',
 					click:function(){
 						var shopTroller = $.location.getQueryArgv('shopTroller').split('|');
+						var clientId = $.location.getQueryArgv('clientId');
 						var addressInput = address.get();
 						addressInput.payment = mapPaymentNameToId[addressInput.payment];
-						order(shopTroller,addressInput,function(shopOrderId){
+						order(clientId,shopTroller,addressInput,function(shopOrderId){
 							location.href = 'deal.html';
 						});
 					}

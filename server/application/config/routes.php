@@ -37,10 +37,10 @@
 | in the URL cannot be matched to a valid route.
 |
 */
-$route['(:num)'] = "mobile/file/$1/";
-$route['(:num)/(:any)'] = "mobile/file/$1/$2";
-$route['(:num)/(:any)/(:any)'] = "mobile/file/$1/$2/$3";
-$route['(:num)/(:any)/(:any)/(:any)'] = "mobile/file/$1/$2/$3/$4";
+$route['([0-9_]+)'] = "mobile/file/$1/";
+$route['([0-9_]+)/(:any)'] = "mobile/file/$1/$2";
+$route['([0-9_]+)/(:any)/(:any)'] = "mobile/file/$1/$2/$3";
+$route['([0-9_]+)/(:any)/(:any)/(:any)'] = "mobile/file/$1/$2/$3/$4";
 $route['default_controller'] = "index";
 $route['404_override'] = '';
 

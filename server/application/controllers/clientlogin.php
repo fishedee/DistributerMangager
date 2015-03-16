@@ -20,7 +20,7 @@ class ClientLogin extends CI_Controller {
 			array('userId','require')
 		));
 
-		$this->clientLoginAo->checkMustLogin($data['userId']);
+		return $this->clientLoginAo->checkMustLogin($data['userId'])['clientId'];
 	}
 
 	/**
@@ -30,10 +30,11 @@ class ClientLogin extends CI_Controller {
 	{
 		//检查输入参数
 		$data = $this->argv->checkGet(array(
-			array('userId','require')
+			array('userId','require'),
+			array('clientId','require')
 		));
 
-		$this->clientLoginAo->login($data['userId'],10001);
+		$this->clientLoginAo->login($data['userId'],$data['clientId']);
 	}
 	
 	/**

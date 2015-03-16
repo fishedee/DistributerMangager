@@ -88,7 +88,7 @@
 			});
 			var biglist = new BigList(_.map(shopOrder.commodity,function(singleCommodity){
 				return {
-					link:$.url.buildQueryUrl('itemdetail.html',{shopOrderCommodityId:singleCommodity.shopOrderCommodityId}),
+					link:$.url.buildQueryUrl('itemdetail.html',{shopCommodityId:singleCommodity.shopCommodityId}),
 					image:singleCommodity.icon,
 					title:singleCommodity.title,
 					summary:singleCommodity.introduction,
@@ -132,7 +132,9 @@
 			$.page.setGrey();
 			$.page.start(pageHtml);
 		}
-		getShopOrder(go);
+		$.checkMustLogin(function(){
+			getShopOrder(go);
+		});
 	</script>
 </body>
 <link rel="import" href="footer.html?__inline">
