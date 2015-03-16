@@ -86,7 +86,8 @@ class DistributionAo extends CI_Model
     }
 
     private $path = array();
-    private $result_path = array();
+    private $result = array();
+
     
     private function dfs($originUserId, $userId){
         //记录路径

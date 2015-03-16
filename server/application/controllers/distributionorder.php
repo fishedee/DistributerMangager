@@ -31,6 +31,16 @@ class Test extends CI_Controller
     /**
      * @view json
      */
+    public function get(){
+        $dataWhere = $this->argv->checkGet(array(
+            array('distributionOrderId', 'require')
+        );
+        return $this->distributionOrderAo->get($dataWhere['distributionOrderId']);
+    }
+
+    /**
+     * @view json
+     */
     public function add(){
         //检查参数
         $data = $this->argv->checkPost(array(
