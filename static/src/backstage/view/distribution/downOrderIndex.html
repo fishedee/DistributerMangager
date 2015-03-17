@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>烘焙帮后台管理系统</title>
+	<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+</head>
+<body class="definewidth m10">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		var subPage = require('/fishstrap/page/subPage.js');
+		var distributionOrderState = {};
+		function getAllState(next){
+			$.get('/distributionorder/getAllState',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				distributionOrderState = data.data;
+				next();
+			});
+		}
+		function go(){
+			query.simpleQuery({
+				id:'container',
+				url:'/distributionorder/search?direction=down',
+				column:[
+					{id:'distributionOrderId',type:'text',name:'分成订单ID'},
+					{id:'downUserId',type:'text',name:'下级分成ID'},
+					{id:'downUserCompany',type:'text',name:'下级分成名称'},
+					{id:'shopOrderPrice',type:'text',name:'订单金额'},
+					{id:'price',type:'text',name:'分成金额'},
+					{id:'state',type:'enum',name:'分成状态',map:distributionOrderState},
+					{id:'createTime',type:'text',name:'创建时间'},
+					{id:'modifyTime',type:'text',name:'修改时间'},
+				],
+				queryColumn:['state'],
+				operate:[
+				{
+					name:'查看',
+					click:function(data){
+						if( data.state == '未付款'){
+							location.href = 'orderUnPayView.html?distributionOrderId='+data.distributionOrderId;
+						}else{
+							location.href = 'orderView.html?distributionOrderId='+data.distributionOrderId;
+						}
+					}
+				}
+				],
+				button:[],
+			});
+		}
+		getAllState(go);
+	</script>
+ </body>
+</html>

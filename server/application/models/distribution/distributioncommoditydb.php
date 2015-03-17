@@ -18,6 +18,12 @@ class DistributionCommodityDb extends CI_Model
         $this->db->update($this->tableName, $data);
     }
 
+    public function modByDistributionOrderAndCommodity($distributionOrderId,$shopCommodityId, $data){
+        $this->db->where('distributionOrderId', $distributionOrderId);
+        $this->db->where('shopCommodityId', $shopCommodityId);
+        $this->db->update($this->tableName, $data);
+    }
+
     public function del($distributionCommodityId){
         $this->db->where('distributionCommodityId', $distributionCommodityId);
         $this->db->delete($this->tableName);

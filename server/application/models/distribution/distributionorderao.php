@@ -9,109 +9,121 @@ class DistributionOrderAo extends CI_Model
         $this->load->model('distribution/distributionCommodityAo', 
             'distributionCommodityAo');
         $this->load->model('order/orderAo', 'orderAo');
+        $this->load->model('user/userAo', 'userAo');
     }
 
     public function getFixedPrice($price){
-        return sprintf("%.2f", $price/100);
+        return sprintf("%.2f", $price);
     }
 
-    public function search($userId, $where, $limit){
-        $where['upUserId'] = $userId;
-        $where['downUserId'] = $userId;
+    private function getOrderDetailInfo($distributionOrder){
+        //取出order信息
+        $distributionOrderId = $distributionOrder['distributionOrderId'];
+        $distributionOrder['price'] = $this->getFixedPrice($distributionOrder['price']/100);
+        $distributionOrder['upUserCompany'] = $this->userAo->get($distributionOrder['upUserId'])['company'];
+        $distributionOrder['downUserCompany'] = $this->userAo->get($distributionOrder['downUserId'])['company'];
 
-        $data = $this->distributionOrderDb->search($where, $limit);
-        foreach($data['data'] as $key=>$value)
-            $data['data'][$key]['priceShow'] = $this->getFixedPrice($value['price']);
-        return $data;
-    }
-
-    public function get($distributionOrderId){
-        $distributionOrder = $this->distributionOrderDb->get($distributionOrderId);
-        $order = $this->orderAo->get($distributionOrder['shopOrderId']);
+        //拉出分成订单商品的信息
+        $idToCommodity = array();
         $commodity = $this->distributionCommodityAo->get($distributionOrderId);
-        $data = array(
-            'distributionOrder'=>$distributionOrder,
-            'shopOrder'=>$order,
-            'commodity'=>$commodity
-        );
+        foreach($commodity as $singleCommodity )
+            $idToCommodity[$singleCommodity['shopCommodityId']] = $singleCommodity; 
+        
+        //拉出订单原始信息
+        $distributionOrder['order'] = $this->orderAo->get($distributionOrder['shopOrderId']);
+        foreach($distributionOrder['order']['commodity'] as $key=>$value){
+            $shopCommodityId = $value['shopCommodityId'];
+            $distributionOrder['order']['commodity'][$key]['distributionPrice'] = $this->getFixedPrice(
+                $idToCommodity[$shopCommodityId]['price']
+            ); 
+            if( $distributionOrder['order']['commodity'][$key]['distributionPrice'] != 0 ){
+                $distributionOrder['order']['commodity'] [$key]['distributionPrecent'] = $this->getFixedPrice(
+                    $distributionOrder['order']['commodity'] [$key]['distributionPrice']/
+                    ($distributionOrder['order']['commodity'] [$key]['priceShow']*
+                    $distributionOrder['order']['commodity'] [$key]['quantity']) 
+                );
+            }else{
+                $distributionOrder['order']['commodity'] [$key]['distributionPrecent'] = 0;
+            }
+        }
+        $distributionOrder['shopOrderId'] = $distributionOrder['order']['shopOrderId'];
+        $distributionOrder['shopOrderPrice'] = $distributionOrder['order']['priceShow'];
+        return $distributionOrder;
+    }
+
+    public function search($where, $limit){
+        //拉出订单信息
+        $data = $this->distributionOrderDb->search($where, $limit);
+        
+        //拉出分成订单详细信息
+        foreach($data['data'] as $key=>$distributionOrder)
+            $data['data'][$key] = $this->getOrderDetailInfo($distributionOrder);
+
         return $data;
     }
 
+    public function get($userId,$distributionOrderId){
+        //拉出分成订单基础信息
+        $distributionOrder = $this->distributionOrderDb->get($distributionOrderId);
+        if($distributionOrder['upUserId'] != $userId && $distributionOrder['downUserId'] != $userId )
+            throw new CI_MyException(1,'没有此权限查看此分成订单');
 
-    public function check($data){
-        if( isset($data['price']) ){
-            if($data['price'] < 0)
-        	    throw new CI_MyException(1, '价格不能少于0');       
-        }
-
-        if( isset($data['state']) ){
-            if($data['state'] < 0 || $data['state'] > 3)
-                throw new CI_MyException(1, '非法状态参数');
-        }
+        //拉出分成订单详细信息
+        return $this->getOrderDetailInfo($distributionOrder);
     }
 
-    public function add($upUserId, $downUserId, $data){
-        $where = array(
-            'upUserId'=>$upUserId,
-            'downUserId'=>$downUserId
-        );
-        
-        $response = $this->distributionAo->search($where, array());
-        if($response['count'] == 0)
-            throw new CI_MyException(1, '用户间不存在分成关系');
-        $this->check($data);
-	    $data['price'] = $data['price']*100;
-        $this->distributionOrderDb->add($upUserId, $downUserId, $data);
-    }
-
-    public function mod($distributionOrderId, $data){
-	if( isset($data['price']) ){
-            $this->check($data);
-        	$data['price'] = $data['price']*100;   
-	}
-        $this->distributionOrderDb->mod($distributionOrderId, $data);
-    }
-
-    public function payOrder($userId, $distributionOrderId){
+    public function payOrder($userId, $distributionOrderId,$commodity){
+        //校验订单信息
         $order = $this->distributionOrderDb->get($distributionOrderId);
         if($order['state'] != $this->distributionOrderStateEnum->UN_PAY)
-            throw new CI_MyException(1, '此分成订单不能设置付款中状态');
+            throw new CI_MyException(1, '只有“未付款”订单才能设置“付款中”状态');
         if($userId != $order['upUserId'])
             throw new CI_MyException(1, '无权操作此分成订单');
 
-        $data = array(
-            'state'=>$this->distributionOrderStateEnum->IN_PAY
-        );
-        $this->mod($distributionOrderId, $data);
+        //修改分成订单的各个商品的分成金额
+        $totalPrice = 0;
+        foreach($commodity as $singleCommodity){
+            $this->distributionCommodityAo->mod(
+                $distributionOrderId,
+                $singleCommodity['shopCommodityId'],
+                array('price'=>$singleCommodity['distributionPrice'])
+            );
+            $totalPrice += $singleCommodity['distributionPrice'];
+        }
+
+        //修改分成订单为支付中
+        $totalPrice = $totalPrice * 100;
+        $this->distributionOrderDb->mod($distributionOrderId, array(
+            'state'=>$this->distributionOrderStateEnum->IN_PAY,
+            'price'=>$totalPrice
+        ));
     }
 
     public function hasPayOrder($userId, $distributionOrderId){
+        //校验订单信息
         $order = $this->distributionOrderDb->get($distributionOrderId);
         if($order['state'] != $this->distributionOrderStateEnum->IN_PAY)
-            throw new CI_MyException(1, '此分成订单不能设置已付款状态');
+            throw new CI_MyException(1, '只有“付款中”订单才能设置“已付款”状态');
         if($userId != $order['upUserId'])
             throw new CI_MyException(1, '无权操作此分成订单');
-        $data = array(
+
+        //修改分成订单为已支付
+        $this->distributionOrderDb->mod($distributionOrderId, array(
             'state'=>$this->distributionOrderStateEnum->HAS_PAY
-        );
-        if($order['state'] != $this->distributionOrderStateEnum->IN_PAY)
-            throw new CI_MyException(1, '此分成订单不能设置已付款状态');
-        if($userId != $order['upUserId'])
-            throw new CI_MyException(1, '无权操作此分成订单');
-        $data = array(
-            'state'=>$this->distributionOrderStateEnum->HAS_PAY
-        );
-        $this->mod($distributionOrderId, $data);
+        ));
     }
 
     public function confirm($userId, $distributionOrderId){
+        //校验订单信息
         $order = $this->distributionOrderDb->get($distributionOrderId);
         if($order['state'] != $this->distributionOrderStateEnum->HAS_PAY)
-            throw new CI_MyException(1, '此分成不能设置确认付款状态');
+            throw new CI_MyException(1, '只有“已付款”订单才能设置“已收款”状态');
         if($userId != $order['downUserId'])
             throw new CI_MyException(1, '无权操作此分成订单');
-        $data = array(
+
+        //修改分成订单为已确认收款
+        $this->distributionOrderDb->mod($distributionOrderId, array(
             'state'=>$this->distributionOrderStateEnum->HAS_CONFIRM
-        );
+        ));
     }
 }

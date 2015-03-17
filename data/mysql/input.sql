@@ -293,6 +293,7 @@ create table t_distribution(
     distributionId integer not null auto_increment,
     upUserId integer not null,
     downUserId integer not null,
+    shopUrl varchar(256) not null,
     distributionPercent integer not null,
     state integer not null,
     createTime timestamp not null default CURRENT_TIMESTAMP,
@@ -305,7 +306,7 @@ create table t_distribution_order(
     distributionOrderId integer not null auto_increment,
     upUserId integer not null,
     downUserId integer not null,
-    shopOrderId integer not null,
+    shopOrderId varchar(32) not null,
     price integer not null,
     state integer not null,
     createTime timestamp not null default CURRENT_TIMESTAMP,
@@ -317,7 +318,7 @@ create table t_distribution_order(
 create table t_distribution_commodity(
     distributionCommodityId  integer not null auto_increment,
     distributionOrderId integer not null,
-    shopOrderId integer not null,
+    shopOrderId varchar(32) not null,
     shopCommodityId integer not null,
     price integer not null,
     createTime timestamp not null default CURRENT_TIMESTAMP,
@@ -408,25 +409,32 @@ insert into t_shop_commodity(userId,shopLinkCommodityId, isLink, shopCommodityCl
 (10004,0, 0, 10009,'/data/upload/sample/sample6.jpg','商品4','商品简介4','商品描述4',4,44400,10,1),
 (10004,10001, 1, 10009,'/data/upload/sample/sample6.jpg','商品4','商品简介4','商品描述4',4,44400,10,1);
 
-insert into t_shop_order_address(shopOrderId, name, province, city, address, phone, payment)values
-(10001, 'fish', '广东', '广州', '广州大学城', '15593728362', 1);
+insert into t_distribution(upUserId,downUserId,distributionPercent,shopUrl,state)values
+(10003,10004,1234,'http://10003.shop.fishedee.com/10003/item.html',2),
+(10004,10005,2345,'http://10003.shop.fishedee.com/10004/item.html',2),
+(10005,10006,3456,'http://10003.fishedee.com/10006/item.html',2);
 
 insert into t_shop_order(shopOrderId, userId, clientId, image, description, price, num, name, wxPrePayId, state, remark)values
-(10001, 10003, 10001, '/data/upload/sample/sample4.jpg', '测试订单', 100, 2, '测试订单', '12323213', 0, '测试订单');
+(10001, 10003, 10001, '/data/upload/sample/sample4.jpg', '测试订单', 100, 3, '测试订单', '12323213', 0, '测试订单'),
+(10002, 10004, 10001, '/data/upload/sample/sample6.jpg', '测试订单2', 90, 1, '测试订单2', '12323213', 0, '测试订单2');
+
+insert into t_shop_order_address(shopOrderId, name, province, city, address, phone, payment)values
+(10001, 'fish', '广东', '广州', '广州大学城', '15593728362', 1),
+(10002, 'fish2', '广东', '广州', '广州大学城', '15593728362', 1);
 
 insert into t_shop_order_commodity(shopOrderId, shopCommodityId, title, icon, introduction, price, OldPrice, quantity)values
-(10001, 10001, '测试商品1', '/data/upload/sample/sample6.jpg', '测试商品1', 30, 50, 2),
-(10001, 10002, '测试商品2', '/data/upload/sample/sample6.jpg', '测试商品2', 40, 50, 1);
+(10001, 10001, '测试商品1', '/data/upload/sample/sample4.jpg', '测试商品1', 30, 500, 2),
+(10001, 10002, '测试商品2', '/data/upload/sample/sample5.jpg', '测试商品2', 40, 500, 1),
+(10002, 10003, '测试商品3', '/data/upload/sample/sample6.jpg', '测试商品3', 90, 500, 1);
 
 insert into t_distribution_order(upUserId, downUserId, shopOrderId, price, state)values
-(10003, 10002, 10001, 100, 0);
-
-insert into t_distribution_order(upUserId, downUserId, shopOrderId, price, state)values
-(10002, 10003, 10001, 100, 1);
+(10003,10004, 10001, 0, 0),
+(10004,10005, 10002, 0, 0);
 
 insert into t_distribution_commodity(distributionOrderId, shopOrderId, shopCommodityId, price)values
-(10001, 10001, 10001, 5),
-(10001, 10001, 10002, 10);
+(10001, 10001, 10001, 0),
+(10001, 10001, 10002, 0),
+(10002, 10002, 10003, 0);
 
 #显示初始数据
 select * from t_user;
@@ -441,3 +449,9 @@ select * from t_user_company_article;
 select * from t_user_company_banner;
 select * from t_shop_commodity_classify;
 select * from t_shop_commodity;
+select * from t_shop_order;
+select * from t_shop_order_address;
+select * from t_shop_order_commodity;
+select * from t_distribution_order;
+select * from t_distribution_commodity;
+select * from t_distribution;

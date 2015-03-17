@@ -8,6 +8,7 @@ class Distribution extends CI_Controller
         $this->load->model('client/clientLoginAo', 'clientLoginAo');
         $this->load->model('distribution/distributionAo', 'distributionAo');
         $this->load->model('distribution/distributionStateEnum', 'distributionStateEnum');
+        $this->load->model('user/userPermissionEnum', 'userPermissionEnum');
         $this->load->library('argv', 'argv');
     }
 
@@ -34,7 +35,9 @@ class Distribution extends CI_Controller
         ));
 
         //检查权限
-        $user = $this->loginAo->checkMustLogin();
+        $user = $this->loginAo->checkMustClient(
+            $this->userPermissionEnum->COMPANY_DISTRIBUTION
+        );
 
         if($dataWhere['direction'] == 'down')
             $where = array(
@@ -60,9 +63,30 @@ class Distribution extends CI_Controller
         ));
         
         //检查权限
-        $user = $this->loginAo->checkMustLogin();
+        $user = $this->loginAo->checkMustClient(
+            $this->userPermissionEnum->COMPANY_DISTRIBUTION
+        );
 
         return $this->distributionAo->get($user['userId'], $data['distributionId']);
+    }
+
+    /**
+     * @view json
+     */
+    public function getByLink(){
+        //检查参数
+        $data = $this->argv->checkGet(array(
+            array('upUserId', 'require'),
+            array('downUserId', 'require'),
+        ));
+        
+        //检查权限
+        $user = $this->loginAo->checkMustClient(
+            $this->userPermissionEnum->COMPANY_DISTRIBUTION
+        );
+        $userId = $user['userId'];
+
+        return $this->distributionAo->getByLink($userId,$data['upUserId'], $data['downUserId']);
     }
 
     /**
@@ -75,7 +99,9 @@ class Distribution extends CI_Controller
         ));
 
         //检查权限
-        $user = $this->loginAo->checkMustLogin();
+        $user = $this->loginAo->checkMustClient(
+            $this->userPermissionEnum->COMPANY_DISTRIBUTION
+        );
 
         $this->distributionAo->request($data['upUserId'], $user['userId']);
     } 
@@ -90,7 +116,9 @@ class Distribution extends CI_Controller
         ));
         
         //检查权限
-        $user = $this->loginAo->checkMustLogin();
+        $user = $this->loginAo->checkMustClient(
+            $this->userPermissionEnum->COMPANY_DISTRIBUTION
+        );
 
         $this->distributionAo->accept($user['userId'],$data['distributionId']);
     }
@@ -101,21 +129,26 @@ class Distribution extends CI_Controller
     public function mod(){
         //检查参数
         $data = $this->argv->checkPost(array(
-            array('distributionId', 'require')
+            array('distributionId', 'require'),
+            array('shopUrl', 'require'),
         ));
         $distributionId = $data['distributionId'];
+        $shopUrl = $data['shopUrl'];
 
         $data = $this->argv->checkPost(array(
             array('distributionPercentShow', 'require')
         ));
 
         //检查权限
-        $user = $this->loginAo->checkMustLogin();
+        $user = $this->loginAo->checkMustClient(
+            $this->userPermissionEnum->COMPANY_DISTRIBUTION
+        );
 
         $this->distributionAo->modPrecent(
             $user['userId'],
             $distributionId,
-            $data['distributionPercentShow']
+            $data['distributionPercentShow'],
+            $shopUrl
         );
     }
 
@@ -129,7 +162,9 @@ class Distribution extends CI_Controller
         ));
 
         //检查权限
-        $user = $this->loginAo->checkMustLogin();
+        $user = $this->loginAo->checkMustClient(
+            $this->userPermissionEnum->COMPANY_DISTRIBUTION
+        );
         $userId = $user['userId'];
 
         $this->distributionAo->del($userId, $data['distributionId']);
