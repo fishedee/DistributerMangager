@@ -6,7 +6,7 @@
     chmod 777 /data/log/ -R
     chmod 777 /data/updata/ -R
 
-#Fis
+###Fis
 
     第一次使用运行安装剧本
     third-party/FishStrap/util/install.sh
