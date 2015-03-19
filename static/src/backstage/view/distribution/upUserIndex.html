@@ -30,9 +30,9 @@
 				url:'/distribution/search?direction=up',
 				column:[
 					{id:'distributionId',type:'text',name:'分成关系ID'},
-					{id:'upUserId',type:'text',name:'上级分成ID'},
-					{id:'upUserCompany',type:'text',name:'上级分成名称'},
-					{id:'shopUrl',type:'text',name:'上级分成URL'},
+					{id:'upUserId',type:'text',name:'供货商ID'},
+					{id:'upUserCompany',type:'text',name:'供货商名称'},
+					{id:'shopUrl',type:'text',name:'供货商商城分成URL'},
 					{id:'state',type:'enum',name:'状态',map:distributionState},
 					{id:'createTime',type:'text',name:'创建时间'},
 					{id:'modifyTime',type:'text',name:'修改时间'},
@@ -55,7 +55,7 @@
 					}
 				}],
 				button:[{
-					name:'添加上级分成',
+					name:'添加供货商',
 					click:function(data){
 						location.href = 'upUserView.html';
 					}

@@ -47,10 +47,10 @@
 				field:[
 					{id:'distributionOrderId',type:'read',name:'分成订单ID'},
 					{id:'shopOrderId',type:'read',name:'订单ID'},
-					{id:'upUserId',type:'read',name:'上级分成ID'},
-					{id:'upUserCompany',type:'read',name:'上级分成名称'},
-					{id:'downUserId',type:'read',name:'下级分成ID'},
-					{id:'downUserCompany',type:'read',name:'下级分成名称'},
+					{id:'upUserId',type:'read',name:'供货商ID'},
+					{id:'upUserCompany',type:'read',name:'供货商名称'},
+					{id:'downUserId',type:'read',name:'分销商ID'},
+					{id:'downUserCompany',type:'read',name:'分销商名称'},
 					{id:'shopOrderPrice',type:'read',name:'订单金额'},
 					{id:'price',type:'read',name:'分成总金额'},
 					{id:'commodity',type:'table',name:'订单商品',
@@ -78,7 +78,7 @@
 						return;
 					}
 					if(data.state == 1 ){
-						dialog.message('只有上级分成才有权限修改为付款中状态');
+						dialog.message('只有供货商才有权限修改为付款中状态');
 					}else if(data.state == 2){
 						//转换为已付款
 						dialog.confirm('确认扭转订单为已付款状态，不可回退操作？!',function(){

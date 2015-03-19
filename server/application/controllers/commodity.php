@@ -63,6 +63,7 @@ class Commodity extends CI_Controller
         ));
 
         //业务逻辑
+        $dataWhere['isLink'] = 0;
         return $this->commodityAo->searchAll($dataWhere, $dataLimit);
     }
 

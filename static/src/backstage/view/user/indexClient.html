@@ -12,18 +12,19 @@
 		var $ = require('/fishstrap/core/global.js');
 		var dialog = require('/fishstrap/ui/dialog.js');
 		var query = require('/fishstrap/ui/query.js');
+		var subPage = require('/fishstrap/page/subPage.js');
 		var isCheck = ($.location.getQueryArgv('check') != null);
-		var allClassify = {};
-		var allState = {};
-		var tableOperation = '';
-		function getAllState(next){
-			$.get('/commodity/getState',{},function(data){
+		var isClient = ($.location.getQueryArgv('isClient') != null);
+		var userType = {};
+		var tableOperation = {};
+		function getAllType(next){
+			$.get('/user/getAllType',{},function(data){
 				data = $.JSON.parse(data);
 				if( data.code != 0 ){
 					dialog.message(data.msg);
 					return;
 				}
-				allState = data.data;
+				userType = data.data;
 				next();
 			});
 		}
@@ -36,29 +37,22 @@
 		function go(){
 			tableOperation = query.simpleQuery({
 				id:'container',
-				url:'/commodity/searchAll',
+				url:'/user/search'+(isClient?'?type=3':''),
 				checkAll:isCheck,
 				column:[
-					{id:'shopCommodityId',type:'text',name:'商品ID'},
-					{id:'appName',type:'text',name:'商城名字'},
-					{id:'title',type:'text',name:'商品名称'},
-					{id:'introduction',type:'text',name:'简介'},
-					{id:'priceShow',type:'text',name:'价格'},
-					{id:'oldPriceShow',type:'text',name:'原价格'},
-					{id:'inventory',type:'text',name:'库存'},
-					{id:'state',type:'enum',name:'状态',map:allState},
-					{id:'remark',type:'text',name:'备注'},
+					{id:'userId',type:'text',name:'用户ID'},
+					{id:'name',type:'text',name:'姓名'},
+					{id:'company',type:'text',name:'公司'},
+					{id:'phone',type:'text',name:'电话号码'},
 					{id:'createTime',type:'text',name:'创建时间'},
 					{id:'modifyTime',type:'text',name:'修改时间'},
 				],
-				queryColumn:['appName','title','introduction','state'],
+				queryColumn:['name','type'],
 				operate:[],
 				button:[],
 			});
 		}
-		getAllState(function(){
-			go();
-		});
+		getAllType(go);
 	</script>
  </body>
 </html>

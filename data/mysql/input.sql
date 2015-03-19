@@ -195,7 +195,7 @@ create table t_shop_commodity(
     shopCommodityId integer not null auto_increment,
     userId integer not null,
     isLink integer not null,
-    shopLinkCommodityId integer not null,
+    shopLinkCommodityId integer not null,#直接上级商品ID
     shopCommodityClassifyId integer not null,
     title varchar(128) not null,
     icon varchar(128) not null,
@@ -355,7 +355,9 @@ insert into t_user_permission(userId,permissionId)values
 
 insert into t_client(userId,openId,type)values
 (10003,'微信测试用户虚拟OpenId',2),
-(10004,'微信测试用户虚拟OpenId',2);
+(10004,'微信测试用户虚拟OpenId',2),
+(10005,'微信测试用户虚拟OpenId',2),
+(10006,'微信测试用户虚拟OpenId',2);
 
 insert into t_address(clientId,name,province,city,address,phone,payment)values
 (10001,'黎锦伟','广东','佛山','某地','15018749403',1);
