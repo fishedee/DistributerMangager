@@ -28,8 +28,8 @@ class ClientWxLoginAo extends CI_Model {
 
 		//获取跳转url
 		$loginUrl = $this->wxSdk->getLoginUrl(
-			'http://'.$_SERVER['HTTP_HOST'].'/clientlogin/wxlogincallback/'.$userId,
-			$callback,
+			'http://'.$_SERVER['HTTP_HOST'].'/clientlogin/wxlogincallback/'.$userId.'?callback='.urlencode($callback),
+			0,
 			'snsapi_base'
 		);
 		
@@ -41,7 +41,7 @@ class ClientWxLoginAo extends CI_Model {
 		$this->initWxSdk($userId);
 
 		//调用QQ接口获取登录信息
-		$callback = $this->wxSdk->getLoginCallBackInfo();
+		$callback = urldecode($_GET['callback']);
 
 		$accessToken = $this->wxSdk->getAccessTokenAndOpenId();
 		

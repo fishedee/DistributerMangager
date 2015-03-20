@@ -43,6 +43,22 @@ class UserAppAo extends CI_Model{
 	public function mod($userId,$data){
 		$this->addOnce($userId);
 
+		if(isset($data['appId']) && trim($data['appId']) != ''){
+			$user = $this->userAppDb->search(array(
+				'appId'=>$data['appId']
+			),array());
+			if( $user['count'] != 0 && $user['data'][0]['userId'] != $userId)
+				throw new CI_MyException(1,'该公众号的appId已经被其它商城占用了，请重新设置其它的appId');
+		}
+
+		if(isset($data['mchId']) && trim($data['mchId']) != ''){
+			$user = $this->userAppDb->search(array(
+				'mchId'=>$data['mchId']
+			),array());
+			if( $user['count'] != 0 && $user['data'][0]['userId'] != $userId)
+				throw new CI_MyException(1,'该公众号的mchId已经被其它商城占用了，请重新设置其它的mchId');
+		}
+
 		return $this->userAppDb->modByUser($userId,$data);
 	}
 }
