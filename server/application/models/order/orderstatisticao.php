@@ -57,37 +57,37 @@ class OrderStatisticAo extends CI_Model
                 'userId'=>$userId
             );    
             $data = array();
-            $where['state'] = $this->OrderStateEnum->NO_PAY;
+            $where['state'] = $this->orderStateEnum->NO_PAY;
             $retData = $this->orderDb->search($where, $limit);
             $orderPrice = 0;
             foreach($retData['data'] as $order)
                 $orderPrice += $order['price'];
             $data[] = array(
-                'state'=>$this->OrderStateEnum->NO_PAY,
+                'state'=>$this->orderStateEnum->NO_PAY,
                 'stateName'=>'未付款',
                 'num'=>$retData['count'],
                 'price'=>$orderPrice
             );
 
-            $where['state'] = $this->OrderStateEnum->NO_SEND;
+            $where['state'] = $this->orderStateEnum->NO_SEND;
             $retData = $this->orderDb->search($where, $limit);
             $orderPrice = 0;
             foreach($retData['data'] as $order)
                 $orderPrice += $order['price'];
             $data[] = array(
-                'state'=>$this->OrderStateEnum->NO_SEND,
+                'state'=>$this->orderStateEnum->NO_SEND,
                 'stateName'=>'已付款',
                 'num'=>$retData['count'],
                 'price'=>$orderPrice
             );
 
-            $where['state'] = $this->OrderStateEnum->HAS_SEND;
+            $where['state'] = $this->orderStateEnum->HAS_SEND;
             $retData = $this->orderDb->search($where, $limit);
             $orderPrice = 0;
             foreach($retData['data'] as $order)
                 $orderPrice += $order['price'];
             $data[] = array(
-                'state'=>$this->OrderStateEnum->HAS_SEND,
+                'state'=>$this->orderStateEnum->HAS_SEND,
                 'stateName'=>'已发货',
                 'num'=>$retData['count'],
                 'price'=>$orderPrice
