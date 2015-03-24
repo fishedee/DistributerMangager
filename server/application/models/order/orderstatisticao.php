@@ -37,22 +37,63 @@ class OrderStatisticAo extends CI_Model
             $data = $ret['data'];
             $retData = array();
             foreach($data as $order){
-		if( !isset($retData[ $this->formatTime($order['createTime']) ])){
-			$retData[ $this->formatTime($order['createTime']) ] = array(
-				'day'=>$this->formatTime($order['createTime']),
-				'orderNum'=>1,
-				'orderPrice'=>$this->commodityAo->getFixedPrice($order['price'])
-			);
-		}else{
-			$retData[ $this->formatTime($order['createTime']) ]['orderNum'] ++;
-			$retData[ $this->formatTime($order['createTime']) ]['orderPrice'] += $this->commodityAo->getFixedPrice($order['price']);
-		}
-
-	    }
-
+		        if( !isset($retData[ $this->formatTime($order['createTime']) ])){
+			        $retData[ $this->formatTime($order['createTime']) ] = array(
+				        'day'=>$this->formatTime($order['createTime']),
+				        'orderNum'=>1,
+				        'orderPrice'=>$this->commodityAo->getFixedPrice($order['price'])
+			    );
+		        }else{
+			        $retData[ $this->formatTime($order['createTime']) ]['orderNum'] ++;
+			        $retData[ $this->formatTime($order['createTime']) ]['orderPrice'] += $this->commodityAo->getFixedPrice($order['price']);
+		        }
+	        }
             return array_values($retData);
         }
     }
 
+    public function getOrderTotalStatistic($userId, $limit){
+            $where = array(
+                'userId'=>$userId
+            );    
+            $data = array();
+            $where['state'] = $this->OrderStateEnum->NO_PAY;
+            $retData = $this->orderDb->search($where, $limit);
+            $orderPrice = 0;
+            foreach($retData['data'] as $order)
+                $orderPrice += $order['price'];
+            $data[] = array(
+                'state'=>$this->OrderStateEnum->NO_PAY,
+                'stateName'=>'未付款',
+                'num'=>$retData['count'],
+                'price'=>$orderPrice
+            );
+
+            $where['state'] = $this->OrderStateEnum->NO_SEND;
+            $retData = $this->orderDb->search($where, $limit);
+            $orderPrice = 0;
+            foreach($retData['data'] as $order)
+                $orderPrice += $order['price'];
+            $data[] = array(
+                'state'=>$this->OrderStateEnum->NO_SEND,
+                'stateName'=>'已付款',
+                'num'=>$retData['count'],
+                'price'=>$orderPrice
+            );
+
+            $where['state'] = $this->OrderStateEnum->HAS_SEND;
+            $retData = $this->orderDb->search($where, $limit);
+            $orderPrice = 0;
+            foreach($retData['data'] as $order)
+                $orderPrice += $order['price'];
+            $data[] = array(
+                'state'=>$this->OrderStateEnum->HAS_SEND,
+                'stateName'=>'已发货',
+                'num'=>$retData['count'],
+                'price'=>$orderPrice
+            );
+
+            return $data;
+    }
 
 }

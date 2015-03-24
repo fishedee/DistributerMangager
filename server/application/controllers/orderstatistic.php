@@ -38,5 +38,17 @@ class OrderStatistic extends CI_Controller
         return $this->orderStatisticAo->getOrderDayStatistic($userId,
             $beginTime, $endTime, array());
     }
+
+    /**
+    * @view json
+    */
+    public function getOrderTotalStatistic(){
+        //检查权限
+        $user = $this->loginAo->checkMustLogin();
+        $userId = $user['userId'];
+        
+        //业务逻辑
+        return $this->orderStatisticAo->getOrderTotalStatistic($userId, array());
+    }
 }
 
