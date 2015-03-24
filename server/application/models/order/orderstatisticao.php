@@ -15,11 +15,8 @@ class OrderStatisticAo extends CI_Model
     }
 
     public function getOrderDayStatistic($userId, $beginTime, $endTime){
-        $str = var_dump($this->orderStateEnum);
-        log_message('error', $str);
-
         $where['$userId'] = $userId;
-        if($beginTime != '' && $endTime != '')
+        if($beginTime != '' && $endTime != ''){
             $where['beginTime'] = $beginTime;
             $where['endTime'] = $endTime;
         }
@@ -47,19 +44,19 @@ class OrderStatisticAo extends CI_Model
                 'userId'=>$userId
             );    
             $data = array();
-            //foreach($this->orderStateEnum->names as $singleEnum){
-            //    $where['state'] = ;
-            //    $retData = $this->orderDb->search($where, $limit);
-            //    $orderPrice = 0;
-            //    foreach($retData['data'] as $order)
-            //        $orderPrice += $order['price'];
-            //    $data[] = array(
-            //        'state'=>$this->orderStateEnum->NO_PAY,
-            //        'stateName'=>,
-            //        'num'=>$retData['count'],
-            //        'price'=>$orderPrice
-            //    );
-            //}
+            foreach($this->orderStateEnum->enums as $singleEnum){
+                $where['state'] = $singleEnum[0];
+                $retData = $this->orderDb->search($where, $limit);
+                $orderPrice = 0;
+                foreach($retData['data'] as $order)
+                    $orderPrice += $order['price'];
+                $data[] = array(
+                    'state'=>$singleEnum[0],
+                    'stateName'=>$singleEnum[2],
+                    'num'=>$retData['count'],
+                    'price'=>$orderPrice
+                );
+            }
 
             return $data;
     }
