@@ -15,6 +15,7 @@
 		var subPage = require('/fishstrap/page/subPage.js');
 		var distributionOrderId = $.location.getQueryArgv('distributionOrderId');
 		var distributionOrderState = {};
+		var distributionOrderOldState = 0;
 		var distributionOrder = {};
 		function getAllState(next){
 			$.get('/distributionorder/getAllState',{},function(data){
@@ -35,7 +36,8 @@
 					return;
 				}
 				distributionOrder = data.data;
-				distributionOrder = $.extend(distributionOrder);
+				distributionOrderOldState = distributionOrder.state;
+				distributionOrder.commodity = distributionOrder.order.commodity;
 				next();
 			});
 		}
@@ -44,10 +46,12 @@
 				id:'container',
 				field:[
 					{id:'distributionOrderId',type:'read',name:'分成订单ID'},
-					{id:'orderId',type:'read',name:'订单ID'},
-					{id:'upUserCompany',type:'read',name:'上级分成名称'},
-					{id:'downUserCompany',type:'read',name:'下级分成名称'},
-					{id:'orderPriceShow',type:'read',name:'订单金额'},
+					{id:'shopOrderId',type:'read',name:'订单ID'},
+					{id:'upUserId',type:'read',name:'供货商ID'},
+					{id:'upUserCompany',type:'read',name:'供货商名称'},
+					{id:'downUserId',type:'read',name:'分销商ID'},
+					{id:'downUserCompany',type:'read',name:'分销商名称'},
+					{id:'shopOrderPrice',type:'read',name:'订单金额'},
 					{id:'price',type:'read',name:'分成总金额'},
 					{id:'commodity',type:'table',name:'订单商品',
 						option:{
@@ -67,11 +71,15 @@
 				],
 				value:distributionOrder,
 				submit:function(data){
-					if(data.state == 2&&data.state == 3&&data.state==1){
-						dialog.message('不能回退订单状态');
+					if(data.state < distributionOrderOldState){
+						dialog.message('不能回退订单状态',function(){
+							history.back();
+						});
 						return;
 					}
-					if(data.state == 2){
+					if(data.state == 1 ){
+						dialog.message('只有供货商才有权限修改为付款中状态');
+					}else if(data.state == 2){
 						//转换为已付款
 						dialog.confirm('确认扭转订单为已付款状态，不可回退操作？!',function(){
 							$.post('/distributionorder/hasPayOrder',{distributionOrderId:data.distributionOrderId},function(data){
@@ -96,7 +104,6 @@
 							});
 						});
 					}else{
-						//不改动状态
 						history.back();
 					}
 				},

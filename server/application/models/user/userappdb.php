@@ -22,7 +22,7 @@ class UserAppDb extends CI_Model
 		foreach( $where as $key=>$value ){
 			if( $key == "remark" )
 				$this->db->like($key,$value);
-			else if( $key == "userId" )
+			else if( $key == "userId" || $key == 'appId' || $key == 'mchId')
 				$this->db->where($key,$value);
 		}
 		
@@ -31,7 +31,7 @@ class UserAppDb extends CI_Model
 		foreach( $where as $key=>$value ){
 			if( $key == "remark" )
 				$this->db->like($key,$value);
-			else if( $key == "userId" )
+			else if( $key == "userId" || $key == 'appId' || $key == 'mchId')
 				$this->db->where($key,$value);
 		}
 			

@@ -18,7 +18,7 @@ class CommodityDb extends CI_Model
         foreach($where as $key=>$value){
             if($key == 'title' || $key == 'introduction' )
                 $this->db->like($key, $value);
-            else if($key == 'userId' || $key == 'shopCommodityClassifyId' || $key == 'state')
+            else if($key == 'userId' || $key == 'shopCommodityClassifyId' || $key == 'state' || $key == 'isLink' || $key == 'shopLinkCommodityId')
                 $this->db->where($key, $value);
             else if($key == 'shopCommodityId')
                 $this->db->where_in($key, $value);
@@ -29,7 +29,7 @@ class CommodityDb extends CI_Model
         foreach($where as $key=>$value){
             if($key == 'title' || $key == 'introduction' )
                 $this->db->like($key, $value);
-            else if($key == 'userId' || $key == 'shopCommodityClassifyId' || $key == 'state')
+            else if($key == 'userId' || $key == 'shopCommodityClassifyId' || $key == 'state' || $key == 'isLink' || $key == 'shopLinkCommodityId')
                 $this->db->where($key, $value);
             else if($key == 'shopCommodityId')
                 $this->db->where_in($key, $value);
@@ -74,6 +74,10 @@ class CommodityDb extends CI_Model
     public function mod($shopCommodityId, $data){
         $this->db->where('shopCommodityId', $shopCommodityId);
         $this->db->update($this->tableName, $data);
+    }
+
+    public function modBatch($data){
+        $this->db->update_batch($this->tableName, $data,'shopCommodityId');
     }
 
     public function modByShopCommodityClassifyId($shopCommodityClassifyId, $data){

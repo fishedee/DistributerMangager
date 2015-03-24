@@ -20,7 +20,7 @@ class CommodityUserAppDb extends CI_Model {
 		foreach( $where as $key=>$value ){
 			if( $key == "title" || $key == "introduction" || $key == "remark" || $key == 'appName')
 				$this->db->like($key,$value);
-			else if($key == 'shopCommodityClassifyId' || $key == 'state')
+			else if($key == 'shopCommodityClassifyId' || $key == 'state' || $key == 'isLink')
                 $this->db->where($key, $value);
            	else if($key == 'userId')
            		$this->db->where('t_shop_commodity.userId', $value);
@@ -35,7 +35,7 @@ class CommodityUserAppDb extends CI_Model {
 		foreach( $where as $key=>$value ){
 			if( $key == "title" || $key == "introduction" || $key == "remark" || $key == 'appName')
 				$this->db->like($key,$value);
-			else if($key == 'shopCommodityClassifyId' || $key == 'state')
+			else if($key == 'shopCommodityClassifyId' || $key == 'state' || $key == 'isLink')
                 $this->db->where($key, $value);
            	else if($key == 'userId')
            		$this->db->where('t_shop_commodity.userId', $value);

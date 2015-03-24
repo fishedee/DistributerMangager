@@ -36,39 +36,24 @@ class DistributionOrderDb extends CI_Model
     }
 
     public function search($where, $limit){
-        if( isset($where['upUserId']) && count($where['upUserId']) == 0)
-            return array(
-                'count'=>0,
-                'data'=>array()
-            );
-        if( isset($where['downUserId']) && count($where['downUserId']) == 0)
-            return array(
-                'count'=>0,
-                'data'=>array()
-            );
 
         foreach($where as $key=>$value){
             if($key == 'upUserId' || $key == 'downUserId')
                 $this->db->where($key, $value);
             else if($key == 'state')
                 $this->db->where($key, $value);
-	    else if($key == 'distributionOrderId' || $key == 'shopOrderId')
-		$this->db->where($key, $value);
         }
-
         $count = $this->db->count_all_results($this->tableName);
 
         foreach($where as $key=>$value){
             if($key == 'upUserId' || $key == 'downUserId')
                 $this->db->where($key, $value);
-	    if($key == 'state')
-		$this->db->where($key, $value);
-	    else if($key == 'distributionOrderId' || $key == 'shopOrderId')
-		$this->db->where($key, $value);
+            else if($key == 'state')
+                $this->db->where($key, $value);
         }
-
         if(isset($limit['pageIndex']) && isset($limit['pageSize']))
             $this->db->limit($limit['pageSize'], $limit['pageIndex']);
+        $this->db->order_by('createTime', 'desc');
         $query = $this->db->get($this->tableName)->result_array();
 
         return array(

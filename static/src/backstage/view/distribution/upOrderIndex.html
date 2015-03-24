@@ -12,54 +12,43 @@
 		var $ = require('/fishstrap/core/global.js');
 		var dialog = require('/fishstrap/ui/dialog.js');
 		var query = require('/fishstrap/ui/query.js');
-		var distributionState = {};
+		var subPage = require('/fishstrap/page/subPage.js');
+		var distributionOrderState = {};
 		function getAllState(next){
-			$.get('/distribution/getAllState',{},function(data){
+			$.get('/distributionorder/getAllState',{},function(data){
 				data = $.JSON.parse(data);
 				if( data.code != 0 ){
 					dialog.message(data.msg);
 					return;
 				}
-				distributionState = data.data;
+				distributionOrderState = data.data;
 				next();
 			});
 		}
 		function go(){
 			query.simpleQuery({
 				id:'container',
-				url:'/distribution/search?direction=up',
+				url:'/distributionorder/search?direction=up',
 				column:[
-					{id:'distributionId',type:'text',name:'分成关系ID'},
+					{id:'distributionOrderId',type:'text',name:'应得分成订单ID'},
 					{id:'upUserId',type:'text',name:'供货商ID'},
 					{id:'upUserCompany',type:'text',name:'供货商名称'},
-					{id:'shopUrl',type:'text',name:'供货商商城分成URL'},
-					{id:'state',type:'enum',name:'状态',map:distributionState},
+					{id:'shopOrderPrice',type:'text',name:'订单金额'},
+					{id:'price',type:'text',name:'分成金额'},
+					{id:'state',type:'enum',name:'分成状态',map:distributionOrderState},
 					{id:'createTime',type:'text',name:'创建时间'},
 					{id:'modifyTime',type:'text',name:'修改时间'},
 				],
 				queryColumn:['state'],
 				operate:[
 				{
-					name:'删除',
+					name:'查看',
 					click:function(data){
-						dialog.confirm('确认删除该上级分成，不可回退操作？!',function(){
-							$.post('/distribution/del',{distributionId:data.distributionId},function(data){
-								data = $.JSON.parse(data);
-								if( data.code != 0 ){
-									dialog.message(data.msg);
-									return;
-								}
-								location.reload();
-							});
-						});
+						location.href = 'orderView.html?distributionOrderId='+data.distributionOrderId;
 					}
-				}],
-				button:[{
-					name:'添加供货商',
-					click:function(data){
-						location.href = 'upUserView.html';
-					}
-				},],
+				}
+				],
+				button:[],
 			});
 		}
 		getAllState(go);

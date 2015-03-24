@@ -15,6 +15,68 @@ class CommodityAo extends CI_Model
         return sprintf("%.2f", $price/100);
     }
 
+    private function recursiveRefreshCommodity(){
+        //取出所有链接商品
+        $linkCommodity = $this->commodityDb->search(array('isLink'=>1),array());
+        if($linkCommodity['count'] == 0 )
+            return;
+        $linkCommodityMap = array();
+        foreach($linkCommodity['data'] as $singleLinkCommodity ){
+            $linkCommodityMap[$singleLinkCommodity['shopCommodityId']] = $singleLinkCommodity;
+        }
+        
+        //计算所有源商品的信息
+        $originCommodityIds = array();
+        foreach($linkCommodityMap as $singleLinkCommodityId=>$singleLinkCommodity ){
+            $shopLinkCommodityId = $singleLinkCommodity['shopLinkCommodityId'];
+            if( isset($linkCommodityMap[$shopLinkCommodityId]) )
+                continue;
+            $originCommodityIds[] = $shopLinkCommodityId;
+        }
+
+        $originCommodity = $this->commodityDb->search(array('shopCommodityId'=>$originCommodityIds),array());
+        if($originCommodity['count'] == 0 )
+            return;
+        $originCommodityMap = array();
+        foreach($originCommodity['data'] as $singleOriginCommodity){
+            $originCommodityMap[$singleOriginCommodity['shopCommodityId']] = $singleOriginCommodity;
+        }
+
+        //更新所有链接商品下的所有商品信息
+        $newLinkCommodityMap = array();
+        foreach($linkCommodityMap as $singleLinkCommodityId=>$singleLinkCommodity ){
+            $tempShopCommodity = $singleLinkCommodity;
+            while($tempShopCommodity != null && $tempShopCommodity['isLink'] == 1 ){
+                $tempShopCommodityId = $tempShopCommodity['shopLinkCommodityId'];
+                if( isset($linkCommodityMap[$tempShopCommodityId]))
+                    $tempShopCommodity = $linkCommodityMap[$tempShopCommodityId];
+                else if( isset($originCommodityMap[$tempShopCommodityId]))
+                    $tempShopCommodity = $originCommodityMap[$tempShopCommodityId];
+                else 
+                    $tempShopCommodity = null;
+                log_message('error',json_encode($tempShopCommodity));
+            }
+            if($tempShopCommodity == null )
+                return;
+            $newLinkCommodityMap[] = array(
+                'shopCommodityId'=>$singleLinkCommodity['shopCommodityId'],
+                'title'=> $tempShopCommodity['title'],
+                'icon'=> $tempShopCommodity['icon'],
+                'introduction'=> $tempShopCommodity['introduction'],
+                'detail'=> $tempShopCommodity['detail'],
+                'price'=> $tempShopCommodity['price'],
+                'oldPrice'=> $tempShopCommodity['oldPrice'],
+                'inventory'=> $tempShopCommodity['inventory'],
+                'state'=> $tempShopCommodity['state'],
+                'remark'=> $tempShopCommodity['remark'],
+            ); 
+        }
+        
+        if(count($newLinkCommodityMap) == 0 )
+            return;
+        $this->commodityDb->modBatch($newLinkCommodityMap);
+    }
+
     private function findOriginCommodity($shopCommodity){
         $originCommodity = $shopCommodity;
         while($originCommodity['isLink'] == 1)
@@ -113,7 +175,6 @@ class CommodityAo extends CI_Model
         if($shopCommodity['userId'] != $userId)
             throw new CI_MyException(1, '非本商城用户无此权限');
 
-        //$this->commodityDb->del($shopCommodityId);
         $this->dfsDelCommodity($shopCommodityId);
     }
 
@@ -129,13 +190,25 @@ class CommodityAo extends CI_Model
         $this->commodityDb->add($data);
     }
 
-    public function checkLink($shopCommodityId){
-        $this->commodityDb->get($shopCommodityId);
+    public function checkLink($userId,$shopCommodityId,$shopLinkCommodityId){
+        $shopCommodity = $this->commodityDb->get($shopLinkCommodityId);
+        if($shopCommodity['isLink'] == 1 )
+            throw new CI_MyException(1,'只能导入普通商品，导入商品不能再次导入');
+        
+        $linkCommodityData = $this->commodityDb->search(
+            array(
+                'userId'=>$userId,
+                'shopLinkCommodityId'=>$shopLinkCommodityId
+            ),
+            array()
+        );
+        if($linkCommodityData['count'] != 0 && $linkCommodityData['data'][0]['shopCommodityId'] != $shopCommodityId)
+            throw new CI_MyException(1,'不能重复导入同一个商品');
     }
 
     public function addLink($userId, $shopLinkCommodityId, $shopCommodityClassifyId){
 
-        $this->checkLink($shopLinkCommodityId);
+        $this->checkLink($userId,0,$shopLinkCommodityId);
 
         $data = array(
             'isLink'=>1,
@@ -154,23 +227,16 @@ class CommodityAo extends CI_Model
             throw new CI_MyException(1, '非本商城用户无权限操作');
         if($shopCommodity['isLink'] != 1)
             throw new CI_MyException(1, '此商品不是导入商品');
-        if($shopCommodityId == $shopLinkCommodityId)
-            throw new CI_MyException(1, '不能导入自己的商品');
         
-        $this->checkLink($shopLinkCommodityId);
-
-        $tempLink = $this->commodityDb->get($shopLinkCommodityId);
-        while($tempLink['isLink'] != 0){
-            if($tempLink['shopCommodityId'] == $shopCommodityId)
-                throw new CI_MyException(1, '循环导入商品出错');
-            $tempLink = $this->commodityDb->get($tempLink['shopLinkCommodityId']);
-        }
+        $this->checkLink($userId,$shopCommodityId,$shopLinkCommodityId);
          
         $data = array(
             'shopLinkCommodityId'=>$shopLinkCommodityId,
             'shopCommodityClassifyId'=>$shopCommodityClassifyId,
         );
         $this->commodityDb->mod($shopCommodityId, $data);
+
+        $this->recursiveRefreshCommodity();
     }
      
     public function mod($userId, $shopCommodityId, $data){
@@ -186,6 +252,8 @@ class CommodityAo extends CI_Model
             throw new CI_MyException(1, '导入商品不能修改');
 
         $this->commodityDb->mod($shopCommodityId, $data);
+
+        $this->recursiveRefreshCommodity();
     }
 
     public function reduceStock($userId, $shopCommodityId, $quantity){

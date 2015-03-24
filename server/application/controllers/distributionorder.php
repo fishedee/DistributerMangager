@@ -7,6 +7,7 @@ class DistributionOrder extends CI_Controller
         $this->load->model('distribution/distributionorderAo', 'distributionOrderAo');
         $this->load->model('user/loginAo', 'loginAo');
         $this->load->model('distribution/distributionOrderStateEnum', 'distributionOrderStateEnum');
+        $this->load->model('user/userPermissionEnum', 'userPermissionEnum');
         $this->load->model('order/orderAo', 'orderAo');
         $this->load->library('argv', 'argv');
     }
@@ -22,9 +23,10 @@ class DistributionOrder extends CI_Controller
      * @view json
      */
     public function search(){
+        //校验参数
         $dataWhere = $this->argv->checkGet(array(
             array('distributionOrderId', 'option'),
-	    array('direction', 'require'),
+            array('direction', 'require'),
             array('state', 'option')
         ));
 
@@ -33,86 +35,77 @@ class DistributionOrder extends CI_Controller
             array('pageIndex', 'require')
         ));
 
-        $user = $this->loginAo->checkMustLogin();
-	$userId = $user['userId'];
+        //检查权限
+        $user = $this->loginAo->checkMustClient(
+            $this->userPermissionEnum->COMPANY_DISTRIBUTION
+        );
+        $userId = $user['userId'];
 
-	if($dataWhere['direction'] == 'up')
-	     $dataWhere['downUserId'] = $userId;
+        if($dataWhere['direction'] == 'up')
+            $dataWhere['downUserId'] = $userId;
         else if($dataWhere['direction'] == 'down')
-	    $dataWhere['upUserId'] = $userId;
+            $dataWhere['upUserId'] = $userId;
         else
-	    throw new CI_MyException(1, "无效的direction参数");
-	unset($dataWhere['direction']);
+            throw new CI_MyException(1, "无效的direction参数");
+        unset($dataWhere['direction']);
 
-        return $this->distributionOrderAo->search($userId, $dataWhere, $dataLimit);
+        //业务逻辑
+        return $this->distributionOrderAo->search($dataWhere, $dataLimit);
     }
 
     /**
      * @view json
      */
     public function get(){
+        //校验参数
         $dataWhere = $this->argv->checkGet(array(
             array('distributionOrderId', 'require')
         ));
-        $distributionOrder = $this->distributionOrderAo->get($dataWhere['distributionOrderId']);
-   	return $distributionOrder;     
-    }
 
-    /**
-     * @view json
-     */
-    public function add(){
-        //检查参数
-        $data = $this->argv->checkPost(array(
-            array('upUserId', 'require'),
-            array('downUserId', 'require'),
-            array('shopOrderId', 'require'),
-            array('price', 'require'),
-            array('state', 'require')
-        ));
-            
-        $upUserId = $data['upUserId'];
-        $downUserId = $data['downUserId'];
-        unset($data['upUserId']);
-        unset($data['downUserId']);
-        $this->distributionOrderAo->add($upUserId, $downUserId, $data);
-    }
+        //检查权限
+        $user = $this->loginAo->checkMustClient(
+            $this->userPermissionEnum->COMPANY_DISTRIBUTION
+        );
+        $userId = $user['userId'];
 
-    /**
-     * @view json
-     */
-    public function mod(){
-        $data = $this->argv->checkPost(array(
-            array('distributionOrderId', 'require'),
-            array('shopOrderId', 'require'),
-            array('price', 'require')
-        ));
-
-        $distributionOrderId = $data['distributionOrderId'];
-        $this->distributionOrderAo->mod($distributionOrderId, $data);
+        //业务逻辑
+        return  $this->distributionOrderAo->get($userId,$dataWhere['distributionOrderId']);
     }
 
     /**
      * @view json
      */
     public function payOrder(){
+        //校验参数
         $data = $this->argv->checkPost(array(
             array('distributionOrderId', 'require'),
+            array('commodity','option',array())
         ));  
-        $user = $this->loginAo->checkMustLogin();
 
-        $this->distributionOrderAo->payOrder($user['userId'], $data['distributionOrderId']);
+        //检查权限
+        $user = $this->loginAo->checkMustClient(
+            $this->userPermissionEnum->COMPANY_DISTRIBUTION
+        );
+
+        //业务逻辑
+        $this->distributionOrderAo->payOrder($user['userId'], $data['distributionOrderId'],$data['commodity']);
     }
 
     /**
      * @view json
      */
     public function hasPayOrder(){
+        //校验参数
         $data = $this->argv->checkPost(array(
             array('distributionOrderId', 'require')
         ));
 
-        $user = $this->loginAo->checkMustLogin();
+        //检查权限
+        $user = $this->loginAo->checkMustClient(
+            $this->userPermissionEnum->COMPANY_DISTRIBUTION
+        );
+
+        //业务逻辑
         $this->distributionOrderAo->HasPayOrder($user['userId'], $data['distributionOrderId']);
     }
 
@@ -120,11 +113,17 @@ class DistributionOrder extends CI_Controller
      * @view json
      */
     public function confirm(){
+        //校验参数
         $data = $this->argv->checkPost(array(
             array('distributionOrderId', 'require')
         ));  
 
-        $user = $this->loginAo->checkMustLogin();
+        //检查权限
+        $user = $this->loginAo->checkMustClient(
+            $this->userPermissionEnum->COMPANY_DISTRIBUTION
+        );
+
+        //业务逻辑
         $this->distributionOrderAo->confirm($user['userId'], $data['distributionOrderId']);
     }
 }

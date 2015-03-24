@@ -16,6 +16,9 @@
 		var distributionOrderId = $.location.getQueryArgv('distributionOrderId');
 		var distributionOrderState = {};
 		var distributionOrder = {};
+		var upUserId = 0;
+		var downUserId = 0;
+		var defaultDistributionPrecent = 0;
 		function getAllState(next){
 			$.get('/distributionorder/getAllState',{},function(data){
 				data = $.JSON.parse(data);
@@ -27,23 +30,19 @@
 				next();
 			});
 		}
+		function getLinkPrecent(next){
+			$.get('/distribution/getByLink',{upUserId:upUserId,downUserId:downUserId},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					defaultDistributionPrecent = 0;
+					return;
+				}else{
+					defaultDistributionPrecent = $.format.floatval(data.data['distributionPercentShow'])/100;
+				}
+				next();
+			});
+		}
 		function getOrder(next){
-			distributionOrder = {
-				commodity:[
-					{
-						shopCommodityId:10001,
-						icon:'/data/upload/sample1.jpg',
-						title:'标题1',
-						priceShow:'11.00',
-						quantity:'1',
-						distributionPrecent:'30%',
-						distributionPrice:'30.00',
-					}
-					
-				]
-			};
-			next();
-			return;
 			$.get('/distributionorder/get',{distributionOrderId:distributionOrderId},function(data){
 				data = $.JSON.parse(data);
 				if( data.code != 0 ){
@@ -51,7 +50,10 @@
 					return;
 				}
 				distributionOrder = data.data;
-				distributionOrder = $.extend(distributionOrder);
+				upUserId = data.data.upUserId;
+				downUserId = data.data.downUserId;
+				distributionOrderOldState = distributionOrder.state;
+				distributionOrder.commodity = distributionOrder.order.commodity;
 				next();
 			});
 		}
@@ -69,10 +71,12 @@
 				id:'container',
 				field:[
 					{id:'distributionOrderId',type:'read',name:'分成订单ID'},
-					{id:'orderId',type:'read',name:'订单ID'},
-					{id:'upUserCompany',type:'read',name:'上级分成名称'},
-					{id:'downUserCompany',type:'read',name:'下级分成名称'},
-					{id:'orderPriceShow',type:'read',name:'订单金额'},
+					{id:'shopOrderId',type:'read',name:'订单ID'},
+					{id:'upUserId',type:'read',name:'供货商ID'},
+					{id:'upUserCompany',type:'read',name:'供货商名称'},
+					{id:'downUserId',type:'read',name:'分销商ID'},
+					{id:'downUserCompany',type:'read',name:'分销商名称'},
+					{id:'shopOrderPrice',type:'read',name:'订单金额'},
 					{id:'price',type:'read',name:'分成总金额'},
 					{id:'commodity',type:'table',name:'订单商品',
 						option:{
@@ -84,7 +88,7 @@
 								{name:'数量',type:'text',id:'quantity'},
 								{name:'分成比例',type:'textInput',id:'distributionPrecent',change:function(data,operation){
 									operation.mod({
-										distributionPrice:$.format.floatval(data.priceShow*data.quantity*data.distributionPrecent).toFixed(2)
+										distributionPrice:$.format.floatval(data.priceShow*data.quantity*data.distributionPrecent).toFixed(4)
 									});
 									refreshPrice();
 								}},
@@ -96,7 +100,23 @@
 								}},
 							],
 							operate:[],
-							button:[]
+							button:[{
+								name:'一键设置为默认分成',
+								click:function(operation){ 
+									getLinkPrecent(function(){
+										var commodity = operation.get();
+										for( var i in commodity ){
+											commodity[i].distributionPrecent = defaultDistributionPrecent.toFixed(4),
+											commodity[i].distributionPrice = $.format.floatval(
+												(commodity[i].priceShow*commodity[i].quantity)*defaultDistributionPrecent
+											).toFixed(2);
+										}
+										operation.clear();
+										operation.add(commodity);
+										refreshPrice();
+									});
+								}
+							}]
 						}
 					},
 					{id:'state',type:'enum',name:'分成订单状态',map:distributionOrderState},
@@ -110,7 +130,7 @@
 					var data = {
 						distributionOrderId:distributionOrderId,
 						commodity:_.map(data.commodity,function(single){
-							return {shopCommodityId:single.shopCommodityId,price:single.price};
+							return {shopCommodityId:single.shopCommodityId,distributionPrice:single.distributionPrice};
 						})
 					};
 					dialog.confirm('确认扭转订单为付款中状态，不可回退操作？!',function(){

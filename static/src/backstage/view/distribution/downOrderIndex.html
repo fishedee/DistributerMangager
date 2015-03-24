@@ -28,13 +28,12 @@
 		function go(){
 			query.simpleQuery({
 				id:'container',
-				url:'/distribution/search?direction=down',
+				url:'/distributionorder/search?direction=down',
 				column:[
-					{id:'distributionOrderId',type:'text',name:'分成订单ID'},
-					{id:'orderId',type:'text',name:'订单ID'},
-					{id:'upUserCompany',type:'text',name:'上级分成名称'},
-					{id:'downUserCompany',type:'text',name:'下级分成名称'},
-					{id:'orderPrice',type:'text',name:'订单金额'},
+					{id:'distributionOrderId',type:'text',name:'分销分成订单ID'},
+					{id:'downUserId',type:'text',name:'分销商ID'},
+					{id:'downUserCompany',type:'text',name:'分销商名称'},
+					{id:'shopOrderPrice',type:'text',name:'订单金额'},
 					{id:'price',type:'text',name:'分成金额'},
 					{id:'state',type:'enum',name:'分成状态',map:distributionOrderState},
 					{id:'createTime',type:'text',name:'创建时间'},
@@ -43,12 +42,13 @@
 				queryColumn:['state'],
 				operate:[
 				{
-					name:'修改',
+					name:'查看',
 					click:function(data){
-						if( data.state == '未付款')
+						if( data.state == '未付款'){
 							location.href = 'orderUnPayView.html?distributionOrderId='+data.distributionOrderId;
-						else
+						}else{
 							location.href = 'orderView.html?distributionOrderId='+data.distributionOrderId;
+						}
 					}
 				}
 				],

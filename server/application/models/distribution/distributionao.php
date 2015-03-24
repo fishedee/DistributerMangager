@@ -14,6 +14,11 @@ class DistributionAo extends CI_Model
     }
 
     private function getOtherInfo($distribution){
+        $distribution['shopUrl'] = preg_replace(
+            '/http:\/\/(\d+)\.([^\/]+)\/\d+\/item\.html/',
+            'http://${1}.'.$_SERVER['HTTP_HOST'].'/'.$distribution['downUserId'].'/item.html',
+            $distribution['shopUrl']
+        );
         $distribution['upUserCompany'] = $this->userAo->get($distribution['upUserId'])['company'];
         $distribution['downUserCompany'] = $this->userAo->get($distribution['downUserId'])['company'];
         $distribution['distributionPercentShow'] = $this->getFixedPrice($distribution['distributionPercent']/100).'%';
@@ -69,19 +74,9 @@ class DistributionAo extends CI_Model
         foreach($data['data'] as $key=>$value )
             $distributionMap[$value['upUserId']][$value['downUserId']] = true;   
         $distributionMap[$upUserId][$downUserId] = true;
-
-        //计算分成关系的顶端
-        $topDistributionUser = array();
-        foreach($distributionMap as $upUserId=>$downUserIds){
-            $topDistributionUser[$upUserId] = true;
-        }
-        foreach($distributionMap as $upUserId=>$downUserIds){
-            foreach($downUserIds as $downUserId=>$temp )
-                unset($topDistributionUser[$downUserId]);
-        }
-
+        
         //遍历分成关系顶端，计算是否两点之间有多条路径
-        foreach($topDistributionUser as $topUserId=>$temp ){
+        foreach($distributionMap as $topUserId=>$temp ){
             $isVisit = array();
             $this->checkSingleTree($distributionMap,$isVisit,$topUserId,$topUserId);
         }
@@ -94,6 +89,22 @@ class DistributionAo extends CI_Model
             throw new CI_MyException(1, "无权查询此非本用户的分成关系");
          
         $distribution = $this->getOtherInfo($distribution);
+        return $distribution;
+    }
+
+    public function getByLink($userId,$upUserId,$downUserId){
+         $data = $this->distributionDb->search(array(
+            'upUserId'=>$upUserId,
+            'downUserId'=>$downUserId,
+        ),array());
+        if($data['count'] == 0 )
+            throw new CI_MyException(1,'不存在该分成关系');
+
+        $distribution = $data['data'][0];
+        if($distribution['upUserId'] != $userId && $distribution['downUserId'] != $userId)
+            throw new CI_MyException(1, "无权查询此非本用户的分成关系");
+        $distribution = $this->getOtherInfo($distribution);
+        
         return $distribution;
     }
 
@@ -121,13 +132,15 @@ class DistributionAo extends CI_Model
         if($distribution['upUserId'] != $userId)
             throw new CI_MyException(1, "无权同意本用户的分成关系");
         $this->check($distribution['upUserId'], $distribution['downUserId']);
+        if(preg_match('/^http:\/\/\d+\.[^\/]+\/\d+\/item\.html$/',$distribution['shopUrl']) == 0 )
+            throw new CI_MyException(1, "请设置正确的商城URL");
 
         $this->distributionDb->mod($distributionId,array(
             'state'=>$this->distributionStateEnum->ON_ACCEPT
         ));
     }
 
-    public function modPrecent($userId,$distributionId,$distributionPercentShow){
+    public function modPrecent($userId,$distributionId,$distributionPercentShow,$shopUrl){
         $distribution = $this->get($userId, $distributionId);
         if($distribution['upUserId'] != $userId)
             throw new CI_MyException(1, "无权同意本用户的分成关系");
@@ -137,9 +150,12 @@ class DistributionAo extends CI_Model
             throw new CI_MyException(1, "默认分成比例不能大于100%");
         if($distributionPercent < 0)
             throw new CI_MyException(1, "默认分成比例不能少于0");
+        if(preg_match('/^http:\/\/\d+\.[^\/]+\/\d+\/item\.html$/',$shopUrl) == 0 )
+            throw new CI_MyException(1, "请输入正确的商城URL");
 
         $this->distributionDb->mod($distributionId,array(
-            'distributionPercent'=>$distributionPercent
+            'distributionPercent'=>$distributionPercent,
+            'shopUrl'=>$shopUrl
         ));
     }
 
