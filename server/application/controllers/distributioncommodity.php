@@ -13,7 +13,7 @@ class DistributionCommodity extends CI_Constroller
      */
     public function add(){
         $data = $this->argv->checkPost(array(
-            array('distributionId', 'require'),
+            array('distributionOrderId', 'require'),
             array('shopOrderId', 'require'),
             array('shopCommodityId', 'require'),
             array('price', 'require')
