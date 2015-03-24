@@ -20,41 +20,23 @@ class OrderStatistic extends CI_Controller
             array('endTime', 'option')
         );
 
-        //检查权限
-        $user = $this->loginAo->checkMustLogin();
-        $userId = $user['userId'];
+        if( isset($dataWhere['beginTime'])
+            $beginTime = $dataWhere['beginTime'];
+        else
+            $beginTime = '';
 
-        //业务逻辑
-        return $this->orderStatisticAo->getOrderStatistic($userId,
-            $dataWhere, array());
-    }
-
-    /**
-    * @view json
-    */
-    public function getOrderTotalStatistic(){
-        //检查输入参数
-        $dataWhere = $this->argv->checkGet(array(
-            array('state', 'option')
-        );
+        if( isset($dataWhere['endTime'])
+            $endTime = $dataWhere['endTime'];
+        else
+            $endTime = '';
 
         //检查权限
         $user = $this->loginAo->checkMustLogin();
         $userId = $user['userId'];
 
         //业务逻辑
-        return $this->orderStatisticAo->getOrderStatistic(
-            $userId, $dataWhere, array());
+        return $this->orderStatisticAo->getOrderDayStatistic($userId,
+            $beginTime, $endTime, array());
     }
-
-
-
-
-
-
-
-
-
-
 }
 
