@@ -1,11 +1,12 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class OrderStaticAo extends CI_Model
+class OrderStatisticAo extends CI_Model
 {
     public function __construct(){
         parent::__construct();
         $this->load->model('order/orderDb', 'orderDb');
         $this->load->model('order/orderStateEnum', 'orderStateEnum');
+	$this->load->model('shop/commodityAo', 'commodityAo');
     }
 
     private function formatTime($timeStr){
@@ -13,18 +14,18 @@ class OrderStaticAo extends CI_Model
         return date('Y-m-d', $time);
     }
 
-    public function getOrderDayStatistic($useId, $beginTime, $endTime){
+    public function getOrderDayStatistic($userId, $beginTime, $endTime){
         $where['$userId'] = $userId;
         if($beginTime == '' || $endTime == ''){
             $ret = $this->orderDb->search($where, array());    
             $orderPrice = 0;
-            for($ret['data'] as $order)
+            foreach($ret['data'] as $order)
                 $orderPrice += $order['price'];
 
             $item = array(
                 'day'=>'all',
                 'orderNum'=>$ret['count'],
-                'orderPrice'=>$orderPrice
+                'orderPrice'=>$this->commodityAo->getFixedPrice($orderPrice)
             );
             $retData = array();
             $retData[] = $item;
@@ -34,24 +35,24 @@ class OrderStaticAo extends CI_Model
             $where['endTime'] = $endTime;
             $ret = $this->orderDb->search($where, array());
             $data = $ret['data'];
-            $item = array(
-                'day'=>formatTime( $data[0]['createTime'] ),
-                'orderNum'=>0,
-                'orderPrice'=>0
-            );
             $retData = array();
-            for($data as $key=>$order){
-                if (formatTime( $order['createTime'] ) == $item['day']){
-                    $item['orderNum']++;
-                    $item['orderPrice'] += $order['price'];
-                }else{
-                    $retData[] = $item;
-                    $item['day'] = formatTime($order['createTime']);
-                    $item['orderNum'] = 1;
-                    $item['orderPrice'] = $order['price'];
-                }
-            }
-            return $retData;
+            foreach($data as $order){
+		if( !isset($retData[ $this->formatTime($order['createTime']) ])){
+			$retData[ $this->formatTime($order['createTime']) ] = array(
+				'day'=>$this->formatTime($order['createTime']),
+				'orderNum'=>1,
+				'orderPrice'=>$this->commodityAo->getFixedPrice($order['price'])
+			);
+		}else{
+			$retData[ $this->formatTime($order['createTime']) ]['orderNum'] ++;
+			$retData[ $this->formatTime($order['createTime']) ]['orderPrice'] += $this->commodityAo->getFixedPrice($order['price']);
+		}
+
+	    }
+
+            return array_values($retData);
         }
     }
+
+
 }

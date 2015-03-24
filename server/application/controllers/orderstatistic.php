@@ -5,7 +5,7 @@ class OrderStatistic extends CI_Controller
     public function __construct(){
         parent::__construct();
         $this->load->model('user/loginAo', 'loginAo');
-        $this->load->model('order/orderStatisticAo', 'orderStastisticAo');
+        $this->load->model('order/orderStatisticAo', 'orderStatisticAo');
         $this->load->library('argv', 'argv');
     }
 
@@ -18,14 +18,14 @@ class OrderStatistic extends CI_Controller
         $dataWhere = $this->argv->checkGet(array(
             array('beginTime', 'option'),
             array('endTime', 'option')
-        );
+        ));
 
-        if( isset($dataWhere['beginTime'])
+        if( isset($dataWhere['beginTime']) )
             $beginTime = $dataWhere['beginTime'];
         else
             $beginTime = '';
 
-        if( isset($dataWhere['endTime'])
+        if( isset($dataWhere['endTime']) )
             $endTime = $dataWhere['endTime'];
         else
             $endTime = '';

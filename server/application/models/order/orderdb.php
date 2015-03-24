@@ -15,9 +15,9 @@ class OrderDb extends CI_Model
 			else if(  $key == 'name' )
 				$this->db->like($key,$value);
             else if( $key == 'beginTime' )
-                $this->db->where('createTime >=', $value);
+                $this->db->where('date(createTime) >=', $value);
             else if( $key == 'endTime' )
-                $this->db->where('createTime <=', $value);
+                $this->db->where('date(createTime) <=', $value);
 		}
 		
 		$count = $this->db->count_all_results($this->tableName);
