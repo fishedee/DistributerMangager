@@ -37,6 +37,10 @@ class OrderStatisticAo extends CI_Model
             }
         }
 
+         
+        if( ($beginTime == '' || $endTime == '') && count($retData) == 0)
+            return array();
+
         $ret = array();
         if($endTime == '')
             $endTime = min(array_keys($retData));
