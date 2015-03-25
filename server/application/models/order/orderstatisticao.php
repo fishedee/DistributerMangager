@@ -36,7 +36,23 @@ class OrderStatisticAo extends CI_Model
                 $retData[ $this->formatTime($order['createTime']) ]['orderPrice'] += $this->commodityAo->getFixedPrice($order['price']);
             }
         }
-        return array_values($retData);
+
+        $ret = array();
+        $time = $beginTime;
+        while($time < $endTime){
+            if( isset($ret[$time]) ){
+                $ret[] = $retData;
+            }else{
+                $ret[] = array(
+                    'day'=>$time,
+                    'orderNum'=>0,
+                    'orderPrice'=>0
+                );
+            }
+            $time = date('Y-m-d', strtotime($time . ' +1 day');
+        }
+
+        return $ret;
     }
 
     public function getOrderTotalStatistic($userId, $limit){
