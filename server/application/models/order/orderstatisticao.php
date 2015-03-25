@@ -38,10 +38,10 @@ class OrderStatisticAo extends CI_Model
         }
 
         $ret = array();
-        $time = $beginTime;
-        while($time < $endTime){
-            if( isset($ret[$time]) ){
-                $ret[] = $retData;
+        $time = $endTime;
+        while($time >= $beginTime){
+            if( isset($retData[$time]) ){
+                $ret[] = $retData[$time];
             }else{
                 $ret[] = array(
                     'day'=>$time,
@@ -49,7 +49,7 @@ class OrderStatisticAo extends CI_Model
                     'orderPrice'=>0
                 );
             }
-            $time = date('Y-m-d', strtotime($time . ' +1 day');
+            $time = date('Y-m-d', strtotime($time . ' -1 day'));
         }
 
         return $ret;
