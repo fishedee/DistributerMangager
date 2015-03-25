@@ -5,6 +5,7 @@ class OrderStatistic extends CI_Controller
     public function __construct(){
         parent::__construct();
         $this->load->model('user/loginAo', 'loginAo');
+        $this->load->model('user/userPermissionEnum', 'userPermissionEnum');
         $this->load->model('order/orderStatisticAo', 'orderStatisticAo');
         $this->load->library('argv', 'argv');
     }
@@ -31,7 +32,9 @@ class OrderStatistic extends CI_Controller
             $endTime = '';
 
         //检查权限
-        $user = $this->loginAo->checkMustLogin();
+        $user = $this->loginAo->checkMustClient(
+            $this->userPermissionEnum->COMPANY_SHOP
+        );
         $userId = $user['userId'];
 
         //业务逻辑
@@ -44,7 +47,9 @@ class OrderStatistic extends CI_Controller
     */
     public function getOrderTotalStatistic(){
         //检查权限
-        $user = $this->loginAo->checkMustLogin();
+        $user = $this->loginAo->checkMustClient(
+            $this->userPermissionEnum->COMPANY_SHOP
+        );
         $userId = $user['userId'];
         
         //业务逻辑
