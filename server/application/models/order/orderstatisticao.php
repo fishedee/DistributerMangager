@@ -16,10 +16,10 @@ class OrderStatisticAo extends CI_Model
 
     public function getOrderDayStatistic($userId, $beginTime, $endTime){
         $where['$userId'] = $userId;
-        if($beginTime != '' && $endTime != ''){
+        if($beginTime != '')
             $where['beginTime'] = $beginTime;
+        if($endTime != '')
             $where['endTime'] = $endTime;
-        }
 
         $ret = $this->orderDb->search($where, array());
         $data = $ret['data'];
@@ -38,6 +38,11 @@ class OrderStatisticAo extends CI_Model
         }
 
         $ret = array();
+        if($endTime == '')
+            $endTime = min(array_keys($retData));
+        if($beginTime == '')
+            $beginTime = max(array_keys($retData));
+
         $time = $endTime;
         while($time >= $beginTime){
             if( isset($retData[$time]) ){
