@@ -8,7 +8,7 @@
 		var dialog = require('common/dialog/dialog.js');
 		var Header = require('common/header/header.js');
 		var ShopCart = require('common/shopcart/shopcart.js');
-		var LittleList = require('common/littlelist/littlelist.js');
+		var BigBigList = require('common/bigbiglist/bigbiglist.js');
 		var commodityclassify = [];
 		var shopCommodityClassifyId = $.location.getQueryArgv('shopCommodityClassifyId');
 		function get(next){
@@ -31,12 +31,12 @@
 				}]
 			});
 			var shopcart = new ShopCart();
-			var littlelist = new LittleList(_.map(commodityclassify.children,function(single){
+			var bigbiglist = new BigBigList(_.map(commodityclassify.children,function(single){
 				var link = $.url.buildQueryUrl('itemlist.html',{shopCommodityClassifyId:single.shopCommodityClassifyId});
 				return {link:link,image:single.icon,text:single.title};
 			}));
 			
-			var pageHtml = header.el + littlelist.el + shopcart.el;
+			var pageHtml = header.el + bigbiglist.el + shopcart.el;
 			$.page.start(pageHtml);
 		}
 		$.checkMustLogin(function(){

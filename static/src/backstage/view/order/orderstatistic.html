@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>烘焙帮后台管理系统</title>
+	<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+</head>
+<body class="definewidth m10">
+	<div id="chooser">
+	</div>
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('fishstrap/core/global.js');
+		var dialog = require('fishstrap/ui/dialog.js');
+		var table = require('fishstrap/ui/table.js');
+		var chart = require('fishstrap/ui/chart.js');
+		var input = require('fishstrap/ui/input.js');
+		var subPage = require('fishstrap/page/subPage.js');
+		var statistic = {};
+		function getData(nextStep ){
+			$.get('/orderstatistic/getOrderTotalStatistic',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				statistic = data.data;
+				nextStep();
+			});
+		}
+		function go(){
+			table.staticSimpleTable({
+				id:'container',
+				data:statistic,
+				column:[
+					{id:'stateName',type:'text',name:'订单状态'},
+					{id:'num',type:'text',name:'订单总数量'},
+					{id:'price',type:'text',name:'订单总金额'},
+				],
+				operate:[]
+			});
+		}
+		getData(go);
+	</script>
+</body>
+</html>

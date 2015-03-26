@@ -10,7 +10,30 @@
 		var HeaderSearch = require('common/headersearch/headersearch.js');
 		var ShopCart = require('common/shopcart/shopcart.js');
 		var LittleList = require('common/littlelist/littlelist.js');
+		var BigList = require('common/biglist/biglist.js');
 		var commodityclassify = [];
+		var commodity = [];
+		var hasCompany = true;
+		function getHasCompany(next){
+			$.get('/user/getHasCompany',function(data){
+				if( data.code != 0 ){
+					//dialog.message(data.msg);
+					return;
+				}
+				hasCompany = data.data;
+				next();
+			});
+		}
+		function getCommmodity(next){
+			$.get('/commodity/getByCommodityClassify',{shopCommodityClassifyId:0},function(data){
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				commodity = data.data;
+				next();
+			});
+		}
 		function get(next){
 			$.get('/commodityclassify/getPrimaryClassify',{},function(data){
 				if( data.code != 0 ){
@@ -23,23 +46,43 @@
 		}
 		function go(){
 			var headersearch = new HeaderSearch();
-			var footer = new Footer('item');
+			var footer = new Footer('item',hasCompany);
 			var shopcart = new ShopCart();
-			var littlelist = new LittleList(_.map(commodityclassify,function(single){
-				var link;
-				if( single.childrenCount == 0 ){
-					link = $.url.buildQueryUrl('itemlist.html',{shopCommodityClassifyId:single.shopCommodityClassifyId});
-				}else{
-					link = $.url.buildQueryUrl('classify.html',{shopCommodityClassifyId:single.shopCommodityClassifyId});
-				}
-				return {link:link,image:single.icon,text:single.title};
-			}));
-			
-			var pageHtml = headersearch.el + littlelist.el+ footer.el + shopcart.el;
+			var list = null;
+			if( commodityclassify.length != 0 ){
+				list = new LittleList(_.map(commodityclassify,function(single){
+					var link;
+					if( single.childrenCount == 0 ){
+						link = $.url.buildQueryUrl('itemlist.html',{shopCommodityClassifyId:single.shopCommodityClassifyId});
+					}else{
+						link = $.url.buildQueryUrl('classify.html',{shopCommodityClassifyId:single.shopCommodityClassifyId});
+					}
+					return {link:link,image:single.icon,text:single.title};
+				}));
+			}else{
+				list = new BigList(_.map(commodity,function(single){
+					return {
+						link:$.url.buildQueryUrl('itemdetail.html',{shopCommodityId:single.shopCommodityId}),
+						image:single.icon,
+						title:single.title,
+						summary:single.introduction,
+						price:single.priceShow,
+						oldprice:single.oldPriceShow,
+						stock:single.inventory
+					}
+				}));
+			}
+			var pageHtml = headersearch.el + list.el+ footer.el + shopcart.el;
+			if( commodityclassify.length == 0 )
+				$.page.setGrey();
 			$.page.start(pageHtml);
 		}
 		$.checkMustLogin(function(){
-			get(go);
+			getHasCompany(function(){
+				getCommmodity(function(){
+					get(go);
+				});
+			});
 		});
 	</script>
 </body>

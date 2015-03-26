@@ -2,16 +2,42 @@
 *@requrie footer.less
 */
 var $ = require('../core/core.js');
-function footer(choose){
-	var data = {
-		companyState:'inactive',
-		itemState:'inactive',
-		dealState:'inactive',
-		meState:'inactive'
-	};
-	data[choose+'State'] = 'active';
+function footer(choose,hasCompany){
+	var data = [
+		{
+			link:'company.html',
+			name:'company',
+			state:'inactive',
+			text:'公司'
+		},
+		{
+			link:'item.html',
+			name:'item',
+			state:'inactive',
+			text:'商品'
+		},
+		{
+			link:'deal.html',
+			name:'deal',
+			state:'inactive',
+			text:'订单'
+		},
+		{
+			link:'me.html',
+			name:'me',
+			state:'inactive',
+			text:'我'
+		},
+	];
+	for( var i in data ){
+		if( data[i].name == choose ){
+			data[i].state = 'active';
+		}
+	}
+	if( hasCompany == false )
+		data.splice(0,1);
 	var template = __inline('footerTpl.tpl');
-	var el = template(data);
+	var el = template({list:data});
 	return {
 		el:el
 	}
