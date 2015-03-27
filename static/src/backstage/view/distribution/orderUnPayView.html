@@ -97,7 +97,7 @@
 										distributionPrecent:$.format.floatval(data.distributionPrice/(data.priceShow*data.quantity)).toFixed(2)
 									});
 									refreshPrice();
-								}},
+								}}
 							],
 							operate:[],
 							button:[{
@@ -119,7 +119,7 @@
 							}]
 						}
 					},
-					{id:'state',type:'enum',name:'分成订单状态',map:distributionOrderState},
+					{id:'state',type:'enum',name:'分成订单状态',map:distributionOrderState}
 				],
 				value:distributionOrder,
 				submit:function(data){

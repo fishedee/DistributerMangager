@@ -40,12 +40,12 @@
 					column:[
 						{id:'day',type:'text',name:'时间'},
 						{id:'orderNum',type:'text',name:'订单流水数量'},
-						{id:'orderPrice',type:'text',name:'订单流水金额'},
+						{id:'orderPrice',type:'text',name:'订单流水金额'}
 					],
 					operate:[]
 				});
 				var chartStatistic = [];
-				for( var i in statistic ){
+				for( var i = 0 ; i != statistic.length ; ++i ){
 					chartStatistic.push({
 						day:statistic[i].day,
 						value:statistic[i].orderNum,
@@ -57,6 +57,7 @@
 						name:'订单流水金额'
 					});
 				}
+				$.console.log($.JSON.stringify(chartStatistic));
 				chart.simpleBrokeLine({
 					id:'chart',
 					data:chartStatistic,
@@ -71,7 +72,7 @@
 				id:'chooser',
 				field:[
 					{id:'beginTime',type:'time',name:'开始时间'},
-					{id:'endTime',type:'time',name:'结束时间'},
+					{id:'endTime',type:'time',name:'结束时间'}
 				],
 				submit:function(data){
 					statisticWhere = {};
