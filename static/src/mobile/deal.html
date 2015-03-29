@@ -15,6 +15,17 @@
 		var orderCount = {};
 		var orderList = [];
 		var orderState = (state == null)?0:state;
+		var hasCompany = true;
+		function getHasCompany(next){
+			$.get('/user/getHasCompany',function(data){
+				if( data.code != 0 ){
+					//dialog.message(data.msg);
+					return;
+				}
+				hasCompany = data.data;
+				next();
+			});
+		}
 		function getOrderCount(next){
 			$.get('/deal/getMyOrderCount',{},function(data){
 				if( data.code != 0 ){
@@ -36,7 +47,7 @@
 			});
 		}
 		function go(){
-			var footer = new Footer('deal');
+			var footer = new Footer('deal',hasCompany);
 			var headerbutton = new HeaderButton(_.map(orderStateList,function(key){
 				return {
 					name:orderStateIdToName[key],
@@ -63,8 +74,10 @@
 			$.page.start(pageHtml);
 		}
 		$.checkMustLogin(function(){
-			getOrderCount(function(){
-				getOrderList(go);
+			getHasCompany(function(){
+				getOrderCount(function(){
+					getOrderList(go);
+				});
 			});
 		});
 	</script>

@@ -14,15 +14,13 @@ class OrderStatisticAo extends CI_Model
         return date('Y-m-d', $time);
     }
 
-    public function getOrderDayStatistic($userId, $beginTime, $endTime){
-        $where['$userId'] = $userId;
-        if($beginTime != '')
-            $where['beginTime'] = $beginTime;
-        if($endTime != '')
-            $where['endTime'] = $endTime;
-
+    public function getOrderDayStatistic($userId, $where){
+        //取出原始数据
+        $where['userId'] = $userId;
         $ret = $this->orderDb->search($where, array());
         $data = $ret['data'];
+
+        //根据日期聚合数据
         $retData = array();
         foreach($data as $order){
             if( !isset($retData[ $this->formatTime($order['createTime']) ])){
@@ -38,14 +36,13 @@ class OrderStatisticAo extends CI_Model
         }
 
          
-        if( ($beginTime == '' || $endTime == '') && count($retData) == 0)
+        if( count($retData) == 0)
             return array();
 
+        //填充空日子的数据
         $ret = array();
-        if($endTime == '')
-            $endTime = min(array_keys($retData));
-        if($beginTime == '')
-            $beginTime = max(array_keys($retData));
+        $endTime = max(array_keys($retData));
+        $beginTime = min(array_keys($retData));
 
         $time = $endTime;
         while($time >= $beginTime){
@@ -72,14 +69,14 @@ class OrderStatisticAo extends CI_Model
             foreach($this->orderStateEnum->enums as $singleEnum){
                 $where['state'] = $singleEnum[0];
                 $retData = $this->orderDb->search($where, $limit);
-                $orderPrice = 0;
+                $orderPrice = 0.00;
                 foreach($retData['data'] as $order)
                     $orderPrice += $order['price'];
                 $data[] = array(
                     'state'=>$singleEnum[0],
                     'stateName'=>$singleEnum[2],
                     'num'=>$retData['count'],
-                    'price'=>$orderPrice
+                    'price'=>$this->commodityAo->getFixedPrice($orderPrice)
                 );
             }
             return $data;

@@ -1,0 +1,91 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>烘焙帮后台管理系统</title>
+	<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+</head>
+<body class="definewidth m10">
+	<div id="chooser">
+	</div>
+	<div id="chart" style="height:400px">
+	</div>
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('fishstrap/core/global.js');
+		var dialog = require('fishstrap/ui/dialog.js');
+		var table = require('fishstrap/ui/table.js');
+		var chart = require('fishstrap/ui/chart.js');
+		var input = require('fishstrap/ui/input.js');
+		var subPage = require('fishstrap/page/subPage.js');
+		var statistic = {};
+		var statisticWhere = {};
+		function getData(nextStep ){
+			$.get('/orderstatistic/getOrderDayStatistic',statisticWhere,function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				statistic = data.data;
+				nextStep();
+			});
+		}
+		function go(){
+			getData(function(){
+				table.staticSimpleTable({
+					id:'container',
+					data:statistic,
+					column:[
+						{id:'day',type:'text',name:'时间'},
+						{id:'orderNum',type:'text',name:'订单流水数量'},
+						{id:'orderPrice',type:'text',name:'订单流水金额'}
+					],
+					operate:[]
+				});
+				var chartStatistic = [];
+				for( var i = 0 ; i != statistic.length ; ++i ){
+					chartStatistic.push({
+						day:statistic[i].day,
+						value:statistic[i].orderNum,
+						name:'订单流水数量'
+					});
+					chartStatistic.push({
+						day:statistic[i].day,
+						value:statistic[i].orderPrice,
+						name:'订单流水金额'
+					});
+				}
+				$.console.log($.JSON.stringify(chartStatistic));
+				chart.simpleBrokeLine({
+					id:'chart',
+					data:chartStatistic,
+					xAxis:'day',
+					yAxis:'value',
+					category:'name'
+				});
+			});
+		}
+		function chooser(){
+			input.flowInput({
+				id:'chooser',
+				field:[
+					{id:'beginTime',type:'time',name:'开始时间'},
+					{id:'endTime',type:'time',name:'结束时间'}
+				],
+				submit:function(data){
+					statisticWhere = {};
+					if( data.beginTime != "")
+						statisticWhere.beginTime = data.beginTime;
+					if( data.endTime != "")
+						statisticWhere.endTime = data.endTime;
+					go();
+				}
+			});
+			go();
+		}
+		chooser();
+	</script>
+</body>
+</html>

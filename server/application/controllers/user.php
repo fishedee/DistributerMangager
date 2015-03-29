@@ -39,6 +39,23 @@ class User extends CI_Controller {
 	/**
 	* @view json
 	*/
+	public function getHasCompany(){
+		//检查参数
+		$data = $this->argv->checkGet(array(
+			array('userId','require'),
+		));
+
+		//检查是否有公司介绍权限
+		$user = $this->userAo->get($data['userId']);
+		return in_array(
+			$this->userPermissionEnum->COMPANY_INTRODUCE,
+			$user['permission']
+		);
+	}
+
+	/**
+	* @view json
+	*/
 	public function modAppInfo()
 	{
 		//检查输入参数

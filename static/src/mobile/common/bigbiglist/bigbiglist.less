@@ -1,0 +1,43 @@
+@import (reference) '../core/core.less';
+.common_bigbiglist{
+	&:extend(.common_global_row);
+	padding-bottom:@section_margin;
+	margin-left:@body_left;
+	margin-right:@body_right;
+	
+	a{
+		&:extend(.common_global_leftcol);
+		display:block;
+		width:100%;
+		margin-top:@section_margin;
+
+		li{
+			&:extend(.common_global_row);
+			border:1px solid @line_deep_grey;
+
+			.img{	
+				&:extend(.common_global_row);
+				width:100%;
+				padding-bottom:50%;
+				position:relative;
+
+				img{
+					&:extend(.common_global_abfull);
+					width:100%;
+					height:100%;
+				}
+			}
+
+			.text{
+				&:extend(.common_global_row);
+				background:@background_light_grey;
+				display:block;
+				line-height:40px;
+				font-size:@font_h1;
+				color:@font_black;
+				padding-left:20px;
+				text-align:left;
+			}
+		}
+	}
+}

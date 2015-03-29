@@ -8,8 +8,19 @@
 		var dialog = require('common/dialog/dialog.js');
 		var Footer = require('common/footer/footer.js');
 		var ButtonList = require('common/buttonlist/buttonlist.js');
+		var hasCompany = true;
+		function getHasCompany(next){
+			$.get('/user/getHasCompany',function(data){
+				if( data.code != 0 ){
+					//dialog.message(data.msg);
+					return;
+				}
+				hasCompany = data.data;
+				next();
+			});
+		}
 		function go(){
-			var footer = new Footer('me');
+			var footer = new Footer('me',hasCompany);
 			var buttonlist = new ButtonList([
 				{
 					name:'常用地址',
@@ -28,7 +39,9 @@
 			$.page.start(pageHtml);
 		}
 		$.checkMustLogin(function(){
-			go();
+			getHasCompany(function(){
+				go();
+			});
 		})
 	</script>
 </body>

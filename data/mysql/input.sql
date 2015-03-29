@@ -394,13 +394,13 @@ insert into t_user_company_banner(userId,image,title,url,sort)values
 
 insert into t_shop_commodity_classify(userId,title,icon,parent,sort,remark)values
 (10003,'汽车','/data/upload/sample/sample1.jpg',0,1,''),
-(10003,'宝马','/data/upload/sample/sample4.jpg',10001,2,''),
-(10003,'大众','/data/upload/sample/sample5.jpg',10001,3,''),
-(10003,'奥迪','/data/upload/sample/sample6.jpg',10001,4,''),
+(10003,'宝马','/data/upload/sample/sample11.jpg',10001,2,''),
+(10003,'大众','/data/upload/sample/sample12.jpg',10001,3,''),
+(10003,'奥迪','/data/upload/sample/sample13.jpg',10001,4,''),
 (10003,'饮食','/data/upload/sample/sample2.jpg',0,5,''),
-(10003,'饮料','/data/upload/sample/sample4.jpg',10005,6,''),
-(10003,'零食','/data/upload/sample/sample5.jpg',10005,7,''),
-(10003,'主食','/data/upload/sample/sample6.jpg',10005,8,''),
+(10003,'饮料','/data/upload/sample/sample11.jpg',10005,6,''),
+(10003,'零食','/data/upload/sample/sample12.jpg',10005,7,''),
+(10003,'主食','/data/upload/sample/sample13.jpg',10005,8,''),
 (10004,'商品','/data/upload/sample/sample2.jpg',0,1,'');
 
 insert into t_shop_commodity(userId,shopLinkCommodityId, isLink, shopCommodityClassifyId,icon,title,introduction,detail,price,oldPrice,inventory,state)values
@@ -416,18 +416,24 @@ insert into t_distribution(upUserId,downUserId,distributionPercent,shopUrl,state
 (10004,10005,2345,'http://10003.shop.fishedee.com/10004/item.html',2),
 (10005,10006,3456,'http://10003.fishedee.com/10006/item.html',2);
 
-insert into t_shop_order(shopOrderId, userId, clientId, image, description, price, num, name, wxPrePayId, state, remark)values
-(10001, 10003, 10001, '/data/upload/sample/sample4.jpg', '测试订单', 100, 3, '测试订单', '12323213', 0, '测试订单'),
-(10002, 10004, 10001, '/data/upload/sample/sample6.jpg', '测试订单2', 90, 1, '测试订单2', '12323213', 0, '测试订单2');
+insert into t_shop_order(shopOrderId, userId, clientId, image, description, price, num, name, wxPrePayId, state, remark,createTime)values
+(10001, 10003, 10001, '/data/upload/sample/sample4.jpg', '测试订单', 100, 3, '测试订单', '12323213', 1, '测试订单',now()),
+(10002, 10004, 10001, '/data/upload/sample/sample6.jpg', '测试订单2', 90, 1, '测试订单2', '12323213', 1, '测试订单2',now()),
+(10003, 10003, 10001, '/data/upload/sample/sample4.jpg', '测试订单', 80, 1, '测试订单3', '12323213', 1, '测试订单3',DATE_SUB(now(), INTERVAL 2 DAY)),
+(10004, 10003, 10001, '/data/upload/sample/sample4.jpg', '测试订单', 70, 1, '测试订单4', '12323213', 1, '测试订单4',DATE_SUB(now(), INTERVAL 3 DAY));
 
 insert into t_shop_order_address(shopOrderId, name, province, city, address, phone, payment)values
 (10001, 'fish', '广东', '广州', '广州大学城', '15593728362', 1),
-(10002, 'fish2', '广东', '广州', '广州大学城', '15593728362', 1);
+(10002, 'fish2', '广东', '广州', '广州大学城', '15593728362', 1),
+(10003, 'fish', '广东', '广州', '广州大学城', '15593728362', 1),
+(10004, 'fish', '广东', '广州', '广州大学城', '15593728362', 1);
 
 insert into t_shop_order_commodity(shopOrderId, shopCommodityId, title, icon, introduction, price, OldPrice, quantity)values
 (10001, 10001, '测试商品1', '/data/upload/sample/sample4.jpg', '测试商品1', 30, 500, 2),
 (10001, 10002, '测试商品2', '/data/upload/sample/sample5.jpg', '测试商品2', 40, 500, 1),
-(10002, 10003, '测试商品3', '/data/upload/sample/sample6.jpg', '测试商品3', 90, 500, 1);
+(10002, 10003, '测试商品3', '/data/upload/sample/sample6.jpg', '测试商品3', 90, 500, 1),
+(10003, 10001, '测试商品1', '/data/upload/sample/sample4.jpg', '测试商品1', 80, 500, 2),
+(10004, 10002, '测试商品2', '/data/upload/sample/sample5.jpg', '测试商品2', 70, 500, 1);
 
 insert into t_distribution_order(upUserId, downUserId, shopOrderId, price, state)values
 (10003,10004, 10001, 0, 0),

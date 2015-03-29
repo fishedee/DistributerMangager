@@ -44,7 +44,7 @@ class Commodity extends CI_Controller
         //业务逻辑
         return $this->commodityAo->search($userId,$dataWhere, $dataLimit);
     }
-
+    
 	/**
 	* @view json
 	*/

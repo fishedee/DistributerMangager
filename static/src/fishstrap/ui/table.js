@@ -6,6 +6,7 @@ var $ = require('../core/global.js');
 var dialog = require('./dialog.js');
 module.exports = {
 	staticSimpleTable:function(option){
+		//$.console.log(option.column);
 		//执行Option
 		var defaultOption = {
 			id:'',
@@ -23,7 +24,7 @@ module.exports = {
 		function setSingleData(tr,singleData){
 			tr.find('td').each(function(){
 				var singleColumn =  null;
-				for( var j in defaultOption.column ){
+				for( var j = 0 ; j != defaultOption.column.length ; ++j ){
 					if( defaultOption.column[j].id == $(this).attr('class') ){
 						singleColumn = defaultOption.column[j];
 						break;
@@ -33,8 +34,6 @@ module.exports = {
 					return;
 				if( _.isUndefined(singleData[singleColumn.id]) == true )
 					return;
-				console.log(singleColumn.id);
-				console.log(singleData);
 				if( singleColumn.type == 'hidden')
 					$(this).text(singleData[singleColumn.id]);
 				else if( singleColumn.type == 'image')
@@ -50,7 +49,7 @@ module.exports = {
 			var singleData = {};
 			tr.find('td').each(function(){
 				var singleColumn =  null;
-				for( var j in defaultOption.column ){
+				for( var j = 0 ; j != defaultOption.column.length ; ++j ){
 					if( defaultOption.column[j].id == $(this).attr('class') ){
 						singleColumn = defaultOption.column[j];
 						break;
@@ -98,7 +97,7 @@ module.exports = {
 				next(data,operation);
 			}
 			//挂载operate事件
-			for( var i in defaultOption.operate ){
+			for( var i  = 0 ; i != defaultOption.operate.length ; ++i ){
 				(function(i){
 					$('#'+defaultOption.id).find('.operate_'+defaultOption.operate[i].id).unbind("click").click(function(){
 						triggerEvent($(this),defaultOption.operate[i].click);
@@ -106,7 +105,7 @@ module.exports = {
 				})(i);
 			}
 			//挂载数据事件
-			for( var i in defaultOption.column ){
+			for( var i = 0 ; i != defaultOption.column.length; ++i ){
 				(function(i){
 					var column = defaultOption.column[i];
 					if( column.type == 'textInput' && _.isUndefined(column.change) == false  ){
@@ -121,20 +120,23 @@ module.exports = {
 		function addData(data){
 			//构造操作
 			var operateDiv = '';
-			for( var i in defaultOption.operate ){
+			for( var i = 0 ; i != defaultOption.operate.length ; ++i ){
 				defaultOption.operate[i].id = $.uniqueNum();
 				operateDiv += "<a href='javascript: void(0)' class=operate_"+defaultOption.operate[i].id
 					+">"+defaultOption.operate[i].name+"</a>&nbsp;";
 			}
 			//构造添加数据
 			var div = '';
-			for( var i in data ){
+			for( var i = 0 ; i != data.length; ++i ){
 				var item = data[i];
+				if( defaultOption.operate.length == 0 )
+					var width = 'width:'+(1/defaultOption.column.length*100)+'%;';
+				else
+					var width = 'width:'+(1/(defaultOption.column.length+1)*100)+'%;';
 				div += '<tr>';
-				for( var j in defaultOption.column ){
+				for( var j = 0 ; j != defaultOption.column.length ; ++j ){
 					var column = defaultOption.column[j];
 					var style = '';
-					var width = 'width:'+(1/defaultOption.column.length*100)+'%;';
 					if( column.type == 'hidden'){
 						div += '<td style="display:none;'+width+'" class="'+column.id+'">'+item[column.id]+'</td>';
 					}else if( column.type == 'image'){
@@ -147,7 +149,7 @@ module.exports = {
 					
 				}
 				if( defaultOption.operate.length != 0 ){
-					div += '<td>'+operateDiv+'</td>';
+					div += '<td style="'+width+'" >'+operateDiv+'</td>';
 				}
 				div += '</tr>';
 			}
@@ -160,10 +162,13 @@ module.exports = {
 			div += '<table class="mod_table" style="table-layout: auto;">';
 			//显示列表头数据
 			div += '<thead><tr>';
-			for( var i in defaultOption.column ){
+			if( defaultOption.operate.length == 0 )
+				var width = 'width:'+(1/defaultOption.column.length*100)+'%;';
+			else
+				var width = 'width:'+(1/(defaultOption.column.length+1)*100)+'%;';
+			for( var i = 0; i != defaultOption.column.length ;++i ){
 				var column = defaultOption.column[i];
 				var style = '';
-				var width = 'width:'+(1/defaultOption.column.length*100)+'%;';
 				if( column.type == 'hidden'){
 					div += '<th style="display:none;'+width+'"><span class="label">'+column.name+'</span></th>';
 				}else {
@@ -171,7 +176,7 @@ module.exports = {
 				}
 			}
 			if( defaultOption.operate.length != 0 ){
-				div += '<th><span class="label">操作</span></th>';
+				div += '<th><span class="label" style="'+width+'">操作</span></th>';
 			}
 			div += '</tr></thead>';
 			//显示列表身数据
@@ -211,7 +216,7 @@ module.exports = {
 		};
 		for( var i in option )
 			defaultOption[i] = option[i];
-			
+
 		//执行_option
 		var sendUrl = '';
 		var _option = {};
@@ -244,7 +249,7 @@ module.exports = {
 
 		//拼接列
 		_option.fields = {};
-		for(var i in defaultOption.column){
+		for(var i = 0 ; i != defaultOption.column.length; ++i ){
 			var column = defaultOption.column[i];
 			if( column.hidden ){
 				continue;
@@ -267,7 +272,7 @@ module.exports = {
 			_option.fields[column.id] = single;
 		}
 		var info = "";
-		for( var i in defaultOption.operate ){
+		for( var i = 0 ; i != defaultOption.operate.length; ++i ){
 			defaultOption.operate[i].id = $.uniqueNum();
 			info += "<a href='#' class=operate_"+defaultOption.operate[i].id
 				+">"+defaultOption.operate[i].name+"</a>&nbsp;";
@@ -313,7 +318,7 @@ module.exports = {
 					tableClass: _option.table_class
 				},
 				callback: function(data){
-					for( var i in defaultOption.operate ){
+					for( var i = 0 ; i != defaultOption.operate.length; ++i ){
 						(function(i){
 							$('.operate_'+defaultOption.operate[i].id).unbind("click").click(function(){
 								var tr = $(this);

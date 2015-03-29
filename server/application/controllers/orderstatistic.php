@@ -21,16 +21,6 @@ class OrderStatistic extends CI_Controller
             array('endTime', 'option')
         ));
 
-        if( isset($dataWhere['beginTime']) )
-            $beginTime = $dataWhere['beginTime'];
-        else
-            $beginTime = '';
-
-        if( isset($dataWhere['endTime']) )
-            $endTime = $dataWhere['endTime'];
-        else
-            $endTime = '';
-
         //检查权限
         $user = $this->loginAo->checkMustClient(
             $this->userPermissionEnum->COMPANY_SHOP
@@ -38,8 +28,7 @@ class OrderStatistic extends CI_Controller
         $userId = $user['userId'];
 
         //业务逻辑
-        return $this->orderStatisticAo->getOrderDayStatistic($userId,
-            $beginTime, $endTime, array());
+        return $this->orderStatisticAo->getOrderDayStatistic($userId,$dataWhere);
     }
 
     /**

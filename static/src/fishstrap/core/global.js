@@ -4,6 +4,8 @@
 * @require ../lib/jquery.js
 */
 //加入格式扩展
+$ = window['jQuery'];
+_ = window._;
 $.format = {
 	intval:function(){
 		var value = arguments[0] ? arguments[0] : 0;
@@ -253,7 +255,7 @@ $.addCssToHead = function(str_css) {
 (function(jQuery) {
 	jQuery.extend({os: {ios: false,android: false,version: false}});
 	var ua = navigator.userAgent;
-	var browser = {}, weixin = ua.match(/MicroMessenger\/([^\s]+)/), webkit = ua.match(/WebKit\/([\d.]+)/), android = ua.match(/(Android)\s+([\d.]+)/), ipad = ua.match(/(iPad).*OS\s([\d_]+)/), ipod = ua.match(/(iPod).*OS\s([\d_]+)/), iphone = !ipod && !ipad && ua.match(/(iPhone\sOS)\s([\d_]+)/), webos = ua.match(/(webOS|hpwOS)[\s\/]([\d.]+)/), touchpad = webos && ua.match(/TouchPad/), kindle = ua.match(/Kindle\/([\d.]+)/), silk = ua.match(/Silk\/([\d._]+)/), blackberry = ua.match(/(BlackBerry).*Version\/([\d.]+)/), mqqbrowser = ua.match(/MQQBrowser\/([\d.]+)/), chrome = ua.match(/CriOS\/([\d.]+)/), opera = ua.match(/Opera\/([\d.]+)/), safari = ua.match(/Safari\/([\d.]+)/),ie = ua.match(/MSIE ([\d.]+)/),gecko = ua.match(/Gecko\/([\d.]+)/),opera = ua.match(/Opera\/([\d.]+)/);
+	var browser = {}, weixin = ua.match(/MicroMessenger\/([^\s]+)/),  qq = ua.match(/QQ\/([^\s]+)/),webkit = ua.match(/WebKit\/([\d.]+)/), android = ua.match(/(Android)\s+([\d.]+)/), ipad = ua.match(/(iPad).*OS\s([\d_]+)/), ipod = ua.match(/(iPod).*OS\s([\d_]+)/), iphone = !ipod && !ipad && ua.match(/(iPhone\sOS)\s([\d_]+)/), webos = ua.match(/(webOS|hpwOS)[\s\/]([\d.]+)/), touchpad = webos && ua.match(/TouchPad/), kindle = ua.match(/Kindle\/([\d.]+)/), silk = ua.match(/Silk\/([\d._]+)/), blackberry = ua.match(/(BlackBerry).*Version\/([\d.]+)/), mqqbrowser = ua.match(/MQQBrowser\/([\d.]+)/), chrome = ua.match(/CriOS\/([\d.]+)/), opera = ua.match(/Opera\/([\d.]+)/), safari = ua.match(/Safari\/([\d.]+)/),ie = ua.match(/MSIE ([\d.]+)/),gecko = ua.match(/Gecko\/([\d.]+)/),opera = ua.match(/Opera\/([\d.]+)/);
 	//浏览器内核判断
 	if( gecko ){
 		jQuery.os.gecko = true;
@@ -292,6 +294,10 @@ $.addCssToHead = function(str_css) {
 	if (weixin) {
 		jQuery.os.wx = true;
 		jQuery.os.wxVersion = weixin[1];
+	}
+	if( qq ){
+		jQuery.os.qq = true;
+		jQuery.os.qqVersion = qq[1];
 	}
 	window.htmlEncode = function(text) {
 		return text.replace(/&/g, '&amp').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
