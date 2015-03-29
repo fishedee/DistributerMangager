@@ -1,6 +1,7 @@
 /data/log/*
 /data/upload/*
 /static/build
+*.swp
 !/data/log/.gitignore
 !/data/upload/.gitignore
 !/data/upload/sample.jpg
