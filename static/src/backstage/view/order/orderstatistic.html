@@ -18,8 +18,9 @@
 		var input = require('fishstrap/ui/input.js');
 		var subPage = require('fishstrap/page/subPage.js');
 		var statistic = {};
+		var statisticWhere = {};
 		function getData(nextStep ){
-			$.get('/orderstatistic/getOrderTotalStatistic',{},function(data){
+			$.get('/orderstatistic/getOrderTotalStatistic',statisticWhere,function(data){
 				data = $.JSON.parse(data);
 				if( data.code != 0 ){
 					dialog.message(data.msg);
@@ -30,18 +31,38 @@
 			});
 		}
 		function go(){
-			table.staticSimpleTable({
-				id:'container',
-				data:statistic,
-				column:[
-					{id:'stateName',type:'text',name:'订单状态'},
-					{id:'num',type:'text',name:'订单总数量'},
-					{id:'price',type:'text',name:'订单总金额'}
-				],
-				operate:[]
+			getData(function(){
+				table.staticSimpleTable({
+					id:'container',
+					data:statistic,
+					column:[
+						{id:'stateName',type:'text',name:'订单状态'},
+						{id:'num',type:'text',name:'订单总数量'},
+						{id:'price',type:'text',name:'订单总金额'}
+					],
+					operate:[]
+				});
 			});
 		}
-		getData(go);
+		function chooser(){
+			input.flowInput({
+				id:'chooser',
+				field:[
+					{id:'beginTime',type:'time',name:'开始时间'},
+					{id:'endTime',type:'time',name:'结束时间'}
+				],
+				submit:function(data){
+					statisticWhere = {};
+					if( data.beginTime != "")
+						statisticWhere.beginTime = data.beginTime;
+					if( data.endTime != "")
+						statisticWhere.endTime = data.endTime;
+					go();
+				}
+			});
+			go();
+		}
+		chooser();
 	</script>
 </body>
 </html>

@@ -35,6 +35,12 @@ class OrderStatistic extends CI_Controller
     * @view json
     */
     public function getOrderTotalStatistic(){
+        //检查输入参数
+        $dataWhere = $this->argv->checkGet(array(
+            array('beginTime', 'option'),
+            array('endTime', 'option')
+        ));
+        
         //检查权限
         $user = $this->loginAo->checkMustClient(
             $this->userPermissionEnum->COMPANY_SHOP
@@ -42,7 +48,7 @@ class OrderStatistic extends CI_Controller
         $userId = $user['userId'];
         
         //业务逻辑
-        return $this->orderStatisticAo->getOrderTotalStatistic($userId, array());
+        return $this->orderStatisticAo->getOrderTotalStatistic($userId,$dataWhere);
     }
 }
 

@@ -61,14 +61,12 @@ class OrderStatisticAo extends CI_Model
         return $ret;
     }
 
-    public function getOrderTotalStatistic($userId, $limit){
-            $where = array(
-                'userId'=>$userId
-            );    
+    public function getOrderTotalStatistic($userId, $where){
+            $where['userId'] = $userId; 
             $data = array();
             foreach($this->orderStateEnum->enums as $singleEnum){
                 $where['state'] = $singleEnum[0];
-                $retData = $this->orderDb->search($where, $limit);
+                $retData = $this->orderDb->search($where, array());
                 $orderPrice = 0.00;
                 foreach($retData['data'] as $order)
                     $orderPrice += $order['price'];
