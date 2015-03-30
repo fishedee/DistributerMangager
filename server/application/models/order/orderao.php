@@ -154,6 +154,9 @@ class OrderAo extends CI_Model
 
 		//校验地址信息
 		$this->addressAo->check($address);
+
+		//保存为默认收货地址
+		$this->addressAo->mod($clientId,$address);
 		
 		//校验商品信息
 		if( count($shopTroller) == 0 )
