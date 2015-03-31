@@ -152,6 +152,11 @@ class Commodity extends CI_Controller
         );
         $userId = $user['userId'];
 
+        if( $this->loginAo->hasCompanyShopPro($user) == false && 
+            $this->commodityAo->getNormalCommodityNum($userId) >= 3 ){
+            throw new CI_MyException(1,'普通商城权限自行上传最多3个产品');
+        }
+
         //执行业务逻辑
         $this->commodityAo->add($userId, $data);
     }

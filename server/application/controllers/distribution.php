@@ -117,7 +117,7 @@ class Distribution extends CI_Controller
         
         //检查权限
         $user = $this->loginAo->checkMustClient(
-            $this->userPermissionEnum->COMPANY_DISTRIBUTION
+            $this->userPermissionEnum->COMPANY_DISTRIBUTION_PRO
         );
 
         $this->distributionAo->accept($user['userId'],$data['distributionId']);

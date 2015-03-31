@@ -178,6 +178,13 @@ class CommodityAo extends CI_Model
         $this->dfsDelCommodity($shopCommodityId);
     }
 
+    public function getNormalCommodityNum($userId){
+        $data = $this->search($userId,array(
+            'isLink'=>0,
+        ),array());
+        return $data['count'];
+    }
+
     public function add($userId, $data){
         $data['price'] = $data['priceShow']*100;
         $data['oldPrice'] = $data['oldPriceShow']*100;

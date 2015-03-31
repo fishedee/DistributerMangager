@@ -54,11 +54,31 @@ class LoginAo extends CI_Model {
 		
 		if( $user['type'] != $this->userTypeEnum->CLIENT )
 			throw new CI_MyException(1,'非商城用户无法执行此操作');
-		
-		if( in_array($permission,$user['permission']) == false )
-			throw new CI_MyException(1,'没有'.$this->userPermissionEnum->names[$permission].'权限');
+
+		if( $permission == $this->userPermissionEnum->COMPANY_SHOP ){
+			//校验商城管理权限
+			if(in_array($this->userPermissionEnum->COMPANY_SHOP,$user['permission']) == false &&
+			in_array($this->userPermissionEnum->COMPANY_SHOP_PRO,$user['permission']) == false)
+				throw new CI_MyException(1,'需要普通商城管理或高级商城管理的权限');
+		}else if( $permission == $this->userPermissionEnum->COMPANY_DISTRIBUTION ){
+			//校验分成管理权限
+			if(in_array($this->userPermissionEnum->COMPANY_DISTRIBUTION,$user['permission']) == false &&
+			in_array($this->userPermissionEnum->COMPANY_DISTRIBUTION_PRO,$user['permission']) == false)
+				throw new CI_MyException(1,'需要普通分成管理或高级分成管理的权限');
+		}else{
+			if( in_array($permission,$user['permission']) == false )
+				throw new CI_MyException(1,'没有'.$this->userPermissionEnum->names[$permission].'权限');
+		} 
 			
 		return $user;
+	}
+
+	public function hasCompanyShopPro($user){
+		return in_array($this->userPermissionEnum->COMPANY_SHOP_PRO,$user['permission']);
+	}
+
+	public function hasCompanyDistributionPro($user){
+		return in_array($this->userPermissionEnum->COMPANY_DISTRIBUTION_PRO,$user['permission']);
 	}
 	
 	public function logout(){
