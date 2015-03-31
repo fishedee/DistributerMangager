@@ -37,7 +37,7 @@
 		function go(){
 			tableOperation = query.simpleQuery({
 				id:'container',
-				url:'/user/search'+(isClient?'?type=3':''),
+				url:'/user/search'+(isClient?'?type=3&permissionId%5B%5D=5':''),
 				checkAll:isCheck,
 				column:[
 					{id:'userId',type:'text',name:'用户ID'},

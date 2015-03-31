@@ -100,6 +100,7 @@ class User extends CI_Controller {
 			array('type','option'),
 			array('company','option'),
 			array('phone','option'),
+			array('permissionId','option'),
 		));
 		
 		$dataLimit = $this->argv->checkGet(array(
@@ -144,6 +145,7 @@ class User extends CI_Controller {
 			array('type','option',$this->userTypeEnum->CLIENT),
 			array('phone','require'),
 			array('company','require'),
+			array('downDistributionNum','require'),
 			array('permission','option',array()),
 			array('client','option',array()),
 		));
@@ -204,6 +206,7 @@ class User extends CI_Controller {
 			array('type','option'),
 			array('phone','require'),
 			array('company','require'),
+			array('downDistributionNum','option'),
 			array('permission','option',array()),
 			array('client','option',array()),
 		));
@@ -217,6 +220,7 @@ class User extends CI_Controller {
 			unset($data['type']);
 			unset($data['permission']);
 			unset($data['client']);
+			unset($data['downDistributionNum']);
 			$userId = $loginUser['userId'];
 		}
 		

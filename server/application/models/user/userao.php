@@ -23,6 +23,18 @@ class UserAo extends CI_Model {
 
 
 	public function search($dataWhere,$dataLimit){
+		if( isset($dataWhere['permissionId'])){
+			$users = $this->userPermissionDb->search(
+				array('permissionId'=>$dataWhere['permissionId']),
+				array()
+			);
+			if( $users['count'] == 0 )
+				return array('count'=>0,'data'=>array());
+			$userIds = array_map(function($single){
+				return $single['userId'];
+			},$users['data']);
+			$dataWhere['userId'] = $userIds;
+		}
 		return $this->userDb->search($dataWhere,$dataLimit);
 	}
 	

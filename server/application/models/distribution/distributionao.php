@@ -34,6 +34,12 @@ class DistributionAo extends CI_Model
         return $data;
     }
 
+    public function getAcceptLinkNum($upUserId){
+        return $this->search(
+            array('upUserId'=>$upUserId,'state'=>$this->distributionStateEnum->ON_ACCEPT),
+            array()
+        )['count'];
+    }
     private function checkSingleTree($distributionMap,&$isVisit,$topUserId,$userId){
         if( isset($isVisit[$userId])){
             $link = $this->getLink($topUserId,$userId);

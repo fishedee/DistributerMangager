@@ -14,6 +14,8 @@ class UserDb extends CI_Model
 				$this->db->like($key,$value);
 			else if( $key == "type" )
 				$this->db->where($key,$value);
+			else if( $key == "userId" )
+				$this->db->where_in($key,$value);
 		}
 		
 		$count = $this->db->count_all_results($this->tableName);
@@ -23,6 +25,8 @@ class UserDb extends CI_Model
 				$this->db->like($key,$value);
 			else if( $key == "type" )
 				$this->db->where($key,$value);
+			else if( $key == "userId" )
+				$this->db->where_in($key,$value);
 		}
 			
 		$this->db->order_by('createTime','desc');

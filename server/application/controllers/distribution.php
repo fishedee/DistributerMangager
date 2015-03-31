@@ -120,6 +120,9 @@ class Distribution extends CI_Controller
             $this->userPermissionEnum->COMPANY_DISTRIBUTION_PRO
         );
 
+        if( $this->distributionAo->getAcceptLinkNum($user['userId']) >= $user['downDistributionNum'])
+            throw new CI_MyException(1,'您的帐号只能最多可以设置 '.$user['downDistributionNum'].' 个分销商');
+
         $this->distributionAo->accept($user['userId'],$data['distributionId']);
     }
 
