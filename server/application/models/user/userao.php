@@ -56,6 +56,8 @@ class UserAo extends CI_Model {
 	}
 	
 	public function del($userId){
+		throw new CI_MyException(1,'禁止删掉用户，删掉用户非常容易导致严重的数据不一致问题，你可以禁止他的权限来屏蔽他的使用');
+
 		$this->userDb->del($userId);
 			
 		$this->userPermissionDb->delByUser($userId);
