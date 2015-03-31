@@ -100,16 +100,16 @@ class TrollerAo extends CI_Model
         if($commodity['title'] != $shopTroller['title']
             || $commodity['icon'] != $shopTroller['icon'] 
             || $commodity['introduction'] != $shopTroller['introduction'] )
-            throw new CI_MyException ($this->commonErrorEnum->SHOP_CART_CHECK_ERROR,'商品信息发生变更');
+            throw new CI_MyException (1,$this->commonErrorEnum->SHOP_CART_CHECK_ERROR,'商品信息发生变更');
 
         if($commodity['price'] != $shopTroller['price'] )
-            throw new CI_MyException ($this->commonErrorEnum->SHOP_CART_CHECK_ERROR,'商品价格发生变更');
+            throw new CI_MyException (1,$this->commonErrorEnum->SHOP_CART_CHECK_ERROR,'商品价格发生变更');
 
         if($commodity['oldPrice'] != $shopTroller['oldPrice'] )
-            throw new CI_MyException ($this->commonErrorEnum->SHOP_CART_CHECK_ERROR,'商品原价格发生变更');
+            throw new CI_MyException (1,$this->commonErrorEnum->SHOP_CART_CHECK_ERROR,'商品原价格发生变更');
 
         if($commodity['inventory'] < $shopTroller['quantity'] )
-            throw new CI_MyException ($this->commonErrorEnum->SHOP_CART_CHECK_ERROR,'商品库存不足');
+            throw new CI_MyException (1,$this->commonErrorEnum->SHOP_CART_CHECK_ERROR,'商品库存不足');
 
         $this->commodityAo->check($shopTroller);
     }

@@ -41,7 +41,7 @@ class CompanyClassifyDb extends CI_Model
 		$this->db->where("userCompanyClassifyId",$userCompanyClassifyId);
 		$query = $this->db->get($this->tableName)->result_array();
 		if( count($query) == 0 )
-			throw new CI_MyException('不存在此公司文章分类');
+			throw new CI_MyException(1,'不存在此公司文章分类');
 		return $query[0];
 	}
 	

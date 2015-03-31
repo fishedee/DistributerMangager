@@ -167,7 +167,7 @@ class OrderAo extends CI_Model
 		$userId = $shopTroller[0]['userId'];
 		foreach($shopTroller as $singleShopTroller)
 			if($singleShopTroller['userId'] != $userId)
-				throw new CI_MyException ($this->commonErrorEnum->SHOP_CART_CHECK_ERROR,'只能购买同一商城内的商品');
+				throw new CI_MyException (1,$this->commonErrorEnum->SHOP_CART_CHECK_ERROR,'只能购买同一商城内的商品');
 
 		//扣库存
 		foreach($shopTroller as $singleShopTroller ){

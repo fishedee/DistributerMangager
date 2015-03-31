@@ -17,7 +17,7 @@ class Upload extends CI_Controller {
 	*/
 	private function getAllFiles($address){
 		if( strpos($address,'/data/upload/') != 0 )
-			throw new CI_MyException('只能查看上传文件夹');
+			throw new CI_MyException(1,'只能查看上传文件夹');
 	
 		$folderAddress = dirname(__FILE__).'/../../../'.$address;
 		$folderPrefixLength = strlen(dirname(__FILE__).'/../../../');

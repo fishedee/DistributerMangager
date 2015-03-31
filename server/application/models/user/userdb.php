@@ -45,7 +45,7 @@ class UserDb extends CI_Model
 		$this->db->where("userId",$userId);
 		$query = $this->db->get($this->tableName)->result_array();
 		if( count($query) == 0 )
-			throw new CI_MyException('不存在此用户');
+			throw new CI_MyException(1,'不存在此用户');
 		return $query[0];
 	}
 	
