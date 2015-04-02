@@ -71,7 +71,9 @@ class Mobile extends CI_Controller {
 		}
 		
 		//否则404
-		show_404();
+		ob_clean();  
+		flush();  
+		readfile($staticAddress.'/error.html');  
 	}
 	
 }

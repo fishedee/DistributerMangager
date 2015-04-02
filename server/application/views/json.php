@@ -1,4 +1,8 @@
 <?php
+	header("Expires: Mon, 26 Jul 1970 05:00:00 GMT");
+	header("Last-Modified:".gmdate("D, d M Y H:i:s ")."GMT");
+	header("Cache-control:no-cache,no-store,must-revalidate"); 
+	header("Pragma:no-cache");
 	if( $data instanceof Exception){
 		$result = array(
 			'code'=>$data->getCode(),

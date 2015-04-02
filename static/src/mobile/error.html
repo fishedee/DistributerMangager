@@ -1,0 +1,19 @@
+<link rel="import" href="header.html?__inline">
+	<title>404页面出错</title>
+</head>
+<body>
+	<div id="body"></div>
+	<script type="text/javascript">
+		var Header = require('common/header/header.js');
+		var Test = require('common/test/test.js');
+		var header = new Header({
+			title:'页面出错',
+			backLink:'company.html',
+			button:[]
+		});
+		var test = new Test('404页面找不到，请确认你的商城是否选择了公司模板');
+		var pageHtml = header.el + test.el;
+		$.page.start(pageHtml);
+	</script>
+</body>
+<link rel="import" href="footer.html?__inline">
