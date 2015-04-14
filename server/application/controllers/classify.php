@@ -77,6 +77,7 @@ class Classify extends CI_Controller {
 			array('title','require'),
 			array('remark','require'),
 			array('icon','require'),
+			array('link','require'),
 		));
 		
 		//检查权限
@@ -125,6 +126,7 @@ class Classify extends CI_Controller {
 			array('title','require'),
 			array('remark','require'),
 			array('icon','require'),
+			array('link','require'),
 		));
 		
 		//检查权限

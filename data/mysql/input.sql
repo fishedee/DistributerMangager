@@ -135,6 +135,7 @@ create table t_user_company_classify(
 	title varchar(128) not null,
 	icon varchar(128) not null,
 	sort integer not null,
+    link varchar(128) not null,
 	remark varchar(128) not null,
 	createTime timestamp not null default CURRENT_TIMESTAMP,
 	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 

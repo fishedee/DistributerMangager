@@ -1,4 +1,7 @@
 <link rel="import" href="../common/header.html?__inline">
+	<div class="alert alert-danger" role="alert">
+		注意！一般情况下，外部链接请保持为空，如需点击分类后跳转到外部链接，请填写外部链接的地址。外部链接格式：http://www.baidu.com
+	</div>
 	<div id="container">
 	</div>
 	<script type="text/javascript">
@@ -25,6 +28,7 @@
 				field:[
 					{id:'title',type:'text',name:'标题'},
 					{id:'icon',type:'image',name:'图标',option:{url:'/upload/image'}},
+					{id:'link',type:'text',name:'外部链接'},
 					{id:'remark',type:'text',name:'备注'}
 				],
 				value:userCompanyClassify,

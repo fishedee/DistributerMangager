@@ -47,7 +47,12 @@
 			
 			//构建metro
 			var metroArgv = _.map(companyClassify,function(single){
-				return {icon:single.icon,title:single.title,link:'articlelist.html?userCompanyClassifyId='+single.userCompanyClassifyId};
+				var link = '';
+				if( single.link != '')
+					link = single.link;
+				else
+					link = 'articlelist.html?userCompanyClassifyId='+single.userCompanyClassifyId;
+				return {icon:single.icon,title:single.title,link:link};
 			}); 
 			var metro = new Metro(metroArgv);
 			
