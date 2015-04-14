@@ -1,5 +1,8 @@
 <link rel="import" href="../common/header.html?__inline">
-	<div class="alert alert-danger" role="alert">注意！一级分类的图标需要使用长宽比为1:1图片，二级分类的图标需要使用长宽比为2:1图片，上传其它比例的图片会导致显示变形</div>
+	<div class="alert alert-danger" role="alert">
+		注意！一级分类的图标需要使用长宽比为1:1图片，二级分类的图标需要使用长宽比为2:1图片，上传其它比例的图片会导致显示变形。<br/>
+		另外，一般情况下，外部链接请保持为空，如需点击分类后跳转到外部链接，请填写外部链接的地址。外部链接格式：http://www.baidu.com
+	</div>
 	<div id="container">
 	</div>
 	<script type="text/javascript" src="/fishstrap/js/fishstrap.js" charset="utf-8"></script>
@@ -46,6 +49,7 @@
 							width:640
 						}
 					},
+					{id:'link',type:'text',name:'外部链接'},
 					{id:'parent',type:'enum',name:'上级分类',map:allParentClassify},
 					{id:'remark',type:'text',name:'备注'}
 					

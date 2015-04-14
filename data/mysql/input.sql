@@ -183,6 +183,7 @@ create table t_shop_commodity_classify(
     icon varchar(128) not null,
     parent integer not null,
     sort integer not null,
+    link varchar(128) not null,
     remark varchar(128) not null,
     createTime timestamp not null default CURRENT_TIMESTAMP,
     modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,

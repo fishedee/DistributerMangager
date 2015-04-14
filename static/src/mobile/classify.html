@@ -32,7 +32,12 @@
 			});
 			var shopcart = new ShopCart();
 			var bigbiglist = new BigBigList(_.map(commodityclassify.children,function(single){
-				var link = $.url.buildQueryUrl('itemlist.html',{shopCommodityClassifyId:single.shopCommodityClassifyId});
+				var link;
+				if( single.link != ''){
+					link = single.link;
+				}else{
+					link = $.url.buildQueryUrl('itemlist.html',{shopCommodityClassifyId:single.shopCommodityClassifyId});
+				}
 				return {link:link,image:single.icon,text:single.title};
 			}));
 			

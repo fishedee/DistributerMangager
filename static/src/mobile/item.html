@@ -52,17 +52,27 @@
 			if( commodityclassify.length != 0 ){
 				list = new LittleList(_.map(commodityclassify,function(single){
 					var link;
-					if( single.childrenCount == 0 ){
-						link = $.url.buildQueryUrl('itemlist.html',{shopCommodityClassifyId:single.shopCommodityClassifyId});
+					if( single.link != ''){
+						link = single.link;
 					}else{
-						link = $.url.buildQueryUrl('classify.html',{shopCommodityClassifyId:single.shopCommodityClassifyId});
+						if( single.childrenCount == 0 ){
+							link = $.url.buildQueryUrl('itemlist.html',{shopCommodityClassifyId:single.shopCommodityClassifyId});
+						}else{
+							link = $.url.buildQueryUrl('classify.html',{shopCommodityClassifyId:single.shopCommodityClassifyId});
+						}
 					}
 					return {link:link,image:single.icon,text:single.title};
 				}));
 			}else{
 				list = new BigList(_.map(commodity,function(single){
+					var link;
+					if( single.link != ''){
+						link = single.link;
+					}else{
+						link = $.url.buildQueryUrl('itemdetail.html',{shopCommodityId:single.shopCommodityId});
+					}
 					return {
-						link:$.url.buildQueryUrl('itemdetail.html',{shopCommodityId:single.shopCommodityId}),
+						link:link,
 						image:single.icon,
 						title:single.title,
 						summary:single.introduction,

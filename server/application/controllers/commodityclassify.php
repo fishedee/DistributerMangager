@@ -133,6 +133,7 @@ class CommodityClassify extends CI_Controller
         $data = $this->argv->checkPost(array(
             array('title', 'require'),
             array('icon', 'require'),
+            array('link', 'require'),
             array('parent', 'require')
         ));
 
@@ -179,6 +180,7 @@ class CommodityClassify extends CI_Controller
         $data = $this->argv->checkPost(array(
             array('title', 'require'),
             array('icon', 'require'),
+            array('link', 'require'),
             array('parent', 'require'),
         ));
 
