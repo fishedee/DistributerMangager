@@ -66,11 +66,7 @@
 			}else{
 				list = new BigList(_.map(commodity,function(single){
 					var link;
-					if( single.link != ''){
-						link = single.link;
-					}else{
-						link = $.url.buildQueryUrl('itemdetail.html',{shopCommodityId:single.shopCommodityId});
-					}
+					link = $.url.buildQueryUrl('itemdetail.html',{shopCommodityId:single.shopCommodityId});
 					return {
 						link:link,
 						image:single.icon,
