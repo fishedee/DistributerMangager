@@ -145,7 +145,7 @@ class User extends CI_Controller {
 			array('type','option',$this->userTypeEnum->CLIENT),
 			array('phone','require'),
 			array('company','require'),
-			array('downDistributionNum','require'),
+			array('downDistributionNum','option',0),
 			array('permission','option',array()),
 			array('client','option',array()),
 		));
