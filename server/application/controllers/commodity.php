@@ -70,6 +70,20 @@ class Commodity extends CI_Controller
     /**
     * @view json
     */
+    public function searchByKeyword(){
+        //检查输入参数
+        $data = $this->argv->checkGet(array(
+            array('keyword', 'option')
+        ));
+        $keyword = $data['keyword'];
+
+        //业务逻辑
+        return $this->commodityAo->searchByKeyword($keyword);
+    }
+
+    /**
+    * @view json
+    */
     public function get(){
         //检查输入参数
         $data = $this->argv->checkGet(array(

@@ -4,10 +4,56 @@
 <body>
 	<div id="body"></div>
 	<script type="text/javascript">
-		var Test = require('common/test/test.js');
-		var test = new Test('商品搜索页面，第四期工作');
-		var pageHtml = test.el;
-		$.page.start(pageHtml);
+		var $ = require('common/core/core.js');
+		var dialog = require('common/dialog/dialog.js');
+		var Header = require('common/header/header.js');
+		var HeaderSearch = require('common/headersearch/headersearch.js');
+		var BigList = require('common/biglist/biglist.js');
+		var keyword = $.location.getQueryArgv('keyword');
+		var commodity = [];
+		function get(next){
+			if( keyword == null || keyword == ''){
+				next();
+			}else{
+				$.get('/commodity/searchByKeyword',{keyword:keyword},function(data){
+					if( data.code != 0 ){
+						dialog.message(data.msg);
+						return;
+					}
+					commodity = data.data;
+					next();
+				})
+			};
+		}
+		function go(){
+			var header = new Header({
+				title:'搜索',
+				backLink:'item.html',
+				button:[{
+					name:'search',
+					link:'search.html'
+				}]
+			});
+			var headersearch = new HeaderSearch();
+			var biglist = new BigList(_.map(commodity,function(single){
+				return {
+					link:$.url.buildQueryUrl('itemdetail.html',{shopCommodityId:single.shopCommodityId}),
+					image:single.icon,
+					title:single.title,
+					summary:single.introduction,
+					price:single.priceShow,
+					oldprice:single.oldPriceShow,
+					stock:single.inventory
+				}
+			}));
+			var pageHtml = header.el + headersearch.el +biglist.el;
+			$.page.setGrey();
+			$.page.start(pageHtml);
+			headersearch.set(keyword);
+		}
+		$.checkMustLogin(function(){
+			get(go);
+		});
 	</script>
 </body>
 <link rel="import" href="footer.html?__inline">

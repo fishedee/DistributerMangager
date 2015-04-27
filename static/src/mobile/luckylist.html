@@ -23,10 +23,7 @@
 			var header = new Header({
 				title:'中奖列表',
 				backLink:'item.html',
-				button:[{
-					name:'search',
-					link:'search.html'
-				}]
+				button:[]
 			});
 			var luckylist = new LuckyList(_.map(luckyDraw,function(single){
 				return {

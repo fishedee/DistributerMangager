@@ -118,6 +118,17 @@ class CommodityAo extends CI_Model
         return $data;
     }
 
+    public function searchByKeyword($keyword){
+        return $this->searchAll(
+            array(
+                'isLink'=>0,
+                'title'=>$keyword,
+                'state'=>$this->commodityStateEnum->ON_STORAGE
+            ),
+            array()
+        )['data'];
+    }
+
     public function check($shopCommodity){
         if($shopCommodity['title'] == '' )
             throw new CI_MyException(1,'商品标题不能为空');
