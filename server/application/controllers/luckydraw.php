@@ -236,7 +236,7 @@ class LuckyDraw extends CI_Controller {
 		$client = $this->clientLoginAo->checkMustLogin($data['userId']);
 		
 		//执行业务逻辑
-		$this->luckyDrawAo->getClientAllResult(
+		return $this->luckyDrawAo->getClientAllResult(
 			$data['userId'],
 			$client['clientId']
 		);

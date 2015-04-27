@@ -63,7 +63,9 @@
 					});
 				},
 				rotateFinish:function(){
-					alert('恭喜你，你获得的是"'+rotateFinishTip+'"');
+					dialog.message('恭喜你，你获得的是"'+rotateFinishTip+'"',function(){
+						location.href = 'luckylist.html';
+					});
 				}
 			});
 			var summary = '<div style="margin:20px;">'+

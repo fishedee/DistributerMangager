@@ -448,16 +448,17 @@ insert into t_user_company_banner(userId,image,title,url,sort)values
 (10003,'/data/upload/sample/sample2.jpg','广告2','http://www.qq.com',2),
 (10003,'/data/upload/sample/sample3.jpg','广告3','http://www.sina.com',2);
 
-insert into t_shop_commodity_classify(userId,title,icon,parent,sort,remark)values
-(10003,'汽车','/data/upload/sample/sample1.jpg',0,1,''),
-(10003,'宝马','/data/upload/sample/sample11.jpg',10001,2,''),
-(10003,'大众','/data/upload/sample/sample12.jpg',10001,3,''),
-(10003,'奥迪','/data/upload/sample/sample13.jpg',10001,4,''),
-(10003,'饮食','/data/upload/sample/sample2.jpg',0,5,''),
-(10003,'饮料','/data/upload/sample/sample11.jpg',10005,6,''),
-(10003,'零食','/data/upload/sample/sample12.jpg',10005,7,''),
-(10003,'主食','/data/upload/sample/sample13.jpg',10005,8,''),
-(10004,'商品','/data/upload/sample/sample2.jpg',0,1,'');
+insert into t_shop_commodity_classify(userId,title,icon,parent,sort,remark,link)values
+(10003,'汽车','/data/upload/sample/sample1.jpg',0,1,'',''),
+(10003,'宝马','/data/upload/sample/sample11.jpg',10001,2,'',''),
+(10003,'大众','/data/upload/sample/sample12.jpg',10001,3,'',''),
+(10003,'奥迪','/data/upload/sample/sample13.jpg',10001,4,'',''),
+(10003,'饮食','/data/upload/sample/sample2.jpg',0,5,'',''),
+(10003,'饮料','/data/upload/sample/sample11.jpg',10005,6,'',''),
+(10003,'零食','/data/upload/sample/sample12.jpg',10005,7,'',''),
+(10003,'主食','/data/upload/sample/sample13.jpg',10005,8,'',''),
+(10004,'商品','/data/upload/sample/sample2.jpg',0,1,'',''),
+(10003,'赢大奖抽iphone','/data/upload/sample/sample2.jpg',0,6,'','http://www.baidu.com');
 
 insert into t_shop_commodity(userId,shopLinkCommodityId, isLink, shopCommodityClassifyId,icon,title,introduction,detail,price,oldPrice,inventory,state)values
 (10003,0, 0, 10002,'/data/upload/sample/sample4.jpg','商品1','商品简介1','商品描述1',1,11100,10,1),

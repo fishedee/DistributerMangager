@@ -1,0 +1,50 @@
+<link rel="import" href="header.html?__inline">
+	<title>中奖列表</title>
+</head>
+<body>
+	<div id="body"></div>
+	<script type="text/javascript">
+		var $ = require('common/core/core.js');
+		var dialog = require('common/dialog/dialog.js');
+		var Header = require('common/header/header.js');
+		var LuckyList = require('common/luckylist/luckylist.js');
+		var luckyDraw = [];
+		function getLuckyDraw(next){
+			$.get('/luckydraw/getClientAllResult',{},function(data){
+				if(data.code!=0){
+					dialog.message(data.msg);
+					return;
+				}
+				luckyDraw = data.data;
+				next();
+			});
+		}
+		function go(){
+			var header = new Header({
+				title:'中奖列表',
+				backLink:'item.html',
+				button:[{
+					name:'search',
+					link:'search.html'
+				}]
+			});
+			var luckylist = new LuckyList(_.map(luckyDraw,function(single){
+				return {
+					image:single.image,
+					title:single.title,
+					name:single.name,
+					phone:single.phone
+				};
+			}));
+			var pageHtml = header.el + luckylist.el;
+			$.page.setGrey();
+			$.page.start(pageHtml);
+		}
+		$.checkMustLogin(function(){
+			getLuckyDraw(function(){
+				go();
+			});
+		});
+	</script>
+</body>
+<link rel="import" href="footer.html?__inline">

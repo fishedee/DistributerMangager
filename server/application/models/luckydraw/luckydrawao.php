@@ -53,6 +53,7 @@ class LuckyDrawAo extends CI_Model
 	}
 
 	private function filterOutputData($data){
+		$data['link'] = 'http://'.$data['userId'].'.'.$_SERVER['HTTP_HOST'].'/'.$data['userId'].'/lucky.html?luckyDrawId='.$data['luckyDrawId'];
 		$data['beginTime'] = substr($data['beginTime'],0,10);
 		$data['endTime'] = substr($data['endTime'],0,10);
 		foreach( $data['commodity'] as $key=>$singleCommodity ){
@@ -210,8 +211,10 @@ class LuckyDrawAo extends CI_Model
 		$currentPrecent = 0;
 		foreach( $luckyDrawCommodity as $key=>$singleCommodity ){
 			$currentPrecent += $singleCommodity['precent'];
-			if( $currentPrecent >= $randNum )
+			if( $currentPrecent >= $randNum ){
 				$currentCommodity = $singleCommodity;
+				break;
+			}
 		}
 		if( $currentCommodity == null )
 			throw new CI_MyException(1,'计算抽奖结果出错，请联系后台工作人员');
