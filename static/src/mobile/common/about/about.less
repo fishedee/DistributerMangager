@@ -1,0 +1,54 @@
+@import (reference) '../core/core.less';
+#common_about{
+	&:extend(.common_global_row);
+
+	.logo{
+		img{
+			width:100%;
+		}
+	}
+
+	.header{
+		&:extend(.common_global_row);
+
+		h1{
+			&:extend(.common_global_row);
+			margin-top:20px;
+			font-size:@font_h1;
+			color:@font_black;
+			text-align:center;
+		}
+	}
+
+	.body{
+		&:extend(.common_global_row);
+		margin-top:50px;
+
+		.item{
+			&:extend(.common_global_row);
+			border-bottom:1px solid @line_black;
+			padding-left:25px;
+			padding-right:25px;
+
+			.key,
+			.value{
+				&:extend(.common_global_leftcol);
+				float:left;
+				width:50%;
+				font-size:@font_h2;
+				color:@font_black;
+				line-height:@font_h2 + 15px;
+			}
+		}
+	}
+
+	.footer{
+		margin-top:150px;
+
+		h1,p{
+			text-align:center;
+			font-size:@font_h2;
+			color:@font_black;
+		}
+	}
+}

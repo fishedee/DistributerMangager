@@ -5,14 +5,15 @@
 	<div id="body"></div>
 	<script type="text/javascript">
 		var Header = require('common/header/header.js');
+		var About = require('common/about/about.js');
+
 		var header = new Header({
-				title:'关于我们',
-				backLink:'me.html',
-				button:[]
-			});
-		var Test = require('common/test/test.js');
-		var test = new Test('关于我们页面，第四期工作');
-		var pageHtml = header.el + test.el;
+			title:'关于我们',
+			backLink:'me.html',
+			button:[]
+		});
+		var about = new About({});
+		var pageHtml = header.el + about.el;
 		$.page.start(pageHtml);
 	</script>
 </body>
