@@ -1,0 +1,63 @@
+<link rel="import" href="../common/header.html?__inline">
+<div id="container">
+</div>
+<script type="text/javascript">
+	var $ = require('/fishstrap/core/global.js');
+	var dialog = require('/fishstrap/ui/dialog.js');
+	var input = require('/fishstrap/ui/input.js');
+	var title = $.location.getQueryArgv('title');
+	var image = $.location.getQueryArgv('image');
+	var type = $.location.getQueryArgv('type');
+	var quantity = $.location.getQueryArgv('quantity');
+	var precentShow = $.location.getQueryArgv('precentShow');
+	var data = {};
+	var allType = {};
+	if(title!=null && image!=null){
+		data = {
+			title:title,
+			image:image,
+			type:type,
+			quantity:quantity,
+			precentShow:precentShow,
+		};
+	}
+	function getAllType(next){
+		$.get('/luckydraw/getAllType',{},function(data){
+			data = $.JSON.parse(data);
+			if( data.code != 0 ){
+				dialog.message(data.msg);
+				return;
+			}
+			allType = data.data;
+			next();
+		});
+	}
+	function whenWindowClose(mode,operation){
+		if( mode == 'confirm'){
+			var data = inputOperation.get();
+			data.typeName = allType[data.type];
+			operation.close(data);
+		}else{
+			operation.close({});
+		}
+	}
+	function go(){
+		inputOperation = input.verticalInput({
+			id:'container',
+			field:[
+				{id:'title',type:'text',name:'标题'},
+				{id:'image',type:'image',name:'图片',option:{url:'/upload/image',width:640}},
+				{id:'type',type:'enum',name:'类型',map:allType},
+				{id:'quantity',type:'text',name:'数量'},
+				{id:'precentShow',type:'text',name:'中奖率'},
+			],
+			value:data,
+			submit:undefined,
+			cancel:undefined
+		});
+	}
+	getAllType(function(){
+		go();
+	});
+</script>
+<link rel="import" href="../common/footer.html?__inline">

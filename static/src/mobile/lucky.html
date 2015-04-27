@@ -1,0 +1,88 @@
+<link rel="import" href="header.html?__inline">
+	<title>抽奖</title>
+</head>
+<body>
+	<div id="body"></div>
+	<script type="text/javascript">
+		var $ = require('common/core/core.js');
+		var dialog = require('common/dialog/dialog.js');
+		var Header = require('common/header/header.js');
+		var CircleList = require('common/circlelist/circlelist.js');
+		var luckyDrawId = $.location.getQueryArgv('luckyDrawId');
+		var luckyDraw = {};
+		var phone = '';
+		var name = '';
+		function getLuckyDraw(next){
+			$.get('/luckydraw/getClientResult',{luckyDrawId:luckyDrawId},function(data){
+				if(data.code!=0){
+					dialog.message(data.msg);
+					return;
+				}
+				luckyDraw = data.data;
+				next();
+			});
+		}
+		function getMyAddress(next){
+			$.get('/address/getMyAddress',{},function(data){
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				phone = data.data.phone;
+				name = data.data.name;
+				next();
+			});
+		}
+		function go(){
+			var header = new Header({
+				title:'抽奖',
+				backLink:'item.html',
+				button:[{
+					name:'search',
+					link:'search.html'
+				}]
+			});
+			var title = '<h1 style="margin-top:20px;margin-bottom:20px;font-size:18px;color:rgb(253,232,0);text-align:center;">'+luckyDraw.title+'</h1>';
+			var rotateFinishTip = '';
+			var circlelist = new CircleList({
+				list:luckyDraw.commodity,
+				click:function(){
+					dialog.inputInfo(name,phone,function(data){
+						$.post('/luckydraw/draw',{luckyDrawId:luckyDrawId,name:name,phone:phone},function(data){
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							for( var i = 0 ; i != luckyDraw.commodity.length ; ++i )
+								if( luckyDraw.commodity[i].luckyDrawCommodityId == data.data ){
+									circlelist.rotate(i);
+									rotateFinishTip = luckyDraw.commodity[i].title;
+									break;
+								}
+						});
+					});
+				},
+				rotateFinish:function(){
+					alert('恭喜你，你获得的是"'+rotateFinishTip+'"');
+				}
+			});
+			var summary = '<div style="margin:20px;">'+
+				'<h2 style="font-size:16px;color:black;margin-top:5px;">活动规则：</h2>'+
+				'<p style="font-size:16px;color:white;margin-top:5px;margin-left:20px;">'+luckyDraw.summary+'</p>'+
+				'<h2 style="font-size:16px;color:black;margin-top:5px;">活动时间：</h2>'+
+				'<p style="font-size:16px;color:white;margin-top:5px;margin-left:20px;">'+luckyDraw.beginTime.substr(0,10)+' ~ '+luckyDraw.endTime.substr(0,10)+'</p>'+
+				'</div>';
+			var pageHtml = header.el + title+circlelist.el + summary;
+			$.page.setRed();
+			$.page.start(pageHtml);
+		}
+		$.checkMustLogin(function(){
+			getLuckyDraw(function(){
+				getMyAddress(function(){
+					go();
+				});
+			});
+		});
+	</script>
+</body>
+<link rel="import" href="footer.html?__inline">

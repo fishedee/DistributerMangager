@@ -27,9 +27,41 @@ function confirm(text,next){
 	if( result )
 		next();
 }
+var inputDiv = null;
+function inputInfo(name,phone,next){
+	if( inputDiv != null )
+		return;
+	var args = {
+		name:name,
+		phone:phone,
+		confirmClick:function(){
+			var target = $('#common_dialog_input');
+			var name = target.find('input[name=name]').val();
+			var phone = target.find('input[name=phone]').val();
+			if( name == '' || phone == ''){
+				alert('请输入名字和手机噢');
+				return;
+			}
+			inputDiv.remove();
+			inputDiv = null;
+			next({
+				name:name,
+				phone:phone
+			});
+		},
+		cancelClick:function(){
+			inputDiv.remove();
+			inputDiv = null;
+		}
+	}
+	var template = __inline('dialogInputTpl.tpl');
+	inputDiv = $(template(args));
+	body.append(inputDiv);
+}
 module.exports = {
 	loadingBegin:loadingBegin,
 	loadingEnd:loadingEnd,
 	message:message,
-	confirm:confirm
+	confirm:confirm,
+	inputInfo:inputInfo
 };

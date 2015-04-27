@@ -1,0 +1,76 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		var allState = {};
+		function getAllState(next){
+			$.get('/luckydraw/getAllState',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				allState = data.data;
+				next();
+			});
+		}
+		function go(){
+			query.simpleQuery({
+				id:'container',
+				url:'/luckydraw/search',
+				column:[
+					{id:'luckyDrawId',type:'text',name:'抽奖ID'},
+					{id:'title',type:'text',name:'标题'},
+					{id:'summary',type:'text',name:'简介'},
+					{id:'state',type:'enum',name:'状态',map:allState},
+					{id:'beginTime',type:'text',name:'开始时间'},
+					{id:'endTime',type:'text',name:'结束时间'},
+					{id:'createTime',type:'text',name:'创建时间'},
+					{id:'modifyTime',type:'text',name:'修改时间'}
+				],
+				queryColumn:['title','summary','state'],
+				operate:[
+				{
+					name:'编辑',
+					click:function(data){
+						location.href = 'view.html?luckyDrawId='+data.luckyDrawId;
+					}
+				},
+				{
+					name:'查看中奖结果',
+					click:function(data){
+						location.href = 'viewResult.html?luckyDrawId='+data.luckyDrawId;
+					}
+				},
+				{
+					name:'删除',
+					click:function(data){
+						dialog.confirm('确认删除该次抽奖，不可回退操作？!',function(){
+							$.post('/luckydraw/del',{luckyDrawId:data.luckyDrawId},function(data){
+								data = $.JSON.parse(data);
+								if( data.code != 0 ){
+									dialog.message(data.msg);
+									return;
+								}
+								location.href = 'index.html';
+							});
+						});
+					}
+				}],
+				button:[
+				{
+					name:'添加抽奖',
+					click:function(){
+						location.href = 'view.html';
+					}
+				}],
+			});
+		}
+		getAllState(function(){
+			go();
+		});
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

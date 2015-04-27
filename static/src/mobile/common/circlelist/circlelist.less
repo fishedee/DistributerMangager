@@ -1,0 +1,59 @@
+@import (reference) '../core/core.less';
+#common_circlelist{
+	&:extend(.common_global_row);
+	width:300px;
+	margin:0 auto;
+
+	.row{
+		&:extend(.common_global_row);
+
+		> div{
+			&:extend(.common_global_leftcol);
+			width:100px;
+			height:100px;
+		}
+
+		.item{
+			position:relative;
+			img{
+				margin-left:5px;
+				margin-top:20px;
+				width:90px;
+				height:60px;
+			}
+
+			.outline{
+				&:extend(.common_global_abfull);
+				border:3px solid rgb(255,12,35);
+				display:none;
+			}
+		}
+
+		.item.active{
+
+			.outline{
+				display:block;
+			}
+			
+		}
+
+		.button{
+			background:@background_light_grey;
+
+			button{
+				margin-top:10px;
+				margin-left:10px;
+				width:80px;
+				height:80px;
+				border-radius:5px;
+				font-size:@font_h2;
+				font-weight:bold;
+				color:white;
+				line-height:80px;
+				text-align:center;
+			}
+			
+		}
+	}
+
+}

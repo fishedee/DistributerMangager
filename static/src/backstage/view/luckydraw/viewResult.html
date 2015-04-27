@@ -1,0 +1,39 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('fishstrap/core/global.js');
+		var dialog = require('fishstrap/ui/dialog.js');
+		var table = require('fishstrap/ui/table.js');
+		var chart = require('fishstrap/ui/chart.js');
+		var input = require('fishstrap/ui/input.js');
+		var luckyDrawId = $.location.getQueryArgv('luckyDrawId');
+		var luckyDraw = [];
+		function getData(nextStep ){
+			$.get('/luckydraw/getResult',{luckyDrawId:luckyDrawId},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				luckyDraw = data.data;
+				nextStep();
+			});
+		}
+		function go(){
+			table.staticSimpleTable({
+				id:'container',
+				data:luckyDraw,
+				column:[
+					{id:'name',type:'text',name:'名字'},
+					{id:'phone',type:'text',name:'电话号码'},
+					{id:'title',type:'text',name:'奖品名称'},
+					{id:'image',type:'image',name:'奖品图片'},
+					{id:'createTime',type:'text',name:'中奖时间'},
+				],
+				operate:[]
+			});
+		}
+		getData(go);
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

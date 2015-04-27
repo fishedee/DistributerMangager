@@ -99,11 +99,15 @@ $.ajax = function(opt){
 	function setGrey(){
 		$('body').addClass('body_grey');
 	}
+	function setRed(){
+		$('body').addClass('body_red');
+	}
 	$.page = {
 		start:start,
 		append:append,
 		ready:ready,
-		setGrey:setGrey
+		setGrey:setGrey,
+		setRed:setRed
 	};
 }());
 //函数空间

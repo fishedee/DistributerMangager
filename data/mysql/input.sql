@@ -329,6 +329,59 @@ create table t_distribution_commodity(
     primary key(distributionCommodityId)
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
 
+#创建抽奖表
+create table t_lucky_draw(
+    luckyDrawId integer not null auto_increment,
+    userId integer not null,
+    title varchar(128) not null,
+    summary varchar(2056) not null,
+    state integer not null,
+    beginTime timestamp not null,
+    endTime timestamp not null,
+    createTime timestamp not null default CURRENT_TIMESTAMP,
+    modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    primary key(luckyDrawId)
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+
+alter table t_lucky_draw add index useIdIndex(userId);
+
+#创建抽奖商品列表
+create table t_lucky_draw_commodity(
+    luckyDrawCommodityId integer not null auto_increment,
+    luckyDrawId integer not null,
+    title varchar(128) not null,
+    image varchar(128) not null,
+    type integer not null,
+    quantity integer not null,
+    precent integer not null,
+    sort integer not null,
+    createTime timestamp not null default CURRENT_TIMESTAMP,
+    modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    primary key(luckyDrawCommodityId)
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+
+alter table t_lucky_draw_commodity add index luckyDrawIdIndex(luckyDrawId);
+
+#创建抽奖的用户列表
+create table t_lucky_draw_client(
+    luckyDrawClientId integer not null auto_increment,
+    luckyDrawId integer not null,
+    clientId integer not null,
+    title varchar(128) not null,
+    image varchar(128) not null,
+    type integer not null,
+    name varchar(128) not null,
+    phone varchar(11) not null,
+    createTime timestamp not null default CURRENT_TIMESTAMP,
+    modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    primary key(luckyDrawClientId)
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+
+alter table t_lucky_draw_client add index luckyDrawIdIndex(luckyDrawId);
+alter table t_lucky_draw_client add index clientIdIndex(clientId);
+
+#创建红包表
+
 #建立初始数据
 insert into t_user(userId,name,password,company,phone,type,downDistributionNum) values
 (10001,"fish","$2y$10$xKsYkwOJFQo2Ack68DqZuebTX99IgHL0lYBKmpwQpkxqzhJbKYgMG",'烘焙帮信息科技有限公司','15018749403',1,0),
@@ -446,6 +499,19 @@ insert into t_distribution_commodity(distributionOrderId, shopOrderId, shopCommo
 (10001, 10001, 10001, 0),
 (10001, 10001, 10002, 0),
 (10002, 10002, 10003, 0);
+
+insert into t_lucky_draw(userId,title,summary,state,beginTime,endTime)values
+(10003,'开箱大抽奖','周一开始，持续到周日，五一停不了',2,now(),DATE_ADD(now(), INTERVAL 2 DAY));
+
+insert into t_lucky_draw_commodity(luckyDrawId,title,image,type,quantity,precent,sort)values
+(10001,'iphone1','/data/upload/sample/sample1.png',1,10,1000,1),
+(10001,'iphone2','/data/upload/sample/sample2.png',1,10,1000,2),
+(10001,'iphone3','/data/upload/sample/sample3.png',1,10,1000,3),
+(10001,'iphone4','/data/upload/sample/sample4.png',1,10,1000,4),
+(10001,'iphone5','/data/upload/sample/sample5.png',1,10,1000,5),
+(10001,'iphone6','/data/upload/sample/sample6.png',1,10,1000,6),
+(10001,'iphone7','/data/upload/sample/sample7.png',1,10,1000,7),
+(10001,'iphone8','/data/upload/sample/sample8.png',2,10,3000,8);
 
 #显示初始数据
 select * from t_user;

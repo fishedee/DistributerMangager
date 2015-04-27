@@ -8,3 +8,66 @@
 	background-repeat:no-repeat;
 	background-position:center center;
 }
+#common_dialog_input{
+	&:extend(.common_global_abfull);
+	width:100%;
+	height:100%;
+	background:rgba(0,0,0,0.5);
+	z-index:9;
+
+	.container{
+		&:extend(.common_global_row);
+		margin:0 auto;
+		width:300px;
+		height:240px;
+		margin-top:100px;
+		padding:20px 15px;
+		background:@background_white;
+
+		h1{
+			text-align:center;
+			font-size:@font_h1;
+			color:@font_red;
+		}
+
+		.item{
+			margin-top:20px;
+			label{
+				line-height:30px;
+				font-size:@font_h3;
+				color:@font_red;
+			}
+
+			input{
+				display:block;
+				width:100%;
+				line-height:30px;
+				font-size:@font_h3;
+				color:@line_black;
+				border-bottom:1px solid @line_black;
+			}
+		}
+
+		.button{
+			text-align:center;
+
+			.confirm,.cancel{
+				margin-top:30px;
+				padding:10px 20px;
+				font-size:@font_h3;
+				color:@font_white;
+			}
+
+			.confirm{
+				background:@background_red;
+			}
+
+			.cancel{
+				background:@background_green;
+			}
+		}
+
+		
+	}
+	
+}
