@@ -1,0 +1,42 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var vipSetting = {};
+		function get(next){
+			$.get('/vip/getSetting',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				vipSetting = data.data;
+				next();
+			});
+		}
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'cardImage',type:'image',name:'会员卡底片',option:{url:'/upload/image',width:640}}
+				],
+				value:vipSetting,
+				submit:function(data){
+					$.post('/vip/setSetting',data,function(data){
+						data = $.JSON.parse(data);
+						if( data.code != 0 ){
+							dialog.message(data.msg);
+							return;
+						}
+						location.reload();
+					});
+				},
+				cancel:undefined
+			});
+		}
+		get(go);
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

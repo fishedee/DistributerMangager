@@ -380,7 +380,33 @@ create table t_lucky_draw_client(
 alter table t_lucky_draw_client add index luckyDrawIdIndex(luckyDrawId);
 alter table t_lucky_draw_client add index clientIdIndex(clientId);
 
-#创建红包表
+#创建VIP设置
+create table t_vip(
+    vipId integer not null auto_increment,
+    userId integer not null,
+    cardImage varchar(128) not null,
+    createTime timestamp not null default CURRENT_TIMESTAMP,
+    modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    primary key(vipId)
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+
+alter table t_vip add index userIdIndex(userId);
+
+#创建VIP用户设置
+create table t_vip_client(
+    vipClientId integer not null auto_increment,
+    userId integer not null,
+    clientId integer not null,
+    name varchar(128) not null,
+    phone varchar(11) not null, 
+    score integer not null,
+    createTime timestamp not null default CURRENT_TIMESTAMP,
+    modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    primary key(vipClientId)
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+
+alter table t_vip_client add index userIdIndex(userId);
+alter table t_vip_client add index clientIdIndex(clientId);
 
 #建立初始数据
 insert into t_user(userId,name,password,company,phone,type,downDistributionNum) values
