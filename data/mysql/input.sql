@@ -408,6 +408,37 @@ create table t_vip_client(
 alter table t_vip_client add index userIdIndex(userId);
 alter table t_vip_client add index clientIdIndex(clientId);
 
+#创建微信红包
+create table t_red_pack(
+    redPackId integer not null auto_increment,
+    userId integer not null,
+    nickName varchar(128) not null,#商户名称
+    minMoney integer not null,#最小红包金额
+    maxMoney integer not null,#最大红包金额
+    wishing varchar(128) not null,#祝福语
+    actName varchar(128) not null,#活动名称
+    remark varchar(128) not null,#备注
+    state integer not null,
+    createTime timestamp not null default CURRENT_TIMESTAMP,
+    modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    primary key(redPackId)
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+
+alter table t_red_pack add index userIdIndex(userId);
+
+#创建微信红包列表
+create table t_red_pack_clientId(
+    redPackClientId integer not null auto_increment,
+    redPackId integer not null,
+    clientId integer not null,
+    money integer not null,
+    createTime timestamp not null default CURRENT_TIMESTAMP,
+    modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    primary key(redPackClientId)
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+
+alter table t_red_pack_clientId add index clientIdIndex(clientId);
+
 #建立初始数据
 insert into t_user(userId,name,password,company,phone,type,downDistributionNum) values
 (10001,"fish","$2y$10$xKsYkwOJFQo2Ack68DqZuebTX99IgHL0lYBKmpwQpkxqzhJbKYgMG",'烘焙帮信息科技有限公司','15018749403',1,0),

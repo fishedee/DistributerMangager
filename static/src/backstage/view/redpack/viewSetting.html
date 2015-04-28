@@ -1,0 +1,64 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var redPackSetting = {};
+		var redPackState = {};
+		function getState(next){
+			$.get('/redpack/getAllState',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				redPackState = data.data;
+				next();
+			});
+		}
+		function get(next){
+			$.get('/redpack/getSetting',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				redPackSetting = data.data;
+				next();
+			});
+		}
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'nickName',type:'text',name:'商户名称'},
+					{id:'minMoneyShow',type:'text',name:'最小红包金额'},
+					{id:'maxMoneyShow',type:'text',name:'最大红包金额'},
+					{id:'wishing',type:'text',name:'红包祝福语'},
+					{id:'actName',type:'text',name:'红包活动名称'},
+					{id:'remark',type:'text',name:'红包备注'},
+					{id:'state',type:'enum',name:'是否开启红包功能',map:redPackState}
+				],
+				value:redPackSetting,
+				submit:function(data){
+					$.post('/redpack/setSetting',data,function(data){
+						data = $.JSON.parse(data);
+						if( data.code != 0 ){
+							dialog.message(data.msg);
+							return;
+						}
+						location.reload();
+					});
+				},
+				cancel:undefined
+			});
+		}
+		getState(function(){
+			get(function(){
+				go();
+			});
+		});
+	</script>
+<link rel="import" href="../common/footer.html?__inline">
