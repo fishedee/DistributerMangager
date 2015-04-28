@@ -48,7 +48,7 @@
 				list:luckyDraw.commodity,
 				click:function(){
 					dialog.inputInfo(name,phone,function(data){
-						$.post('/luckydraw/draw',{luckyDrawId:luckyDrawId,name:name,phone:phone},function(data){
+						$.post('/luckydraw/draw',{luckyDrawId:luckyDrawId,name:data.name,phone:data.phone},function(data){
 							if( data.code != 0 ){
 								dialog.message(data.msg);
 								return;

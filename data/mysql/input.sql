@@ -445,7 +445,7 @@ insert into t_address(clientId,name,province,city,address,phone,payment)values
 (10001,'黎锦伟','广东','佛山','某地','15018749403',1);
 
 insert into t_user_app(userId,appName,appId,appKey,mchId,mchKey,remark)values
-(10003,'至高商城','wx5cc2d94dfe468c95','adc38d0974b0617023012fef684e9ae6','1220218001','56344f19b3b90eb545bf2f07800e7a10',''),
+(10003,'至高商城','wxa9b4bcb4be4695d7','e045f8cc0d5e03d5fefbe0d18d1f4ef3','1220218001','56344f19b3b90eb545bf2f07800e7a10',''),
 (10004,'至强商城','testAppId','testAppKey','testMchId','testMchKey','');
 
 insert into t_company_template(title,url,remark)values

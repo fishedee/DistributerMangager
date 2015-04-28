@@ -6,19 +6,9 @@ function create(args){
 	var nowCircle = 0;
 	function rotateNext(){
 		var target = $('#common_circlelist');
-		var temp = {
-			0:0,
-			1:1,
-			2:2,
-			3:4,
-			4:7,
-			5:6,
-			6:5,
-			7:3
-		};
 		target.find('.item').removeClass('active');
 		nowCircle = (nowCircle+1)%8;
-		$(target.find('.item')[temp[nowCircle]]).addClass('active');
+		target.find('.item[index='+nowCircle+']').addClass('active');
 	}
 	function rotateEightLast(){
 		var timer = 0;
