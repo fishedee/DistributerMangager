@@ -8,7 +8,7 @@
 		var clientId = $.location.getQueryArgv('clientId');
 		var vipCard = {};
 		function get(next){
-			$.get('/vip/getCardDetail',{},function(data){
+			$.get('/vip/getCardDetail',{clientId:clientId},function(data){
 				data = $.JSON.parse(data);
 				if( data.code != 0 ){
 					dialog.message(data.msg);
@@ -22,13 +22,14 @@
 			input.verticalInput({
 				id:'container',
 				field:[
-					{id:'name',type:'read',name:'名字'},
-					{id:'phone',type:'read',name:'手机'},
+					{id:'name',type:'text',name:'名字'},
+					{id:'phone',type:'text',name:'手机'},
 					{id:'score',type:'text',name:'积分'},
 				],
 				value:vipCard,
 				submit:function(data){
-					$.post('/vip/modCardScore',data,function(data){
+					data = $.extend({clientId:clientId},data);
+					$.post('/vip/modCardAll',data,function(data){
 						data = $.JSON.parse(data);
 						if( data.code != 0 ){
 							dialog.message(data.msg);

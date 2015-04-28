@@ -97,18 +97,22 @@ class Vip extends CI_Controller {
 		
 		//检查权限
 		$client = $this->clientLoginAo->checkMustLogin(
-			$data['userId']
+			$userId
 		);
 		$clientId = $client['clientId'];
 		
 		//执行业务逻辑
+		$card = $this->vipAo->getCard($userId,$clientId);
+		if( $card['name'] != '') 
+			throw new CI_MyException(1,'你已经设置过会员卡了，请勿重复设置');
+
 		return $this->vipAo->modCard($userId,$clientId,$data);
 	}
 
 	/**
 	* @view json
 	*/
-	public function modCardScore()
+	public function modCardAll()
 	{
 		//检查输入参数
 		$data = $this->argv->checkPost(array(
@@ -117,6 +121,8 @@ class Vip extends CI_Controller {
 		$clientId = $data['clientId'];
 
 		$data = $this->argv->checkPost(array(
+			array('name','require'),
+			array('phone','require'),
 			array('score','require'),
 		));
 		

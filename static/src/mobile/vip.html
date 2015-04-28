@@ -4,16 +4,77 @@
 <body>
 	<div id="body"></div>
 	<script type="text/javascript">
+		var $ = require('common/core/core.js');
+		var dialog = require('common/dialog/dialog.js');
 		var Header = require('common/header/header.js');
-		var header = new Header({
+		var Vip = require('common/vip/vip.js');
+		var FooterButton = require('common/footerbutton/footerbutton.js');
+		var vipCard = {};
+		var phone = '';
+		var name = '';
+		function getVip(next){
+			$.get('/vip/getCard',{},function(data){
+				if(data.code!=0){
+					dialog.message(data.msg);
+					return;
+				}
+				vipCard = data.data;
+				next();
+			});
+		}
+		function getMyAddress(next){
+			$.get('/address/getMyAddress',{},function(data){
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				phone = data.data.phone;
+				name = data.data.name;
+				next();
+			});
+		}
+		function go(){
+			var header = new Header({
 				title:'会员卡',
 				backLink:'me.html',
 				button:[]
 			});
-		var Test = require('common/test/test.js');
-		var test = new Test('会员卡页面，第四期工作');
-		var pageHtml = header.el + test.el;
-		$.page.start(pageHtml);
+			var vip = new Vip({
+				cardImage:vipCard.cardImage,
+				id:vipCard.phone,
+				name:vipCard.name,
+				phone:vipCard.phone,
+				score:vipCard.score,
+			});
+			var footerbutton = new FooterButton([
+				{
+					name:'confirm',
+					text:'设置',
+					click:function(data){
+						dialog.inputInfo(name,phone,function(data){
+							$.post('/vip/modCard',data,function(data){
+								if(data.code!=0){
+									dialog.message(data.msg);
+									return;
+								}
+								dialog.message('设置会员卡成功',function(){
+									location.reload();
+								});
+							});
+						});
+					}
+				}
+			]);
+			var pageHtml = header.el + vip.el + footerbutton.el;
+			$.page.start(pageHtml);
+		}
+		$.checkMustLogin(function(){
+			getVip(function(){
+				getMyAddress(function(){
+					go();
+				});
+			});
+		});
 	</script>
 </body>
 <link rel="import" href="footer.html?__inline">

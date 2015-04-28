@@ -540,6 +540,9 @@ insert into t_lucky_draw_commodity(luckyDrawId,title,image,type,quantity,precent
 (10001,'iphone7','/data/upload/sample/sample7.png',1,10,1000,7),
 (10001,'iphone8','/data/upload/sample/sample8.png',2,10,3000,8);
 
+insert into t_vip(userId,cardImage)values
+(10003,'/data/upload/sample/vip.jpg');
+
 #显示初始数据
 select * from t_user;
 select * from t_user_permission;

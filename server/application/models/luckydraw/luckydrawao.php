@@ -182,7 +182,7 @@ class LuckyDrawAo extends CI_Model
 			throw new CI_MyException(1,'你已经参与过这次抽奖活动，不能重复参与了');
 		if( strlen($name) == 0 )
             throw new CI_MyException(1,'请输入名字');
-		if(preg_match_all('/^\d{11}$/',$phone == 0 ))
+		if(preg_match_all('/^\d{11}$/',$phone) == 0 )
             throw new CI_MyException(1,'请输入11位数字的电话号码以便获得抽奖奖品噢');
 
 		//校验商品数量

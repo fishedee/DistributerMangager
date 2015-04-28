@@ -1,0 +1,45 @@
+@import (reference) '../core/core.less';
+.common_vip{
+	&:extend(.common_global_row);
+
+	.card{
+		&:extend(.common_global_row);
+		position:relative;
+		background:@background_light_grey;
+		padding:10px 20px;
+
+		img{
+			width:100%;
+			border-radius:5px;
+		}
+
+		.id{
+			&:extend(.common_global_abbottom);
+			bottom:25px;
+			right:35px;
+			text-align:right;
+			font-size:@font_h2;
+			font-weight:bold;
+			color:@font_black;
+		}
+	}
+
+	.info{
+		&:extend(.common_global_row);
+		margin-top:@section_margin;
+
+		li{
+			&:extend(.common_global_row);
+			padding-left:@body_left;
+			padding-right:@body_right;
+			font-size:@font_h1;
+			line-height:@font_h1 + 20px;
+			border-bottom:1px solid @line_black;
+			color:@font_black;
+		}
+
+		.score{
+			color:@font_red;
+		}
+	}
+}

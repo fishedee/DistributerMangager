@@ -53,21 +53,34 @@ class VipAo extends CI_Model {
 	public function getCard($userId,$clientId){
 		$this->addOnceCard($userId,$clientId);
 
-		return $this->vipClientDb->getByUserAndClient($userId,$clientId);
+		$card = $this->vipClientDb->getByUserAndClient($userId,$clientId)[0];
+
+		$card['cardImage'] = $this->getSetting($userId)['cardImage'];
+
+		return $card;
 	}
 
 	public function modCard($userId,$clientId,$data){
-		$this->addOnceCard($userId,$clientId);
+		$originData = $this->getCard($userId,$clientId);
 
-		if( isset($data['name']) && strlen($data['name']) == 0 )
+		if( strlen($data['name']) == 0 )
 			throw new CI_MyException(1,'请输入您的会员卡名字');
 
-		if( isset($data['phone']) && preg_match_all('/^\d{11}$/',$data['phone'] == 0 ))
+		if( preg_match_all('/^\d{11}$/',$data['phone']) == 0 )
             throw new CI_MyException(1,'请输入您的11位数字的会员卡手机号码');
 
         if( isset($data['score']) && $data['score'] <= 0 )
         	throw new CI_MyException(1,'请输入大于或等于0的积分制');
 
+    	$samePhoneCard = $this->vipClientDb->search(array(
+        	'userId'=>$userId,
+        	'phone'=>$data['phone']
+        ),array());
+        foreach( $samePhoneCard['data'] as $singlePhoneCard ){
+        	if( $singlePhoneCard['clientId'] != $clientId )
+        		throw new CI_MyException(1,'该手机号码已经被注册过了，请勿更换一个手机号码');
+        }	
+       
         return $this->vipClientDb->modByUserAndClient($userId,$clientId,$data);
 	}
 }
