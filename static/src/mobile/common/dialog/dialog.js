@@ -27,6 +27,35 @@ function confirm(text,next){
 	if( result )
 		next();
 }
+function redPackOne(next){
+	var template = __inline('redPackOneTpl.tpl');
+	var argv = {
+		image:__uri('redpack.png'),
+		click:function(){
+			var target = $('#common_redPackOne');
+			target.remove();
+			next();
+		}
+	};
+	var div = template(argv);
+	body.append(div);
+}
+function redPackTwo(shop,money,next){
+	var template = __inline('redPackTwoTpl.tpl');
+	var argv = {
+		image:__uri('redpackget.png'),
+		click:function(){
+			var target = $('#common_redPackTwo');
+			target.remove();
+			next();
+		},
+		shop:shop,
+		money:money
+	};
+	var div = template(argv);
+	body.append(div);
+
+}
 var inputDiv = null;
 function inputInfo(name,phone,next){
 	if( inputDiv != null )
@@ -63,5 +92,7 @@ module.exports = {
 	loadingEnd:loadingEnd,
 	message:message,
 	confirm:confirm,
-	inputInfo:inputInfo
+	inputInfo:inputInfo,
+	redPackOne:redPackOne,
+	redPackTwo:redPackTwo
 };

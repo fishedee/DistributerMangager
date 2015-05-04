@@ -126,4 +126,20 @@ $.ajax = function(opt){
 		clear:clear
 	};
 })();
+//加入红包校验逻辑
+$.page.ready(function(){
+	$.get('/redpack/getRedPack',{},function(data){
+		if( data.code != 0 )
+			return;
+		dialog.redPackOne(function(){
+			$.get('/redpack/tryRedPack',{},function(data){
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				dialog.redPackTwo('xx商城','100.00');
+			});
+		});
+	});
+});
 module.exports = $;

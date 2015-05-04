@@ -59,10 +59,10 @@ class RedPackAo extends CI_Model
 				throw new CI_MyException(1,'请输入活动名称');
 			if( trim($data['remark']) == '' )
 				throw new CI_MyException(1,'请输入备注');
-			if( trim($data['minMoney']) == '' || $data['minMoney'] <= 100 )
+			if( trim($data['minMoney']) == '' || $data['minMoney'] < 100 )
 				throw new CI_MyException(1,'请输入最小为1元的红包金额');
-			if( trim($data['maxMoney']) == '' || $data['maxMoney'] <= 100 )
-				throw new CI_MyException(1,'请输入最大为1元的红包金额');
+			if( trim($data['maxMoney']) == '' || $data['maxMoney'] < 100 )
+				throw new CI_MyException(1,'请输入最小为1元的红包金额');
 			if( $data['minMoney'] > $data['maxMoney'] )
 				throw new CI_MyException(1,'最小红包金额需要少于或等于最大红包金额');
 		}
@@ -111,14 +111,17 @@ class RedPackAo extends CI_Model
 		$client = $this->clientAo->get($userId,$clientId);
 
 		//计算发放金额
-		$redPackInfo = $this->getRedPack();
+		$redPackInfo = $this->getRedPack($userId,$clientId);
 
 		$money = mt_rand($redPackInfo['minMoney'],$redPackInfo['maxMoney']);
+
+		$orderId = date('YmdHis').$clientId.rand(10000,99999);
 
 		//添加微信的红包结果
 		$this->wxSdk->sendRedPack(
 			$client['openId'],
 			$money,
+			$orderId,
 			$redPackInfo['nickName'],
 			$redPackInfo['wishing'],
 			$redPackInfo['actName'],
