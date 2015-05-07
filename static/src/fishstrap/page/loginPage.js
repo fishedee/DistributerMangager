@@ -108,6 +108,10 @@ return {
 				name:$('input[name=name]').val(),
 				password:$('input[name=password]').val(),
 			};
+                if($.trim(data.name)=='')
+                   return dialog.message('账号不能为空！！！');   
+                if($.trim(data.password)=='')
+                  return dialog.message('密码不能为空！！！'); 
 			option.login(data);
 		});
 		for( var i = 0 ; i != defaultOption.button.length ; ++i ){
