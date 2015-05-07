@@ -9,6 +9,12 @@
 		function whenWindowClose(state,operation){
 			if( state == 'confirm'){
 				var data = inputOperation.get();
+                                if($.trim(data.name)=='')
+                                return dialog.message('姓名不能为空！！！');   
+                                if($.trim(data.password)=='')
+                                return dialog.message('密码不能为空！！！'); 
+                                if($.trim(data.company)=='')
+                                return dialog.message('公司不能为空！！！'); 
 				if( data.password != data.password2 ){
 					dialog.message('两次输入密码不一致');
 					return;
