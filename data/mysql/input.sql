@@ -466,7 +466,7 @@ insert into t_user_permission(userId,permissionId)values
 (10006,4);
 
 insert into t_client(userId,openId,type)values
-(10003,'微信测试用户虚拟OpenId',2),
+(10003,'oMhf-txr18KIBU1GZ0TXpxToaoH8',2),
 (10004,'微信测试用户虚拟OpenId',2),
 (10005,'微信测试用户虚拟OpenId',2),
 (10006,'微信测试用户虚拟OpenId',2);
@@ -474,9 +474,9 @@ insert into t_client(userId,openId,type)values
 insert into t_address(clientId,name,province,city,address,phone,payment)values
 (10001,'黎锦伟','广东','佛山','某地','15018749403',1);
 
-insert into t_user_app(userId,appName,appId,appKey,mchId,mchKey,remark)values
-(10003,'至高商城','wx5cc2d94dfe468c95','adc38d0974b0617023012fef684e9ae6','1220218001','56344f19b3b90eb545bf2f07800e7a10',''),
-(10004,'至强商城','testAppId','testAppKey','testMchId','testMchKey','');
+insert into t_user_app(userId,appName,appId,appKey,mchId,mchKey,mchSslCert,mchSslKey,remark)values
+(10003,'至高商城','wx5cc2d94dfe468c95','adc38d0974b0617023012fef684e9ae6','1220218001','56344f19b3b90eb545bf2f07800e7a10','/data/upload/apiclient_cert.pem','/data/upload/apiclient_key.pem',''),
+(10004,'至强商城','testAppId','testAppKey','testMchId','testMchKey','testMchSslCert','testMchSslKey','');
 
 insert into t_company_template(title,url,remark)values
 ('metro风格','/data/upload/template/sample1',''),
@@ -572,6 +572,9 @@ insert into t_lucky_draw_commodity(luckyDrawId,title,image,type,quantity,precent
 
 insert into t_vip(userId,cardImage)values
 (10003,'/data/upload/sample/vip.jpg');
+
+insert into t_red_pack(userId,nickName,minMoney,maxMoney,wishing,actName,remark,state)values
+(10003,'至高商城',100,100,'红包','红包','红包',1);
 
 #显示初始数据
 select * from t_user;

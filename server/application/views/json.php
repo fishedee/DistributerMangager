@@ -16,6 +16,7 @@
 			'data'=>$data
 		);
 	}
+
 	$output = json_encode($result);
 	if( $output == null ){
 		$output = json_encode(array(

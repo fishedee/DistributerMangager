@@ -61,10 +61,14 @@ class RedPackAo extends CI_Model
 				throw new CI_MyException(1,'请输入备注');
 			if( trim($data['minMoney']) == '' || $data['minMoney'] < 100 )
 				throw new CI_MyException(1,'请输入最小为1元的红包金额');
-			if( trim($data['maxMoney']) == '' || $data['maxMoney'] < 100 )
-				throw new CI_MyException(1,'请输入最小为1元的红包金额');
+			if( trim($data['maxMoney']) == '' || $data['maxMoney'] > 20000 )
+				throw new CI_MyException(1,'请输入最大为200元的红包金额');
 			if( $data['minMoney'] > $data['maxMoney'] )
 				throw new CI_MyException(1,'最小红包金额需要少于或等于最大红包金额');
+
+			$userApp = $this->userAppAo->get($userId);
+
+			$this->userAppAo->checkAll($userApp);
 		}
 		
 		$this->redPackDb->modByUserId($userId,$data);
@@ -90,6 +94,10 @@ class RedPackAo extends CI_Model
 		if($redPackClientInfo['count'] != 0 )
 			throw new CI_MyException(1,'你已经领过红包了，不能重复领取');
 
+		$nowHour = intval(date('H',time()));
+		if( $nowHour >= 0 && $nowHour <= 8 )
+			throw new CI_MyException(1,'早上0点到8点之间不能发放红包噢');
+
 		return $redPackInfo;
 	}
 
@@ -97,7 +105,7 @@ class RedPackAo extends CI_Model
 		//初始化userApp
 		$appInfo = $this->userAppAo->get($userId);
 
-    	$this->userAppAo->check($appInfo);
+    	$this->userAppAo->checkAll($appInfo);
 
 		$this->load->library('wxSdk',array(
 			'appId'=>$appInfo['appId'],
@@ -115,7 +123,7 @@ class RedPackAo extends CI_Model
 
 		$money = mt_rand($redPackInfo['minMoney'],$redPackInfo['maxMoney']);
 
-		$orderId = date('YmdHis').$clientId.rand(10000,99999);
+		$orderId = $appInfo['mchId'].date('YmdHis').rand(1000,9999);
 
 		//添加微信的红包结果
 		$this->wxSdk->sendRedPack(
@@ -135,7 +143,13 @@ class RedPackAo extends CI_Model
 			'money'=>$money
 		));
 
-		return sprintf('%.2f',$money/100);
+		return array_merge(
+			$redPackInfo,
+			array(
+				'money'=>$money,
+				'moneyShow'=>sprintf('%.2f',$money/100)
+			)
+		);
 	}
 
 }

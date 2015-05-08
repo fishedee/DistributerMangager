@@ -40,6 +40,14 @@ class Upload extends CI_Controller {
 	{
 		return $this->fileUpload->simpleImage('data');
 	}
+
+	/**
+	* @view json
+	*/
+	public function cert()
+	{
+		return $this->fileUpload->simpleFile('data','pem');
+	}
 	
 	/**
 	* @view json

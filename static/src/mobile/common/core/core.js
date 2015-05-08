@@ -137,7 +137,10 @@ $.page.ready(function(){
 					dialog.message(data.msg);
 					return;
 				}
-				dialog.redPackTwo('xx商城','100.00');
+				dialog.redPackTwo(
+					data.data.nickName,
+					data.data.moneyShow
+				);
 			});
 		});
 	});

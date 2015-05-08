@@ -33,7 +33,7 @@ class User extends CI_Controller {
 		$userId = $user['userId'];
 
 		//业务逻辑
-		return $this->userAppAo->get($userId);
+		return $this->userAppAo->get($userId,true);
 	}
 
 	/**
@@ -65,8 +65,8 @@ class User extends CI_Controller {
 			array('appKey','require'),
 			array('mchId','require'),
 			array('mchKey','require'),
-			array('mchSslCert','option'),
-			array('mchSslKey','option'),
+			array('mchSslCert','require'),
+			array('mchSslKey','require'),
 			array('remark','require'),
 		));
 
