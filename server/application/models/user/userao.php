@@ -145,6 +145,6 @@ class UserAo extends CI_Model {
 		$this->checkMustVaildPassword($oldPassword,$user['password']);
 		
 		//修改密码
-		$this->modPassword($userId,$this->getPasswordHash($newPassword));
+		$this->modPassword($userId,$newPassword);
 	}
 }
