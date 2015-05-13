@@ -144,6 +144,7 @@ class User extends CI_Controller {
 			array('password','option','123456'),
 			array('type','option',$this->userTypeEnum->CLIENT),
 			array('phone','require'),
+			array('telephone','require'),
 			array('company','require'),
 			array('downDistributionNum','option',0),
 			array('permission','option',array()),
@@ -205,6 +206,7 @@ class User extends CI_Controller {
 		$data = $this->argv->checkPost(array(
 			array('type','option'),
 			array('phone','require'),
+			array('telephone','require'),
 			array('company','require'),
 			array('downDistributionNum','option'),
 			array('permission','option',array()),

@@ -9,12 +9,6 @@
 		function whenWindowClose(state,operation){
 			if( state == 'confirm'){
 				var data = inputOperation.get();
-                                if($.trim(data.name)=='')
-                                return dialog.message('姓名不能为空！！！');   
-                                if($.trim(data.password)=='')
-                                return dialog.message('密码不能为空！！！'); 
-                                if($.trim(data.company)=='')
-                                return dialog.message('公司不能为空！！！'); 
 				if( data.password != data.password2 ){
 					dialog.message('两次输入密码不一致');
 					return;
@@ -37,11 +31,12 @@
 			inputOperation = input.verticalInput({
 				id:'container',
 				field:[
-					{id:'name',type:'text',name:'姓名'},
+					{id:'name',type:'text',name:'帐号'},
 					{id:'password',type:'password',name:'密码'},
 					{id:'password2',type:'password',name:'再次密码'},
-					{id:'company',type:'text',name:'公司'},
-					{id:'phone',type:'text',name:'电话'}
+					{id:'phone',type:'text',name:'联系电话'},
+					{id:'company',type:'text',name:'公司名称'},
+					{id:'telephone',type:'text',name:'公司电话'}
 				],
 				submit:undefined,
 				cancel:undefined

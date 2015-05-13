@@ -64,8 +64,45 @@ class UserAo extends CI_Model {
 		
 		$this->userClientDb->delByUser($userId);
 	}
+
+	private function check($data){
+		if( isset($data['name'])){
+			$data['name'] = trim($data['name']);
+			if( preg_match('/^[0-9A-Za-z]+$/',$data['name']) == 0 )
+				throw new CI_MyException(1,'请输入数字或英文字母组成的名字');
+		}
+
+		if( isset($data['password'])){
+			$data['password'] = trim($data['password']);
+			if( $data['password'] == '')
+				throw new CI_MyException(1,'请输入密码');
+		}
+
+		if( isset($data['company'])){
+			$data['company'] = trim($data['company']);
+			if( $data['company'] == '')
+			throw new CI_MyException(1,'请输入公司名称');
+		}
+		
+		if( isset($data['phone'])){
+			$data['phone'] = trim($data['phone']);
+			if( preg_match('/^[0-9]{11}$/',$data['phone']) == 0 )
+				throw new CI_MyException(1,'请输入11位的联系人手机号码');
+		}
+
+		if( isset($data['telephone'])){
+			$data['telephone'] = trim($data['telephone']);
+			if( preg_match('/^[0-9-]+$/',$data['telephone']) == 0 )
+				throw new CI_MyException(1,'请输入只包含数字的电话号码');
+		}
+
+		return $data;
+	}
 	
 	public function add($data){
+		//校验数据
+		$data = $this->check($data);
+
 		//检查是否有重名
 		$user = $this->userDb->getByName($data['name']);
 		if( count($user) != 0 )
@@ -102,6 +139,9 @@ class UserAo extends CI_Model {
 	}
 	
 	public function mod($userId,$data){
+		//校验数据
+		$data = $this->check($data);
+		
 		//修改用户基本信息
 		$userBaseInfo = $data;
 		unset($userBaseInfo['permission']);
