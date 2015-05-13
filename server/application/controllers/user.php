@@ -56,6 +56,26 @@ class User extends CI_Controller {
 	/**
 	* @view json
 	*/
+	public function getHasShop(){
+		//检查参数
+		$data = $this->argv->checkGet(array(
+			array('userId','require'),
+		));
+
+		//检查是否有公司介绍权限
+		$user = $this->userAo->get($data['userId']);
+		return in_array(
+			$this->userPermissionEnum->COMPANY_SHOP,
+			$user['permission']
+		) || in_array(
+			$this->userPermissionEnum->COMPANY_SHOP_PRO,
+			$user['permission']
+		);
+	}
+
+	/**
+	* @view json
+	*/
 	public function modAppInfo()
 	{
 		//检查输入参数
@@ -146,6 +166,7 @@ class User extends CI_Controller {
 			array('phone','require'),
 			array('telephone','require'),
 			array('company','require'),
+			array('followLink','option|noxss'),
 			array('downDistributionNum','option',0),
 			array('permission','option',array()),
 			array('client','option',array()),
@@ -208,6 +229,7 @@ class User extends CI_Controller {
 			array('phone','require'),
 			array('telephone','require'),
 			array('company','require'),
+			array('followLink','require|noxss'),
 			array('downDistributionNum','option'),
 			array('permission','option',array()),
 			array('client','option',array()),

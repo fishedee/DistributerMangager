@@ -21,6 +21,7 @@ create table t_user(
 	company varchar(128) not null,
 	phone varchar(11) not null,
     telephone varchar(11) not null,
+    followLink varchar(256) not null,
 	type integer not null,
     downDistributionNum integer not null,
 	createTime timestamp not null default CURRENT_TIMESTAMP,
