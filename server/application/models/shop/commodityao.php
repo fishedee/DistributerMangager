@@ -197,6 +197,13 @@ class CommodityAo extends CI_Model
     }
 
     public function add($userId, $data){
+        $maxSort = $this->commodityDb->getMaxSortByUser($userId);
+        if( $maxSort == null )
+            $sort = 1;
+        else
+            $sort = $maxSort + 1;
+
+        $data['sort'] = $sort;
         $data['price'] = $data['priceShow']*100;
         $data['oldPrice'] = $data['oldPriceShow']*100;
         $data['userId'] = $userId;
@@ -225,10 +232,16 @@ class CommodityAo extends CI_Model
     }
 
     public function addLink($userId, $shopLinkCommodityId, $shopCommodityClassifyId){
+        $maxSort = $this->commodityDb->getMaxSortByUser($userId);
+        if( $maxSort == null )
+            $sort = 1;
+        else
+            $sort = $maxSort + 1;
 
         $this->checkLink($userId,0,$shopLinkCommodityId);
 
         $data = array(
+            'sort'=>$sort,
             'isLink'=>1,
             'shopLinkCommodityId'=>$shopLinkCommodityId,
             'userId'=>$userId,
@@ -282,5 +295,47 @@ class CommodityAo extends CI_Model
             throw new CI_MyException(1, '导入商品不能修改');
 
         $this->commodityDb->reduceStock($shopCommodityId, $quantity);
+    }
+
+    public function move($userId,$shopCommodityId,$direction){
+        //取出所有的分类
+        $dataWhere['userId'] = $userId;
+        $allClassify = $this->commodityDb->search($dataWhere,array());
+        $allClassify = $allClassify['data'];
+        
+        //计算上一级的banner，与下一级的banner
+        $index = -1;
+        foreach( $allClassify as $key=>$singleClassify){
+            if( $singleClassify['shopCommodityId'] == $shopCommodityId){
+                $index = $key;
+                break;
+            }
+        }
+        if( $index == -1 )
+            throw new CI_MyException(1,'不存在此商品');
+        $currentClassify = $allClassify[$index];
+        
+        //调整sort值
+        if( $direction == 'up' ){
+            if( $index - 1 < 0 )
+                throw new CI_MyException(1,'不能再往上调整了');
+            $prevClassify =  $allClassify[$index - 1];
+            $newCurrentSort = $prevClassify['sort'];
+            $newCurrentId = $currentClassify['shopCommodityId'];
+            $newOtherSort = $currentClassify['sort'];
+            $newOtherId = $prevClassify['shopCommodityId'];
+        }else{
+            if( $index + 1 >= count($allClassify) )
+                throw new CI_MyException(1,'不能再下调整了');
+            $nextClassify =  $allClassify[$index + 1];
+            $newCurrentSort = $nextClassify['sort'];
+            $newCurrentId = $currentClassify['shopCommodityId'];
+            $newOtherSort = $currentClassify['sort'];
+            $newOtherId = $nextClassify['shopCommodityId'];
+        }
+        
+        //更新数据库
+        $this->commodityDb->mod($newOtherId,array('sort'=>$newOtherSort));
+        $this->commodityDb->mod($newCurrentId,array('sort'=>$newCurrentSort));
     }
 }

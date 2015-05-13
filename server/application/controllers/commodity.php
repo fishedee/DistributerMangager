@@ -269,6 +269,48 @@ class Commodity extends CI_Controller
         $this->commodityAo->mod($userId, $shopCommodityId, $data);
     }
 
+    /**
+    * @view json
+    */
+    public function moveUp()
+    {
+        //检查输入参数
+        $data = $this->argv->checkPost(array(
+            array('shopCommodityId','require'),
+        ));
+        $shopCommodityId = $data['shopCommodityId'];
+        
+        //检查权限
+        $user = $this->loginAo->checkMustClient(
+            $this->userPermissionEnum->COMPANY_INTRODUCE
+        );
+        $userId = $user['userId'];
+        
+        //执行业务逻辑
+        $this->commodityAo->move($userId,$shopCommodityId,'up');
+    }
+    
+    /**
+    * @view json
+    */
+    public function moveDown()
+    {
+        //检查输入参数
+        $data = $this->argv->checkPost(array(
+            array('shopCommodityId','require'),
+        ));
+        $shopCommodityId = $data['shopCommodityId'];
+        
+        //检查权限
+        $user = $this->loginAo->checkMustClient(
+            $this->userPermissionEnum->COMPANY_INTRODUCE
+        );
+        $userId = $user['userId'];
+        
+        //执行业务逻辑
+        $this->commodityAo->move($userId,$shopCommodityId,'down');
+    }
+
 }
 
 /* End of file commodity.php */

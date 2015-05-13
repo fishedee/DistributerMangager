@@ -35,6 +35,32 @@
 				queryColumn:['title','remark','userCompanyClassifyId'],
 				operate:[
 				{
+					name:'上移',
+					click:function(data){
+						$.post('/article/moveUp',{userCompanyArticleId:data.userCompanyArticleId},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							location.href = 'index.html';
+						});
+					}
+				},
+				{
+					name:'下移',
+					click:function(data){
+						$.post('/article/moveDown',{userCompanyArticleId:data.userCompanyArticleId},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							location.href = 'index.html';
+						});
+					}
+				},
+				{
 					name:'修改',
 					click:function(data){
 						location.href = 'view.html?userCompanyArticleId='+data.userCompanyArticleId;

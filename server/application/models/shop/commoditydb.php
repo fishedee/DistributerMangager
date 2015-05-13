@@ -34,7 +34,7 @@ class CommodityDb extends CI_Model
             else if($key == 'shopCommodityId')
                 $this->db->where_in($key, $value);
         }
-        $this->db->order_by('createTime', 'desc');  
+        $this->db->order_by('sort', 'asc');  
 
         if(isset($limit['pageIndex']) && isset($limit['pageSize']))
             $this->db->limit($limit['pageSize'], $limit['pageIndex']);
@@ -59,6 +59,13 @@ class CommodityDb extends CI_Model
         $this->db->where("shopLinkCommodityId", $shopLinkCommodityId);    
         $query = $this->db->get($this->tableName)->result_array();
         return $query;
+    }
+
+    public function getMaxSortByUser($userId){
+        $this->db->select_max('sort');
+        $this->db->where("userId",$userId);
+        $result = $this->db->get($this->tableName)->result_array();
+        return $result[0]['sort'];
     }
 
     public function del($shopCommodityId){

@@ -153,6 +153,7 @@ create table t_user_company_article(
 	summary varchar(256) not null,
 	content text not null,
 	userCompanyClassifyId integer not null,
+    sort integer not null,
 	createTime timestamp not null default CURRENT_TIMESTAMP,
 	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
 	primary key( userCompanyArticleId )
@@ -207,6 +208,7 @@ create table t_shop_commodity(
     oldPrice integer not null,
     inventory integer not null,
     state integer not null,
+    sort integer not null,
     remark varchar(128) not null,
     createTime timestamp not null default CURRENT_TIMESTAMP,
     modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
@@ -492,12 +494,12 @@ insert into t_user_company_classify(userId,title,icon,sort,remark)values
 (10003,'公司介绍','/data/upload/sample/home.png',3,''),
 (10003,'数码产品','/data/upload/sample/picture.png',4,'');
 
-insert into t_user_company_article(userId,cover,title,summary,remark,content,userCompanyClassifyId)values
-(10003,'/data/upload/sample.jpg','文章标题1','文章简介1','','文章内容1',10001),
-(10003,'/data/upload/sample.jpg','文章标题2','文章简介2','','文章内容2',10002),
-(10003,'/data/upload/sample.jpg','文章标题3','文章简介3','','文章内容3',10003),
-(10003,'/data/upload/sample.jpg','文章标题4','文章简介4','','文章内容4',10004),
-(10003,'/data/upload/sample.jpg','文章标题5','文章简介5','','文章内容5',10001);
+insert into t_user_company_article(userId,cover,title,summary,remark,content,userCompanyClassifyId,sort)values
+(10003,'/data/upload/sample.jpg','文章标题1','文章简介1','','文章内容1',10001,1),
+(10003,'/data/upload/sample.jpg','文章标题2','文章简介2','','文章内容2',10002,2),
+(10003,'/data/upload/sample.jpg','文章标题3','文章简介3','','文章内容3',10003,3),
+(10003,'/data/upload/sample.jpg','文章标题4','文章简介4','','文章内容4',10004,4),
+(10003,'/data/upload/sample.jpg','文章标题5','文章简介5','','文章内容5',10001,5);
 
 insert into t_user_company_banner(userId,image,title,url,sort)values
 (10003,'/data/upload/sample/sample1.jpg','广告1','http://www.baidu.com',1),
@@ -516,13 +518,13 @@ insert into t_shop_commodity_classify(userId,title,icon,parent,sort,remark,link)
 (10004,'商品','/data/upload/sample/sample2.jpg',0,1,'',''),
 (10003,'赢大奖抽iphone','/data/upload/sample/sample2.jpg',0,6,'','http://www.baidu.com');
 
-insert into t_shop_commodity(userId,shopLinkCommodityId, isLink, shopCommodityClassifyId,icon,title,introduction,detail,price,oldPrice,inventory,state)values
-(10003,0, 0, 10002,'/data/upload/sample/sample4.jpg','商品1','商品简介1','商品描述1',1,11100,10,1),
-(10003,0, 0, 10003,'/data/upload/sample/sample5.jpg','商品2','商品简介2','商品描述2',2,22200,10,1),
-(10003,0, 0, 10004,'/data/upload/sample/sample6.jpg','商品3','商品简介3','商品描述3',3,33300,10,1),
-(10003,10005, 1, 10002,'','','','',1,1,1,1),
-(10004,0, 0, 10009,'/data/upload/sample/sample6.jpg','商品4','商品简介4','商品描述4',4,44400,10,1),
-(10004,10001, 1, 10009,'/data/upload/sample/sample6.jpg','商品4','商品简介4','商品描述4',4,44400,10,1);
+insert into t_shop_commodity(userId,shopLinkCommodityId, isLink, shopCommodityClassifyId,icon,title,introduction,detail,price,oldPrice,inventory,state,sort)values
+(10003,0, 0, 10002,'/data/upload/sample/sample4.jpg','商品1','商品简介1','商品描述1',1,11100,10,1,1),
+(10003,0, 0, 10003,'/data/upload/sample/sample5.jpg','商品2','商品简介2','商品描述2',2,22200,10,1,2),
+(10003,0, 0, 10004,'/data/upload/sample/sample6.jpg','商品3','商品简介3','商品描述3',3,33300,10,1,3),
+(10003,10005, 1, 10002,'','','','',1,1,1,1,4),
+(10004,0, 0, 10009,'/data/upload/sample/sample6.jpg','商品4','商品简介4','商品描述4',4,44400,10,1,5),
+(10004,10001, 1, 10009,'/data/upload/sample/sample6.jpg','商品4','商品简介4','商品描述4',4,44400,10,1,6);
 
 insert into t_distribution(upUserId,downUserId,distributionPercent,shopUrl,state)values
 (10003,10004,1234,'http://10003.shop.fishedee.com/10003/item.html',2),

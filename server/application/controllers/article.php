@@ -16,7 +16,7 @@ class Article extends CI_Controller {
 	*/
 	public function search()
 	{
-		//¼ì²éÊäÈë²ÎÊý		
+		//æ£€æŸ¥è¾“å…¥å‚æ•°		
 		$dataWhere = $this->argv->checkGet(array(
 			array('title','option'),
 			array('remark','option'),
@@ -28,13 +28,13 @@ class Article extends CI_Controller {
 			array('pageSize','require'),
 		));
 		
-		//¼ì²éÈ¨ÏÞ
+		//æ£€æŸ¥æƒé™
 		$user = $this->loginAo->checkMustClient(
 			$this->userPermissionEnum->COMPANY_INTRODUCE
 		);
 		$userId = $user['userId'];
 		
-		//Ö´ÐÐÒµÎñÂß¼­
+		//æ‰§è¡Œä¸šåŠ¡é€»è¾‘
 		return $this->companyArticleAo->search($userId,$dataWhere,$dataLimit);
 	}
 	
@@ -43,7 +43,7 @@ class Article extends CI_Controller {
 	*/
 	public function getByClassifyId()
 	{
-		//¼ì²éÊäÈë²ÎÊý
+		//æ£€æŸ¥è¾“å…¥å‚æ•°
 		$data = $this->argv->checkGet(array(
 			array('userCompanyClassifyId','require'),
 			array('userId','require'),
@@ -51,7 +51,7 @@ class Article extends CI_Controller {
 		$userId = $data['userId'];
 		$userCompanyClassifyId = $data['userCompanyClassifyId'];
 		
-		//Ö´ÐÐÒµÎñÂß¼­
+		//æ‰§è¡Œä¸šåŠ¡é€»è¾‘
 		return $this->companyArticleAo->search($userId,array('userCompanyClassifyId'=>$userCompanyClassifyId),array());
 	}
 	
@@ -60,13 +60,13 @@ class Article extends CI_Controller {
 	*/
 	public function get()
 	{
-		//¼ì²éÊäÈë²ÎÊý
+		//æ£€æŸ¥è¾“å…¥å‚æ•°
 		$data = $this->argv->checkGet(array(
 			array('userCompanyArticleId','require'),
 		));
 		$userCompanyArticleId = $data['userCompanyArticleId'];
 		
-		//Ö´ÐÐÒµÎñÂß¼­
+		//æ‰§è¡Œä¸šåŠ¡é€»è¾‘
 		return $this->companyArticleAo->get($userCompanyArticleId);
 	}
 	
@@ -75,7 +75,7 @@ class Article extends CI_Controller {
 	*/
 	public function add()
 	{
-		//¼ì²éÊäÈë²ÎÊý
+		//æ£€æŸ¥è¾“å…¥å‚æ•°
 		$data = $this->argv->checkPost(array(
 			array('title','require'),
 			array('cover','require'),
@@ -85,13 +85,13 @@ class Article extends CI_Controller {
 			array('userCompanyClassifyId','require')
 		));
 		
-		//¼ì²éÈ¨ÏÞ
+		//æ£€æŸ¥æƒé™
 		$user = $this->loginAo->checkMustClient(
 			$this->userPermissionEnum->COMPANY_INTRODUCE
 		);
 		$userId = $user['userId'];
 		
-		//Ö´ÐÐÒµÎñÂß¼­
+		//æ‰§è¡Œä¸šåŠ¡é€»è¾‘
 		$this->companyArticleAo->add($userId,$data);
 	}
 	
@@ -100,19 +100,19 @@ class Article extends CI_Controller {
 	*/
 	public function del()
 	{
-		//¼ì²éÊäÈë²ÎÊý
+		//æ£€æŸ¥è¾“å…¥å‚æ•°
 		$data = $this->argv->checkPost(array(
 			array('userCompanyArticleId','require'),
 		));
 		$userCompanyArticleId = $data['userCompanyArticleId'];
 		
-		//¼ì²éÈ¨ÏÞ
+		//æ£€æŸ¥æƒé™
 		$user = $this->loginAo->checkMustClient(
 			$this->userPermissionEnum->COMPANY_INTRODUCE
 		);
 		$userId = $user['userId'];
 		
-		//Ö´ÐÐÒµÎñÂß¼­
+		//æ‰§è¡Œä¸šåŠ¡é€»è¾‘
 		$this->companyArticleAo->del($userId,$userCompanyArticleId);
 	}
 	
@@ -121,7 +121,7 @@ class Article extends CI_Controller {
 	*/
 	public function mod()
 	{
-		//¼ì²éÊäÈë²ÎÊý
+		//æ£€æŸ¥è¾“å…¥å‚æ•°
 		$data = $this->argv->checkPost(array(
 			array('userCompanyArticleId','require'),
 		));
@@ -136,14 +136,56 @@ class Article extends CI_Controller {
 			array('userCompanyClassifyId','require')
 		));
 		
-		//¼ì²éÈ¨ÏÞ
+		//æ£€æŸ¥æƒé™
 		$user = $this->loginAo->checkMustClient(
 			$this->userPermissionEnum->COMPANY_INTRODUCE
 		);
 		$userId = $user['userId'];
 		
-		//Ö´ÐÐÒµÎñÂß¼­
+		//æ‰§è¡Œä¸šåŠ¡é€»è¾‘
 		$this->companyArticleAo->mod($userId,$userCompanyArticleId,$data);
+	}
+
+	/**
+	* @view json
+	*/
+	public function moveUp()
+	{
+		//æ£€æŸ¥è¾“å…¥å‚æ•°
+		$data = $this->argv->checkPost(array(
+			array('userCompanyArticleId','require'),
+		));
+		$userCompanyArticleId = $data['userCompanyArticleId'];
+		
+		//æ£€æŸ¥æƒé™
+		$user = $this->loginAo->checkMustClient(
+			$this->userPermissionEnum->COMPANY_INTRODUCE
+		);
+		$userId = $user['userId'];
+		
+		//æ‰§è¡Œä¸šåŠ¡é€»è¾‘
+		$this->companyArticleAo->move($userId,$userCompanyArticleId,'up');
+	}
+	
+	/**
+	* @view json
+	*/
+	public function moveDown()
+	{
+		//æ£€æŸ¥è¾“å…¥å‚æ•°
+		$data = $this->argv->checkPost(array(
+			array('userCompanyArticleId','require'),
+		));
+		$userCompanyArticleId = $data['userCompanyArticleId'];
+		
+		//æ£€æŸ¥æƒé™
+		$user = $this->loginAo->checkMustClient(
+			$this->userPermissionEnum->COMPANY_INTRODUCE
+		);
+		$userId = $user['userId'];
+		
+		//æ‰§è¡Œä¸šåŠ¡é€»è¾‘
+		$this->companyArticleAo->move($userId,$userCompanyArticleId,'down');
 	}
 }
 

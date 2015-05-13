@@ -53,6 +53,32 @@
 				queryColumn:['title','introduction','shopCommodityClassifyId','state'],
 				operate:[
 				{
+					name:'上移',
+					click:function(data){
+						$.post('/commodity/moveUp',{shopCommodityId:data.shopCommodityId},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							location.href = 'index.html';
+						});
+					}
+				},
+				{
+					name:'下移',
+					click:function(data){
+						$.post('/commodity/moveDown',{shopCommodityId:data.shopCommodityId},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							location.href = 'index.html';
+						});
+					}
+				},
+				{
 					name:'编辑',
 					click:function(data){
 						if( data.isLink == "导入商品" ){
