@@ -60,6 +60,7 @@ class Upload extends CI_Controller {
 		$folderAddress = dirname(__FILE__).'/../../../data/upload/template/'.$folderName;
 		$cmd = 'unzip -o '.$fileAddress.' -d '.$folderAddress;
 		shell_exec($cmd);
+		@unlink($fileAddress);
 		$folderAddress = '/data/upload/template/'.$folderName;
 		return $this->getAllFiles($folderAddress);;
 	}
