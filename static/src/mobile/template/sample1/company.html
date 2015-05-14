@@ -11,6 +11,17 @@
 		var Metro = require('../../common/metro/metro.js');
 		var companyBanner = [];
 		var companyClassify = [];
+		var hasShop = true;
+		function getHasShop(next){
+			$.get('/user/getHasShop',{},function(data){
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				hasShop = data.data;
+				next();
+			});
+		}
 		function getBanner(next){
 			$.get('/banner/getByUserId',{},function(data){
 				if( data.code != 0 ){
@@ -57,12 +68,17 @@
 			var metro = new Metro(metroArgv);
 			
 			//构建page
-			var pageHtml = banner.el + metro.el + footer.el;
+			if( hasShop == true )
+				var pageHtml = banner.el + metro.el + footer.el;
+			else
+				var pageHtml = banner.el + metro.el;
 			$.page.start(pageHtml);
 		}
-		getBanner(function(){
-			getClassify(function(){
-				go();
+		getHasShop(function(){
+			getBanner(function(){
+				getClassify(function(){
+					go();
+				});
 			});
 		});
 	</script>
