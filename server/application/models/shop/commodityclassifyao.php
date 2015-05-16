@@ -36,6 +36,7 @@ class CommodityClassifyAO extends CI_Model {
             if(  $parentCommodityClassifyId == 0 ){
                 $commodityPrimaryClassify[] = $singleCommodityClassify;
             }else{
+            	//统计子分类数量
                 if( !isset($commodityPrimaryClassifyCount[$parentCommodityClassifyId]))
                     $commodityPrimaryClassifyCount[$parentCommodityClassifyId] = 0;
                 $commodityPrimaryClassifyCount[$parentCommodityClassifyId] += 1;
