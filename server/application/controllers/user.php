@@ -188,6 +188,8 @@ class User extends CI_Controller {
 			//非登录用户只能添加商城用户
 			$data['type'] = $this->userTypeEnum->CLIENT;
 			unset($data['permission']);
+			//非登陆用户，注册账号有普通商城和普通分销权限
+			$data['permission']=array(2,3);
 			unset($data['client']);
 		}
 		
