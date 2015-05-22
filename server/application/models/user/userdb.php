@@ -35,6 +35,10 @@ class UserDb extends CI_Model
 			$this->db->limit($limit["pageSize"],$limit["pageIndex"]);
 
 		$query = $this->db->get($this->tableName)->result_array();
+		//过滤显示密码
+		foreach ($query as $k=>$v){
+			unset($query[$k]['password']);
+		}
 		return array(
 			"count"=>$count,
 			"data"=>$query
