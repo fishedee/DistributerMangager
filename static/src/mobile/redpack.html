@@ -1,0 +1,44 @@
+<link rel="import" href="header.html?__inline">
+	<title>红包</title>
+</head>
+<body>
+	<div id="body"></div>
+	<script type="text/javascript">
+		var $ = require('common/core/core.js');
+		var dialog = require('common/dialog/dialog.js');
+		var redPack = {};
+		function getRedPack(next){
+			$.get('/redpack/getRedPack',{},function(data){
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				next();
+			});
+		}
+		function go(){
+			$.page.start('');
+			dialog.redPackOne(function(){
+				$.get('/redpack/tryRedPack',{},function(data){
+					if( data.code != 0 ){
+						dialog.message(data.msg);
+						return;
+					}
+					dialog.redPackTwo(
+						data.data.nickName,
+						data.data.moneyShow,
+						function(){
+							location.href = 'item.html';
+						}
+					);
+				});
+			});
+		}
+		$.checkMustLogin(function(){
+			getRedPack(function(){
+				go();
+			});
+		});
+	</script>
+</body>
+<link rel="import" href="footer.html?__inline">

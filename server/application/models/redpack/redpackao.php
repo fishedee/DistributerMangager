@@ -32,6 +32,7 @@ class RedPackAo extends CI_Model
 	private function filterOutput($data){
 		$data['minMoneyShow'] = sprintf('%.2f',$data['minMoney']/100);
 		$data['maxMoneyShow'] = sprintf('%.2f',$data['maxMoney']/100);
+		$data['link'] = 'http://'.$data['userId'].'.'.$_SERVER['HTTP_HOST'].'/'.$data['userId'].'/redpack.html';
 		return $data;
 	}
 
