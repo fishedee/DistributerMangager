@@ -6,6 +6,8 @@ class CommonErrorEnum extends CI_Model{
 		array(1,'NORMAL','普通错误'),
 		//购物车错误
 		array(20001,'SHOP_CART_CHECK_ERROR','购物车校验错误'),
+		//红包错误
+		array(30001,'RED_PACK_HAVE_GET','红包已领取，不能重复领取'),
 	);
 	public function __construct(){
 		parent::__construct();

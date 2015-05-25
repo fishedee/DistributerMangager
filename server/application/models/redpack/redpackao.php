@@ -9,6 +9,7 @@ class RedPackAo extends CI_Model
 		$this->load->model('redpack/redPackStateEnum','redPackStateEnum');
 		$this->load->model('client/clientAo','clientAo');
 		$this->load->model('user/userAppAo','userAppAo');
+		$this->load->model('common/commonErrorEnum','commonErrorEnum');
 	}
 
 	private function addOnceSetting($userId){
@@ -70,6 +71,7 @@ class RedPackAo extends CI_Model
 				throw new CI_MyException(1,'最小红包金额需要少于或等于最大红包金额');
 			if( intval($data['maxPackNum']) <= 0 )
 				throw new CI_MyException(1,'最大红包数量应该是大于0的');
+
 			if( trim($data['redPackRuleImage']) == '' )
 				throw new CI_MyException(1,'请输入红包说明的图片');
 
