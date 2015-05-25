@@ -41,6 +41,8 @@ class RedPackAo extends CI_Model
 
 		$data = $this->redPackDb->getByUserId($userId)[0];
 
+		$data['packNum'] = $this->redPackClientDb->getCountByRedPackId($data['redPackId']);
+
 		$data = $this->filterOutput($data);
 
 		return $data;
@@ -66,6 +68,8 @@ class RedPackAo extends CI_Model
 				throw new CI_MyException(1,'请输入最大为200元的红包金额');
 			if( $data['minMoney'] > $data['maxMoney'] )
 				throw new CI_MyException(1,'最小红包金额需要少于或等于最大红包金额');
+			if( intval($data['maxPackNum']) <= 0 )
+				throw new CI_MyException(1,'最大红包数量应该是大于0的');
 
 			$userApp = $this->userAppAo->get($userId);
 
@@ -86,6 +90,8 @@ class RedPackAo extends CI_Model
 		$redPackInfo = $this->getSetting($userId);
 		if( $redPackInfo['state'] != $this->redPackStateEnum->OPEN)
 			throw new CI_MyException(1,'企业没有开通红包呢');
+		if( $redPackInfo['packNum'] >= $redPackInfo['maxPackNum'] )
+			throw new CI_MyException(1,'迟来一步了，红包已经发完了～');
 
 		$redPackClientInfo = $this->redPackClientDb->search(array(
 			'redPackId'=>$redPackInfo['redPackId'],

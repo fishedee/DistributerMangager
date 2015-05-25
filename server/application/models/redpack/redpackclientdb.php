@@ -37,4 +37,9 @@ class RedPackClientDb extends CI_Model
 		return $this->db->insert_id();
 	}
 
+	public function getCountByRedPackId($redPackId){
+		$this->db->where('redPackId',$redPackId);
+		return $this->db->count_all_results($this->tableName);
+	}
+
 }

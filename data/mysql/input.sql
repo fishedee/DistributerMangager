@@ -415,6 +415,7 @@ alter table t_vip_client add index clientIdIndex(clientId);
 create table t_red_pack(
     redPackId integer not null auto_increment,
     userId integer not null,
+    maxPackNum integer not null,
     nickName varchar(128) not null,#商户名称
     minMoney integer not null,#最小红包金额
     maxMoney integer not null,#最大红包金额
@@ -577,8 +578,8 @@ insert into t_lucky_draw_commodity(luckyDrawId,title,image,type,quantity,precent
 insert into t_vip(userId,cardImage)values
 (10003,'/data/upload/sample/vip.jpg');
 
-insert into t_red_pack(userId,nickName,minMoney,maxMoney,wishing,actName,remark,state)values
-(10003,'至高商城',100,100,'红包','红包','红包',1);
+insert into t_red_pack(userId,nickName,minMoney,maxMoney,wishing,actName,remark,state,maxPackNum)values
+(10003,'至高商城',100,100,'红包','红包','红包',1,10);
 
 #显示初始数据
 select * from t_user;
