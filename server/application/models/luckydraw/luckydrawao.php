@@ -17,7 +17,6 @@ class LuckyDrawAo extends CI_Model
 			return;
 		if( count($data['commodity']) != 8 )
 			throw new CI_MyException(1,'必须选择刚好8个抽奖商品');
-		$totalPrecent = 0;
 		foreach( $data['commodity'] as $singleCommodity ){
 			if( $singleCommodity['type'] == $this->luckyDrawTypeEnum->COMMODITY ){
 				//普通抽奖商品
@@ -33,22 +32,14 @@ class LuckyDrawAo extends CI_Model
 				throw new CI_MyException(1,'抽奖商品的图片不能为空');
 			if( $singleCommodity['quantity'] < 0 )
 				throw new CI_MyException(1,'抽奖商品的数量必须要大于或等于0');
-			if( $singleCommodity['precent'] < 0 )
-				throw new CI_MyException(1,'抽奖商品的概率必须要大于或等于0');
-			$totalPrecent += $singleCommodity['precent'];
 		}
 		if( $data['beginTime'] >= $data['endTime'] )
 			throw new CI_MyException(1,'开始时间必须少于结束时间');
-		if( $totalPrecent != 10000 )
-			throw new CI_MyException(1,'抽奖商品的总概率必须刚好为100%');
 	}
 
 	private function filterInputData($data){
 		$data['beginTime'] .= ' 00:00:00';
 		$data['endTime'] .= ' 23:59:59';
-		foreach( $data['commodity'] as $key=>$singleCommodity ){
-			$data['commodity'][$key]['precent'] = intval($data['commodity'][$key]['precentShow']*100);
-		}
 		return $data;
 	}
 
@@ -56,9 +47,10 @@ class LuckyDrawAo extends CI_Model
 		$data['link'] = 'http://'.$data['userId'].'.'.$_SERVER['HTTP_HOST'].'/'.$data['userId'].'/lucky.html?luckyDrawId='.$data['luckyDrawId'];
 		$data['beginTime'] = substr($data['beginTime'],0,10);
 		$data['endTime'] = substr($data['endTime'],0,10);
+		$data['totalQuantity'] = 0;
 		foreach( $data['commodity'] as $key=>$singleCommodity ){
-			$data['commodity'][$key]['precentShow'] = sprintf('%.2f',$data['commodity'][$key]['precent']/100).'%';
 			$data['commodity'][$key]['typeName'] = $this->luckyDrawTypeEnum->names[$data['commodity'][$key]['type']];
+			$data['totalQuantity'] += $singleCommodity['quantity'];
 		}
 		return $data;
 	}
@@ -192,26 +184,14 @@ class LuckyDrawAo extends CI_Model
 		if( $totalQuantity == 0 )
 			throw new CI_MyException(1,'迟来一步了，抽奖活动的商品都被人抽光啦');
 
-		//整理抽奖的非空奖品
-		$luckyDrawCommodity = array();
-		$totalPrecent = 0;
-		foreach( $luckyDraw['commodity'] as $singleCommodity ){
-			if( $singleCommodity['quantity'] == 0 )
-				continue;
-			$luckyDrawCommodity[] = $singleCommodity;
-			$totalPrecent += $singleCommodity['precent'];
-		}
-		foreach( $luckyDrawCommodity as $key=>$singleCommodity ){
-			$luckyDrawCommodity[$key]['precent'] = $luckyDrawCommodity[$key]['precent'] /$totalPrecent*10000;
-		}
 
 		//使用随机数选取合适的奖品
-		$randNum = mt_rand(0,10000);
+		$randNum = mt_rand(1,$totalQuantity);
 		$currentCommodity = null;
-		$currentPrecent = 0;
-		foreach( $luckyDrawCommodity as $key=>$singleCommodity ){
-			$currentPrecent += $singleCommodity['precent'];
-			if( $currentPrecent >= $randNum ){
+		$currentQuantity = 0;
+		foreach( $luckyDraw['commodity'] as $key=>$singleCommodity ){
+			$currentQuantity += $singleCommodity['quantity'];
+			if( $currentQuantity >= $randNum ){
 				$currentCommodity = $singleCommodity;
 				break;
 			}

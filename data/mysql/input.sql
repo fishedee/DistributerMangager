@@ -356,7 +356,6 @@ create table t_lucky_draw_commodity(
     image varchar(128) not null,
     type integer not null,
     quantity integer not null,
-    precent integer not null,
     sort integer not null,
     createTime timestamp not null default CURRENT_TIMESTAMP,
     modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
@@ -565,15 +564,15 @@ insert into t_distribution_commodity(distributionOrderId, shopOrderId, shopCommo
 insert into t_lucky_draw(userId,title,summary,state,beginTime,endTime)values
 (10003,'开箱大抽奖','周一开始，持续到周日，五一停不了',2,now(),DATE_ADD(now(), INTERVAL 2 DAY));
 
-insert into t_lucky_draw_commodity(luckyDrawId,title,image,type,quantity,precent,sort)values
-(10001,'iphone1','/data/upload/sample/sample1.png',1,10,1000,1),
-(10001,'iphone2','/data/upload/sample/sample2.png',1,10,1000,2),
-(10001,'iphone3','/data/upload/sample/sample3.png',1,10,1000,3),
-(10001,'iphone4','/data/upload/sample/sample4.png',1,10,1000,4),
-(10001,'iphone5','/data/upload/sample/sample5.png',1,10,1000,5),
-(10001,'iphone6','/data/upload/sample/sample6.png',1,10,1000,6),
-(10001,'iphone7','/data/upload/sample/sample7.png',1,10,1000,7),
-(10001,'iphone8','/data/upload/sample/sample8.png',2,10,3000,8);
+insert into t_lucky_draw_commodity(luckyDrawId,title,image,type,quantity,sort)values
+(10001,'iphone1','/data/upload/sample/sample1.png',1,10,1),
+(10001,'iphone2','/data/upload/sample/sample2.png',1,10,2),
+(10001,'iphone3','/data/upload/sample/sample3.png',1,10,3),
+(10001,'iphone4','/data/upload/sample/sample4.png',1,10,4),
+(10001,'iphone5','/data/upload/sample/sample5.png',1,10,5),
+(10001,'iphone6','/data/upload/sample/sample6.png',1,10,6),
+(10001,'iphone7','/data/upload/sample/sample7.png',1,10,7),
+(10001,'iphone8','/data/upload/sample/sample8.png',2,10,8);
 
 insert into t_vip(userId,cardImage)values
 (10003,'/data/upload/sample/vip.jpg');

@@ -1,5 +1,6 @@
 <link rel="import" href="../common/header.html?__inline">
 	<div class="alert alert-danger" role="alert">注意！外部链接是抽奖活动的网页地址，将抽奖活动的地址发布到朋友圈就能进行抽奖活动了，或者，你可以放到分类管理的外部链接中，就能在首页进行抽奖活动了。</div>
+	<div class="alert alert-danger" role="alert">注意！中奖基数就是将所有的奖品数量相加，例如，如果总共两个奖品，奖品1是有1件iphone，奖品2是999件谢谢参与，那么中奖基数就是1000件，iphone的中奖几率是0.1%，谢谢参与的中奖几率就是99.9%</div>
 	<div id="container">
 	</div>
 	<script type="text/javascript">
@@ -39,6 +40,7 @@
 					{id:'link',type:'read',name:'外部链接'},
 					{id:'title',type:'text',name:'标题'},
 					{id:'summary',type:'text',name:'简介'},
+					{id:'totalQuantity',type:'read',name:'中奖基数'},
 					{id:'beginTime',type:'time',name:'开始时间'},
 					{id:'endTime',type:'time',name:'结束时间'},
 					{id:'commodity',type:'table',name:'奖品',
@@ -49,7 +51,6 @@
 								{id:'type',type:'hidden',name:'类型'},
 								{id:'typeName',type:'text',name:'类型'},
 								{id:'quantity',type:'text',name:'数量'},
-								{id:'precentShow',type:'text',name:'中奖率'},
 							],
 							operate:[
 							{
