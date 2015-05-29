@@ -70,6 +70,8 @@ class RedPackAo extends CI_Model
 				throw new CI_MyException(1,'最小红包金额需要少于或等于最大红包金额');
 			if( intval($data['maxPackNum']) <= 0 )
 				throw new CI_MyException(1,'最大红包数量应该是大于0的');
+			if( trim($data['redPackRuleImage']) == '' )
+				throw new CI_MyException(1,'请输入红包说明的图片');
 
 			$userApp = $this->userAppAo->get($userId);
 
@@ -92,6 +94,9 @@ class RedPackAo extends CI_Model
 			throw new CI_MyException(1,'企业没有开通红包呢');
 		if( $redPackInfo['packNum'] >= $redPackInfo['maxPackNum'] )
 			throw new CI_MyException(1,'迟来一步了，红包已经发完了～');
+		$nowHour = intval(date('H',time()));
+		if( $nowHour >= 0 && $nowHour <= 8 )
+			throw new CI_MyException(1,'早上0点到8点之间不能发放红包噢');
 
 		$redPackClientInfo = $this->redPackClientDb->search(array(
 			'redPackId'=>$redPackInfo['redPackId'],
@@ -99,13 +104,9 @@ class RedPackAo extends CI_Model
 		),array());
 
 		if($redPackClientInfo['count'] != 0 )
-			throw new CI_MyException(1,'你已经领过红包了，不能重复领取');
+			return array_merge($redPackInfo,array('hasGet'=>true));
 
-		$nowHour = intval(date('H',time()));
-		if( $nowHour >= 0 && $nowHour <= 8 )
-			throw new CI_MyException(1,'早上0点到8点之间不能发放红包噢');
-
-		return $redPackInfo;
+		return array_merge($redPackInfo,array('hasGet'=>false));
 	}
 
 	public function tryRedPack( $userId, $clientId ){
@@ -149,6 +150,9 @@ class RedPackAo extends CI_Model
 			'clientId'=>$clientId,
 			'money'=>$money
 		));
+
+		//更新最新的红包信息
+		$redPackInfo = $this->getRedPack($userId,$clientId);
 
 		return array_merge(
 			$redPackInfo,

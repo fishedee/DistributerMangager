@@ -13,26 +13,45 @@
 					dialog.message(data.msg);
 					return;
 				}
+				redPack = data.data;
 				next();
 			});
 		}
 		function go(){
 			$.page.start('');
-			dialog.redPackOne(function(){
-				$.get('/redpack/tryRedPack',{},function(data){
-					if( data.code != 0 ){
-						dialog.message(data.msg);
-						return;
+			if( redPack.hasGet ){
+				//显示已经领取
+				dialog.redPackGet(
+					redPack.maxPackNum - redPack.packNum
+					,function(){
+
 					}
-					dialog.redPackTwo(
-						data.data.nickName,
-						data.data.moneyShow,
-						function(){
-							location.href = 'item.html';
-						}
-					);
-				});
-			});
+				);
+			}else{
+				//显示抢夺红包
+				dialog.redPackShow(
+					redPack.nickName,
+					redPack.maxPackNum - redPack.packNum,
+					function(operation){
+						$.get('/redpack/tryRedPack',{},function(data){
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							operation.remove();
+							dialog.redPackGet(
+								data.data.maxPackNum - data.data.packNum
+								,function(){
+
+								}
+							);
+						});
+					},
+					function(){
+						location.href = 'redpackrule.html';
+					}
+				);
+			}
 		}
 		$.checkMustLogin(function(){
 			getRedPack(function(){

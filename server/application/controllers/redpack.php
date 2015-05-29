@@ -112,7 +112,8 @@ class RedPack extends CI_Controller {
 			array('actName','require'),
 			array('remark','require'),
 			array('state','require'),
-			array('maxPackNum','require')
+			array('maxPackNum','require'),
+			array('redPackRuleImage','require')
 		));
 		
 		//检查权限

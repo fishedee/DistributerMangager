@@ -1,0 +1,35 @@
+<link rel="import" href="header.html?__inline">
+	<title>红包</title>
+</head>
+<body>
+	<div id="body"></div>
+	<script type="text/javascript">
+		var $ = require('common/core/core.js');
+		var dialog = require('common/dialog/dialog.js');
+		var redPack = {};
+		function getRedPack(next){
+			$.get('/redpack/getRedPack',{},function(data){
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				redPack = data.data;
+				next();
+			});
+		}
+		function go(){
+			$.page.start('');
+			dialog.redPackRule(
+				redPack.redPackRuleImage,
+				function(){
+				}
+			);
+		}
+		$.checkMustLogin(function(){
+			getRedPack(function(){
+				go();
+			});
+		});
+	</script>
+</body>
+<link rel="import" href="footer.html?__inline">

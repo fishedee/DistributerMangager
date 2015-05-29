@@ -27,30 +27,65 @@ function confirm(text,next){
 	if( result )
 		next();
 }
-function redPackOne(next){
-	var template = __inline('redPackOneTpl.tpl');
+function redPackRule(image,next){
+	var template = __inline('redPackRuleTpl.tpl');
 	var argv = {
-		image:__uri('redpack.png'),
+		image:image,
 		click:function(){
-			var target = $('#common_redPackOne');
-			target.remove();
-			next();
+			var operation = {
+				remove:function(){
+					var target = $('#common_redPackRule');
+					target.remove();
+				}
+			}
+			next(operation);
 		}
 	};
 	var div = template(argv);
 	body.append(div);
 }
-function redPackTwo(shop,money,next){
-	var template = __inline('redPackTwoTpl.tpl');
+function redPackShow(shop,num,nextClick,ruleClick){
+	var template = __inline('redPackShowTpl.tpl');
 	var argv = {
-		image:__uri('redpackget.png'),
-		click:function(){
-			var target = $('#common_redPackTwo');
-			target.remove();
-			next();
-		},
+		image:__uri('redpackshow.jpg'),
 		shop:shop,
-		money:money
+		num:num,
+		nextClick:function(){
+			var operation = {
+				remove:function(){
+					var target = $('#common_redPackShow');
+					target.remove();
+				}
+			}
+			nextClick(operation);
+		},
+		ruleClick:function(){
+			var operation = {
+				remove:function(){
+					var target = $('#common_redPackShow');
+					target.remove();
+				}
+			}
+			ruleClick(operation);
+		}
+	};
+	var div = template(argv);
+	body.append(div);
+}
+function redPackGet(num,next){
+	var template = __inline('redPackGetTpl.tpl');
+	var argv = {
+		image:__uri('redpackget.jpg'),
+		click:function(){
+			var operation = {
+				remove:function(){
+					var target = $('#common_redPackGet');
+					target.remove();
+				}
+			}
+			next(operation);
+		},
+		num:num
 	};
 	var div = template(argv);
 	body.append(div);
@@ -93,6 +128,7 @@ module.exports = {
 	message:message,
 	confirm:confirm,
 	inputInfo:inputInfo,
-	redPackOne:redPackOne,
-	redPackTwo:redPackTwo
+	redPackShow:redPackShow,
+	redPackGet:redPackGet,
+	redPackRule:redPackRule
 };
