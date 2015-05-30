@@ -1,6 +1,7 @@
 /data/log/*
 /data/upload/*
 /static/build
+/server/application/config/database.php
 *.swp
 !/data/log/.gitignore
 !/data/upload/.gitignore

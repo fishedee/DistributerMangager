@@ -27,10 +27,8 @@ class User extends CI_Controller {
 	public function getAppInfo()
 	{
 		//检查权限
-		$user = $this->loginAo->checkMustClient(
-			$this->userPermissionEnum->COMPANY_SHOP
-		);
-		$userId = $user['userId'];
+		$userId = $this->loginAo->checkMustLogin();
+		$userId = $userId['userId'];
 
 		//业务逻辑
 		return $this->userAppAo->get($userId,true);
@@ -81,6 +79,7 @@ class User extends CI_Controller {
 		//检查输入参数
 		$data = $this->argv->checkPost(array(
 			array('appName','require'),
+			array('weixinNum','require'),
 			array('appId','require'),
 			array('appKey','require'),
 			array('mchId','require'),
@@ -91,10 +90,8 @@ class User extends CI_Controller {
 		));
 
 		//检查权限
-		$user = $this->loginAo->checkMustClient(
-			$this->userPermissionEnum->COMPANY_SHOP
-		);
-		$userId = $user['userId'];
+		$userId = $this->loginAo->checkMustLogin();
+		$userId = $userId['userId'];
 
 		//业务逻辑
 		return $this->userAppAo->mod($userId,$data);

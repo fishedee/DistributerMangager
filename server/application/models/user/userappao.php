@@ -21,6 +21,8 @@ class UserAppAo extends CI_Model{
 		$user['shop'] = 'http://'.$userId.'.'.$_SERVER['HTTP_HOST'].'/'.$userId.'/item.html';
 		$user['logincallback'] = $userId.'.'.$_SERVER['HTTP_HOST'];
 		$user['paycallback'] = 'http://'.$userId.'.'.$_SERVER['HTTP_HOST'].'/'.$userId.'/';
+		$user['Token']='weiyd';
+		$user['serverurl'] = 'http://'.$_SERVER['HTTP_HOST'].'/weixin/index';
 		if( $originSsl == false ){
 			$user['mchSslCert'] = dirname(__FILE__).'/../../../../'.$user['mchSslCert'];
 			$user['mchSslKey'] = dirname(__FILE__).'/../../../../'.$user['mchSslKey'];
@@ -45,6 +47,11 @@ class UserAppAo extends CI_Model{
 			throw new CI_MyException(1,'后台未设置mchSslCert，微信红包将不能正常使用');
 		if($userApp['mchSslKey'] == '')
 			throw new CI_MyException(1,'后台未设置mchSslKey，微信红包将不能正常使用');
+	}
+	
+	public function checkWeixinNum($userApp){
+		if($userApp['weixinNum'] == '')
+			throw new CI_MyException(1,'后台未设置后台微信号，微信自动回复和自定义菜单将不能正常使用');
 	}
 
 	public function checkByUserId($userId){

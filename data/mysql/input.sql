@@ -36,6 +36,7 @@ create table t_user_app(
 	userAppId integer not null auto_increment,
 	userId integer not null,
 	appName varchar(128) not null,
+	weixinNum varchar(128),
 	appId varchar(128) not null,
 	appKey varchar(128) not null,
 	mchId varchar(128) not null,
@@ -442,6 +443,35 @@ create table t_red_pack_client(
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
 
 alter table t_red_pack_client add index clientIdIndex(clientId);
+
+#微信被关注回复列表
+create table t_weixin_subscribe(
+	weixinSubscribeId int not null auto_increment,
+	userId int,
+	materialClassifyId integer not null,
+	title varchar(128),
+	remark varchar(128),
+	isRelease integer,
+	createTime timestamp not null default CURRENT_TIMESTAMP,
+	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+	primary key(weixinSubscribeId)
+)engine=innodb default charset=utf8 auto_increment = 10001;
+alter table t_weixin_subscribe add index userIdIndex(userId);
+
+#微信自动回复素材列表
+create table t_weixin_material(
+	materialId integer not null auto_increment,
+	weixinSubscribeId int not null,
+	Title varchar(128) not null,
+	Description varchar(128),
+	Url varchar(256),
+	PicUrl varchar(128),
+	sort int not null,
+	createTime timestamp not null default CURRENT_TIMESTAMP,
+	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+	primary key(materialId)
+)engine=innodb default charset=utf8 auto_increment = 10001;
+alter table table t_weixin_material add index userIdIndex(userId);
 
 #建立初始数据
 insert into t_user(userId,name,password,company,phone,type,downDistributionNum) values
