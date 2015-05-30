@@ -455,7 +455,7 @@ create table t_weixin_subscribe(
 	createTime timestamp not null default CURRENT_TIMESTAMP,
 	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
 	primary key(weixinSubscribeId)
-)engine=innodb default charset=utf8 auto_increment = 10001;
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
 alter table t_weixin_subscribe add index userIdIndex(userId);
 
 #微信自动回复素材列表
@@ -470,7 +470,7 @@ create table t_weixin_material(
 	createTime timestamp not null default CURRENT_TIMESTAMP,
 	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
 	primary key(materialId)
-)engine=innodb default charset=utf8 auto_increment = 10001;
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
 alter table t_weixin_material add index weixinSubscribeIdIndex(weixinSubscribeId);
 
 #建立初始数据
