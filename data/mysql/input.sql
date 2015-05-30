@@ -471,7 +471,7 @@ create table t_weixin_material(
 	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
 	primary key(materialId)
 )engine=innodb default charset=utf8 auto_increment = 10001;
-alter table table t_weixin_material add index userIdIndex(userId);
+alter table t_weixin_material add index weixinSubscribeIdIndex(weixinSubscribeId);
 
 #建立初始数据
 insert into t_user(userId,name,password,company,phone,type,downDistributionNum) values
