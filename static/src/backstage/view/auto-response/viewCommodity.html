@@ -1,0 +1,44 @@
+<link rel="import" href="../common/header.html?__inline">
+<div id="container">
+</div>
+<script type="text/javascript">
+	var $ = require('/fishstrap/core/global.js');
+	var dialog = require('/fishstrap/ui/dialog.js');
+	var input = require('/fishstrap/ui/input.js');
+	var Title = $.location.getQueryArgv('Title');
+	var PicUrl = $.location.getQueryArgv('PicUrl');
+	var Url = $.location.getQueryArgv('Url');
+	var data = {};
+	var allType = {};
+	if(Title!=null && PicUrl!=null){
+		data = {
+			Title:Title,
+			PicUrl:PicUrl,
+			Url:Url,
+		};
+	}
+	function whenWindowClose(mode,operation){
+		if( mode == 'confirm'){
+			var data = inputOperation.get();
+			data.typeName = allType[data.type];
+			operation.close(data);
+		}else{
+			operation.close({});
+		}
+	}
+	function go(){
+		inputOperation = input.verticalInput({
+			id:'container',
+			field:[
+				{id:'Title',type:'text',name:'标题'},
+				{id:'PicUrl',type:'image',name:'图片',option:{url:'/upload/image',width:640}},
+				{id:'Url',type:'text',name:'外连接地址'},
+			],
+			value:data,
+			submit:undefined,
+			cancel:undefined
+		});
+	}
+		go();
+</script>
+<link rel="import" href="../common/footer.html?__inline">

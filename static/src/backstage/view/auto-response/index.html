@@ -1,0 +1,99 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		var companyClassify = {};
+		function getClassify(next){
+			$.get('/wxsubscribe/getAllType',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				companyClassify = data.data;
+				next();
+			});
+		}
+		function getSubscribeStateType(next){
+			$.get('/wxsubscribe/getSubscribeStateType',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				SubscribeStateClassify = data.data;
+				next();
+			});
+		}
+		function go(){
+			tableOperation = query.simpleQuery({
+				id:'container',
+				url:'/wxsubscribe/search',
+				column:[
+					{id:'weixinSubscribeId',type:'text',name:'素材ID'},
+					{id:'materialClassifyId',type:'enum',name:'分类',map:companyClassify},
+					{id:'title',type:'text',name:'标题'},
+					{id:'remark',type:'text',name:'备注'},
+					{id:'isRelease',type:'enum',name:'是否发布',map:SubscribeStateClassify},
+					{id:'createTime',type:'text',name:'创建时间'},
+					{id:'modifyTime',type:'text',name:'修改时间'}
+				],
+				queryColumn:['title','remark'],
+				operate:[
+				{
+					name:'发布',
+					click:function(data){
+						dialog.confirm('确定发布？!',function(){
+							$.post('/wxsubscribe/SubscribePublish',{weixinSubscribeId:data.weixinSubscribeId},function(data){
+								data = $.JSON.parse(data);
+								if( data.code != 0 ){
+									dialog.message(data.msg);
+									return;
+								}
+								location.href = 'index.html';
+							});
+						});
+					}
+				},
+				{
+					name:'修改',
+					click:function(data){
+						location.href = 'graphic.html?weixinSubscribeId='+data.weixinSubscribeId;
+					}
+				},
+				{
+					name:'删除',
+					click:function(data){
+						dialog.confirm('确认删除该条内容，不可回退操作？!',function(){
+							$.post('/wxsubscribe/del',{weixinSubscribeId:data.weixinSubscribeId},function(data){
+								data = $.JSON.parse(data);
+								if( data.code != 0 ){
+									dialog.message(data.msg);
+									return;
+								}
+								location.href = 'index.html';
+							});
+						});
+					}
+				}
+				],
+				button:[
+				{
+					name:'添加多图文',
+					click:function(){
+						location.href = 'graphic.html';
+					}
+				}
+				],
+			});
+		}
+		getClassify(function(){
+		getSubscribeStateType(function(){
+			go();
+			})
+		});
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

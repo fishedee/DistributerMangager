@@ -1,0 +1,124 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div class="alert alert-danger" role="alert">注意：素材修改成功后，重新发布才生效。<br/>最多只可以加入8条图文消息。<br/>第一张大图片建议尺寸：900像素 * 500像素。第二张开始小图片建议尺寸：200像素 * 200像素。</div>
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var subPage = require('/fishstrap/page/subPage.js');
+		var weixinSubscribeId = $.location.getQueryArgv('weixinSubscribeId');
+		var luckyDraw = {};
+		function get(next){
+			$.get('/wxsubscribe/graphicGet',{weixinSubscribeId:weixinSubscribeId},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				luckyDraw = data.data;
+				next();
+			});
+		}
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'title',type:'text',name:'标题'},
+					{id:'remark',type:'text',name:'备注'},
+					{id:'graphic',type:'table',name:'多图文内容',
+						option:{
+							column:[
+								{id:'Title',type:'text',name:'标题'},
+								{id:'PicUrl',type:'image',name:'图片'},
+								{id:'Url',type:'text',name:'外连接地址'},
+							],
+							operate:[
+							{
+								name:'上移',
+								click:function(data,operation){
+									operation.moveUp();
+								}
+							},
+							{
+								name:'下移',
+								click:function(data,operation){
+									operation.moveDown();
+								}
+							},
+							{
+								name:'修改',
+								click:function(data,operation){
+									subPage.open({
+										title:'修改图文内容',
+										url:$.url.buildQueryUrl('viewCommodity.html',data),
+										close:function(state,data){
+											if( state == 'confirm' ){
+												operation.mod(data);
+											}
+										}
+									});
+								}
+							},
+							{
+								name:'删除',
+								click:function(data,operation){
+									dialog.confirm('确认删除'+data.Title+'?',function(){
+										operation.remove();
+									});
+								}
+							}],
+							button:[{
+								name:'添加',
+								click:function(operation){
+									subPage.open({
+										title:'添加图文内容',
+										url:$.url.buildQueryUrl('viewCommodity.html',{}),
+										close:function(state,data){
+											if( state == 'confirm' ){
+												operation.add([data]);
+											}
+										}
+									});
+								}
+							}]
+						}
+					}
+				],
+				value:luckyDraw,
+				submit:function(data){
+					if( weixinSubscribeId != null ){
+						data = $.extend({weixinSubscribeId:weixinSubscribeId},data);
+						$.post('/wxsubscribe/graphicMod',data,function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							location.href = 'index.html';
+						});
+					}else{
+						$.post('/wxsubscribe/graphicAdd',data,function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							location.href = 'index.html';
+						});
+					}
+				},
+				cancel:function(){
+					location.href = 'index.html';
+				}
+			});
+		}
+		
+			if( weixinSubscribeId != null ){
+				get(go);}
+			else{
+				go();
+			}
+		
+	</script>
+<link rel="import" href="../common/footer.html?__inline">
