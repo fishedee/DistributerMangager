@@ -30,6 +30,53 @@ class UserAppAo extends CI_Model{
 		return $user;
 	}
 
+	public function getTokenAndTicket($userId){
+		//获取userApp
+		$userApp = $this->get($userId);
+		$this->check($userApp);
+
+		//初始化wxSdk
+		$this->load->library('wxSdk',array(
+			'appId'=>$userApp['appId'],
+			'appKey'=>$userApp['appKey'],
+			'appToken'=>''
+		),'wxSdk3');
+
+		//刷新accessToken
+		if( trim($userApp['appAccessToken']) == '' 
+			|| strtotime($userApp['appAccessTokenExpire']) - time() < 60 ){
+			$accessToken = $this->wxSdk3->getAccessToken();
+
+			$this->userAppDb->modByUser($userId,array(
+				'appAccessToken'=>$accessToken['access_token'],
+				'appAccessTokenExpire'=>date('Y-m-d H:i:s',$accessToken['expires_in'] + time())
+			));
+
+			$userApp['appAccessToken'] = $accessToken['access_token'];
+		}
+
+		//刷新jsApiTicket
+		if( trim($userApp['appJsApiTicket']) == '' 
+			|| strtotime($userApp['appJsApiTicketExpire']) - time() < 60 ){
+			$jsApiTicket = $this->wxSdk3->getJsApiTicket($userApp['appAccessToken']);
+
+			$this->userAppDb->modByUser($userId,array(
+				'appJsApiTicket'=>$jsApiTicket['ticket'],
+				'appJsApiTicketExpire'=>date('Y-m-d H:i:s',$jsApiTicket['expires_in'] + time())
+			));
+
+			$userApp['appJsApiTicket'] = $jsApiTicket['ticket'];
+		}
+
+		return $userApp;
+	}
+
+	public function getJsConfig($userId,$url){
+		$tokenAndTicket = $this->getTokenAndTicket($userId);
+
+		return $this->wxSdk3->getJsConfig($tokenAndTicket['appJsApiTicket'],$url);
+	}
+
 	public function check($userApp){
 		if($userApp['appId'] == '')
 			throw new CI_MyException(1,'后台未设置appId，微信商城将不能正常使用');

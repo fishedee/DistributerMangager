@@ -1,11 +1,7 @@
-/*
-* 依赖jquery.js与underscore.js
-* @require ../lib/underscore.js
-* @require ../lib/jquery.js
-*/
+//依赖jquery.js与underscore.js
+var $ = require('../module/jquery.js');
+var _ = require('../module/underscore.js');
 //加入格式扩展
-$ = window['jQuery'];
-_ = window._;
 $.format = {
 	intval:function(){
 		var value = arguments[0] ? arguments[0] : 0;
@@ -580,6 +576,12 @@ $.addCssToHead = function(str_css) {
 //加入地址栏扩展
 (function($){
 	$.location = {
+		getSegment:function(index){
+			var pathname = location.pathname.split('/');
+			if( index + 1 >= pathname.length || index + 1 < 0 )
+				return null;
+			return pathname[index+1];
+		},
 		getQueryArgv:function(name){
 			var reg = new RegExp("(^|[?&])" + name + "=([^&]*)(&|$)", "i");
 			var r = decodeURI(window.location.search).match(reg);
@@ -615,33 +617,4 @@ $.addCssToHead = function(str_css) {
 		}
 	};
 })($);
-//调试模式
-(function(){
-	function enable(callback){
-		window.onerror = function(errorMessage, scriptURI, lineNumber,columnNumber,error) {
-			var stack = '';
-			var msgs = [];
-			var userAgent = '';
-			if( error.stack )
-				stack = error.stack;
-			userAgent = navigator.userAgent;
-			
-			msgs.push("额，代码有错。。。");
-			msgs.push("\n错误信息：" , errorMessage);
-			msgs.push("\n出错文件：" , scriptURI);
-			msgs.push("\n出错位置：" , lineNumber + '行，' + columnNumber + '列');
-			msgs.push("\n调用栈："+stack);
-			msgs.push("\n客户端："+userAgent);
-			msgs.push("\n地址："+location.href);
-			msgs = msgs.join('');
-			if( callback ){
-				callback(msgs);
-			}
-			alert(msgs);
-		}
-	}
-	$.debug = {
-		enable:enable
-	};
-})();
 return $;

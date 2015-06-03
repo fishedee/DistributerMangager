@@ -6,6 +6,7 @@
 	<script type="text/javascript">
 		var $ = require('common/core/core.js');
 		var dialog = require('common/dialog/dialog.js');
+		var wxSdk = require('/fishstrap/module/jweixin.js');
 		var redPack = {};
 		function getRedPack(next){
 			$.get('/redpack/getRedPack',{},function(data){
@@ -33,18 +34,27 @@
 					redPack.nickName,
 					redPack.maxPackNum - redPack.packNum,
 					function(operation){
-						$.get('/redpack/tryRedPack',{},function(data){
+						$.get('/redpack/tryRedPack',{url:location.href},function(data){
 							if( data.code != 0 ){
 								dialog.message(data.msg);
 								return;
 							}
 							operation.remove();
-							dialog.redPackGet(
-								data.data.maxPackNum - data.data.packNum
-								,function(){
-
+							wxSdk.config($.extend(
+								data.data,
+								{
+									debug:false,
+									jsApiList:[
+										'closeWindow'
+									]
 								}
-							);
+							));
+							wxSdk.error(function(){
+								alert('微信接口配置失败，请手动关闭当前网页以查看红包');
+							});
+							wxSdk.ready(function(){
+								wxSdk.closeWindow();
+							});
 						});
 					},
 					function(){

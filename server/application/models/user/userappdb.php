@@ -13,6 +13,10 @@ class UserAppDb extends CI_Model
 		'mchKey'=>'',
 		'mchSslCert'=>'',
 		'mchSslKey'=>'',
+		'appAccessToken'=>'',
+		'appAccessTokenExpire'=>'',
+		'appJsApiTicket'=>'',
+		'appJsApiTicketExpire'=>'',
 		'remark'=>''
 	);
 	public function __construct(){

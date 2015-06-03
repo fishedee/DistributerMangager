@@ -9,6 +9,7 @@ class RedPack extends CI_Controller {
 		$this->load->model('client/clientLoginAo','clientLoginAo');
 		$this->load->model('redpack/redPackAo','redPackAo');
 		$this->load->model('redpack/redPackStateEnum','redPackStateEnum');
+		$this->load->model('user/userAppAo','userAppAo');
 		$this->load->library('argv','argv');
     }
 	
@@ -70,8 +71,10 @@ class RedPack extends CI_Controller {
 		//检查输入参数
 		$data = $this->argv->checkGet(array(
 			array('userId','require'),
+			array('url','require')
 		));
 		$userId = $data['userId'];
+		$url = $data['url'];
 		
 		//检查权限
 		$client = $this->clientLoginAo->checkMustLogin(
@@ -80,7 +83,9 @@ class RedPack extends CI_Controller {
 		$clientId = $client['clientId'];
 		
 		//执行业务逻辑
-		return $this->redPackAo->tryRedPack($userId,$clientId);
+		//$this->redPackAo->tryRedPack($userId,$clientId);
+
+		return $this->userAppAo->getJsConfig($userId,$url);
 	}
 	
 	/**
