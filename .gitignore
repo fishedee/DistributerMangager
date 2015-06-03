@@ -2,6 +2,7 @@
 /data/upload/*
 /static/build
 /server/application/config/database.php
+/server/application/indexp.php
 *.swp
 !/data/log/.gitignore
 !/data/upload/.gitignore

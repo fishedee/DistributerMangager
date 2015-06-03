@@ -3,7 +3,7 @@
 class WxSubscribeEnum extends CI_Model{
 	public $enums = array(
 		array(1,'GRAPHIC','多图文'),
-//      array(2,'wenzi', '单图文'),
+        array(2,'SINGLEGRAPHIC', '单图文'),
 // 		array(2,'tupian', '文字'),
 	);
 	

@@ -92,6 +92,10 @@ class Wxsubscribe extends CI_Controller {
 			$data = $this->argv->checkPost(array(
 					array('title','require'),
 					array('remark','require'),
+					array('Title','require'),
+					array('Description','require'),
+					array('Url','require'),
+					array('PicUrl','require'),
 					array('graphic','option',array()),
 			));
 			
@@ -112,7 +116,12 @@ class Wxsubscribe extends CI_Controller {
 			//检查输入参数
 			$data = $this->argv->checkPost(array(
 					array('weixinSubscribeId','weixinSubscribeId'),
-					array('title','require'),
+					array('title','require'),				
+					array('remark','require'),
+					array('Title','require'),
+					array('Description','require'),
+					array('Url','require'),
+					array('PicUrl','require'),
 					array('remark','require'),
 					array('graphic','option',array()),
 			));

@@ -43,15 +43,15 @@ class Weixin extends CI_Controller {
 // <Event><![CDATA[subscribe]]></Event>
 // </xml>";
 
-		//$this->load->model('weixin/wxreply','wxreply');
-		//$data2=$this->wxreply->responseMsg($xmlTpl);
-		//file_put_contents(dirname(__FILE__).'/out.text', print_r($data2).'1');
-		//return $data2;
-		/*测试end*/
+// 		$this->load->model('weixin/wxreply','wxreply');
+// 		$data2=$this->wxreply->responseMsg($xmlTpl);
+// 		//file_put_contents(dirname(__FILE__).'/out.text', print_r($data2).'1');
+// 		return $data2;
+ 		/*测试end*/
 
 
 		$this->load->model('weixin/wxreply','wxreply');
-		return $this->wxreply->responseMsg();
+ 		return $this->wxreply->responseMsg();
 
 
 		}

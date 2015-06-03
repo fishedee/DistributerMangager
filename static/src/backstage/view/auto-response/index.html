@@ -35,7 +35,7 @@
 				column:[
 					{id:'weixinSubscribeId',type:'text',name:'素材ID'},
 					{id:'materialClassifyId',type:'enum',name:'分类',map:companyClassify},
-					{id:'title',type:'text',name:'标题'},
+					{id:'title',type:'text',name:'消息标题'},
 					{id:'remark',type:'text',name:'备注'},
 					{id:'isRelease',type:'enum',name:'是否发布',map:SubscribeStateClassify},
 					{id:'createTime',type:'text',name:'创建时间'},
@@ -61,8 +61,12 @@
 				{
 					name:'修改',
 					click:function(data){
+						if(data.materialClassifyId == '多图文'){
 						location.href = 'graphic.html?weixinSubscribeId='+data.weixinSubscribeId;
-					}
+						   } else if(data.materialClassifyId == '单图文'){
+						 location.href = 'singleGraphic.html?weixinSubscribeId='+data.weixinSubscribeId;
+						   }
+						}
 				},
 				{
 					name:'删除',
@@ -85,6 +89,12 @@
 					name:'添加多图文',
 					click:function(){
 						location.href = 'graphic.html';
+					}
+				},
+				{
+					name:'添加单图文',
+					click:function(){
+						location.href = 'singleGraphic.html';
 					}
 				}
 				],

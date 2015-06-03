@@ -2,7 +2,7 @@
 
 class WxSubscribeStateEnum extends CI_Model{
 	public $enums = array(
-		array(1,'NOT-RELEASE','未发布'),
+		array(1,'NOTRELEASE','未发布'),
         array(2,'PUBLISHED', '已发布'),
 	);
 	

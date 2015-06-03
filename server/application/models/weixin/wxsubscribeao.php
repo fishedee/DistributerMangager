@@ -19,7 +19,13 @@ class WxSubscribeAo extends CI_Model {
 		$graphic = $this->wxSubscribeDb->graphicGet($weixinSubscribeId);
 		if( $graphic['userId'] != $userId )
 			throw new CI_MyException(1,'没有权限查看此素材');
-		$graphic['graphic'] = $this->wxMaterialDb->getByWeixinSubscribeId($weixinSubscribeId);
+		if(strstr($_SERVER['HTTP_REFERER'], 'graphic')){
+			$graphic['graphic'] = $this->wxMaterialDb->getByWeixinSubscribeId($weixinSubscribeId);
+		}elseif(strstr($_SERVER['HTTP_REFERER'], 'singleGraphic')){
+			$materialData=$this->wxMaterialDb->getByWeixinSubscribeId($weixinSubscribeId)[0];
+			$graphic=array_merge($graphic,$materialData);
+		}
+		
 	
 		return $graphic;
 	}
@@ -36,22 +42,34 @@ class WxSubscribeAo extends CI_Model {
 		
 		//添加Subscribe列表
 		$data['userId'] = $userId;
-		$data['materialClassifyId'] = $this->wxSubscribeEnum->GRAPHIC;
+		if(strstr($_SERVER['HTTP_REFERER'], 'graphic')){
+			$data['materialClassifyId'] = $this->wxSubscribeEnum->GRAPHIC;
+		}elseif(strstr($_SERVER['HTTP_REFERER'], 'singleGraphic')){
+			$data['materialClassifyId'] = $this->wxSubscribeEnum->SINGLEGRAPHIC;
+		}
 		$data['isRelease']= '1';//未发布状态
 		$weixinSubscribeId = $this->wxSubscribeDb->add($data);
 		
-		//添加图文
+		//添加多图文
 		$material = array();
 		$sort = 1 ;
-		foreach( $data['graphic'] as $singleMaterial ){
-			$material[] = array_merge(
+		if(strstr($_SERVER['HTTP_REFERER'], 'graphic')){
+				foreach( $data['graphic'] as $singleMaterial ){
+					$material[] = array_merge(
 					$singleMaterial,
 					array(
 							'weixinSubscribeId'=>$weixinSubscribeId,
 							'sort'=>$sort++
 					)
-			);
+					);
+				}
+		}elseif(strstr($_SERVER['HTTP_REFERER'], 'singleGraphic')){
+			$data['weixinSubscribeId'] = $weixinSubscribeId;
+			$data['sort'] = $sort;
+			unset($data['graphic']);
+			$material[]=$data;
 		}
+
 		
 		$this->wxMaterialDb->addBatch($material);
 	

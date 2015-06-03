@@ -71,12 +71,12 @@ class Wxreply extends CI_Model {
     			$result = "unknown msg type: ".$RX_TYPE;
     			break;
     	}
-    	//file_put_contents(dirname(__FILE__).'/out.text', $result.'1');
+    	//file_put_contents(dirname(__FILE__).'/out.text', var_export($result,TRUE));
     	echo $result;
     }
     
     //找多图文内容
-    public function graphic($postObj){
+    public function content($postObj){
     	//搜索userId
     	$weixinNum=$postObj->ToUserName;
     	$this->load->model('user/userAppDb','userAppDb');
@@ -92,11 +92,16 @@ class Wxreply extends CI_Model {
     	$materialClassifyId=$weixinSubscribe['materialClassifyId'];
     	
     	$graphic=$this->wxSubscribeAo->graphicSearch($userId,$weixinSubscribeId);
-    	//file_put_contents(dirname(__FILE__).'/out.text', print_r($postObj));
+    	//file_put_contents(dirname(__FILE__).'/out.text', var_export($graphic,TRUE));
     	//print_r($graphic);die();
 
     	switch ($materialClassifyId){
+    		//多图文
     		case 1:
+    			return $this->transmitNews($postObj,$graphic);
+    			break;
+    		//单图文
+    		case 2:
     			return $this->transmitNews($postObj,$graphic);
     			break;
     	}
@@ -110,14 +115,13 @@ class Wxreply extends CI_Model {
         switch ($object->Event)
         {
             case "subscribe":
-            	return $this->graphic($object);
+            	return $this->content($object);
             	
                  break;
             
         }
         
        //print_r($result);
-        return $result;
     }
 
     //接收文本消息
@@ -292,7 +296,7 @@ $item_str
     {
     	$content = array();
     	foreach ($graphic as $v){
-    		$content[] = array("Title"=>$v['Title'], "Description"=>"", "PicUrl"=>'http://'.$_SERVER[HTTP_HOST].$v['PicUrl'], "Url" =>$v['Url']);
+    		$content[] = array("Title"=>$v['Title'], "Description"=>$v['Description'], "PicUrl"=>'http://'.$_SERVER[HTTP_HOST].$v['PicUrl'], "Url" =>$v['Url']);
     	}
     	
     	

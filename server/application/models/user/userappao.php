@@ -98,7 +98,7 @@ class UserAppAo extends CI_Model{
 	
 	public function checkWeixinNum($userApp){
 		if($userApp['weixinNum'] == '')
-			throw new CI_MyException(1,'后台未设置后台微信号，微信自动回复和自定义菜单将不能正常使用');
+			throw new CI_MyException(1,'后台未设置微信原始ID，该微信功能将不能正常使用');
 	}
 
 	public function checkByUserId($userId){
@@ -123,6 +123,14 @@ class UserAppAo extends CI_Model{
 			),array());
 			if( $user['count'] != 0 && $user['data'][0]['userId'] != $userId)
 				throw new CI_MyException(1,'该公众号的mchId已经被其它商城占用了，请重新设置其它的mchId');
+		}
+		
+		if(isset($data['weixinNum']) && trim($data['weixinNum']) != ''){
+			$user = $this->userAppDb->search(array(
+				'weixinNum'=>$data['weixinNum']
+			),array());
+			if( $user['count'] != 0 && $user['data'][0]['userId'] != $userId)
+				throw new CI_MyException(1,'该微信号已经被其它商城占用了，请重新设置其它的mchId');
 		}
 
 		return $this->userAppDb->modByUser($userId,$data);
