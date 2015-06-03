@@ -89,15 +89,25 @@ class Wxsubscribe extends CI_Controller {
 		public function graphicAdd()
 		{
 			//检查输入参数
-			$data = $this->argv->checkPost(array(
-					array('title','require'),
+			if(strstr($_SERVER['HTTP_REFERER'], 'graphic')){
+				$data = $this->argv->checkPost(array(
+					array('title','require'),				
 					array('remark','require'),
+					array('graphic','option',array()),
+				));
+			
+			}elseif(strstr($_SERVER['HTTP_REFERER'], 'singleGraphic')){
+				$data = $this->argv->checkPost(array(
+					array('title','require'),				
 					array('Title','require'),
 					array('Description','require'),
 					array('Url','require'),
 					array('PicUrl','require'),
+					array('remark','require'),
 					array('graphic','option',array()),
-			));
+				));
+			
+			}
 			
 			//检查权限
 			$userId = $this->loginAo->checkMustLogin();
@@ -114,17 +124,27 @@ class Wxsubscribe extends CI_Controller {
 		 */
 		public function graphicMod(){
 			//检查输入参数
-			$data = $this->argv->checkPost(array(
+			if(strstr($_SERVER['HTTP_REFERER'], 'graphic')){
+				$data = $this->argv->checkPost(array(
 					array('weixinSubscribeId','weixinSubscribeId'),
 					array('title','require'),				
 					array('remark','require'),
+					array('graphic','option',array()),
+				));
+			
+			}elseif(strstr($_SERVER['HTTP_REFERER'], 'singleGraphic')){
+				$data = $this->argv->checkPost(array(
+					array('weixinSubscribeId','weixinSubscribeId'),
+					array('title','require'),				
 					array('Title','require'),
 					array('Description','require'),
 					array('Url','require'),
 					array('PicUrl','require'),
 					array('remark','require'),
 					array('graphic','option',array()),
-			));
+				));
+			
+			}
 			
 			//检查权限
 			$userId = $this->loginAo->checkMustLogin();
