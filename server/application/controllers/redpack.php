@@ -83,7 +83,7 @@ class RedPack extends CI_Controller {
 		$clientId = $client['clientId'];
 		
 		//执行业务逻辑
-		//$this->redPackAo->tryRedPack($userId,$clientId);
+		$this->redPackAo->tryRedPack($userId,$clientId);
 
 		return $this->userAppAo->getJsConfig($userId,$url);
 	}
