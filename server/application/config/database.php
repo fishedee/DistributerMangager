@@ -48,10 +48,10 @@
 $active_group = 'default';
 $query_builder = TRUE;
 
-$db['default']['hostname'] = 'localhost';
-$db['default']['username'] = 'root';
-$db['default']['password'] = 'milkbobo';
-$db['default']['database'] = 'DistributerManager';
+$db['default']['hostname'] = 'rdsjm7rqf3qrfuy.mysql.rds.aliyuncs.com';
+$db['default']['username'] = 'fish';
+$db['default']['password'] = 'lijinwei1101';
+$db['default']['database'] = 'dealer2';
 $db['default']['dbdriver'] = 'mysqli';
 $db['default']['dbprefix'] = '';
 $db['default']['pconnect'] = FALSE;
