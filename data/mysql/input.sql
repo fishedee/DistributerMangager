@@ -427,6 +427,7 @@ create table t_red_pack(
     actName varchar(128) not null,#活动名称
     remark varchar(128) not null,#备注
     redPackRuleImage varchar(128) not null,
+    redPackNoneTip varchar(128) not null,#没有红包时的提示
     state integer not null,
     createTime timestamp not null default CURRENT_TIMESTAMP,
     modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
@@ -612,8 +613,8 @@ insert into t_lucky_draw_commodity(luckyDrawId,title,image,type,quantity,sort)va
 insert into t_vip(userId,cardImage)values
 (10003,'/data/upload/sample/vip.jpg');
 
-insert into t_red_pack(userId,nickName,minMoney,maxMoney,wishing,actName,remark,state,maxPackNum,redPackRuleImage)values
-(10003,'至高商城',100,100,'红包','红包','红包',1,10,'/data/upload/sample/redpackrule.jpg');
+insert into t_red_pack(userId,nickName,minMoney,maxMoney,wishing,actName,remark,state,maxPackNum,redPackRuleImage,redPackNoneTip)values
+(10003,'至高商城',100,100,'红包','红包','红包',1,10,'/data/upload/sample/redpackrule.jpg','迟来一步，红包都被禽兽抢光了');
 
 #显示初始数据
 select * from t_user;

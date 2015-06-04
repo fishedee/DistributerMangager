@@ -74,6 +74,8 @@ class RedPackAo extends CI_Model
 
 			if( trim($data['redPackRuleImage']) == '' )
 				throw new CI_MyException(1,'请输入红包说明的图片');
+			if( trim($data['redPackNoneTip']) == '')
+				throw new CI_MyException(1,'请输入红包发完时的提示');
 
 			$userApp = $this->userAppAo->get($userId);
 
@@ -91,24 +93,38 @@ class RedPackAo extends CI_Model
 	}
 
 	public function getRedPack( $userId,$clientId){
+		$redPack = array(
+			'canGet'=>true,
+			'hasGet'=>false,
+			'canGetTip'=>''
+		);
 		$redPackInfo = $this->getSetting($userId);
-		if( $redPackInfo['state'] != $this->redPackStateEnum->OPEN)
-			throw new CI_MyException(1,'企业没有开通红包呢');
-		if( $redPackInfo['packNum'] >= $redPackInfo['maxPackNum'] )
-			throw new CI_MyException(1,'迟来一步了，红包已经发完了～');
-		$nowHour = intval(date('H',time()));
-		if( $nowHour >= 0 && $nowHour <= 8 )
-			throw new CI_MyException(1,'早上0点到8点之间不能发放红包噢');
+		if( $redPackInfo['state'] != $this->redPackStateEnum->OPEN){
+			$redPack['canGet'] = false;
+			$redPack['canGetTip'] = '企业没有开通红包呢';
+		}else if( $redPackInfo['packNum'] >= $redPackInfo['maxPackNum'] ){
+			$redPack['canGet'] = false;
+			$redPack['canGetTip'] = $redPackInfo['redPackNoneTip'];
+		}else{
+			$nowHour = intval(date('H',time()));
+			if( $nowHour >= 0 && $nowHour <= 8 ){
+				$redPack['canGet'] = false;
+				$redPack['canGetTip'] = '早上0点到8点之间不能发放红包噢';
+			}
+		}
 
 		$redPackClientInfo = $this->redPackClientDb->search(array(
 			'redPackId'=>$redPackInfo['redPackId'],
 			'clientId'=>$clientId
 		),array());
 
-		if($redPackClientInfo['count'] != 0 )
-			return array_merge($redPackInfo,array('hasGet'=>true));
+		if($redPackClientInfo['count'] != 0 ){
+			$redPack['canGet'] = false;
+			$redPack['hasGet'] = true;
+			$redPack['canGetTip'] = '你已经领取过该红包了';
+		}
 
-		return array_merge($redPackInfo,array('hasGet'=>false));
+		return array_merge($redPackInfo,$redPack);
 	}
 
 	public function tryRedPack( $userId, $clientId ){
@@ -130,6 +146,8 @@ class RedPackAo extends CI_Model
 
 		//计算发放金额
 		$redPackInfo = $this->getRedPack($userId,$clientId);
+		if( $redPackInfo['canGet'] == false )
+			throw new CI_MyException(1,$redPackInfo['canGetTip']);
 
 		$money = mt_rand($redPackInfo['minMoney'],$redPackInfo['maxMoney']);
 

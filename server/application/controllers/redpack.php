@@ -12,6 +12,21 @@ class RedPack extends CI_Controller {
 		$this->load->model('user/userAppAo','userAppAo');
 		$this->load->library('argv','argv');
     }
+
+    /**
+    * @view json
+    */
+    public function getJsConfig(){
+    	//检查输入参数
+		$data = $this->argv->checkGet(array(
+			array('userId','require'),
+			array('url','require')
+		));
+		$userId = $data['userId'];
+		$url = $data['url'];
+    	
+    	return $this->userAppAo->getJsConfig($userId,$url);
+    }
 	
 	/**
 	* @view json
@@ -70,11 +85,9 @@ class RedPack extends CI_Controller {
 	{
 		//检查输入参数
 		$data = $this->argv->checkGet(array(
-			array('userId','require'),
-			array('url','require')
+			array('userId','require')
 		));
 		$userId = $data['userId'];
-		$url = $data['url'];
 		
 		//检查权限
 		$client = $this->clientLoginAo->checkMustLogin(
@@ -83,9 +96,7 @@ class RedPack extends CI_Controller {
 		$clientId = $client['clientId'];
 		
 		//执行业务逻辑
-		$this->redPackAo->tryRedPack($userId,$clientId);
-
-		return $this->userAppAo->getJsConfig($userId,$url);
+		return $this->redPackAo->tryRedPack($userId,$clientId);
 	}
 	
 	/**
@@ -118,7 +129,8 @@ class RedPack extends CI_Controller {
 			array('remark','require'),
 			array('state','require'),
 			array('maxPackNum','require'),
-			array('redPackRuleImage','require')
+			array('redPackRuleImage','require'),
+			array('redPackNoneTip','require'),
 		));
 		
 		//检查权限
