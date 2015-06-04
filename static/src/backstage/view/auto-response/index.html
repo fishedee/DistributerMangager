@@ -65,6 +65,8 @@
 						location.href = 'graphic.html?weixinSubscribeId='+data.weixinSubscribeId;
 						   } else if(data.materialClassifyId == '单图文'){
 						 location.href = 'singleGraphic.html?weixinSubscribeId='+data.weixinSubscribeId;
+						   }else if(data.materialClassifyId == '文字'){
+						 location.href = 'theText.html?weixinSubscribeId='+data.weixinSubscribeId;
 						   }
 						}
 				},
@@ -95,6 +97,12 @@
 					name:'添加单图文',
 					click:function(){
 						location.href = 'singleGraphic.html';
+					}
+				},
+				{
+					name:'添加文字',
+					click:function(){
+						location.href = 'theText.html';
 					}
 				}
 				],

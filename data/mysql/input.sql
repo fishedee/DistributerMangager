@@ -467,7 +467,7 @@ alter table t_weixin_subscribe add index userIdIndex(userId);
 create table t_weixin_material(
 	materialId integer not null auto_increment,
 	weixinSubscribeId int not null,
-	Title varchar(128) not null,
+	Title varchar(128),
 	Description varchar(128),
 	Url varchar(256),
 	PicUrl varchar(128),

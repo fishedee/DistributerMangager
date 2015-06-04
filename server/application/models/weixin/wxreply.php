@@ -104,6 +104,11 @@ class Wxreply extends CI_Model {
     		case 2:
     			return $this->transmitNews($postObj,$graphic);
     			break;
+    		//单图文
+    		case 3:
+    			return $this->transmitText($postObj,$graphic[0]['Description']);
+    			break;
+    				 
     	}
     	
     }

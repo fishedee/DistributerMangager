@@ -104,7 +104,13 @@ class Wxsubscribe extends CI_Controller {
 					array('Url','require'),
 					array('PicUrl','require'),
 					array('remark','require'),
-					array('graphic','option',array()),
+				));
+			
+			}elseif(strstr($_SERVER['HTTP_REFERER'], 'theText')){
+				$data = $this->argv->checkPost(array(
+					array('title','require'),	
+					array('remark','require'),
+					array('Description','require'),
 				));
 			
 			}
@@ -142,6 +148,13 @@ class Wxsubscribe extends CI_Controller {
 					array('PicUrl','require'),
 					array('remark','require'),
 					array('graphic','option',array()),
+				));
+			
+			}elseif(strstr($_SERVER['HTTP_REFERER'], 'theText')){
+				$data = $this->argv->checkPost(array(
+					array('title','require'),	
+					array('remark','require'),
+					array('Description','require'),
 				));
 			
 			}

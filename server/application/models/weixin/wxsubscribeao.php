@@ -24,6 +24,9 @@ class WxSubscribeAo extends CI_Model {
 		}elseif(strstr($_SERVER['HTTP_REFERER'], 'singleGraphic')){
 			$materialData=$this->wxMaterialDb->getByWeixinSubscribeId($weixinSubscribeId)[0];
 			$graphic=array_merge($graphic,$materialData);
+		}elseif(strstr($_SERVER['HTTP_REFERER'], 'theText')){
+			$materialData=$this->wxMaterialDb->getByWeixinSubscribeId($weixinSubscribeId)[0];
+			$graphic=array_merge($graphic,$materialData);
 		}
 		
 	
@@ -46,6 +49,8 @@ class WxSubscribeAo extends CI_Model {
 			$data['materialClassifyId'] = $this->wxSubscribeEnum->GRAPHIC;
 		}elseif(strstr($_SERVER['HTTP_REFERER'], 'singleGraphic')){
 			$data['materialClassifyId'] = $this->wxSubscribeEnum->SINGLEGRAPHIC;
+		}elseif(strstr($_SERVER['HTTP_REFERER'], 'theText')){
+			$data['materialClassifyId'] = $this->wxSubscribeEnum->THETEXT;
 		}
 		$data['isRelease']= '1';//未发布状态
 		$weixinSubscribeId = $this->wxSubscribeDb->add($data);
@@ -64,6 +69,11 @@ class WxSubscribeAo extends CI_Model {
 					);
 				}
 		}elseif(strstr($_SERVER['HTTP_REFERER'], 'singleGraphic')){
+			$data['weixinSubscribeId'] = $weixinSubscribeId;
+			$data['sort'] = $sort;
+			unset($data['graphic']);
+			$material[]=$data;
+		}elseif(strstr($_SERVER['HTTP_REFERER'], 'theText')){
 			$data['weixinSubscribeId'] = $weixinSubscribeId;
 			$data['sort'] = $sort;
 			unset($data['graphic']);

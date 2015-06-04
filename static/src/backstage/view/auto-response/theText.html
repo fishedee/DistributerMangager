@@ -25,17 +25,7 @@
 				field:[
 					{id:'title',type:'text',name:'消息标题'},
 					{id:'remark',type:'text',name:'备注'},
-					{id:'PicUrl',type:'image',name:'图片',
-						option:{
-							url:'/upload/image',
-							width:900
-						}
-					},
-					{id:'Title',type:'text',name:'单图文标题'},
-					{id:'Description',type:'text',name:'描述'},
-					{id:'Url',type:'text',name:'外部链接'},
-
-					
+					{id:'Description',type:'area',name:'文字内容'},			
 				],
 				value:classify,
 				submit:function(data){
