@@ -203,5 +203,17 @@ class Wxsubscribe extends CI_Controller {
 			return $this->wxSubscribeAo->del($userId,$data['weixinSubscribeId']);
 		}
 		
+		/**
+		 * @view json
+		 * 获取已发布信息
+		 */
+		public function getMysubscribe(){
+			//检查权限
+			$userId = $this->loginAo->checkMustLogin();
+			$userId = $userId['userId'];
+			
+			//执行业务逻辑
+			return $this->wxSubscribeAo->getMysubscribe($userId);
+		}
 		
 }

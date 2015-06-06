@@ -61,14 +61,14 @@ class WxSubscribeDb extends CI_Model
 	
 	/*发布被关注内容*/
 	public function publish($userId,$weixinSubscribeId){
-		//先全部设置为发布
+		//先全部设置为未发布
 		$this->db->where("userId", $userId);
-		$data=(array(isRelease=>1));
+		$data=array('isRelease'=>1);
 		$this->db->update($this->tableName, $data);
 		//后单独那个发布
 		$this->db->where("userId", $userId);
 		$this->db->where("weixinSubscribeId", $weixinSubscribeId);
-		$data=(array(isRelease=>2));
+		$data=array('isRelease'=>2);
 		$this->db->update($this->tableName, $data);
 	}
 	

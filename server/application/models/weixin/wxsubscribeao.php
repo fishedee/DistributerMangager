@@ -15,7 +15,7 @@ class WxSubscribeAo extends CI_Model {
 	}
 	
 	public function graphicGet($userId,$weixinSubscribeId){
-		//拉多图文信息
+		//拉取素材资料
 		$graphic = $this->wxSubscribeDb->graphicGet($weixinSubscribeId);
 		if( $graphic['userId'] != $userId )
 			throw new CI_MyException(1,'没有权限查看此素材');
@@ -97,6 +97,12 @@ class WxSubscribeAo extends CI_Model {
 		$this->wxMaterialDb->del($weixinSubscribeId,$data);//第二参数，更新文件状态
 	}
 
-	
+	/*获取被关注列表*/
+	public function getMysubscribe($userId){
+		//拉取素材资料，获取已发布信息。
+		$data['userId']=$userId;
+		$data['isRelease']=2;//已发布
+		return $this->wxSubscribeDb->search($data,array())['data'][0];
+	}
 	}
 ?>

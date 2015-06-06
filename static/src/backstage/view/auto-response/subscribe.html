@@ -1,0 +1,81 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var subPage = require('/fishstrap/page/subPage.js');
+		var subscribeData = {};
+		function get(next){
+			$.get('/wxsubscribe/getMysubscribe',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				getMysubscribe = data.data;
+				if( getMysubscribe != 0 ){
+					subscribeData = [data.data];
+				}else{
+					subscribeData = [];
+				}
+				next(); 
+			});
+		}
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'subscribeData',type:'table',name:'模板',
+						option:{
+							column:[
+								{name:'素材ID',type:'text',id:'weixinSubscribeId'},
+								{name:'素材标题',type:'text',id:'title'},
+								{name:'备注',type:'text',id:'remark'}
+							],
+							operate:[{
+								name:'删除',
+								click:function(data,operation){
+									operation.remove();
+								}
+							}],
+							button:[{
+								name:'选择素材',
+								click:function(operation){
+									subPage.open({
+										title:'选择素材',
+										url:'index.html?check=true',
+										close:function(state,data){
+											if( state == 'confirm' ){
+												operation.clear();
+												if( data.length != 0 )
+													operation.add([data[0]]);
+											}
+										}
+									});
+								}
+							}]
+						}
+					}
+				],
+				value:{subscribeData:subscribeData},
+				submit:function(data){
+					var weixinSubscribeId = 0;
+					if( data.subscribeData.length != 0 )
+						weixinSubscribeId = data.subscribeData[0].weixinSubscribeId;
+					$.post('/wxsubscribe/SubscribePublish',{weixinSubscribeId:weixinSubscribeId},function(data){
+						data = $.JSON.parse(data);
+						if( data.code != 0 ){
+							dialog.message(data.msg);
+							return;
+						}
+						location.reload();
+					});
+				},
+				cancel:undefined
+			});
+		}
+		get(go);
+	</script>
+<link rel="import" href="../common/footer.html?__inline">
