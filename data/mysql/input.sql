@@ -478,6 +478,15 @@ create table t_weixin_material(
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
 alter table t_weixin_material add index weixinSubscribeIdIndex(weixinSubscribeId);
 
+#微信自定义菜单
+create table t_weixin_menu(
+	menuId integer not null auto_increment,
+	userId int,
+	content text,
+	primary key(menuId)
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+alter table t_weixin_menu add index weixinmenuIndex(userId);
+
 #建立初始数据
 insert into t_user(userId,name,password,company,phone,type,downDistributionNum) values
 (10001,"fish","$2y$10$xKsYkwOJFQo2Ack68DqZuebTX99IgHL0lYBKmpwQpkxqzhJbKYgMG",'烘焙帮信息科技有限公司','15018749403',1,0),

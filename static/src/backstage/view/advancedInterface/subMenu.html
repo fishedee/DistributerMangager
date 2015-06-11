@@ -1,0 +1,41 @@
+<link rel="import" href="../common/header.html?__inline">
+<div id="container">
+</div>
+<script type="text/javascript">
+	var $ = require('/fishstrap/core/global.js');
+	var dialog = require('/fishstrap/ui/dialog.js');
+	var input = require('/fishstrap/ui/input.js');
+	var name = $.location.getQueryArgv('name');
+	var url = $.location.getQueryArgv('url');
+	var data = {};
+	var allType = {};
+	if(name!=null && url!=null){
+		data = {
+			name:name,
+			url:url,
+		};
+	}
+	function whenWindowClose(mode,operation){
+		if( mode == 'confirm'){
+			var data = inputOperation.get();
+			data.typeName = allType[data.type];
+			operation.close(data);
+		}else{
+			operation.close({});
+		}
+	}
+	function go(){
+		inputOperation = input.verticalInput({
+			id:'container',
+			field:[
+				{id:'name',type:'text',name:'标题'},
+				{id:'url',type:'text',name:'外连接地址'},
+			],
+			value:data,
+			submit:undefined,
+			cancel:undefined
+		});
+	}
+		go();
+</script>
+<link rel="import" href="../common/footer.html?__inline">
