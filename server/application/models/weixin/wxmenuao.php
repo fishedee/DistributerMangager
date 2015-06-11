@@ -22,8 +22,12 @@ class WxMenuAo extends CI_Model
 
 		$data = $this->wxMenuDb->getByUserId($userId)[0]['content'];
 		$data=json_decode($data,true);
+		if($data == null){
+			return '';
+		}else {
+			return $data;
+		}
 
-		return $data;
 	}
 
 	public function setSetting($userId,$data='',$mysqlData){
