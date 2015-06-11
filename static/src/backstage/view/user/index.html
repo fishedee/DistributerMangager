@@ -44,6 +44,19 @@
 				queryColumn:['name','type'],
 				operate:[
 				{
+					name:'进入账号',
+					click:function(data){
+						$.post('/user/comeuser',{userId:data.userId},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							top.location.href = '/backstage/index.html';
+						});
+					}
+				},
+				{
 					name:'修改',
 					click:function(data){
 						location.href = 'viewByAdmin.html?userId='+data.userId;

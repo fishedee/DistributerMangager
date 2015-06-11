@@ -293,6 +293,28 @@ class User extends CI_Controller {
 			$data['newPassword']
 		);
 	}
+	
+	/**
+	 * @view json
+	 * 进入该会员账号
+	 */
+	public function comeuser()
+	{
+		//检查输入参数
+		$data = $this->argv->checkPost(array(
+				array('userId','require'),
+		));
+		$userId = $data['userId'];
+	
+		//检查权限
+		$loginUser = $this->loginAo->checkMustLogin();
+		if(!($loginUser['type'] == $this->userTypeEnum->ADMIN))
+			throw new CI_MyException(1,"只有管理员才能进入会员账号。");
+	
+		//执行业务逻辑
+		$this->session->unset_userdata('userId');
+		$this->session->set_userdata('userId',$userId);
+	}
 }
 
 /* End of file welcome.php */
