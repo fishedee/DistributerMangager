@@ -71,8 +71,8 @@ class WxMenuAo extends CI_Model
  		$appAccessToken = $this->userAppAo->getTokenAndTicket($userId)['appAccessToken'];
  		
  		//初始化sdk
- 		$this->load->library('wxSdk',array(),'wxSdk');
- 		$this->wxSdk->setMenu($appAccessToken,$data);
+ 		$this->load->library('wxSdk',array(),'wxSdk_Menu');
+ 		$this->wxSdk_Menu->setMenu($appAccessToken,$data);
 	}
 
 	public function isUrl($s){
