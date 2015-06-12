@@ -19,7 +19,7 @@ class WxSubscribeDb extends CI_Model
 		foreach( $where as $key=>$value ){
 			if( $key == "title" || $key == "remark")
 				$this->db->like($key,$value);
-			else if( $key == "userId" || $key == "isRelease")
+			else if( $key == "userId" || $key == "isRelease" || $key == "weixinSubscribeId")
 				$this->db->where($key,$value);
 		}
 		
@@ -28,7 +28,7 @@ class WxSubscribeDb extends CI_Model
 		foreach( $where as $key=>$value ){
 			if( $key == "title" || $key == "remark")
 				$this->db->like($key,$value);
-			else if( $key == "userId" || $key == "isRelease")
+			else if( $key == "userId" || $key == "isRelease" || $key == "weixinSubscribeId")
 				$this->db->where($key,$value);
 		}
 			

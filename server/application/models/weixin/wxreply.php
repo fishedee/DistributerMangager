@@ -30,7 +30,7 @@ class Wxreply extends CI_Model {
         }
     	//$postStr = $GLOBALS["HTTP_RAW_POST_DATA"];
     	//print_r($postStr);die();
-       //file_put_contents(dirname(__FILE__).'/come.text', $postStr.'1');
+       //file_put_contents(dirname(__FILE__).'/come.text',var_export($postStr,TRUE));
         if (!empty($postStr)){
             $postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
             $this->fenlei($postObj);
@@ -71,11 +71,11 @@ class Wxreply extends CI_Model {
     			$result = "unknown msg type: ".$RX_TYPE;
     			break;
     	}
-    	//file_put_contents(dirname(__FILE__).'/out.text', var_export($result,TRUE));
+    	file_put_contents(dirname(__FILE__).'/out.text', var_export($result,TRUE));
     	echo $result;
     }
     
-    //找多图文内容
+    //找回复内容
     public function content($postObj){
     	//搜索userId
     	$weixinNum=$postObj->ToUserName;
@@ -83,15 +83,27 @@ class Wxreply extends CI_Model {
     	$userId = $this->userAppDb->search(array('weixinNum'=>$weixinNum),array())['data'][0]['userId'];
     	
     
-    	//搜索已发布的
+    	//搜索要回复的素材
     	$this->load->model('weixin/wxSubscribeAo','wxSubscribeAo');
-    	$weixinSubscribe=$this->wxSubscribeAo->search($userId,array('isRelease'=>2),'')['data'][0];//'isRelease'=>2 已发布
+    	switch ($postObj->Event)
+    	{
+    		case "subscribe":
+    			$weixinSubscribe=$this->wxSubscribeAo->search($userId,array('isRelease'=>2),'')['data'][0];//'isRelease'=>2 已发布
+    			$weixinSubscribeId=$weixinSubscribe['weixinSubscribeId'];
+    			break;
+    		case "CLICK":
+    			$weixinSubscribe=$this->wxSubscribeAo->search($userId,array('weixinSubscribeId'=>$postObj->EventKey),'')['data'][0];
+    			break;
+    	
+    	}
     	$weixinSubscribeId=$weixinSubscribe['weixinSubscribeId'];
     	
     	//materialClassifyId要回复的类型
     	$materialClassifyId=$weixinSubscribe['materialClassifyId'];
     	
     	$graphic=$this->wxSubscribeAo->graphicSearch($userId,$weixinSubscribeId);
+    	if (count($graphic) == 0)return $this->transmitText($postObj,'不存在该素材，请联系该公众号修改。');
+    	
     	//file_put_contents(dirname(__FILE__).'/out.text', var_export($graphic,TRUE));
     	//print_r($graphic);die();
 
@@ -121,8 +133,10 @@ class Wxreply extends CI_Model {
         {
             case "subscribe":
             	return $this->content($object);
-            	
-                 break;
+                break;
+            case "CLICK":
+            	return $this->content($object);
+                break;
             
         }
         

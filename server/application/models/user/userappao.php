@@ -81,7 +81,7 @@ class UserAppAo extends CI_Model{
 		if($userApp['appId'] == '')
 			throw new CI_MyException(1,'后台未设置appId，微信商城将不能正常使用');
 		if($userApp['appKey'] == '')
-			throw new CI_MyException(1,'后台未设置appId，微信商城将不能正常使用');
+			throw new CI_MyException(1,'后台未设置appKey，微信商城将不能正常使用');
 		if($userApp['mchId'] == '')
 			throw new CI_MyException(1,'后台未设置mchId，微信支付将不能正常使用');
 		if($userApp['mchKey'] == '')
@@ -97,6 +97,13 @@ class UserAppAo extends CI_Model{
 	}
 	
 	public function checkWeixinNum($userApp){
+		if($userApp['appId'] == '')
+			throw new CI_MyException(1,'后台未设置appId，自定义菜单等功能将不能正常使用');
+		if($userApp['appKey'] == '')
+			throw new CI_MyException(1,'后台未设置appKey，自定义菜单等功能不能正常使用');
+	}
+	
+	public function checkAppIdAppKey($userApp){
 		if($userApp['weixinNum'] == '')
 			throw new CI_MyException(1,'后台未设置微信原始ID，该微信功能将不能正常使用');
 	}

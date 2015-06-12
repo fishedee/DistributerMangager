@@ -92,7 +92,7 @@ class WxSubscribeAo extends CI_Model {
 	}
 	
 	/*删除被关注内容*/
-	public function del($userId,$weixinSubscribeId,$data){
+	public function del($userId,$weixinSubscribeId,$data=null){
 		$this->wxSubscribeDb->del($userId,$weixinSubscribeId);
 		$this->wxMaterialDb->del($weixinSubscribeId,$data);//第二参数，更新文件状态
 	}

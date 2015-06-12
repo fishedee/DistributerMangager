@@ -32,7 +32,7 @@ class WxMaterialDb extends CI_Model
 	
 	/*删除被关注内容*/
 	//第二参数，更新文件状态
-	public function del($weixinSubscribeId,$data){
+	public function del($weixinSubscribeId,$data=null){
 		$this->db->where("weixinSubscribeId",$weixinSubscribeId);
 		$this->db->select('PicUrl');
 		$Material=$this->db->get($this->tableName)->result_array();
