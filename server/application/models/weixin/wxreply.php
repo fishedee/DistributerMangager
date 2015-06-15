@@ -102,7 +102,7 @@ class Wxreply extends CI_Model {
     	$materialClassifyId=$weixinSubscribe['materialClassifyId'];
     	
     	$graphic=$this->wxSubscribeAo->graphicSearch($userId,$weixinSubscribeId);
-    	if (count($graphic) == 0)return $this->transmitText($postObj,'不存在该素材，请联系该公众号修改。');
+    	if (count($graphic) == 0)return $this->transmitText($postObj,'寻找不到素材，请检查微信原始ID是否填写正确，是否有该素材，请联系该公众号修改。');
     	
     	//file_put_contents(dirname(__FILE__).'/out.text', var_export($graphic,TRUE));
     	//print_r($graphic);die();
