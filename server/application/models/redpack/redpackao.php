@@ -57,12 +57,24 @@ class RedPackAo extends CI_Model
 		if($data['state'] == $this->redPackStateEnum->OPEN ){
 			if( trim($data['nickName']) == '' )
 				throw new CI_MyException(1,'请输入商户名称');
+			if( strlen($data['nickName']) >= 128 )
+				throw new CI_MyException(1,'商户名称不能超过128个字符');
+
 			if( trim($data['wishing']) == '' )
 				throw new CI_MyException(1,'请输入祝福语');
+			if( strlen($data['wishing']) >= 128 )
+				throw new CI_MyException(1,'祝福语不能超过128个字符');
+
 			if( trim($data['actName']) == '' )
 				throw new CI_MyException(1,'请输入活动名称');
+			if( strlen($data['actName']) >= 128 )
+				throw new CI_MyException(1,'活动名称不能超过128个字符');
+
 			if( trim($data['remark']) == '' )
 				throw new CI_MyException(1,'请输入备注');
+			if( strlen($data['remark']) >= 128 )
+				throw new CI_MyException(1,'备注不能超过128个字符');
+			
 			if( trim($data['minMoney']) == '' || $data['minMoney'] < 100 )
 				throw new CI_MyException(1,'请输入最小为1元的红包金额');
 			if( trim($data['maxMoney']) == '' || $data['maxMoney'] > 20000 )
