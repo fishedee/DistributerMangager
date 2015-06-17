@@ -517,6 +517,103 @@ create table t_cooperation(
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;;
 alter table t_cooperation add index cooperationUserIdIndex(userId);
 
+#微信多客服列表
+create table t_weixin_kf(
+	kfId integer not null auto_increment,
+	userId int,
+	kf_id int,
+	kf_nick varchar(50),
+	kf_account varchar(50),
+	kf_headimgurl varchar(128),
+	primary key(kfId)
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+alter table t_weixin_kf add index weixinKfIndex(userId);
+
+#创建众筹商品列表
+create table t_chips(
+    chips_id int(10) not null auto_increment primary key,
+    product_title varchar(50) not null ,oldprice double not null,
+    newprice double not null ,base double not null,
+    num int(10) not null ,icon varchar(255) not null ,
+    create_time varchar(100) not null ,start_time varchar(100) not null ,
+    end_time varchar(100) not null ,
+    percent double not null,down_num int(10) not null ,
+    down_price double not null ,
+    status tinyint(1) default '1',
+    detail text not null ,
+    remark varchar(255) not null ,
+    is_delete tinyint(1) default '0',
+    stock int(10) not null ,
+    userId int(10) not null ,
+    start int(1) not null ,
+    password varchar(32) not null
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+alter table t_chips add index chipsIdIndex(chips_id);
+
+#创建众筹订单表
+create table t_chips_order(
+    chips_order_id int(11) not null auto_increment primary key,
+    orderNo varchar(32) not null unique,
+    userId int(11) not null ,
+    clientId int(11) not null ,
+    chips_id int(11) not null ,
+    num int(11) not null ,
+    percent double not null ,
+    firstpay double not null ,
+    unit_price double not null ,
+    time int(10) not null ,
+    status int(1) not null default '1',
+    addressId int(11) not null ,
+    wxPrePayId varchar(128) not null ,
+    wxPrePayId2 varchar(128) not null ,
+    name varchar(32) not null ,
+    province varchar(32) not null ,
+    city varchar(32) not null,
+    address varchar(128) not null ,
+    phone int(11) not null ,
+    end_free double not null ,
+    end_unit_price double not null ,
+    down_time varchar(128) not null ,
+    pay_first_time varchar(128) not null ,
+    pay_all_time varchar(128) not null
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+alter table t_chips_order add index chipsOrderIdIndex(chips_order_id);
+
+#创建众筹记录表
+create table t_chips_record(
+    chips_record_id int(11) not null auto_increment primary key,
+    clientId int(11) not null ,
+    chips_id int(11) not null ,
+    newprice double not null,
+    num int(11) not null
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+alter table t_chips_record add index chipsRecordIdIndex(chips_record_id);
+
+#创建众筹权限表
+create table t_chips_power(
+    powerId int(11) not null auto_increment primary key,
+    clientId int(11) not null ,
+    chips_id int(11) not null
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+alter table t_chips_record add index chipsPowerClientId(clientId);
+
+#创建众筹banner图表
+create table t_chips_banner(
+    chips_banner_id int(11) not null auto_increment primary key,
+    userId int(11) not null ,
+    img varchar(255) not null,
+    url varchar(128) not null ,
+    title varchar(128) not null ,
+    status tinyint(1) not null default '1'
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+
+#创建众筹联系方式表
+create table t_chips_contract(
+    chips_contract_id int(11) not null auto_increment primary key ,
+    userId int(11) not null unique,
+    phone varchar(32) not null
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+
 #建立初始数据
 insert into t_user(userId,name,password,company,phone,type,downDistributionNum) values
 (10001,"fish","$2y$10$xKsYkwOJFQo2Ack68DqZuebTX99IgHL0lYBKmpwQpkxqzhJbKYgMG",'烘焙帮信息科技有限公司','15018749403',1,0),
