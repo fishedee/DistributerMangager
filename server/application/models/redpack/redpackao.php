@@ -183,12 +183,18 @@ class RedPackAo extends CI_Model
 			$strBeginPos = strpos($message,$strBegin) ;
 			$strEndPos = strpos($message,$strEnd);
 			if( $strBeginPos !== false &&
-				$strEndPos !== false )
-				throw new CI_MyException(1,substr(
+				$strEndPos !== false ){
+				//FIXME 没办法了，只能用文本匹配来确定是否余额不足，真是个略坑的需求
+				$tip = substr(
 					$message,
 					$strBeginPos+strlen($strBegin),
 					$strEndPos-$strBeginPos-strlen($strBegin)
-				));
+				);
+				if( strpos($tip,'余额不足') !== false )
+					throw new CI_MyException(1,$redPackInfo['redPackNoneTip']);
+				else
+					throw new CI_MyException(1,$tip);
+			}
 			throw $exception;
 		}
 
