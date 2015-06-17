@@ -81,7 +81,7 @@ class Wxreply extends CI_Model {
     	$weixinNum=$postObj->ToUserName;
     	$this->load->model('user/userAppDb','userAppDb');
     	$userId = $this->userAppDb->search(array('weixinNum'=>$weixinNum),array())['data'][0]['userId'];
-    	
+    	if (count($userId) == 0)return $this->transmitText($postObj,'找不到该微信原始ID，请联系该公众号管理员修改。');
     
     	//搜索要回复的素材
     	$this->load->model('weixin/wxSubscribeAo','wxSubscribeAo');
@@ -100,9 +100,10 @@ class Wxreply extends CI_Model {
     	
     	//materialClassifyId要回复的类型
     	$materialClassifyId=$weixinSubscribe['materialClassifyId'];
-    	
     	$graphic=$this->wxSubscribeAo->graphicSearch($userId,$weixinSubscribeId);
-    	if (count($graphic) == 0)return $this->transmitText($postObj,'寻找不到素材，请检查微信原始ID是否填写正确，是否有该素材，请联系该公众号修改。');
+    	
+    	//找不到回复内容，转到客服
+    	if (count($graphic) == 0)return $this->transmitService($postObj);
     	
     	//file_put_contents(dirname(__FILE__).'/out.text', var_export($graphic,TRUE));
     	//print_r($graphic);die();

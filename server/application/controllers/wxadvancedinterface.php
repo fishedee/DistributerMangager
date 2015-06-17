@@ -6,7 +6,6 @@ class Wxadvancedinterface extends CI_Controller {
 		parent::__construct();
 		$this->load->model('user/loginAo','loginAo');
 		$this->load->model('user/userAppAo','userAppAo');
-		$this->load->model('weixin/wxMenuAo','wxMenuAo');
 		$this->load->library('argv','argv');
 	}
 	
@@ -17,15 +16,15 @@ class Wxadvancedinterface extends CI_Controller {
 	
 	public function getMenu()
 	{
-		//return '';die();
+
+		//检查权限
 		$userId = $this->loginAo->checkMustLogin();
 		$userId =$userId['userId'];
-		
-		//检查权限
 		$userApp = $this->userAppAo->get($userId);
-		$this->userAppAo->check($userApp);
+		$this->userAppAo->checkAppIdAppKey($userApp);
 	
 		//执行业务逻辑
+		$this->load->model('weixin/wxMenuAo','wxMenuAo');
 		return  $data=$this->wxMenuAo->getSetting($userId);
 		
 		//print_r($data);die();
@@ -70,9 +69,161 @@ class Wxadvancedinterface extends CI_Controller {
 		//检查权限
 		$userId = $this->loginAo->checkMustLogin();
 		$userId =$userId['userId'];
+		$userApp = $this->userAppAo->get($userId);
+		$this->userAppAo->checkAppIdAppKey($userApp);
 		
 		//执行业务
+		$this->load->model('weixin/wxMenuAo','wxMenuAo');
 		$this->wxMenuAo->setSetting($userId,$data,$mysqlData);	
  		
 	}
+	
+	/**
+	 * @view json
+	 * 添加客服人员
+	 */
+	public function customerServiceAdd(){
+		$data = $this->argv->checkPost(array(
+				array('kf_account','require'),
+				array('nickname','require'),
+				array('password','require'),
+		));
+		$data['password']=md5($data['password']);
+
+		//检查权限
+		$userId = $this->loginAo->checkMustLogin();
+		$userId =$userId['userId'];
+		$userApp = $this->userAppAo->get($userId);
+		$this->userAppAo->checkAppIdAppKey($userApp);
+		
+		$this->load->model('weixin/wxCustomerServiceAo','wxCustomerServiceAo');
+		$this->wxCustomerServiceAo->Add($userId,$data);
+		
+	}
+	
+	/**
+	 * @view json
+	 * 修改客服人员
+	 */
+	public function customerServiceMod(){
+		$data = $this->argv->checkPost(array(
+				array('kf_account','require'),
+				array('kf_nick','require'),
+				array('password','require'),
+		));
+		
+		$data['nickname']=$data['kf_nick'];
+		unset($data['kf_nick']);
+		$data['password']=md5($data['password']);
+	
+		//检查权限
+		$userId = $this->loginAo->checkMustLogin();
+		$userId =$userId['userId'];
+		$userApp = $this->userAppAo->get($userId);
+		$this->userAppAo->checkAppIdAppKey($userApp);
+	
+		$this->load->model('weixin/wxCustomerServiceAo','wxCustomerServiceAo');
+		$this->wxCustomerServiceAo->Mod($userId,$data);
+	
+	}
+	
+	/**
+	 * @view json
+	 * 删除客服人员
+	 */
+	public function customerServiceDel(){
+		$data = $this->argv->checkPost(array(
+				array('kf_account','require'),
+		));
+		
+		//检查权限
+		$userId = $this->loginAo->checkMustLogin();
+		$userId =$userId['userId'];
+		$userApp = $this->userAppAo->get($userId);
+		$this->userAppAo->checkAppIdAppKey($userApp);
+	
+		$this->load->model('weixin/wxCustomerServiceAo','wxCustomerServiceAo');
+		$this->wxCustomerServiceAo->Del($userId,$data);
+	
+	}
+	
+	/**
+	 * @view json
+	 * 上传客服头像
+	 */
+	public function customerServiceHeadPortrait(){
+		$data = $this->argv->checkPost(array(
+				array('kf_account','require'),
+				array('media','require'),
+		));
+		
+		//检查权限
+		$userId = $this->loginAo->checkMustLogin();
+		$userId =$userId['userId'];
+		$userApp = $this->userAppAo->get($userId);
+		$this->userAppAo->checkAppIdAppKey($userApp);
+	
+		$this->load->model('weixin/wxCustomerServiceAo','wxCustomerServiceAo');
+		$this->wxCustomerServiceAo->customerServiceHeadPortrait($userId,$data);
+	
+	}
+	
+	/**
+	 * @view json
+	 * 获取数据库的客服列表
+	 */
+	public function customerServiceGet(){
+		
+		$dataLimit = $this->argv->checkGet(array(
+				array('pageIndex','require'),
+				array('pageSize','require'),
+		));
+		
+		//检查权限
+		$userId = $this->loginAo->checkMustLogin();
+		$userId =$userId['userId'];
+		$userApp = $this->userAppAo->get($userId);
+		$this->userAppAo->checkAppIdAppKey($userApp);
+		
+		$this->load->model('weixin/wxCustomerServiceAo','wxCustomerServiceAo');
+		return $this->wxCustomerServiceAo->search(array('userId'=>$userId),$dataLimit);
+	}
+	
+	/**
+	 * @view json
+	 * 搜索客服
+	 */
+	public function customerServiceSearch(){
+	
+		$data = $this->argv->checkGet(array(
+				array('kfId','require'),
+		));
+		
+		//检查权限
+		$userId = $this->loginAo->checkMustLogin();
+		$userId =$userId['userId'];
+		$userApp = $this->userAppAo->get($userId);
+		$this->userAppAo->checkAppIdAppKey($userApp);
+	
+		$this->load->model('weixin/wxCustomerServiceAo','wxCustomerServiceAo');
+		return $this->wxCustomerServiceAo->search($data,array())['data'][0];
+	}
+	
+	/**
+	 * @view json
+	 * 获取微信服务器最新的客服列表
+	 */
+	public function customerServicePull(){
+
+		//检查权限
+		$userId = $this->loginAo->checkMustLogin();
+		$userId =$userId['userId'];
+		$userApp = $this->userAppAo->get($userId);
+		$this->userAppAo->checkAppIdAppKey($userApp);
+
+		$this->load->model('weixin/wxCustomerServiceAo','wxCustomerServiceAo');
+		$this->wxCustomerServiceAo->Pull($userId);
+		
+	}
+	
 }

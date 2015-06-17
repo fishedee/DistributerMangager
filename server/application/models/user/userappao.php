@@ -33,7 +33,8 @@ class UserAppAo extends CI_Model{
 	public function getTokenAndTicket($userId){
 		//获取userApp
 		$userApp = $this->get($userId);
-		$this->check($userApp);
+		$this->checkAppIdAppKey($userApp);
+		$this->checkMch($userApp);
 
 		//初始化wxSdk
 		$this->load->library('wxSdk',array(
@@ -96,14 +97,21 @@ class UserAppAo extends CI_Model{
 			throw new CI_MyException(1,'后台未设置mchSslKey，微信红包将不能正常使用');
 	}
 	
-	public function checkWeixinNum($userApp){
+	public function checkMch($userApp){
+		if($userApp['mchSslCert'] == '')
+			throw new CI_MyException(1,'后台未设置mchSslCert，微信红包将不能正常使用');
+		if($userApp['mchSslKey'] == '')
+			throw new CI_MyException(1,'后台未设置mchSslKey，微信红包将不能正常使用');
+	}
+	
+	public function checkAppIdAppKey($userApp){
 		if($userApp['appId'] == '')
 			throw new CI_MyException(1,'后台未设置appId，自定义菜单等功能将不能正常使用');
 		if($userApp['appKey'] == '')
 			throw new CI_MyException(1,'后台未设置appKey，自定义菜单等功能不能正常使用');
 	}
 	
-	public function checkAppIdAppKey($userApp){
+	public function checkWeixinNum($userApp){
 		if($userApp['weixinNum'] == '')
 			throw new CI_MyException(1,'后台未设置微信原始ID，该微信功能将不能正常使用');
 	}

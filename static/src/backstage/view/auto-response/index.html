@@ -55,7 +55,7 @@
 				{
 					name:'删除',
 					click:function(data){
-						dialog.confirm('确认删除该条内容，不可回退操作？!',function(){
+						dialog.confirm('确认删除该条内容，不可撤回操作！',function(){
 							$.post('/wxsubscribe/del',{weixinSubscribeId:data.weixinSubscribeId},function(data){
 								data = $.JSON.parse(data);
 								if( data.code != 0 ){
@@ -98,7 +98,6 @@
 					{id:'materialClassifyId',type:'enum',name:'分类',map:companyClassify},
 					{id:'title',type:'text',name:'素材标题'},
 					{id:'remark',type:'text',name:'备注'},
-//					{id:'isRelease',type:'enum',name:'是否已发布',map:SubscribeStateClassify},
 					{id:'createTime',type:'text',name:'创建时间'},
 					{id:'modifyTime',type:'text',name:'修改时间'}
 				],

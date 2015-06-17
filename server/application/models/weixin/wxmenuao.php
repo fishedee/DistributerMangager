@@ -94,6 +94,7 @@ class WxMenuAo extends CI_Model
 		if(!empty($data))$data=array('button'=>$data);
 
 		//获取access_token
+		$this->load->model('user/userAppAo','userAppAo');
  		$appAccessToken = $this->userAppAo->getTokenAndTicket($userId)['appAccessToken'];
 
  		//初始化sdk

@@ -1,0 +1,73 @@
+<link rel="import" href="../common/header.html?__inline">
+<div class="alert alert-danger" role="alert">注意：多客服功能，必须开通微信认证，才能使用。</div>
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		function go(){
+			tableOperation = query.simpleQuery({
+				id:'container',
+				url:'/wxadvancedinterface/customerServiceGet',
+				column:[
+					{id:'kfId',type:'text',name:'本地ID'},
+					{id:'kf_id',type:'text',name:'客服工号'},
+					{id:'kf_nick',type:'text',name:'客服昵称'},
+					{id:'kf_account',type:'text',name:'客服账号'},
+					{id:'kf_headimgurl',type:'image',name:'客服头像'},
+				],
+				operate:[
+				{
+					name:'上传头像',
+					click:function(data){
+						location.href = 'customerServiceHeadPortrait.html?kfId='+data.kfId;
+					}
+				},
+				{
+					name:'修改',
+					click:function(data){
+						location.href = 'customerServiceAdd.html?kfId='+data.kfId;
+					}
+				},
+				{
+					name:'删除',
+					click:function(data){
+						dialog.confirm('确认删除该条内容，不可撤回操作！',function(){
+							$.post('/wxadvancedinterface/customerServiceDel',{kf_account:data.kf_account},function(data){
+								data = $.JSON.parse(data);
+								if( data.code != 0 ){
+									dialog.message(data.msg);
+									return;
+								}
+								location.href = 'customerService.html';
+							});
+						});
+					}
+				}],
+				button:[
+				{
+					name:'刷新最新客服',
+					click:function(){
+						$.get('/wxadvancedinterface/customerServicePull',{},function(data){
+						data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							location.href = 'customerService.html';
+						});
+					}
+					},
+					{
+					name:'添加新客服',
+					click:function(){
+							location.href = 'customerServiceAdd.html';
+					}
+					}
+				],
+			});
+		}
+		go();
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

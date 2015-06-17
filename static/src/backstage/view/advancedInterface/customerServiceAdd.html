@@ -1,0 +1,77 @@
+<link rel="import" href="../common/header.html?__inline">
+<div class="alert alert-danger" role="alert">注意：完整客服账号，格式为：账号前缀@公众号微信号，账号前缀最多10个字符，必须是英文或者数字字符。。</div>
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var kfId = $.location.getQueryArgv('kfId');
+		var classify = {};
+		function getmsg(next){
+			$.get('/wxadvancedinterface/customerServiceSearch',{kfId:kfId},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				classify = data.data;
+				next();
+			});
+		}
+		function go(){
+			field = [];
+			if( kfId != null ){
+				field = [
+					{id:'kf_account',type:'read',name:'完整客服账号'},
+					{id:'kf_nick',type:'text',name:'客服昵称'},
+					{id:'password',type:'text',name:'客服账号登录密码'},			
+				]
+			} else {
+				field = [
+					{id:'kf_account',type:'text',name:'完整客服账号'},
+					{id:'nickname',type:'text',name:'客服昵称'},
+					{id:'password',type:'text',name:'客服账号登录密码'},			
+				]
+			}
+			
+			input.verticalInput({
+				id:'container',
+				field:field,
+				value:classify,
+				submit:function(data){
+					if( kfId != null ){
+						data = $.extend({kfId:kfId},data);
+						$.post('/wxadvancedinterface/customerServiceMod',data,function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							history.back();
+						});
+					}else{
+						$.post('/wxadvancedinterface/customerServiceAdd',data,function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							history.back();
+						});
+					}
+				},
+				cancel:function(){
+					history.back();
+				}
+			});
+		}
+
+			if( kfId != null ){
+				getmsg(go);
+			}else{
+				go();
+			}
+
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

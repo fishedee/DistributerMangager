@@ -1,0 +1,48 @@
+<link rel="import" href="../common/header.html?__inline">
+<div class="alert alert-danger" role="alert">注意：头像图片文件必须是jpg格式，推荐使用640*640大小的图片以达到最佳效果。</div>
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var kfId = $.location.getQueryArgv('kfId');
+		var classify = {};
+		function getmsg(next){
+			$.get('/wxadvancedinterface/customerServiceSearch',{kfId:kfId},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				classify = data.data;
+				next();
+			});
+		}
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'kf_account',type:'read',name:'完整客服账号'},
+					{id:'media',type:'image',name:'图片',option:{url:'/upload/image',width:640}},
+				],
+				value:classify,
+				submit:function(data){
+						$.post('/wxadvancedinterface/customerServiceHeadPortrait',data,function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							history.back();
+						});
+				},
+				cancel:function(){
+					history.back();
+				}
+			});
+		}
+				getmsg(go);
+
+	</script>
+<link rel="import" href="../common/footer.html?__inline">
