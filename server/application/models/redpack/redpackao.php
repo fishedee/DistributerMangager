@@ -166,15 +166,31 @@ class RedPackAo extends CI_Model
 		$orderId = $appInfo['mchId'].date('YmdHis').rand(1000,9999);
 
 		//添加微信的红包结果
-		$this->wxSdk->sendRedPack(
-			$client['openId'],
-			$money,
-			$orderId,
-			$redPackInfo['nickName'],
-			$redPackInfo['wishing'],
-			$redPackInfo['actName'],
-			$redPackInfo['remark']
-		);
+		try{
+			$this->wxSdk->sendRedPack(
+				$client['openId'],
+				$money,
+				$orderId,
+				$redPackInfo['nickName'],
+				$redPackInfo['wishing'],
+				$redPackInfo['actName'],
+				$redPackInfo['remark']
+			);
+		}catch(Exception $exception){
+			$message = $exception->getMessage();
+			$strBegin = '<return_msg><![CDATA[';
+			$strEnd = ']]></return_msg>';
+			$strBeginPos = strpos($message,$strBegin) ;
+			$strEndPos = strpos($message,$strEnd);
+			if( $strBeginPos !== false &&
+				$strEndPos !== false )
+				throw new CI_MyException(1,substr(
+					$message,
+					$strBeginPos+strlen($strBegin),
+					$strEndPos-$strBeginPos-strlen($strBegin)
+				));
+			throw $exception;
+		}
 
 		//添加本地的红包结果
 		$this->redPackClientDb->add(array(
