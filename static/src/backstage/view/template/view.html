@@ -8,7 +8,19 @@
 		var subPage = require('/fishstrap/page/subPage.js');
 		var companyTemplateId = $.location.getQueryArgv('companyTemplateId');
 		var companyTemplate = {};
+		var companyTemplateType = {};
 		var companyTemplateFile = [];
+		function getAllType(next){
+			$.get('/template/getAllType',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				companyTemplateType = data.data;
+				next();
+			});
+		}
 		function getCompanyTemplate( next ){
 			$.get('/template/get',{companyTemplateId:companyTemplateId},function(data){
 				data = $.JSON.parse(data);
@@ -37,6 +49,7 @@
 				field:[
 					{id:'title',type:'text',name:'标题'},
 					{id:'url',type:'compressFile',name:'位置',option:{url:'/upload/compressFile',type:'zip',maxSize:1024*1024*2}},
+					{id:'type',type:'enum',name:'类型',map:companyTemplateType},
 					{id:'remark',type:'text',name:'备注'}
 				],
 				value:companyTemplate,
@@ -68,11 +81,13 @@
 				}
 			});
 		}
-		if( companyTemplateId != null )
-			getCompanyTemplate(function(){
-				getCompanyTemplateFile(go);
-			});
-		else
-			go();
+		getAllType(function(){
+			if( companyTemplateId != null )
+				getCompanyTemplate(function(){
+					getCompanyTemplateFile(go);
+				});
+			else
+				go();
+		});
 	</script>
 <link rel="import" href="../common/footer.html?__inline">

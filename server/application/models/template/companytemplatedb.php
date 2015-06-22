@@ -12,6 +12,8 @@ class CompanyTemplateDb extends CI_Model
 		foreach( $where as $key=>$value ){
 			if( $key == "title" || $key == "remark")
 				$this->db->like($key,$value);
+			else if( $key == "type" )
+				$this->db->where($key,$value);
 		}
 		
 		$count = $this->db->count_all_results($this->tableName);
@@ -19,6 +21,8 @@ class CompanyTemplateDb extends CI_Model
 		foreach( $where as $key=>$value ){
 			if( $key == "title" || $key == "remark")
 				$this->db->like($key,$value);
+			else if( $key == "type")
+				$this->db->where($key,$value);
 		}
 			
 		$this->db->order_by('createTime','desc');

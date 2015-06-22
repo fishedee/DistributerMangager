@@ -10,6 +10,7 @@ class Mobile extends CI_Controller {
 		$this->load->model('user/userPermissionEnum','userPermissionEnum');
 		$this->load->model('user/userTypeEnum','userTypeEnum');
 		$this->load->model('template/companyTemplateAo','companyTemplateAo');
+		$this->load->model('template/companyTemplateTypeEnum','companyTemplateTypeEnum');
 		$this->load->library('argv','argv');
     }
 	/**
@@ -46,19 +47,12 @@ class Mobile extends CI_Controller {
 			header("Content-type: image/gif");
 		else 
 			header('Content-type: image/jpeg');
-		
-		
-		//尝试纯静态文件
-		$staticAddress = dirname(__FILE__).'/../../../static/build/mobile';
-		if( file_exists($staticAddress.$url) ){
-			ob_clean();  
-			flush();  
-			readfile($staticAddress.$url);  
-			return;
-		}
-			
-		//尝试模板静态文件
-		$companyTemplateId = $this->companyTemplateAo->getByUserId($userId);
+	
+		//尝试公司模板静态文件
+		$companyTemplateId = $this->companyTemplateAo->getByUserIdAndType(
+			$userId,
+			$this->companyTemplateTypeEnum->INTRDOUCE
+		);
 		if( $companyTemplateId != 0 ){
 			$template = $this->companyTemplateAo->get($companyTemplateId);
 			$staticAddress = dirname(__FILE__).'/../../../'.$template['url'];
@@ -68,6 +62,31 @@ class Mobile extends CI_Controller {
 				readfile($staticAddress.$url);  
 				return;
 			}
+		}
+
+		//尝试商城模板静态文件
+		$companyTemplateId = $this->companyTemplateAo->getByUserIdAndType(
+			$userId,
+			$this->companyTemplateTypeEnum->SHOP
+		);
+		if( $companyTemplateId != 0 ){
+			$template = $this->companyTemplateAo->get($companyTemplateId);
+			$staticAddress = dirname(__FILE__).'/../../../'.$template['url'];
+			if( file_exists($staticAddress.$url) ){
+				ob_clean();  
+				flush();  
+				readfile($staticAddress.$url);  
+				return;
+			}
+		}
+
+		//尝试纯静态文件
+		$staticAddress = dirname(__FILE__).'/../../../static/build/mobile';
+		if( file_exists($staticAddress.$url) ){
+			ob_clean();  
+			flush();  
+			readfile($staticAddress.$url);  
+			return;
 		}
 		
 		//否则404

@@ -6,10 +6,11 @@
 		var dialog = require('/fishstrap/ui/dialog.js');
 		var input = require('/fishstrap/ui/input.js');
 		var subPage = require('/fishstrap/page/subPage.js');
+		var type = $.location.getQueryArgv('type');
 		var companyTemplate = {};
 		var companyTemplateId = {};
 		function get(next){
-			$.get('/template/getMyTemplate',{},function(data){
+			$.get('/template/getMyTemplate',{type:type},function(data){
 				data = $.JSON.parse(data);
 				if( data.code != 0 ){
 					dialog.message(data.msg);
@@ -57,7 +58,7 @@
 								click:function(operation){
 									subPage.open({
 										title:'选择模板',
-										url:'index.html?check=true',
+										url:'index.html?check=true&type='+type,
 										close:function(state,data){
 											if( state == 'confirm' ){
 												operation.clear();
@@ -76,7 +77,7 @@
 					var companyTemplateId = 0;
 					if( data.companyTemplate.length != 0 )
 						companyTemplateId = data.companyTemplate[0].companyTemplateId;
-					$.post('/template/modMyTemplate',{companyTemplateId:companyTemplateId},function(data){
+					$.post('/template/modMyTemplate',{type:type,companyTemplateId:companyTemplateId},function(data){
 						data = $.JSON.parse(data);
 						if( data.code != 0 ){
 							dialog.message(data.msg);

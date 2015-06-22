@@ -8,8 +8,17 @@ class Template extends CI_Controller {
 		$this->load->model('user/loginAo','loginAo');
 		$this->load->model('user/userTypeEnum','userTypeEnum');
 		$this->load->model('user/userPermissionEnum','userPermissionEnum');
+		$this->load->model('template/companyTemplateTypeEnum','companyTemplateTypeEnum');
 		$this->load->model('template/companyTemplateAo','companyTemplateAo');
 		$this->load->library('argv','argv');
+    }
+
+    /**
+    *@view json
+    */
+    public function getAllType()
+    {
+    	return $this->companyTemplateTypeEnum->names;
     }
 	
 	/**
@@ -21,6 +30,7 @@ class Template extends CI_Controller {
 		$dataWhere = $this->argv->checkGet(array(
 			array('title','option'),
 			array('remark','option'),
+			array('type','option')
 		));
 		
 		$dataLimit = $this->argv->checkGet(array(
@@ -30,11 +40,6 @@ class Template extends CI_Controller {
 		
 		//检查权限
 		$user = $this->loginAo->checkMustLogin();
-		if( $user['type'] != $this->userTypeEnum->ADMIN ){
-			$this->loginAo->checkMustClient(
-				$this->userPermissionEnum->COMPANY_INTRODUCE
-			);
-		}
 		
 		//执行业务逻辑
 		return $this->companyTemplateAo->search($dataWhere,$dataLimit);
@@ -53,11 +58,6 @@ class Template extends CI_Controller {
 		
 		//检查权限
 		$user = $this->loginAo->checkMustLogin();
-		if( $user['type'] != $this->userTypeEnum->ADMIN ){
-			$this->loginAo->checkMustClient(
-				$this->userPermissionEnum->COMPANY_INTRODUCE
-			);
-		}
 		
 		//执行业务逻辑
 		return $this->companyTemplateAo->get($companyTemplateId);
@@ -73,6 +73,7 @@ class Template extends CI_Controller {
 			array('title','require'),
 			array('url','require'),
 			array('remark','require'),
+			array('type','require')
 		));
 		
 		//检查权限
@@ -115,6 +116,7 @@ class Template extends CI_Controller {
 			array('title','require'),
 			array('url','require'),
 			array('remark','require'),
+			array('type','require')
 		));
 		
 		//检查权限
@@ -130,14 +132,18 @@ class Template extends CI_Controller {
 	*/
 	public function getMyTemplate()
 	{
+		//检查输入参数
+		$data = $this->argv->checkGet(array(
+			array('type','require'),
+		));
+		$type = $data['type'];
+
 		//检查权限
-		$user = $this->loginAo->checkMustClient(
-			$this->userPermissionEnum->COMPANY_INTRODUCE
-		);
+		$user = $this->loginAo->checkMustLogin();
 		$userId = $user['userId'];
 		
 		//执行业务逻辑
-		return $this->companyTemplateAo->getByUserId($userId);
+		return $this->companyTemplateAo->getByUserIdAndType($userId,$type);
 	}
 	
 	/**
@@ -148,17 +154,17 @@ class Template extends CI_Controller {
 		//检查输入参数
 		$data = $this->argv->checkPost(array(
 			array('companyTemplateId','require'),
+			array('type','require')
 		));
 		$companyTemplateId = $data['companyTemplateId'];
+		$type = $data['type'];
 		
 		//检查权限
-		$user = $this->loginAo->checkMustClient(
-			$this->userPermissionEnum->COMPANY_INTRODUCE
-		);
+		$user = $this->loginAo->checkMustLogin();
 		$userId = $user['userId'];
 		
 		//执行业务逻辑
-		$this->companyTemplateAo->modByUserId($userId,$companyTemplateId);
+		$this->companyTemplateAo->modByUserIdAndType($userId,$type,$companyTemplateId);
 	}
 }
 

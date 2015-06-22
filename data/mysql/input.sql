@@ -115,6 +115,7 @@ create table t_company_template(
 	companyTemplateId integer not null auto_increment,
 	title varchar(128) not null,
 	url varchar(256) not null,
+    type integer not null,
 	remark varchar(256) not null,
 	createTime timestamp not null default CURRENT_TIMESTAMP,
 	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
@@ -125,6 +126,7 @@ create table t_company_template(
 create table t_user_company_template(
 	userCompanyTemplateId integer not null auto_increment,
 	userId integer not null,
+    type integer not null,
 	companyTemplateId integer not null,
 	createTime timestamp not null default CURRENT_TIMESTAMP,
 	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
@@ -527,13 +529,13 @@ insert into t_user_app(userId,appName,appId,appKey,mchId,mchKey,mchSslCert,mchSs
 (10003,'至高商城','wx5cc2d94dfe468c95','adc38d0974b0617023012fef684e9ae6','1220218001','56344f19b3b90eb545bf2f07800e7a10','/data/upload/apiclient_cert.pem','/data/upload/apiclient_key.pem',''),
 (10004,'至强商城','testAppId','testAppKey','testMchId','testMchKey','testMchSslCert','testMchSslKey','');
 
-insert into t_company_template(title,url,remark)values
-('metro风格','/data/upload/template/sample1',''),
-('简约风格(测试用)','/data/upload/template/sample2','');
+insert into t_company_template(title,url,remark,type)values
+('metro风格','/data/upload/template/sample1','',1),
+('简约风格(测试用)','/data/upload/template/sample2','',1);
 
-insert into t_user_company_template(userId,companyTemplateId)values
-(10003,10001),
-(10004,10001);
+insert into t_user_company_template(userId,companyTemplateId,type)values
+(10003,10001,1),
+(10004,10001,1);
 
 insert into t_user_company_classify(userId,title,icon,sort,remark)values
 (10003,'行业新闻','/data/upload/sample/earth.png',1,''),

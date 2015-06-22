@@ -12,21 +12,22 @@ class CompanyTemplateAo extends CI_Model {
 		return $this->companyTemplateDb->search($dataWhere,$dataLimit);
 	}
 	
-	public function getByUserId($userId){
-		$data = $this->userCompanyTemplateDb->getByUserId($userId);
+	public function getByUserIdAndType($userId,$type){
+		$data = $this->userCompanyTemplateDb->getByUserIdAndType($userId,$type);
 		if( count($data) == 0 )
 			return 0;
 		return $data[0]['companyTemplateId'];
 	}
 	
-	public function modByUserId($userId,$companyTemplateId){
-		$this->userCompanyTemplateDb->delByUserId($userId);
-		if( $companyTemplateId != 0 ){
-			$this->userCompanyTemplateDb->add(array(
-				'userId'=>$userId,
-				'companyTemplateId'=>$companyTemplateId
-			));
-		}
+	public function modByUserIdAndType($userId,$type,$companyTemplateId){
+		$this->userCompanyTemplateDb->delByUserIdAndType($userId,$type);
+		if( $companyTemplateId == 0 )
+			return;
+		$this->userCompanyTemplateDb->add(array(
+			'userId'=>$userId,
+			'type'=>$type,
+			'companyTemplateId'=>$companyTemplateId
+		));
 	}
 	
 	public function get($companyTemplateId){

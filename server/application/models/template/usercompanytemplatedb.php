@@ -8,18 +8,20 @@ class UserCompanyTemplateDb extends CI_Model
 		parent::__construct();
 	}
 
-	public function getByUserId($userId){
+	public function getByUserIdAndType($userId,$type){
 		$this->db->where("userId",$userId);
+		$this->db->where("type",$type);
 		return $this->db->get($this->tableName)->result_array();
+	}
+
+	public function delByUserIdAndType( $userId,$type){
+		$this->db->where("userId",$userId);
+		$this->db->where("type",$type);
+		return $this->db->delete($this->tableName);
 	}
 
 	public function delByCompanyTemplateId($companyTemplateId){
 		$this->db->where("companyTemplateId",$companyTemplateId);
-		return $this->db->delete($this->tableName);
-	}
-	
-	public function delByUserId( $userId ){
-		$this->db->where("userId",$userId);
 		return $this->db->delete($this->tableName);
 	}
 	

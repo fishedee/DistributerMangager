@@ -6,16 +6,16 @@
 		var dialog = require('/fishstrap/ui/dialog.js');
 		var query = require('/fishstrap/ui/query.js');
 		var isCheck = ($.location.getQueryArgv('check') != null);
-		var userType = {};
+		var companyTemplateType = {};
 		var tableOperation = {};
 		function getAllType(next){
-			$.get('/user/getAllType',{},function(data){
+			$.get('/template/getAllType',{},function(data){
 				data = $.JSON.parse(data);
 				if( data.code != 0 ){
 					dialog.message(data.msg);
 					return;
 				}
-				userType = data.data;
+				companyTemplateType = data.data;
 				next();
 			});
 		}
@@ -69,11 +69,12 @@
 					{id:'companyTemplateId',type:'text',name:'模板ID'},
 					{id:'title',type:'text',name:'名字'},
 					{id:'url',type:'text',name:'位置'},
+					{id:'type',type:'enum',name:'类型',map:companyTemplateType},
 					{id:'remark',type:'text',name:'备注'},
 					{id:'createTime',type:'text',name:'创建时间'},
 					{id:'modifyTime',type:'text',name:'修改时间'}
 				],
-				queryColumn:['title','remark'],
+				queryColumn:['title','remark','type'],
 				operate:operate,
 				button:button,
 			});
