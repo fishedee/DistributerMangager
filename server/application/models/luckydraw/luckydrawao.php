@@ -10,6 +10,7 @@ class LuckyDrawAo extends CI_Model
 		$this->load->model('luckydraw/luckyDrawClientDb','luckyDrawClientDb');
 		$this->load->model('luckydraw/luckyDrawStateEnum','luckyDrawStateEnum');
 		$this->load->model('luckydraw/luckyDrawTypeEnum','luckyDrawTypeEnum');
+		$this->load->model('luckydraw/conponAo','conponAo');
 	}
 
 	private function check($userId,$data){
@@ -22,6 +23,8 @@ class LuckyDrawAo extends CI_Model
 				//普通抽奖商品
 			}else if( $singleCommodity['type'] == $this->luckyDrawTypeEnum->THANKYOU ){
 				//谢谢抽奖
+			}else if( $singleCommodity['type'] == $this->luckyDrawTypeEnum->COUPON ){
+				$this->conponAo->queryCouponStock($userId,$singleCommodity);
 			}else{
 				//抛出异常
 				throw new CI_MyException(1,'不合法的抽奖类型');

@@ -9,6 +9,7 @@ class LuckyDrawCommodityDb extends CI_Model
 		'image'=>'',
 		'type'=>1,
 		'quantity'=>'',
+		'coupon_id'=>'',
 		'precent'=>'',
 		'sort'=>''
 	);

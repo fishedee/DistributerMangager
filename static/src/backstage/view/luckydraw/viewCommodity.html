@@ -9,6 +9,7 @@
 	var image = $.location.getQueryArgv('image');
 	var type = $.location.getQueryArgv('type');
 	var quantity = $.location.getQueryArgv('quantity');
+	var coupon_id = $.location.getQueryArgv('coupon_id');
 	var precentShow = $.location.getQueryArgv('precentShow');
 	var data = {};
 	var allType = {};
@@ -18,6 +19,7 @@
 			image:image,
 			type:type,
 			quantity:quantity,
+			coupon_id:coupon_id,
 			precentShow:precentShow,
 		};
 	}
@@ -49,6 +51,7 @@
 				{id:'image',type:'image',name:'图片',option:{url:'/upload/image',width:640}},
 				{id:'type',type:'enum',name:'类型',map:allType},
 				{id:'quantity',type:'text',name:'数量'},
+				{id:'coupon_id',type:'text',name:'代金券批次ID'},
 			],
 			value:data,
 			submit:undefined,

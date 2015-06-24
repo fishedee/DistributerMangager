@@ -4,6 +4,7 @@ class LuckyDrawTypeEnum extends CI_Model{
 	public $enums = array(
 		array(1,'COMMODITY','商品'),
         array(2,'THANKYOU', '谢谢参与'),
+		array(3,'COUPON','代金券')
 	);
 	
 	public function __construct(){
