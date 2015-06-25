@@ -185,6 +185,19 @@ create table t_user_company_banner(
 
 alter table t_user_company_banner add index userIdIndex(userId);
 
+#创建商城轮播图片列表
+create table t_shop_banner(
+	userShopBannerId integer not null auto_increment,
+	userId integer not null,
+	icon varchar(256) not null,
+	title varchar(256) not null,
+	sort integer not null,
+	createTime timestamp not null default CURRENT_TIMESTAMP,
+	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
+	primary key( userShopBannerId )
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+alter table t_shop_banner add index userIdIndex(userId);
+
 #创建用户商城商品分类表
 create table t_shop_commodity_classify(
     shopCommodityClassifyId integer not null auto_increment,

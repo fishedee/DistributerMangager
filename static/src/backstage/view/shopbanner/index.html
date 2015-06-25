@@ -1,0 +1,79 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		function go(){
+			tableOperation = query.simpleQuery({
+				id:'container',
+				url:'/shopbanner/search',
+				column:[
+					{id:'userShopBannerId',type:'text',name:'广告ID'},
+					{id:'icon',type:'image',name:'图片'},
+					{id:'title',type:'text',name:'标题'},
+					{id:'createTime',type:'text',name:'创建时间'},
+					{id:'modifyTime',type:'text',name:'修改时间'}
+				],
+				operate:[
+				{
+					name:'上移',
+					click:function(data){
+						$.post('/shopbanner/moveUp',{userShopBannerId:data.userShopBannerId},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							location.href = 'index.html';
+						});
+					}
+				},
+				{
+					name:'下移',
+					click:function(data){
+						$.post('/shopbanner/moveDown',{userShopBannerId:data.userShopBannerId},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							location.href = 'index.html';
+						});
+					}
+				},
+				{
+					name:'修改',
+					click:function(data){
+						location.href = 'view.html?userShopBannerId='+data.userShopBannerId;
+					}
+				},
+				{
+					name:'删除',
+					click:function(data){
+						dialog.confirm('确认删除该广告，不可回退操作？!',function(){
+							$.post('/shopbanner/del',{userShopBannerId:data.userShopBannerId},function(data){
+								data = $.JSON.parse(data);
+								if( data.code != 0 ){
+									dialog.message(data.msg);
+									return;
+								}
+								location.href = 'index.html';
+							});
+						});
+					}
+				}],
+				button:[
+				{
+					name:'添加轮播图片',
+					click:function(){
+						location.href = 'view.html';
+					}
+				}
+				],
+			});
+		}
+		go();
+	</script>
+<link rel="import" href="../common/footer.html?__inline">
