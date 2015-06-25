@@ -41,7 +41,7 @@ class BannerDb extends CI_Model
 		$this->db->where("userShopBannerId",$userShopBannerId);
 		$query = $this->db->get($this->tableName)->result_array();
 		if( count($query) == 0 )
-			throw new CI_MyException('不存在此公司广告');
+			throw new CI_MyException('不存在此商城轮播图片');
 		return $query[0];
 	}
 	
