@@ -7,6 +7,5 @@
 		<button class="<%= button[i].name %>icon"></button>
 	</a>
 	<% } %>
-	<p class="title"><%= title %></p>
 </div>
 <div id="common_header_padding"></div>
