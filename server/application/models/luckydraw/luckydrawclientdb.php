@@ -26,6 +26,7 @@ class LuckyDrawClientDb extends CI_Model
 	
 	public function add( $data ){
 		$this->db->insert($this->tableName,$data);
+		return $this->db->insert_id();
 	}
 
 }

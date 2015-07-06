@@ -10,7 +10,7 @@ class ClientDb extends CI_Model
 
 	public function search($where,$limit){
 		foreach( $where as $key=>$value ){
-			if(  $key == 'openId'|| $key == 'type' || $key == 'userId')
+			if(  $key == 'clientId'|| $key == 'openId'|| $key == 'type' || $key == 'userId')
 				$this->db->where($key,$value);
 			else if( $key == 'clientId')
 				$this->db->where_in($key,$value);
@@ -19,7 +19,7 @@ class ClientDb extends CI_Model
 		$count = $this->db->count_all_results($this->tableName);
 		
 		foreach( $where as $key=>$value ){
-			if(  $key == 'openId'|| $key == 'type' || $key == 'userId')
+			if(  $key == 'clientId'|| $key == 'openId'|| $key == 'type' || $key == 'userId')
 				$this->db->where($key,$value);
 			else if( $key == 'clientId')
 				$this->db->where_in($key,$value);

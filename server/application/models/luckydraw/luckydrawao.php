@@ -201,12 +201,12 @@ class LuckyDrawAo extends CI_Model
 		}
 		if( $currentCommodity == null )
 			throw new CI_MyException(1,'计算抽奖结果出错，请联系后台工作人员');
-
+		
 		//记录抽奖结果
 		$this->luckyDrawCommodityDb->reduceQuantity(
 			$currentCommodity['luckyDrawCommodityId']
 		);
-		$this->luckyDrawClientDb->add(array(
+		$luckyDrawClientId=$this->luckyDrawClientDb->add(array(
 			'luckyDrawId'=>$luckyDrawId,
 			'clientId'=>$clientId,
 			'title'=>$currentCommodity['title'],
@@ -215,7 +215,11 @@ class LuckyDrawAo extends CI_Model
 			'name'=>$name,
 			'phone'=>$phone
 		));
-
+		
+		//代金券处理
+		if( $currentCommodity['coupon_id'] >0 && $currentCommodity['typeName'] == '代金券' )
+			$this->conponAo->sendToCoupon($userId,$clientId,$luckyDrawClientId,$currentCommodity['coupon_id']);
+		
 		return $currentCommodity['luckyDrawCommodityId'];
 	}
 
