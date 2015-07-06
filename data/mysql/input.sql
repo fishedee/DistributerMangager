@@ -376,6 +376,7 @@ create table t_lucky_draw_commodity(
     image varchar(128) not null,
     type integer not null,
     quantity integer not null,
+    coupon_id integer not null default '0',
     sort integer not null,
     createTime timestamp not null default CURRENT_TIMESTAMP,
     modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
