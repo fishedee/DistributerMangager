@@ -1,0 +1,54 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		var subPage = require('/fishstrap/page/subPage.js');
+		var clientType = {};
+		var pageIndex = $.location.getQueryArgv('pageIndex');
+		var pageSize = $.location.getQueryArgv('pageSize');
+		var cooperationType = {};
+		cooperationType = ['省级','市级'];
+		function go(){
+			query.simpleQuery({
+				id:'container',
+				url:'/cooperation/search',
+				column:[
+					{id:'type',type:'enum',name:'加盟类型',map:{'省级':'省级','市级':'市级'}},
+					{id:'business_name',type:'text',name:'企业名称'},
+					{id:'user_name',type:'text',name:'用户名称'},
+					{id:'contract',type:'text',name:'联系电话'},
+					{id:'province',type:'text',name:'省份'},
+					{id:'city',type:'text',name:'城市'},
+					{id:'newlocation',type:'text',name:'地址'},
+					{id:'will',type:'text',name:'合作意向'},
+				],
+				queryColumn:['type','business_name','province','city'],
+				operate:[],
+				button:[
+				{
+					name:'导出全部',
+					click:function(){
+						location.href = 'http://shop.tongyinyang.com/cooperation/excel';
+					}
+				},
+				{
+					name:'导出当页',
+					click:function(){
+						var current = $('.current').text();
+						var pageSize= $('.pg').siblings('.show').find('select').val();
+						var type    = $('select[name=type]').val();
+						var business_name = $('input[name=business_name]').val();
+						var province   = $('input[name=province]').val();
+						var city       = $('input[name=city]').val();
+						location.href = '/cooperation/currentPage?current='+current+'&pageSize='+pageSize+'&type='+type+'&business_name='+business_name+'&province='+province+'&city='+city;
+					}
+				}
+				],
+			});
+		}
+		go();
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

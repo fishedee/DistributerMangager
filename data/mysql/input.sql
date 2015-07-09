@@ -502,6 +502,21 @@ create table t_weixin_menu(
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
 alter table t_weixin_menu add index weixinmenuIndex(userId);
 
+#创建招商加盟表
+create table t_cooperation(
+    cooperationId int(11) not null auto_increment primary key,
+    userId int(11) not null,
+    type varchar(50) not null,
+    business_name varchar(50) not null,
+    user_name varchar(50) not null,
+    contract varchar(50) not null,
+    province varchar(50) not null,
+    city varchar(50) not null,
+    newlocation varchar(50) not null,
+    will text not null
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;;
+alter table t_cooperation add index userIdIndex(userId);
+
 #建立初始数据
 insert into t_user(userId,name,password,company,phone,type,downDistributionNum) values
 (10001,"fish","$2y$10$xKsYkwOJFQo2Ack68DqZuebTX99IgHL0lYBKmpwQpkxqzhJbKYgMG",'烘焙帮信息科技有限公司','15018749403',1,0),
