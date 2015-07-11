@@ -1,0 +1,60 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container"></div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var chips_banner_id = $.location.getQueryArgv('chips_banner_id');
+		var bannerInfo = {};
+		function getChips(next){
+			$.post('/chipsbanner/bannerDetailInfo',{chips_banner_id:chips_banner_id},function(data){
+				data = $.JSON.parse(data);
+				console.info(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				bannerInfo = data.data;
+				console.info(bannerInfo);
+				next();
+			});
+		}
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'title',type:'text',name:'banner标题'},
+					{id:'img',type:'image',name:'图片',option:{url:'/upload/image',width:640}},
+					{id:'url',type:'text',name:'链接'},
+				],
+				value:bannerInfo,
+				submit:function(data){
+					$.ajax({
+						url: '/chipsbanner/updateChipsBanner',
+						type: 'POST',
+						dataType: 'JSON',
+						data: {
+							chips_banner_id: chips_banner_id,
+							data: data
+						},
+						success:function(data){
+							if(data == 1){
+								alert('更新成功');
+								window.location.href = 'index.html';
+							}else{
+								alert('更新失败');
+							}
+						},
+						error:function(XMLResponse){
+							alert(XMLResponse.responseText);
+						}
+					})
+				},
+				cancel:function(){
+					history.back();
+				}
+			});
+		}
+		getChips(go);
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

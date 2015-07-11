@@ -1,0 +1,426 @@
+<link rel="import" href="../header.html?__inline">
+<meta name=”viewport” content="width=320, user-scalable=yes, initial-scale=2.5, maximum-scale=5.0, minimun-scale=1.0">
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<title>众筹活动</title>
+<style type="text/css">
+	* {
+		padding: 0px;
+		margin: 0px;
+	}
+	
+	body {
+		background: #DCDCDC;
+	}
+	
+	#main {
+		position: relative;
+	}
+	
+	#product {
+		width: 100%;
+		/*background: gray;*/
+	}
+	
+	#product ul {
+		list-style: none;
+	}
+	
+	#product ul li {
+		position: relative;
+		height: 160px;
+		margin-top: 50px;
+		background: #ffffff;
+	}
+	
+	#product .chips .icon {
+		/*border: 1px solid red;*/
+		/*width: 200px;*/
+		
+		float: left;
+		margin-left: 8px;
+		margin-top: 20px;
+	}
+	
+	#product .chips .icon img {
+		width: 120px;
+		height: 120px;
+	}
+	
+	#product .chips .product_info {
+		/*border: 1px solid blue;*/
+		
+		float: left;
+		margin-left: 24px;
+		margin-top: 20px;
+	}
+	
+	#product .chips .product_info .p1 {
+		font-family: '微软雅黑';
+		font-weight: 500;
+		font-size: 18px;
+	}
+	
+	#product .chips .product_info .p2 {
+		font-family: '微软雅黑';
+		margin-top: 2px;
+		font-size: 14px;
+		color: #969696;
+	}
+	
+	#product .chips .product_info .p2 .span1 {
+		font-family: '微软雅黑';
+		font-size: 18px;
+		font-weight: 700;
+		color: #A0273A;
+		padding-left: 20px;
+	}
+	
+	#product .chips .product_info .p2 .span2 {
+		font-family: '微软雅黑';
+		padding-left: 20px;
+		font-size: 18px;
+		font-weight: 700;
+		color: black;
+	}
+	
+	#product .chips .chips_start {
+		position: absolute;
+		width: 45px;
+		height: 18px;
+		border: 1px solid;
+		line-height: 18px;
+		text-align: center;
+		background: #44C8B0;
+		color: white;
+		font-family: '微软雅黑';
+		font-size: 10px;
+	}
+	
+	.line {
+		border: 1px solid;
+		width: 95%;
+		margin: 0 auto;
+		border: none;
+		border-top: 1px solid;
+		position: absolute;
+		top: 153px;
+		left: 8px;
+	}
+	
+	.line2 {
+		border: 1px solid;
+		width: 95%;
+		margin: 0 auto;
+		border: none;
+		border-top: 1px solid;
+		margin-top: 8px;
+		margin-left: 8px;
+	}
+	
+	#book {
+		position: relative;
+		width: 100%;
+		height: 50px;
+		background: white;
+	}
+	
+	#book .book_title {
+		position: absolute;
+		font-size: 14px;
+		left: 100px;
+		/*margin-left: 18%;*/
+		
+		margin-top: 20px;
+	}
+	
+	.num {
+		position: absolute;
+		display: inline-block;
+		width: 105px;
+		height: 23px;
+		border: 1px solid black;
+		left: 180px;
+		top: 16px;
+	}
+	
+	.num .dis {
+		position: absolute;
+		left: 0px;
+		display: inline-block;
+		width: 25px;
+		height: 25px;
+		font-size: 12px;
+		line-height: 25px;
+		text-align: center;
+		/*margin-left: 5px;*/
+	}
+	
+	.num .add {
+		position: absolute;
+		right: 0px;
+		display: inline-block;
+		width: 25px;
+		height: 25px;
+		font-size: 12px;
+		line-height: 24px;
+		text-align: center;
+	}
+	
+	.num input {
+		position: absolute;
+		top: 0px;
+		left: 24px;
+		height: 23px;
+		width: 58px;
+		border: none;
+		border-left: 1px solid;
+		border-right: 1px solid;
+		border-radius: 0px;
+		font-size: 10px;
+		text-align: center;
+	}
+	
+	#tijiao {
+		margin-top: 50px;
+	}
+	
+	#tijiao a {
+		display: block;
+		height: 80px;
+		width: 450px;
+		border: 1px solid;
+		margin: 0 auto;
+		font-family: '微软雅黑';
+		font-size: 40px;
+		background: #FE0000;
+		color: white;
+		text-align: center;
+		line-height: 80px;
+		border-radius: 15px;
+	}
+	
+	.content img {
+		width: 100%;
+		height: 100%;
+	}
+	
+	#common_footerbutton a {
+		text-decoration: none;
+		color: white;
+		line-height: 60px;
+		font-size: 20px;
+	}
+	
+	#canvasDiv {}
+	
+	#null {
+		height: 100px;
+	}
+</style>
+</head>
+
+<body>
+	<div id="main">
+		<div id="product">
+<!--
+			<ul>
+				 <li>
+					<div class="chips">
+						<div class="chips_start">众筹中</div>
+						<div class="icon">
+							<img src="common/image/banner1.jpg" alt='' />
+						</div>
+						<div class="product_info">
+							<p class='p1'>云游Q5夜视王超高清行车记录仪</p>
+							<p class="p2">
+								原 始 价 格：<span class='span1'>1500</span>
+							</p>
+							<p class="p2">
+								已 筹 数 量：<span class='span2'>7天</span>
+							</p>
+							<p class="p2">
+								现 在 价 格：<span class='span2'>7天</span>
+							</p>
+							<p class="p2">
+								参 与 人 数：<span class='span2'>7天</span>
+							</p>
+						</div>
+					</div>
+				</li> 
+			</ul>
+-->
+
+			<div class='line'></div>
+			<div id='container'></div>
+			<div class="line2"></div>
+		<!--	<div id="book">
+				
+				<span class='book_title'>我 要 众 筹</span>
+				<div class="num">
+					<span class="dis">-</span>
+					<span class="inputss">
+						<input type="text" name="num" value="1" />
+						<input type='hidden' value='1' name='oldnum' />
+					</span>
+					<span class="add">+</span>
+				</div>
+
+			</div>-->
+			<div class="content"></div>
+		</div>
+	</div>
+	<div id="null"></div>
+</body>
+<script type="text/javascript">
+	var $ = require('../common/core/core.js');
+	var chips = {};
+	var chips_id = $.location.getQueryArgv('chips_id');
+	var password = $.location.getQueryArgv('password');
+	var mobile_request = 1;
+	var x = [];
+	var y = [];
+
+	//检测安全性
+	function check_password(next) {
+		if (password) {
+			$.ajax({
+				url: '/chips/checkGetPassword',
+				type: 'POST',
+				dataType: 'JSON',
+				data: {
+					chips_id: chips_id,
+					password: password
+				},
+				success: function (data) {
+					if (data != 1) {
+						alert('非法操作');
+						history.go(-1);
+					} else {
+						next();
+					}
+				},
+				error: function (XMLResponse) {
+					alert(XMLResponse.responseText);
+				}
+			})
+
+		} else {
+			alert('非法操作');
+			history.go(-1);
+		}
+	}
+
+	function get_chips(next) {
+		$.ajax({
+			url: '/chips/chipsDetail',
+			type: 'POST',
+			dataType: 'JSON',
+			data: {
+				chips_id: chips_id,
+				mobile_request: mobile_request
+			},
+			success: function (data) {
+				if (data.code != 0) {
+					dialog.message(data.msg);
+					return;
+				}
+				chips = data.data;
+				next();
+			},
+			error: function (XMLResponse) {
+				alert(XMLResponse.responseText);
+			}
+		})
+	}
+
+
+		function tubiao(next) {
+			$.ajax({
+				url: '/chips/line',
+				type: 'POST',
+				dataType: 'JSON',
+				data: {
+					chips_id: chips_id
+				},
+				success: function (data) {
+					x = data.x;
+					y = data.y;
+					next();
+				},
+				error: function (XMLResponse) {
+					alert(XMLResponse.responseText);
+				}
+			})
+		};
+
+	function go() {
+		var Header = require('../common/chips/header.js');
+		var Product = require('../common/chips/product.js');
+		var Book = require('../common/chips/book.js');
+		require('../common/chips/highcharts.js');
+		var DetailFooter = require('../common/chips/detailFooter.js');
+		var header = new Header({
+			title: '众筹中',
+			backLink: 'javascript:;',
+			button: []
+		});
+		var chipsArray = [];
+		chipsArray[0]=chips;
+		chipsArray[0].isDetail='ture';
+		console.log(chipsArray);
+		var productHtml = new Product(chipsArray);
+		var book = new Book(chips);
+		var detailFooter = new DetailFooter('提交');
+		
+		$('#main').html(productHtml.el);
+		$('#product').append("<div class='line'></div><div id='container'></div><div class='line2'></div><div class='content'></div>");
+		$('.content').append(chips['detail']);
+		$('#main').append(header.el);
+		$('#main').append(detailFooter.el);
+		detailFooter.set();
+		book.set();
+		productHtml.set();
+		
+		$('#container').highcharts({
+			chart: {
+				type: 'line'
+			},
+			title: {
+				text: '众筹商品的价格分布'
+			},
+			subtitle: {
+				text: ''
+			},
+			xAxis: {
+				categories: x
+			},
+			yAxis: {
+				title: {
+					text: 'price'
+				}
+			},
+			plotOptions: {
+				line: {
+					dataLabels: {
+						enabled: true
+					},
+					enableMouseTracking: false
+				}
+			},
+			series: [{
+				name: '众筹单价',
+				data: y
+        }]
+		});
+
+	}
+
+	$.checkMustLogin(function () {
+		check_password(function () {
+			tubiao(function(){
+				get_chips(go);
+			});
+		});
+	});
+</script>
+<link rel="import" href="../footer.html?__inline">

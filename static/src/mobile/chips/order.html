@@ -1,0 +1,462 @@
+<link rel="import" href="../header.html?__inline">
+	<title>订单页面</title>
+</head>
+<body>
+	<div id="body"></div>
+	<script type="text/javascript">
+		var $ = require('../common/core/core.js');
+		var dialog = require('../common/dialog/dialog.js');
+		var Footer = require('../common/footer/footer.js');
+		var HeaderButton = require('../common/headerbutton/headerbutton.js');
+		var DealList = require('../common/deallist/deallist.js');
+		var state = $.location.getQueryArgv('state');
+		var orderStateIdToName = {0:'全部',1:'未支付',2:'已预付',3:'完成'};
+		var orderStateList = [0,1,2,3];
+		var orderCount = {};
+		var orderList = [];
+		var orderState = (state == null)?0:state;
+		var hasCompany = true;
+		var WXSdk = require('../../fishstrap/sdk/wxsdk.js'); //引入微信sdk
+
+		//获取订单数量
+		function getOrderCount(next){
+			$.get('/chipsorder/getOrderCount',{},function(data){
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				console.info(data);
+				orderCount = data.data;
+				next();
+			});
+		}
+
+		//支付--余额
+		function orderpay(chips_id,chips_order_id){
+			$.ajax({
+				url: '/chipsorder/payAll',
+				type: 'POST',
+				dataType: 'JSON',
+				data: {
+					chips_id: chips_id,
+					chips_order_id: chips_order_id
+				},
+				success:function(data){
+					if(data.code!=0){
+						dialog.message(data.msg);
+						return;
+					}
+					WXSdk.enableDebugMode();
+					WXSdk.ready(function(){
+						WXSdk.pay(data.data,{
+							success:function(msg){
+								//支付成功 执行回调操作 更新目前价格
+								console.info(msg);
+								$.ajax({
+									url: '/chipsorder/payAllAfter',
+									type: 'POST',
+									dataType: 'JSON',
+									data: {
+										chips_order_id: chips_order_id,
+									},
+									success:function(data){
+										if(data){
+											window.location.href = 'index.html';
+										}else{
+											alert('支付成功，但价格更新失败');
+											return false;
+										}
+									},
+									error:function(XMLResponse){
+										alert(XMLResponse.responseText);
+									}
+								})
+							},
+							fail:function(msg){
+								if(msg['err_desc'] == '该订单已过期，请重新下单'){
+									//订单过期 重新下单
+									re_pay_all(chips_id,chips_order_id);
+								}else{
+									dialog.message('用户取消支付'+JSON.stringify(msg),function(){
+									});
+								}
+							}
+						});
+					});
+				},
+				error:function(XMLResponse){
+					alert(XMLResponse.responseText);
+				}
+			})			
+		}
+
+		//支付--预付
+		function order_first_pay(chips_id,chips_order_id,num){
+			$.ajax({
+				url: '/chipsorder/orderFirstPay',
+				type: 'POST',
+				dataType: 'JSON',
+				data: {
+					chips_order_id: chips_order_id
+				},
+				success:function(data){
+					if(data.code!=0){
+						dialog.message(data.msg);
+						return;
+					}
+					console.info(data);
+					WXSdk.enableDebugMode();
+					WXSdk.ready(function(){
+						WXSdk.pay(data.data,{
+							success:function(msg){
+								//支付成功 执行回调操作 更新目前价格
+								console.info(msg);
+								$.ajax({
+									url: '/chips/firstAfter',
+									type: 'POST',
+									dataType: 'JSON',
+									data: {
+										chips_order_id: chips_order_id,
+										chips_id: chips_id,
+										num: num
+									},
+									success:function(data){
+										if(data){
+											window.location.href = 'index.html';
+										}else{
+											alert('支付成功，但价格更新失败');
+											return false;
+										}
+									},
+									error:function(XMLResponse){
+										alert(XMLResponse.responseText);
+									}
+								})
+							},
+							fail:function(msg){
+								console.info(msg);
+								if(msg['err_desc'] == '该订单已过期，请重新下单'){
+									//订单过期 重新下单
+									re_pay_first(chips_id,chips_order_id,num);
+								}else{
+									dialog.message('用户取消支付'+JSON.stringify(msg),function(){
+									});
+								}
+							}
+						});
+					});
+				},
+				error:function(XMLResponse){
+					alert(XMLResponse.responseText);
+				}
+			})
+		}
+
+		//支付预付 订单过期 重新发起
+		function re_pay_first(chips_id,chips_order_id,num){
+			$.ajax({
+				url: '/chipsorder/rePayFirst',
+				type: 'POST',
+				dataType: 'JSON',
+				data: {chips_order_id: chips_order_id},
+				success:function(data){
+					if(data.code!=0){
+						dialog.message(data.msg);
+						return;
+					}
+					WXSdk.enableDebugMode();
+					WXSdk.ready(function(){
+						WXSdk.pay(data.data,{
+							success:function(msg){
+								//支付成功 执行回调操作 更新目前价格
+								console.info(msg);
+								$.ajax({
+									url: '/chips/firstAfter',
+									type: 'POST',
+									dataType: 'JSON',
+									data: {
+										chips_order_id: chips_order_id,
+										chips_id: chips_id,
+										num: num
+									},
+									success:function(data){
+										if(data){
+											window.location.href = 'index.html';
+										}else{
+											alert('支付成功，但价格更新失败');
+											return false;
+										}
+									},
+									error:function(XMLResponse){
+										alert(XMLResponse.responseText);
+									}
+								})
+							},
+							fail:function(msg){
+								console.info(msg);
+								dialog.message('用户取消支付'+JSON.stringify(msg),function(){
+								});
+							}
+						});
+					});
+				},
+				error:function(XMLResponse){
+					alert(XMLResponse.responseText);
+				}
+			})
+		}
+
+		//支付余额 订单过期 重新发起
+		function re_pay_all(chips_id,chips_order_id){
+			$.ajax({
+				url: '/chipsorder/rePayAll',
+				type: 'POST',
+				dataType: 'JSON',
+				data: {
+					chips_id: chips_id,
+					chips_order_id: chips_order_id
+				},
+				success:function(data){
+					if(data.code!=0){
+						dialog.message(data.msg);
+						return;
+					}
+					WXSdk.enableDebugMode();
+					WXSdk.ready(function(){
+						WXSdk.pay(data.data,{
+							success:function(msg){
+								//支付成功 执行回调操作 更新目前价格
+								console.info(msg);
+								$.ajax({
+									url: '/chipsorder/payAllAfter',
+									type: 'POST',
+									dataType: 'JSON',
+									data: {
+										chips_order_id: chips_order_id,
+									},
+									success:function(data){
+										if(data){
+											window.location.href = 'index.html';
+										}else{
+											alert('支付成功，但价格更新失败');
+											return false;
+										}
+									},
+									error:function(XMLResponse){
+										alert(XMLResponse.responseText);
+									}
+								})
+							},
+							fail:function(msg){
+								dialog.message('用户取消支付'+JSON.stringify(msg),function(){
+								});
+							}
+						});
+					});
+				},
+				error:function(XMLResponse){
+					alert(XMLResponse.responseText);
+				}
+			})
+		}
+
+		//获取订单列表
+		function getOrderList(next){
+			$.ajax({
+				url: '/chipsorder/getOrderList',
+				type: 'GET',
+				dataType: 'JSON',
+				data: {state: orderState},
+				success:function(data){
+					console.info(data);
+					orderList = data.data;
+					next();
+				},
+				error:function(XMLResponse){
+					alert(XMLResponse.responseText);
+				}
+			})
+		}
+
+		//页面追加
+		function go(){
+			var footer = new Footer('deal',hasCompany);
+			var headerbutton = new HeaderButton(_.map(orderStateList,function(key){
+				return {
+					name:orderStateIdToName[key],
+					number:orderCount[key],
+					click:function(){
+						location.href = 'order.html?state='+key;
+					}
+				};	
+			}));
+			var html = "<ul class='common_deallist' id='common_deallist_6'>";
+			$.each(orderList,function(index,val) {
+				if(val['status'] == 1){
+					html +=	"<a href='javascript:;' name='pay_first' order_id='"+val['chips_order_id']+"' chips_id='"+val['chips_id']+"' num='"+val['num']+"'>\
+								<li data='0'>\
+									<div class='img'><img src='"+val['icon']+"' style='height:175px;'></div>\
+									<div class='info'>\
+										<div class='id'><span class='tip'>订单号：</span><span class='text'>"+val['orderNo']+"</span></div>\
+										<div class='state'><span class='tip'>订单状态：</span><span class='text'>需预付"+val['percent']+"%</span></div>\
+										<div class='price'><span class='tip'>订单金额：</span><span class='text'>￥"+val['firstpay']+"</span></div>\
+										<div class='price'><span class='tip'>订购数量：</span><span class='text'>"+val['num']+"</span></div>\
+										<div class='price'><span class='tip'>众筹单价：</span><span class='text'>￥"+val['unit_price']+"</span></div>\
+									</div>\
+								</li>\
+							</a>";
+				}else if (val['status'] == 2){
+					html += "<a href='javascript:;' name='pay_all' order_id='"+val['chips_order_id']+"' chips_id='"+val['chips_id']+"'>\
+								<li data='0'>\
+									<div class='img'><img src='"+val['icon']+"' style='height:175px;'></div>\
+									<div class='info'>\
+										<div class='id'><span class='tip'>订单号：</span><span class='text'>"+val['orderNo']+"</span></div>\
+										<div class='state'><span class='tip'>订单状态：</span><span class='text'>已支付"+val['firstpay']+"</span></div>\
+										<div class='price'><span class='tip'>订单金额：</span><span class='text'>￥"+(val['num'] * val['newprice'] - val['firstpay']).toFixed(2)+"</span></div>\
+										<div class='price'><span class='tip'>订购数量：</span><span class='text'>"+val['num']+"</span></div>\
+										<div class='price'><span class='tip'>目前单价：</span><span class='text'>￥"+val['newprice']+"</span></div>\
+									</div>\
+								</li>\
+							</a>";
+				}else if(val['status'] == 3){
+					html += "<a href='javascript:;'>\
+								<li data='0'>\
+									<div class='img'><img src='"+val['icon']+"' style='height:175px;'></div>\
+									<div class='info'>\
+										<div class='id'><span class='tip'>订单号：</span><span class='text'>"+val['orderNo']+"</span></div>\
+										<div class='state'><span class='tip'>订单状态：</span><span class='text'>已经全额支付</span></div>\
+										<div class='price'><span class='tip'>订单金额：</span><span class='text'>￥"+val['end_free']+"</span></div>\
+										<div class='price'><span class='tip'>订购数量：</span><span class='text'>"+val['num']+"</span></div>\
+										<div class='price'><span class='tip'>众筹单价：</span><span class='text'>￥"+val['end_unit_price']+"</span></div>\
+									</div>\
+								</li>\
+							</a>";
+				}
+			});	
+			html += "</ul>";
+			footer = "<div id='common_footer_padding'></div>\
+						<ul id='common_footer'>\
+							<a href='index.html'>\
+								<li class='item' state='inactive' style='width:50%;'>\
+									<span class='icon'></span>\
+									<span class='text'>众筹</span>\
+								</li>\
+							</a>\
+							<a href='order.html'>\
+								<li class='deal' state='active' style='width:50%;'>\
+									<span class='icon'></span>\
+									<span class='text'>订单</span>\
+								</li>\
+							</a>\
+						</ul>";
+			var pageHtml = headerbutton.el + html + footer;
+			$.page.setGrey();
+			$.page.start(pageHtml);
+			$('.common_headerbutton').children("li[data='"+orderState+"']").css('border-top','3px solid #CA191D');
+			$('.option').each(function() {
+				if($(this).attr('status') == 1){
+					//未支付
+					$(this).append("<a href='javascript:;' name='pay'>立即支付</a>&nbsp;&nbsp;<a href='javascript:;' name='del'>删除</a>");
+				}else if($(this).attr('status') == 2){
+					$(this).append("<a href='javascript:;' name='pay'>支付余额</a>&nbsp;&nbsp;<a href='javascript:;' name='del'>删除</a>");
+				}
+			});
+
+			//支付流程
+			$('.option').children('a[name=pay]').click(function() {
+				var free = $(this).parents('li').find('span[name=free]').text(); //订单金额
+				var status = $(this).parent('.option').attr('status');           //订单状态
+				var chips_order_id = $(this).parent('.option').attr('chips_order_id'); //订单id
+				$.ajax({
+					url: '/chipsorder/pay',
+					type: 'POST',
+					dataType: 'JSON',
+					data: {
+						free: free,
+						status: status,
+						chips_order_id: chips_order_id
+					},
+					success:function(data){
+						if(data == 1){
+							alert('支付成功');
+							window.location.href = 'order.html';
+						}else{
+							alert('支付失败');
+						}
+					},
+					error:function(XMLResponse){
+						alert(XMLResponse.responseText);
+					}
+				})
+			});
+
+			//删除
+			$('.option').children('a[name=del]').click(function() {
+				var chips_order_id = $(this).parent('.option').attr('chips_order_id');
+				var status = $(this).parent('.option').attr('status');
+				$.ajax({
+					url: '/chipsorder/del',
+					type: 'POST',
+					dataType: 'JSON',
+					data: {
+						chips_order_id: chips_order_id,
+						status: status
+					},
+					success:function(data){
+						if(data == 1){
+							alert('删除成功');
+							window.location.href = 'order.html';
+						}else{
+							alert(data);
+						}
+					},
+					error:function(XMLResponse){
+						alert(XMLResponse.responseText);
+					}
+				})
+			});
+
+			//支付余额
+			$('.common_deallist').on('click', 'a[name=pay_all]', function() {
+				var chips_id = $(this).attr('chips_id');
+				var chips_order_id = $(this).attr('order_id');
+				//先判断活动是否结束
+				$.ajax({
+					url: '/chips/chipsStart',
+					type: 'POST',
+					dataType: 'JSON',
+					data: {chips_id: chips_id},
+					success:function(data){
+						if(data == 1){
+							if(confirm('改活动还没结束，确定要提前支付余额吗？')){
+								orderpay(chips_id,chips_order_id);
+							}
+						}else{
+							orderpay(chips_id,chips_order_id);
+						}
+					},
+					error:function(XMLResponse){
+						alert(XMLResponse.responseText);
+					}
+				})				
+			});
+
+			//支付预付
+			$('.common_deallist').on('click', 'a[name=pay_first]', function() {
+				var chips_id = $(this).attr('chips_id');
+				var chips_order_id = $(this).attr('order_id');
+				var num = $(this).attr('num');
+				if(confirm('确定要支付预付吗？')){
+					order_first_pay(chips_id,chips_order_id,num);
+					// re_pay_first(chips_order_id);
+				}
+			});
+		}
+		$.checkMustLogin(function(){
+			getOrderCount(function(){
+				getOrderList(go);
+			})
+		})
+	</script>
+</body>
+<link rel="import" href="../footer.html?__inline">

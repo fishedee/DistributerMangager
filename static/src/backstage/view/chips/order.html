@@ -1,0 +1,51 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		var allState = {};
+		function go(){
+			query.simpleQuery({
+				id:'container',
+				url:'/chipsorder/search',
+				column:[
+					{id:'orderNo',type:'text',name:'订单号'},
+					{id:'name',type:'text',name:'收货人'},
+					{id:'firstpay',type:'text',name:'预付金额'},
+					{id:'end_free',type:'text',name:'订单最终金额'},
+					{id:'show_status',type:'text',name:'状态'},
+					{id:'down_time',type:'text',name:'下单时间'},
+					{id:'pay_first_time',type:'text',name:'预付时间'},
+					{id:'pay_all_time',type:'text',name:'全额支付时间'}
+				],
+				queryColumn:['name'],
+				operate:[
+				{
+					name:'详情',
+					click:function(data){
+						location.href = 'view.html?shopOrderId='+data.shopOrderId;
+					}
+				},
+				{
+					name:'标记为已发货',
+					click:function(data){
+						dialog.confirm('确认订单已发货，不可回退操作？!',function(){
+							$.post('/deal/modhassend',{shopOrderId:data.shopOrderId},function(data){
+								data = $.JSON.parse(data);
+								if( data.code != 0 ){
+									dialog.message(data.msg);
+									return;
+								}
+								location.href = 'index.html';
+							});
+						});
+					}
+				}],
+				button:[],
+			});
+		}
+		go();
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

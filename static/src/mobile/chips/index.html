@@ -1,0 +1,445 @@
+<link rel="import" href="../header.html?__inline">
+<!-- <meta name="viewport" content="user-scalable=no"> -->
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<meta name="format-detection" content="telephone=yes" />
+<title>众筹活动</title>
+<style type="text/css">
+	* {
+		padding: 0px;
+		margin: 0px;
+	}
+	
+	body {
+		background: #DCDCDC;
+	}
+	
+	#main {
+		position: relative;
+	}
+	
+	#banner img {
+		width: 100%;
+		height: 400px;
+	}
+	
+	#search {
+		width: 100%;
+	}
+	
+	#product {
+		margin-top: 5px;
+		width: 100%;
+		/*background: gray;*/
+	}
+	
+	#product ul {
+		list-style: none;
+	}
+	
+	#product ul li {
+		position: relative;
+		height: 160px;
+		margin-top: 5px;
+		background: #ffffff;
+	}
+	
+	#product .chips .icon {
+		/*border: 1px solid red;*/
+		/*width: 200px;*/
+		
+		float: left;
+		margin-left: 8px;
+		margin-top: 20px;
+	}
+	
+	#product .chips .icon img {
+		width: 120px;
+		height: 120px;
+	}
+	
+	#product .chips .product_info {
+		/*border: 1px solid blue;*/
+		
+		float: left;
+		margin-left: 24px;
+		margin-top: 20px;
+	}
+	
+	#product .chips .product_info .p1 {
+		font-family: '微软雅黑';
+		font-weight: 500;
+		font-size: 18px;
+	}
+	
+	#product .chips .product_info .p2 {
+		font-family: '微软雅黑';
+		margin-top: 10px;
+		font-size: 14px;
+		color: #969696;
+	}
+	
+	#product .chips .product_info .p2 .span1 {
+		font-family: '微软雅黑';
+		font-size: 18px;
+		font-weight: 700;
+		color: #A0273A;
+		padding-left: 20px;
+	}
+	
+	#product .chips .product_info .p2 .span2 {
+		font-family: '微软雅黑';
+		padding-left: 20px;
+		font-size: 18px;
+		font-weight: 700;
+		color: black;
+	}
+	
+	#product .chips .chips_start {
+		position: absolute;
+		width: 45px;
+		height: 18px;
+		border: 1px solid;
+		line-height: 18px;
+		text-align: center;
+		background: #44C8B0;
+		color: white;
+		font-family: '微软雅黑';
+		font-size: 10px;
+	}
+	/*banner*/
+	
+	.swiper-container {
+		width: 100%;
+		height: 160px;
+	}
+	
+	.swiper-slide {
+		text-align: center;
+		font-size: 18px;
+		background: #fff;
+		position: relative;
+		/* Center slide text vertically */
+		
+		display: -webkit-box;
+		display: -ms-flexbox;
+		display: -webkit-flex;
+		display: flex;
+		-webkit-box-pack: center;
+		-ms-flex-pack: center;
+		-webkit-justify-content: center;
+		justify-content: center;
+		-webkit-box-align: center;
+		-ms-flex-align: center;
+		-webkit-align-items: center;
+		align-items: center;
+		height: 160px;
+	}
+	/*password css*/
+	
+	.security_div {
+		width: 100%;
+		height: 60px;
+		line-height: 60px;
+		border-bottom: solid 1px #eee;
+	}
+	
+	.security_div em {
+		width: 30px;
+		display: block;
+		float: left;
+		height: 100%;
+	}
+	
+	.security_div span {
+		font-size: 16px;
+		float: left;
+		display: inline-block;
+		padding-left: 5px;
+	}
+	
+	.security_div div {
+		float: right;
+		display: inline-block;
+	}
+	
+	.security_div div a {
+		margin-left: 10px;
+	}
+	
+	.Bomb_box {
+		width: 0;
+		height: 0;
+		position: fixed;
+		left: 40%;
+		rigth: 50%;
+		top: 50%;
+		bottom: 50%;
+	}
+	
+	.security_Mailbox_bd {
+		position: relative;
+		width: 240px;
+		height: 140px;
+		background: #EFEFEF;
+		border: solid 1px #ddd;
+		/*margin-left:100px;*/
+		/*margin-top:300px;*/
+		
+		-webkit-border-radius: 5px;
+		-moz-border-radius: 5px;
+		border-radius: 5px;
+		padding: 20px;
+		-webkit-box-shadow: 0 0 5px #ccc;
+		-moz-box-shadow: 0 0 5px #ccc;
+		box-shadow: 0 0 5px #ccc;
+		position: relative;
+		left: -100px;
+		top: -100px;
+	}
+	
+	.security_Mailbox_title {
+		width: 100%;
+		height: 35px;
+		line-height: 35px;
+		border-bottom: solid 1px #ddd;
+		display: block;
+		text-align: center;
+		font-size: 26px;
+	}
+	
+	.security_Mailbox_bd ul {
+		margin: 30px 0;
+	}
+	
+	.security_Mailbox_bd ul li {
+		height: 35px;
+		line-height: 35px;
+		margin-bottom: 15px;
+		list-style: none;
+		position: relative;
+	}
+	
+	.security_Mailbox_bd ul li span {
+		width: 115px;
+		height: 35px;
+		line-height: 35px;
+		text-align: right;
+		float: left;
+		font-size: 14px;
+	}
+	
+	.security_Mailbox_bd ul li input {
+		/*width:243px;*/
+		
+		width: 80%;
+		height: 18px;
+		line-height: 18px;
+		float: left;
+		-webkit-border-radius: 5px;
+		-moz-border-radius: 5px;
+		border-radius: 5px;
+		border: solid 1px #ddd;
+		padding-left: 5px;
+		position: relative;
+		top: 1px;
+	}
+	
+	.security_Mailbox_bd ul li input.input_pwd {
+		/*border:none;*/
+		
+		border: 1px solid #EFEFEF;
+		position: absolute;
+		left: 10%;
+		width: 80%;
+		height: 28px;
+		background: #EFEFEF;
+		font-size: 12px;
+	}
+	
+	.security_Mailbox_bd ul li .mobile {
+		position: absolute;
+		left: 8px;
+		top: 9px;
+		height: 14px;
+		width: 14px;
+		background-image: url("../common/chips/image/mobile11.png");
+	}
+	
+	.security_Mailbox_bd ul li .close {
+		position: absolute;
+		right: 20px;
+		top: 9px;
+		height: 14px;
+		width: 14px;
+		background-image: url("../common/chips/image/close11.png");
+	}
+	
+	.pwd_sub {
+		display: block;
+		width: 100%;
+		height: 35px;
+		position: absolute;
+		background: #0195DF;
+		font-family: '微软雅黑';
+		font-size: 16px;
+		color: white;
+		text-decoration: none;
+		border-radius: 5px;
+		text-align: center;
+		line-height: 35px;
+		position: relative;
+		top: 25px;
+	}
+	
+	.security_Mailbox_bd ul li span.contract {
+		position: absolute;
+		display: block;
+		width: 50%;
+		height: 25px;
+		line-height: 25px;
+		text-align: center;
+		color: #454545;
+		font-family: '微软雅黑';
+		font-size: 12px;
+		top: -50px;
+	}
+	
+	.security_Mailbox_bd ul li span.contract1 {
+		position: absolute;
+		display: block;
+		width: 50%;
+		height: 25px;
+		line-height: 25px;
+		text-align: left;
+		color: #454545;
+		font-family: '微软雅黑';
+		font-size: 12px;
+		top: -50px;
+		left: 37%;
+	}
+	
+	.security_Mailbox_bd ul li.bginput {
+		height: 35px;
+		width: 260px;
+		position: relative;
+		background-image: url("../common/chips/image/bginput3.png");
+		background-position: -7px -9px;
+		background-repeat: no-repeat;
+	}
+	
+	.banner_title {
+		position: absolute;
+		display: inline-block;
+		height: 30px;
+		width: 100%;
+		background: black;
+		opacity: 0.5;
+		color: white;
+		bottom: 0px;
+		z-index: 10;
+		left: 0px;
+		top: 130px;
+		font-family: '微软雅黑';
+		line-height: 30px;
+		text-align: left;
+		padding-left: 20px;
+	}
+</style>
+</head>
+
+<body>
+	<div id='main'></div>
+	<div id="body"></div>
+	<script type="text/javascript">
+		var $ = require('../common/core/core.js');
+		var dialog = require('../common/dialog/dialog.js');
+		var Banner = require('../common/chips/banner.js');
+		var Product = require('../common/chips/product.js');
+		var Possword = require('../common/chips/password.js');
+		var Footer = require('../common/chips/footer.js');
+		var commodity = [];
+		var banner = [];
+		var hasCompany = true;
+
+		function getHasChips(next) {
+			$.get('/user/getHasChips', function (data) {
+				if (data.code != 0) {
+					//dialog.message(data.msg);
+					return;
+				}
+				hasCompany = data.data;
+				next();
+			});
+		}
+
+		function getCommmodity(next) {
+			$.get('/chips/getChips', {
+				mobile: 1
+			}, function (data) {
+				if (data.code != 0) {
+					dialog.message(data.msg);
+					return;
+				}
+				commodity = data.data.data;
+				next();
+			});
+		}
+
+		function getBanner(next) {
+			$.ajax({
+				url: '/chipsbanner/getBanner',
+				type: 'POST',
+				dataType: 'JSON',
+				success: function (data) {
+					banner = data;
+					next();
+				},
+				error: function (XMLResponse) {
+					alert(XMLResponse.responseText);
+				}
+			})
+		}
+
+		function getContract(next) {
+			$.ajax({
+				url: '/chipscontract/getContractInfo',
+				type: 'POST',
+				dataType: 'JSON',
+				success: function (data) {
+					$('.contract1').text(data['phone']);
+
+				},
+				error: function (XMLResponse) {
+					alert(XMLResponse.responseText);
+				}
+			})
+		}
+
+		function go(next) {
+			var bannerHtml = new Banner(banner);
+			var productHtml = new Product(commodity);
+			var posswordHtml = new Possword();
+			var footerHtml = new Footer();
+			bannerHtml.set();
+
+			$('#main').html(bannerHtml.el + productHtml.el + posswordHtml.el);
+			$('#body').html(footerHtml.el);
+			bannerHtml.set();
+			productHtml.set();
+			posswordHtml.set();
+			next();
+		}
+
+
+		$.checkMustLogin(function () {
+			getHasChips(function () {
+				getBanner(function () {
+					getCommmodity(function () {
+						go(getContract);
+					})
+				});
+			})
+		})
+	</script>
+</body>
+<link rel="import" href="../footer.html?__inline">

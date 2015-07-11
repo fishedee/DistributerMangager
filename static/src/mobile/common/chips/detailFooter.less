@@ -1,0 +1,60 @@
+@import (reference) '../core/core.less';
+#common_footerbutton_padding{
+	height:60px;
+}
+#common_footerbutton{
+	&:extend(.common_global_fixbottom);
+	height:60px;
+	z-index:@level_footer;
+
+	li{
+		&:extend(.common_global_leftcol);
+		text-align:center;
+		height:60px;
+
+		span{
+			font-size:@font_h1;
+			color:@font_white;
+			line-height:60px;
+			padding-left:30px;
+			background-position:left conter;
+			background-size:20px 20px;
+			background-repeat:no-repeat;
+		}
+
+		&.buy{
+			background-color:@background_red;
+			span{
+				background-image:url(buy.png);
+			}
+		}
+
+		&.cart{
+			background-color:@background_green;
+			span{
+				background-image:url(cart.png);
+			}
+		}
+
+		&.pay{
+			background-color:@background_red;
+			span{
+				background-image:url(pay.png);
+			}
+		}
+
+		&.confirm{
+			background-color:@background_red;
+			span{
+				background-image:url(confirm.png);
+			}
+		}
+
+		&.cancel{
+			background-color:@background_green;
+			span{
+				background-image:url(cancel.png);
+			}
+		}
+	}
+}

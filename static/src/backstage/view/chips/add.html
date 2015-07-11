@@ -1,0 +1,60 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container"></div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var shopCommodityId = $.location.getQueryArgv('shopCommodityId');
+		var shopCommodity = {};
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'product_title',type:'text',name:'众筹商品标题'},
+					{id:'icon',type:'image',name:'图片',option:{url:'/upload/image',width:640}},
+					{id:'remark',type:'text',name:'备注'},
+					{id:'detail',type:'fullEditor',name:'内容',option:{url:'/upload/ueditor'}},
+					{id:'oldprice',type:'text',name:'初始价格'},
+					{id:'percent',type:'text',name:'支付比例'},
+					{id:'down_num',type:'text',name:'降价数量'},
+					{id:'down_price',type:'text',name:'降价幅度'},
+					{id:'base',type:'text',name:'底价'},
+					{id:'start_time',type:'time',name:'开始时间'},
+					{id:'end_time',type:'time',name:'结束时间'},
+					{id:'password',type:'text',name:'密码'}
+				],
+				value:shopCommodity,
+				submit:function(data){
+					$.ajax({
+						url: '/chips/add',
+						type: 'POST',
+						dataType: 'JSON',
+						data: {data: data},
+						success:function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}else{
+								alert('发布成功');
+								window.location.href = 'index.html';
+							}
+						},
+						error:function(XMLResponse){
+							alert(XMLResponse.responseText);
+						}
+					})
+				},
+				cancel:function(){
+					history.back();
+				}
+			});
+		}
+		go();
+		$('input').each(function() {
+			if($(this).hasClass('time')){
+				$(this).attr('readonly','readonly');
+			}
+		});
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

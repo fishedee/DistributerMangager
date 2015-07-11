@@ -1,0 +1,144 @@
+<link rel="import" href="../header.html?__inline">
+	<title>收货地址</title>
+</head>
+<body>
+	<div id="body"></div>
+	<script type="text/javascript">
+		var $ = require('../common/core/core.js');
+		var dialog = require('../common/dialog/dialog.js');
+		var Header = require('../common/header/header.js');
+		var Address = require('../common/address/address.js');
+		var FooterButton = require('../common/footerbutton/footerbutton.js');
+		var WXSdk = require('../../fishstrap/sdk/wxsdk.js');
+		var myaddress = {};
+		var mapPaymentIdToName = {1:'微信支付',2:'货到付款'};
+		var mapPaymentNameToId = {'微信支付':1,'货到付款':2};
+		var chips_id = $.location.getQueryArgv('chips_id');
+		var num      = $.location.getQueryArgv('num');
+
+		//获取收货地址
+		function get(next){
+			$.get('/address/getMyAddress',{},function(data){
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				myaddress = data.data;
+				next();
+			});
+		}
+
+		//支付
+		function orderpay(chips_order_id){
+			var order_id = chips_order_id;
+			$.ajax({
+				url: '/chipsorder/payFirst',
+				type: 'POST',
+				dataType: 'JSON',
+				data: {chips_order_id: chips_order_id},
+				success:function(data){
+					if(data.code!=0){
+						dialog.message(data.msg);
+						return;
+					}
+					WXSdk.enableDebugMode();
+					WXSdk.ready(function(){
+						WXSdk.pay(data.data,{
+							success:function(msg){
+								//支付成功 执行回调操作 更新目前价格
+								console.info(msg);
+								$.ajax({
+									url: '/chips/firstafter',
+									type: 'POST',
+									dataType: 'JSON',
+									data: {
+										chips_order_id: order_id,
+										chips_id: chips_id,
+										num: num
+									},
+									success:function(data){
+										if(data){
+											window.location.href = 'order.html';
+										}else{
+											alert('支付成功，但价格更新失败');
+											return false;
+										}
+									},
+									error:function(XMLResponse){
+										alert(XMLResponse.responseText);
+									}
+								})
+							},
+							fail:function(msg){
+								console.info(msg);
+								dialog.message('用户取消支付'+JSON.stringify(msg),function(){
+								});
+							}
+						});
+					});
+				},
+				error:function(XMLResponse){
+					alert(XMLResponse.responseText);
+				}
+			})
+		}
+
+		//下单
+		function order(){
+			$.ajax({
+				url: '/chipsorder/down',
+				type: 'POST',
+				dataType: 'JSON',
+				data: {
+					name: $('.name').find('input').val(),
+					province: $('.province').find('select').val(),
+					city: $('.city').find('select').val(),
+					address: $('.address').find('input').val(),
+					phone: $('.phone').find('input').val(),
+					payment: $('.payment').find('select').val(),
+					chips_id: chips_id,
+					num: num,
+				},
+				success:function(data){
+					if( data.code != 0 ){
+						dialog.message(data.msg);
+						return;
+					}else{
+						orderpay(data.data);
+					}
+				},
+				error:function(XMLResponse){
+					alert(XMLResponse.responseText);
+				}
+			})
+		}
+
+		function go(){
+			var header = new Header({
+				title:'收货地址',
+				backLink:'javascript:;',
+				button:[]
+			});
+			$('#common_header').on('click', '.backicon', function() {
+				history.go(-1);
+			});
+
+			var address = new Address(_.extend(myaddress,{payment:mapPaymentIdToName[myaddress.payment]}));
+			var footer  = "<ul id='common_footerbutton'>\
+								<li data='0' class='pay' style='width:100%;'>\
+									<span>支付</span>\
+								</li>\
+							</ul>";
+			// var pageHtml = header.el + address.el + footerbutton.el;
+			var pageHtml = header.el + address.el + footer;
+			$.page.start(pageHtml);
+			$('#common_footerbutton').on('click', '.pay', function() {
+				order();
+			});
+		}
+		$.checkMustLogin(function(){
+			get(go);
+		});
+	</script>
+</body>
+<link rel="import" href="../footer.html?__inline">

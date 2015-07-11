@@ -52,6 +52,23 @@ class User extends CI_Controller {
 	}
 
 	/**
+	 * @view json
+	 */
+	public function getHasChips(){
+		//检查参数
+		$data = $this->argv->checkGet(array(
+			array('userId','require'),
+		));
+
+		//检查是否有众筹权限
+		$user = $this->userAo->get($data['userId']);
+		return in_array(
+			$this->userPermissionEnum->COMPANY_CHIPS,
+			$user['permission']
+		);
+	}
+
+	/**
 	* @view json
 	*/
 	public function getHasShop(){

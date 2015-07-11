@@ -1,0 +1,53 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var contractInfo;
+		function get(next){
+			$.get('/chipscontract/getContractInfoBack',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				contractInfo = data.data;
+				next();
+			});
+		}
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'phone',type:'text',name:'联系电话'},
+				],
+				value:contractInfo,
+				submit:function(data){
+					$.ajax({
+						url: '/chipscontract/updateContract',
+						type: 'POST',
+						dataType: 'JSON',
+						data: {
+							data: data
+						},
+						success:function(data){
+							if(data == 1){
+								alert('修改成功');
+								window.location.href = 'index.html';
+							}else{
+								alert('修改失败');
+							}
+						},
+						error:function(XMLResponse){
+							alert(XMLResponse.responseText);
+						}
+					})
+				},
+				cancel:undefined
+			});
+		}
+		get(go);
+	</script>
+<link rel="import" href="../common/footer.html?__inline">
