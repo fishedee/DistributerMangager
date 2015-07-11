@@ -515,7 +515,7 @@ create table t_cooperation(
     newlocation varchar(50) not null,
     will text not null
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;;
-alter table t_cooperation add index userIdIndex(userId);
+alter table t_cooperation add index cooperationUserIdIndex(userId);
 
 #建立初始数据
 insert into t_user(userId,name,password,company,phone,type,downDistributionNum) values
