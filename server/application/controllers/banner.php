@@ -27,9 +27,7 @@ class Banner extends CI_Controller {
 		));
 		
 		//检查权限
-		$user = $this->loginAo->checkMustClient(
-			$this->userPermissionEnum->COMPANY_INTRODUCE
-		);
+		$user = $this->loginAo->checkMustIntroduce();
 		$userId = $user['userId'];
 		
 		//执行业务逻辑
@@ -63,9 +61,7 @@ class Banner extends CI_Controller {
 		$userCompanyBannerId = $data['userCompanyBannerId'];
 		
 		//检查权限
-		$user = $this->loginAo->checkMustClient(
-			$this->userPermissionEnum->COMPANY_INTRODUCE
-		);
+		$user = $this->loginAo->checkMustIntroduce();
 		$userId = $user['userId'];
 		
 		//执行业务逻辑
@@ -85,9 +81,7 @@ class Banner extends CI_Controller {
 		));
 		
 		//检查权限
-		$user = $this->loginAo->checkMustClient(
-			$this->userPermissionEnum->COMPANY_INTRODUCE
-		);
+		$user = $this->loginAo->checkMustIntroduce();
 		$userId = $user['userId'];
 		
 		//执行业务逻辑
@@ -106,9 +100,7 @@ class Banner extends CI_Controller {
 		$userCompanyBannerId = $data['userCompanyBannerId'];
 		
 		//检查权限
-		$user = $this->loginAo->checkMustClient(
-			$this->userPermissionEnum->COMPANY_INTRODUCE
-		);
+		$user = $this->loginAo->checkMustIntroduce();
 		$userId = $user['userId'];
 		
 		//执行业务逻辑
@@ -133,9 +125,7 @@ class Banner extends CI_Controller {
 		));
 		
 		//检查权限
-		$user = $this->loginAo->checkMustClient(
-			$this->userPermissionEnum->COMPANY_INTRODUCE
-		);
+		$user = $this->loginAo->checkMustIntroduce();
 		$userId = $user['userId'];
 		
 		//执行业务逻辑
@@ -154,9 +144,7 @@ class Banner extends CI_Controller {
 		$userCompanyBannerId = $data['userCompanyBannerId'];
 		
 		//检查权限
-		$user = $this->loginAo->checkMustClient(
-			$this->userPermissionEnum->COMPANY_INTRODUCE
-		);
+		$user = $this->loginAo->checkMustIntroduce();
 		$userId = $user['userId'];
 		
 		//执行业务逻辑
@@ -175,9 +163,7 @@ class Banner extends CI_Controller {
 		$userCompanyBannerId = $data['userCompanyBannerId'];
 		
 		//检查权限
-		$user = $this->loginAo->checkMustClient(
-			$this->userPermissionEnum->COMPANY_INTRODUCE
-		);
+		$user = $this->loginAo->checkMustIntroduce();
 		$userId = $user['userId'];
 		
 		//执行业务逻辑

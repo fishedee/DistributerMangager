@@ -1,0 +1,61 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var poi_id = $.location.getQueryArgv('poi_id');
+		var appInfo;
+		var available ={1:'系统错误', 2:'审核中', 3:'审核通过',4:'审核驳回'};
+		var update ={0:'更新已生效',1:'扩展字段正在更新中，不允许再次更新', 2:'更新已生效'};
+		function get(next){
+			$.get('/stores/search',{poi_id:poi_id},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				appInfo = data.data;
+				next();
+			});
+		}
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'poi_id',type:'read',name:'门店ID'},
+					{id:'business_name',type:'read',name:'门店名称'},
+					{id:'branch_name',type:'read',name:'分店名称'},
+					{id:'categories',type:'read',name:'的类型'},
+					{id:'province',type:'read',name:'所在的省份'},
+					{id:'city',type:'read',name:'所在的城市'},
+					{id:'address',type:'read',name:'所在地区'},
+					{id:'telephone',type:'read',name:'电话号码'},
+					{id:'longitude',type:'read',name:'所在地理位置的经度'},
+					{id:'latitude',type:'read',name:'所在地理位置的纬度'},
+					{id:'photo_list',type:'table',name:'图片列表',
+						option:{
+							column:[
+								{id:'photo_url',type:'image',name:'图片'},
+							],
+							button:[],
+							operate:[],
+						}},
+					{id:'recommend',type:'read',name:'推荐品'},
+					{id:'special',type:'read',name:'特色服务'},
+					{id:'introduction',type:'read',name:'商户简介'},
+					{id:'open_time',type:'read',name:'营业时间'},
+					{id:'avg_price',type:'read',name:'人均消费价格'},
+					{id:'available_state',type:'enum',name:'门店可用状态',map:available},
+					{id:'update_status',type:'enum',name:'门店更新状态',map:update},
+				],
+				value:appInfo,
+				cancel:function(){
+					history.back();
+				},
+			});
+		}
+		get(go);
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

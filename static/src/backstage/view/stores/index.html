@@ -1,0 +1,68 @@
+<link rel="import" href="../common/header.html?__inline">
+
+<div id="container">
+</div>
+<script type="text/javascript">
+	var $ = require('/fishstrap/core/global.js');
+	var dialog = require('/fishstrap/ui/dialog.js');
+	var query = require('/fishstrap/ui/query.js');
+
+	var available ={1:'系统错误', 2:'审核中', 3:'审核通过',4:'审核驳回'};
+	var update ={0:'更新已生效',1:'扩展字段正在更新中，不允许再次更新', 2:'更新已生效'};
+	
+	function go() {
+		tableOperation = query.simpleQuery({
+			id: 'container',
+			url: '/stores/get',
+			column: [
+				{
+					id: 'poi_id',
+					type: 'text',
+					name: '门店ID'
+				},
+				{
+					id: 'business_name',
+					type: 'text',
+					name: '店铺名称'
+				},
+				{
+					id: 'branch_name',
+					type: 'text',
+					name: '分店名'
+				},
+				{
+					id: 'categories',
+					type: 'text',
+					name: '类目'
+				},
+				{
+					id: 'categories',
+					type: 'text',
+					name: '类目'
+				},
+				{
+					id: 'available_state',
+					type: 'enum',
+					name: '门店可用状态',
+					map:available,
+				},
+				{
+					id: 'update_status',
+					type: 'enum',
+					name: '门店更新状态',
+					map:update,
+				},
+				],
+			operate: [{
+					name: '查看详情',
+					click: function (data) {
+						location.href = 'view.html?poi_id=' + data.poi_id;
+					}
+				},
+						],
+			button: [],
+		});
+	}
+	go();
+</script>
+<link rel="import" href="../common/footer.html?__inline">

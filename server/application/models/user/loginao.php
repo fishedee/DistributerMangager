@@ -49,11 +49,18 @@ class LoginAo extends CI_Model {
 		
 		return $user;
 	}
+	
+	public function checkMustIntroduce(){
+		$user = $this->checkMustLogin();
+	
+		if(in_array($this->userPermissionEnum->COMPANY_INTRODUCE,$user['permission']) == false )
+			throw new CI_MyException(1,'对不起，你没有开启公司介绍权限，请联系管理员。');
+		
+		return $user;
+	}
+	
 	public function checkMustClient($permission){
 		$user = $this->checkMustLogin();
-		
-		if( $user['type'] != $this->userTypeEnum->CLIENT )
-			throw new CI_MyException(1,'非商城用户无法执行此操作');
 
 		if( $permission == $this->userPermissionEnum->COMPANY_SHOP ){
 			//校验商城管理权限

@@ -45,7 +45,7 @@
 							]
 						},
 					}
-				}else{
+				}else if( user.type == 3 ){
 					//商城用户
 					menu = {
 						'系统管理':{
@@ -100,9 +100,9 @@
 								{name:'分销商',url:'view/distribution/downUserIndex.html'},
 								{name:'分销分成',url:'view/distribution/downOrderIndex.html'},
 							],
-                                                        '招商加盟':[
-                                                                {name:'已提交信息',url:'view/cooperation/index.html'},
-                                                        ],
+                        '招商加盟':[
+                                {name:'已提交信息',url:'view/cooperation/index.html'},
+                            ],
 						},
 						'众筹管理':{
 							'众筹管理':[
@@ -115,6 +115,57 @@
 							],
 							'联系方式':[
 								{name:'联系方式',url:'view/chips/contractindex.html'},
+							]
+						},
+					}
+				}else if( user.type == 4 ){
+					//商城用户
+					menu = {
+						'系统管理':{
+							'系统管理':[
+								{name:'帐号管理',url:'view/user/viewByClient.html?userId='+user.userId},
+								{name:'密码管理',url:'view/password/index.html'}
+							],
+							'微信设置':[
+								{name:'微信设置',url:'view/commodityapp/index.html'},
+							],
+							'回复设置':[
+								{name:'素材中心',url:'view/auto-response/index.html?userId='+user.userId},
+								{name:'被关注自动回复',url:'view/auto-response/subscribe.html?userId='+user.userId},
+							],
+							'高级功能':[
+								{name:'自定义菜单',url:'view/advancedInterface/customMenu.html'},
+								{name:'多客服设置',url:'view/advancedInterface/customerService.html'},
+								{name:'门店列表',url:'view/stores/index.html'},
+								{name:'微信Wifi',url:'view/wifi/index.html'},
+							]
+						},
+						'公司介绍':{
+							'公司介绍':[
+								{name:'分类管理',url:'view/classify/index.html'},
+								{name:'文章管理',url:'view/article/index.html'},
+								{name:'广告管理',url:'view/banner/index.html'},
+								{name:'模板管理',url:'view/template/viewMyTemplate.html?type=1'},
+							]
+						},
+						'商城管理':{
+							'商城管理':[
+								{name:'用户管理',url:'view/client/index.html'},
+								{name:'模板管理',url:'view/template/viewMyTemplate.html?type=2'},
+								{name:'轮播图片',url:'view/shopbanner/index.html'},
+								{name:'分类管理',url:'view/commodityclassify/index.html'},
+								{name:'商品管理',url:'view/commodity/index.html'},
+								{name:'订单管理',url:'view/order/index.html'},
+							],
+							'营销管理':[
+								{name:'抽奖管理',url:'view/luckydraw/index.html'},
+								{name:'会员卡设置',url:'view/vip/viewSetting.html'},
+								{name:'会员卡管理',url:'view/vip/indexCard.html'},
+								{name:'红包管理',url:'view/redpack/viewSetting.html'},
+							],
+							'统计管理':[
+								{name:'订单流水日统计',url:'view/order/orderdaystatistic.html'},
+								{name:'订单流水总统计',url:'view/order/orderstatistic.html'},
 							]
 						},
 					}
