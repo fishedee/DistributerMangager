@@ -173,5 +173,16 @@
 			$objWriter->save('php://output');
 			exit;
 		}
+
+		/**
+		 * @view json
+		 */
+		public function getUrl(){
+			if($this->input->is_ajax_request()){
+				$userId = $this->session->userdata('userId');
+				$url = 'http://'.$userId.'.'.$_SERVER['HTTP_HOST'].'/'.$userId.'/league.html';
+				return $url;
+			}
+		}
 	}
  ?>

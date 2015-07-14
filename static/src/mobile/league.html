@@ -1,21 +1,19 @@
-<!--
-@require fishstrap/lib/jquery.js
--->
-
 <link rel="import" href="header.html?__inline">
 	<meta charset="UTF-8">
-	<title>Document</title>
-    <meta name="viewport" content="width=320,initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=medium-dpi">
+	<title>合作加盟</title>
+	<meta name="viewport" content="width=320,initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=medium-dpi">
 	<style>
 		body {
+			position: relative;
 			margin: 0 auto;
-			max-width: 320px;
+			max-width: 360px;
 			background: #ebe5e5;
+			min-height: 500px;
 		}
 		
 		textarea {
 			resize: none;
-			width: 200px;
+			width: 210px;
 		}
 		
 		td span {
@@ -70,6 +68,10 @@
 		option {
 			height: 22px;
 		}
+
+		select,option{
+			height: 40px;
+		}
 		
 		input[name=newlocation] {
 			margin-top: 5px;
@@ -84,13 +86,15 @@
 			font-size: 微软雅黑;
 		}
 		
-		input[type=submit]{
-			width: 200px;
-			height: 30px;
+		input[type=button]{
+			position: absolute;
+			width: 100%;
+			height: 60px;
 			font-size: 18px;
 			font-weight: 600;
-			margin-left: 20%;
+			/*margin-left: 20%;*/
 			margin-top: 10px;
+			bottom: -100px;
 		}
 	</style>
 </head>
@@ -149,7 +153,7 @@
 			<tr>
 				<td>合作意向：</td>
 				<td>
-					<textarea id="" cols="30" rows="3" name='will'></textarea>
+					<textarea id="" cols="32" rows="8" name='will'></textarea>
 					<td><span>*</span>
 					</td>
 				</td>
@@ -246,7 +250,8 @@
 	}
 </script>
 <script type="text/javascript">
-//	var $ = require('../fishstrap/lib/jquery.js');
+	require('../fishstrap/lib/jquery.js');
+
 
 	//选择城市
 	$('select[name=province]').change(function() {

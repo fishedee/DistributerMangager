@@ -1,4 +1,5 @@
 <link rel="import" href="../common/header.html?__inline">
+	<div class="alert alert-danger" role="alert"></div>
 	<div id="container">
 	</div>
 	<script type="text/javascript">
@@ -11,6 +12,29 @@
 		var pageSize = $.location.getQueryArgv('pageSize');
 		var cooperationType = {};
 		cooperationType = ['省级','市级'];
+
+		function getUrl(next){
+			$.ajax({
+				url: '/cooperation/getUrl',
+				type: 'POST',
+				dataType: 'JSON',
+				success:function(data){
+					data = $.JSON.parse(data);
+					if( data.code != 0 ){
+						dialog.message(data.msg);
+						return;
+					}
+					var url = data.data;
+					var str = '注意！招商加盟的手机端网址是'+url;
+					$('div[role=alert]').text(str);
+					next();
+				},
+				error:function(){
+
+				}
+			})
+		}
+
 		function go(){
 			query.simpleQuery({
 				id:'container',
@@ -31,7 +55,7 @@
 				{
 					name:'导出全部',
 					click:function(){
-						location.href = '/cooperation/excel';
+						location.href = 'http://shop.tongyinyang.com/cooperation/excel';
 					}
 				},
 				{
@@ -43,12 +67,13 @@
 						var business_name = $('input[name=business_name]').val();
 						var province   = $('input[name=province]').val();
 						var city       = $('input[name=city]').val();
-						location.href = '/cooperation/currentPage?current='+current+'&pageSize='+pageSize+'&type='+type+'&business_name='+business_name+'&province='+province+'&city='+city;
+						// location.href = 'http://shop.tongyinyang.com/cooperation/currentPage/current/'+current+'/pageSize/'+pageSize+'/type/'+type+'/business_name/'+business_name+'/province/'+province+'/city/'+city;
+						location.href = 'http://shop.tongyinyang.com/cooperation/currentPage?current='+current+'&pageSize='+pageSize+'&type='+type+'&business_name='+business_name+'&province='+province+'&city='+city;
 					}
 				}
 				],
 			});
 		}
-		go();
+		getUrl(go);
 	</script>
 <link rel="import" href="../common/footer.html?__inline">
