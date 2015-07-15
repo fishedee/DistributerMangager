@@ -1,0 +1,38 @@
+<link rel="import" href="../common/header.html?__inline">
+<div class="alert alert-danger" role="alert">注意：Wifi名称“WX”开头(“WX”为大写字母)，并且不能包含中文字符。</br>无线网络设备的密码，大于8个字符，不能包含中文字符</br>无线网络设备无线mac地址，格式冒号分隔，字符长度17个，并且字母小写，例如：00:1f:7a:ad:5c:a8</div>
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'shop_id',type:'text',name:'门店ID'},
+					{id:'ssid',type:'text',name:'Wifi名称'},
+					{id:'password',type:'text',name:'Wifi密码'},
+					{id:'bssid',type:'text',name:'mac地址'},
+				],
+				submit:function(data){	
+						$.post('/wifi/add',data,function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							history.back();
+						});
+					
+				},
+				cancel:function(){
+					history.back();
+				}
+			});
+		}
+
+				go();
+
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

@@ -1,0 +1,77 @@
+<link rel="import" href="../common/header.html?__inline">
+
+<div id="container">
+</div>
+<script type="text/javascript">
+	var $ = require('/fishstrap/core/global.js');
+	var dialog = require('/fishstrap/ui/dialog.js');
+	var query = require('/fishstrap/ui/query.js');
+
+	function go() {
+		tableOperation = query.simpleQuery({
+			id: 'container',
+			url: '/wifi/get',
+			column: [
+				{
+					id: 'shop_id',
+					type: 'text',
+					name: 'ID'
+				},
+				{
+					id: 'ssid',
+					type: 'text',
+					name: 'WIFI名称'
+				},
+				{
+					id: 'bssid',
+					type: 'text',
+					name: '无线MAC地址'
+				},
+				],
+			operate: [
+				{
+				name: '删除',
+				click: function (data) {
+					dialog.confirm('确认删除该微信Wifi，不可回退操作!', function () {
+						$.post('/wifi/del', {
+							bssid: data.bssid
+						}, function (data) {
+							data = $.JSON.parse(data);
+							if (data.code != 0) {
+								dialog.message(data.msg);
+								return;
+							}
+							location.href = 'index.html';
+						});
+					});
+				}
+				},
+				{
+				name: '下载二维码',
+				click: function (data) {
+						$.post('/wifi/download', {
+							shop_id: data.shop_id
+						}, function (data) {
+							data = $.JSON.parse(data);
+							if (data.code != 0) {
+								dialog.message(data.msg);
+								return;
+							}
+							location.href = 'data.data';
+						});
+				}
+				}
+			],
+			button: [
+//				{
+//					name: '添加微信wifi',
+//					click: function () {
+//						location.href = 'add.html';
+//					}
+//				}
+				],
+		});
+	}
+	go();
+</script>
+<link rel="import" href="../common/footer.html?__inline">
