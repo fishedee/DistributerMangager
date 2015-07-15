@@ -84,7 +84,7 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 			$data['userId'] = $userId;
 			$data['create_time'] = date('Y-m-d',time());
-			$data['showpassword']= $data['password'];
+			// $data['showpassword']= $data['password'];
 			$data['password'] = md5($data['password']);
 
 			$start_time = $data['start_time'];
@@ -129,7 +129,7 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 				throw new CI_MyException(1,'查询错误');
 			}else{
 				$chipsDetailInfo['mobilePassword'] = $chipsDetailInfo['password'];
-				$chipsDetailInfo['password'] = $chipsDetailInfo['showpassword'];
+				// $chipsDetailInfo['password'] = $chipsDetailInfo['showpassword'];
 				return $chipsDetailInfo;
 			}
 		}
@@ -171,7 +171,7 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 				throw new CI_MyException(1,'底价过低');
 			}
 			$data['start'] = $this->judgeStart($data['start_time'],$data['end_time']);
-			$data['showpassword'] = $data['password'];
+			// $data['showpassword'] = $data['password'];
 			$data['password'] = md5($data['password']);
 			return $this->chipsDb->updateChips($chips_id,$data);
 		}

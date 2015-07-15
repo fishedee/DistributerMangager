@@ -14,7 +14,7 @@
 				echo '非法操作';die;
 			}
 			$this->load->model('chips/chipsAo','chipsAo');
-			$this->load->model('client/client_model','client');
+			$this->load->model('client/clientAo','clientAo');
 			$this->load->model('chips/chipsPowerAo','powerAo');
 			$this->load->library('argv','argv');
 		}
@@ -29,7 +29,7 @@
 				array('pageSize','require'),
 			));
 			$chips_id = $_GET['chips_id'];
-			$result = $this->client->getClient($this->userId,$dataLimit,$chips_id);
+			$result = $this->clientAo->getClient($this->userId,$dataLimit,$chips_id);
 			// var_dump($result);die;
 			return $result;
 		}
@@ -65,8 +65,7 @@
 		        $chipsInfo= $this->chipsAo->chipsDetail($chips_id,$userId);
 		        $result   = $this->powerAo->judge($clientId,$chips_id);
 		        if($result){
-		        	// echo json_encode($chipsInfo['password']);
-		        	echo json_encode($chipsInfo['mobilePassword']);
+		        	echo json_encode($chipsInfo['password']);
 		        }else{
 		        	echo 0;
 		        }

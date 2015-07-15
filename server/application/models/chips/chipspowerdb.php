@@ -51,5 +51,9 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 				$this->db->insert($this->tableName,$data);
 			}
 		}
+
+		public function powerResult($condition){
+			return $this->db->where($condition)->get($this->tableName)->result_array();
+		}
 	}
  ?>
