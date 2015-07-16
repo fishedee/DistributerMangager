@@ -110,5 +110,62 @@ class WxSubscribeAo extends CI_Model {
         }
 		
 	}
+
+	/*获取素材ID信息*/
+	public function getKeyResponseId($userId){
+		return $this->wxSubscribeDb->getKeyResponseId($userId);
 	}
+
+	/*增加关键字的回复*/
+	public function addKey($data){
+		foreach ($data as $key => $value) {
+			if(!$value){
+				throw new CI_MyException(1,'参数不齐');
+			}
+		}
+		return $this->wxSubscribeDb->addKey($data);
+	}
+
+	/*更新*/
+	public function updateKey($keyResponseId,$data){
+		foreach ($data as $key => $value) {
+			if(!$value){
+				throw new CI_MyException(1,'参数不齐');
+			}
+		}
+		return $this->wxSubscribeDb->updateKey($keyResponseId,$data);
+	}
+
+	/*关键词自动回复*/
+	public function keySearch($dataWhere,$dataLimit){
+		return $this->wxSubscribeDb->keySearch($dataWhere,$dataLimit);
+	}
+
+	/*删除关键词自动回复*/
+	public function keyResponseDel($keyResponseId){
+		return $this->wxSubscribeDb->keyResponseDel($keyResponseId);
+	}
+
+	/*获取详细信息*/
+	public function getKeyResponseInfo($keyResponseId){
+		return $this->wxSubscribeDb->getKeyResponseInfo($keyResponseId);
+	}
+
+	/*根据关键字查询*/
+	public function keyWordSearch($keyword){
+		$weixinSubscribeId =  $this->wxSubscribeDb->keyWordSearch($keyword);
+		//根据微信素材id查询素材类型
+		$materialClassifyId = $this->wxSubscribeDb->materialClassifyIdSearch($weixinSubscribeId);
+		return array(
+			'weixinSubscribeId' => $weixinSubscribeId,
+			'materialClassifyId' => $materialClassifyId
+			);
+	}
+
+	/*根据素材id 查询素材的内容*/
+	public function materialSearch($weixinSubscribeId){
+		$materialInfo = $this->wxMaterialDb->getByWeixinSubscribeId($weixinSubscribeId);
+		return $materialInfo;
+	}
+}
 ?>

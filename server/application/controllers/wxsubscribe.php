@@ -47,7 +47,6 @@ class Wxsubscribe extends CI_Controller {
 					array('pageIndex','option'),
 					array('pageSize','option'),
 			));
-		
 			//检查权限
 			$userId = $this->loginAo->checkMustLogin();
 			$userId =$userId['userId'];
@@ -56,10 +55,8 @@ class Wxsubscribe extends CI_Controller {
 			$this->load->model('user/userAppAo','userAppAo');
 			$userApp = $this->userAppAo->get($userId);
 			$this->userAppAo->checkWeixinNum($userApp);
-
 			//执行业务逻辑
-			return $this->wxSubscribeAo->search($userId,$dataWhere,$dataLimit);
-			
+			return $this->wxSubscribeAo->search($userId,$dataWhere,$dataLimit);		
 		}	
 		
 		/**
@@ -214,6 +211,112 @@ class Wxsubscribe extends CI_Controller {
 			
 			//执行业务逻辑
 			return $this->wxSubscribeAo->getMysubscribe($userId);
+		}
+
+		//获取素材的ID信息
+		public function getKeyResponseId(){
+			//检查权限
+			$userId = $this->loginAo->checkMustLogin();
+			$userId = $userId['userId'];
+			$result = $this->wxSubscribeAo->getKeyResponseId($userId);
+			foreach ($result as $key => $value) {
+				$arr[$value['weixinSubscribeId']] = $value['weixinSubscribeId'];
+			}
+			echo json_encode($arr);
+		}
+
+		//删除关键词的自动回复
+		public function keyResponseDel(){
+			if($this->input->is_ajax_request()){
+				//检查权限
+				$userId = $this->loginAo->checkMustLogin();
+				$userId = $userId['userId'];
+				$keyResponseId = $this->input->post('keyResponseId');
+				$result = $this->wxSubscribeAo->keyResponseDel($keyResponseId);
+				if($result){
+					echo 1;
+				}else{
+					echo 0;
+				}
+			}
+		}
+
+		/**
+		 * @view json
+		 * 增加自动回复信息
+		 */
+		public function addKey(){
+			if($this->input->is_ajax_request()){
+				//检查权限
+				$userId = $this->loginAo->checkMustLogin();
+				$userId =$userId['userId'];
+				$datas = $this->input->post('data');
+				// var_dump($data);die;
+				$data['keyWord']= $datas['keyWord'];
+				$data['weixinSubscribeId'] = $datas['weixinSubscribeId'][0]['weixinSubscribeId'];
+				$data['userId'] = $userId;
+				return $this->wxSubscribeAo->addKey($data);
+			}
+		}
+
+		/**
+		 * @view json
+		 * 更新
+		 */
+		public function updateKey(){
+			if($this->input->is_ajax_request()){
+				//检查权限
+				$userId = $this->loginAo->checkMustLogin();
+				$userId =$userId['userId'];
+				$datas = $this->input->post('data');
+				$keyResponseId = $this->input->post('keyResponseId');
+				$data['keyWord']= $datas['keyWord'];
+				$data['weixinSubscribeId'] = $datas['weixinSubscribeId'][0]['weixinSubscribeId'];
+				$data['userId'] = $userId;
+				return $this->wxSubscribeAo->updateKey($keyResponseId,$data);
+			}
+		}
+
+		/**
+		 * @view json
+		 * 查看关键词自动回复
+		 */
+		public function keySearch(){
+			$dataWhere = array();
+			$dataLimit = $this->argv->checkGet(array(
+					array('pageIndex','option'),
+					array('pageSize','option'),
+			));
+		
+			//检查权限
+			$userId = $this->loginAo->checkMustLogin();
+			$userId =$userId['userId'];
+				
+			$dataWhere['userId'] = $userId;
+
+			//检查是否填写微信号
+			$this->load->model('user/userAppAo','userAppAo');
+			$userApp = $this->userAppAo->get($userId);
+			$this->userAppAo->checkWeixinNum($userApp);
+
+			//执行业务逻辑
+			return $this->wxSubscribeAo->keySearch($dataWhere,$dataLimit);
+			
+		}
+
+		/**
+		 * @view json
+		 * 获取关键词自动回复信息
+		 */
+		public function getKeyResponseInfo(){
+			if($this->input->is_ajax_request()){
+				//检查权限
+				$userId = $this->loginAo->checkMustLogin();
+				$userId =$userId['userId'];
+
+				$keyResponseId = $this->input->post('keyResponseId');
+				return $this->wxSubscribeAo->getKeyResponseInfo($keyResponseId);
+			}
 		}
 		
 }

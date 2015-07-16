@@ -615,6 +615,15 @@ create table t_chips_contract(
     phone varchar(32) not null
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
 
+#创建关键词自动回复表
+create table t_weixin_key_response(
+    keyResponseId int(11) not null auto_increment primary key,
+    weixinSubscribeId int(11) not null,
+    userId int(11) not null,
+    keyWord varchar(255) not null
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+alter table t_chips_record add index keyResponseUserId(userId);
+
 #建立初始数据
 insert into t_user(userId,name,password,company,phone,type,downDistributionNum) values
 (10001,"fish","$2y$10$xKsYkwOJFQo2Ack68DqZuebTX99IgHL0lYBKmpwQpkxqzhJbKYgMG",'烘焙帮信息科技有限公司','15018749403',1,0),

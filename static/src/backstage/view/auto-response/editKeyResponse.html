@@ -1,0 +1,123 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var subPage = require('/fishstrap/page/subPage.js');
+		var keyResponseId = $.location.getQueryArgv('keyResponseId');
+		var keyInfo  = {};
+		var sourceId = {};
+		var sid = new Array();
+		var wxsid = new Array();
+		// function getSource(next){
+		// 	$.post('/wxsubscribe/getKeyResponseId', function(data) {
+		// 		var obj = JSON.parse(data);
+		// 		sid = obj;
+		// 		next();
+		// 	});
+		// }
+
+		function getKeyResponseInfo(next){
+			$.ajax({
+				url: '/wxsubscribe/getKeyResponseInfo',
+				type: 'POST',
+				dataType: 'JSON',
+				data: {keyResponseId: keyResponseId},
+				success:function(data){
+					data = $.JSON.parse(data);
+					if(data.code != 0){
+						dialog.message(data.msg);
+						return;
+					}
+					keyInfo = data.data;
+					next();
+				},
+				error:function(){
+
+				}
+			})
+		}
+
+		function say(){
+			$('iframe').contents().find('table').on('click', 'input[type=checkbox]', function() {
+				if($(this).attr('class') == 'gri_checkAll'){
+					if($(this).is(':checked')){
+						$('iframe').contents().find('input[type=checkbox]').prop('checked',false);
+					}
+				}
+				if($(this).attr('class') == 'gri_td_checkbox'){
+					if($(this).is(':checked')){
+						// alert('xx');
+						$(this).parent().parent().siblings('tr').find('input[type=checkbox]').prop('checked',false);
+					}
+				}
+			});
+		}
+
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'keyWord',type:'text',name:'关键词'},
+					{id:'weixinSubscribeId',type:'table',name:'素材ID',
+						option:{
+							column:[
+								{name:'素材ID',type:'text',id:'weixinSubscribeId'},
+								{id:'materialClassifyId',type:'text',name:'分类'},
+								{id:'title',type:'text',name:'素材标题'},
+								{id:'remark',type:'text',name:'备注'},
+							],
+							operate:[],
+							button:[{
+								name:'选择',
+								click:function(operation){
+									subPage.open({
+										title:'选择商品',
+										url:'responseAll.html?check=true&keyResponseId='+keyResponseId,
+										close:function(state,data){
+											if( state == 'confirm' && data.length != 0  ){
+												operation.clear();
+												operation.add([data[0]]);
+											}
+										}
+									});
+								}
+							}]
+						}
+					}
+				],
+				value:keyInfo,
+				submit:function(data){
+					$.ajax({
+						url: '/wxsubscribe/updateKey',
+						type: 'POST',
+						dataType: 'JSON',
+						data: {
+							keyResponseId: keyResponseId,
+							data: data
+						},
+						success:function(data){
+							data = $.JSON.parse(data);
+							if(data.code != 0){
+								alert('更新错误');
+							}else{
+								location.href = 'keyResponse.html';
+							}
+						},
+						error:function(){
+
+						}
+					})			
+				},
+				cancel:function(){
+					history.back();
+				}
+			});
+		}
+		// getSource(function(){
+			getKeyResponseInfo(go);
+		// });
+	</script>
+<link rel="import" href="../common/footer.html?__inline">
