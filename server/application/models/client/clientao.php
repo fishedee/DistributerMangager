@@ -49,7 +49,7 @@ class ClientAo extends CI_Model {
 		if( isset($limit["pageIndex"]) && isset($limit["pageSize"])){
 			$this->db->limit($limit["pageSize"],$limit["pageIndex"]);
 		}
-		$this->load->helper('sendget');
+		//$this->load->helper('sendget');
 		$clientInfo = $this->clientDb->clientInfo($userId);
 		// 获取access_token
 		$this->load->model('user/userAppAo','userAppAo');
