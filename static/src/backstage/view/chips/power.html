@@ -24,23 +24,13 @@
 					{id:'check',type:'text',name:"<input type='checkbox' name='all'/>"},
 					{id:'clientId',type:'text',name:'用户ID'},
 					{id:'openId',type:'text',name:'openId'},
-					{id:'headimgurl',type:'image',name:'头像'},
-					{id:'nickname',type:'text',name:'用户名'},
+					{id:'headImgUrl',type:'image',name:'头像'},
+					{id:'nickName',type:'text',name:'用户名'},
 				],
+				queryColumn:['nickName'],
 				operate:[],
 				button:[
-				{
-					name:'添加',
-					click:function(){
-						var power = new Array();
-						$("input[name='power[]'][type='checkbox']").each(function() {
-							if($(this).is(':checked')){
-								power.push($(this).attr('clientId'));
-							}
-						});
-						alert(power);
-					}
-				},]
+				]
 			});
 			$('#container').on('click', "input[name='power[]'][type=checkbox]", function() {
 				var clientId = $(this).attr('clientId');

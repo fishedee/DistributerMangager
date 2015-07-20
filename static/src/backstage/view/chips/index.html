@@ -1,11 +1,15 @@
 <link rel="import" href="../common/header.html?__inline">
+	<div class="alert alert-danger" role="alert"></div>
 	<div id="container"></div>
 	<script type="text/javascript">
 		var $ = require('/fishstrap/core/global.js');
 		var dialog = require('/fishstrap/ui/dialog.js');
 		var query  = require('/fishstrap/ui/query.js');
+		var url = 'http://'+$.location.getQueryArgv('userId')+'.'+location.hostname+'/'+$.location.getQueryArgv('userId')+'/chips/index.html';	
 		var allClassify = {};
 		var allState = {};
+
+		$('div[role=alert]').text('众筹网址:'+url);
 
 		function go(){
 			query.simpleQuery({

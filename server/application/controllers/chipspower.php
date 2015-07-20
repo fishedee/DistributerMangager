@@ -28,8 +28,12 @@
 				array('pageIndex','require'),
 				array('pageSize','require'),
 			));
+			$dataWhere = $this->argv->checkGet(array(
+				array('nickName','option'),
+			));
+			$dataWhere['userId'] = $this->userId;
 			$chips_id = $_GET['chips_id'];
-			$result = $this->clientAo->getClient($this->userId,$dataLimit,$chips_id);
+			$result = $this->clientAo->getClient($dataWhere,$dataLimit,$chips_id);
 			// var_dump($result);die;
 			return $result;
 		}

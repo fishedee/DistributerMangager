@@ -31,8 +31,12 @@ class ClientLoginAo extends CI_Model {
 	
 	public function checkMustLogin($userId){
 		$client = $this->islogin($userId);
-		if( $client === false )
+		if( $client === false ){
 			throw new CI_MyException(1,'手机帐号未登录');
+		}else{
+			//更新用户信息
+			$this->clientAo->refreshUserInfo($userId,$client);
+		}
 		return $client;
 	}
 }

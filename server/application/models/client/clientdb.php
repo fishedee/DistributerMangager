@@ -62,4 +62,38 @@ class ClientDb extends CI_Model
 	public function clientCount($userId){
 		return $this->db->where('userId',$userId)->count_all_results($this->tableName);
 	}
+
+	public function refreshUserInfo($clientId,$data){
+		$this->db->where('clientId',$clientId);
+		$this->db->update($this->tableName,$data);
+	}
+
+	public function getClient($dataWhere,$limit,$chips_id){
+		$this->load->model('chips/chipsPowerDb','chipsPowerDb');
+		$count = $this->db->where($dataWhere)->count_all_results($this->tableName);
+		if( isset($limit["pageIndex"]) && isset($limit["pageSize"])){
+			$this->db->limit($limit["pageSize"],$limit["pageIndex"]);
+		}
+		if(count($dataWhere) > 1){
+			$this->db->where('userId',$dataWhere['userId']);
+			$this->db->like('nickName',$dataWhere['nickName'],'both');
+		}else{
+			$this->db->where('userId',$dataWhere['userId']);
+		}
+		$clientInfo = $this->db->get($this->tableName)->result_array();
+		foreach ($clientInfo as $key => $value) {
+			$condition['clientId'] = $value['clientId'];
+        	$condition['chips_id'] = $chips_id;
+        	$power_result = $this->chipsPowerDb->powerResult($condition);
+        	if(count($power_result)){
+        		$clientInfo[$key]['check'] = "<input type='checkbox' clientId='".$value['clientId']."' name='power[]' checked='true'/>";
+        	}else{
+        		$clientInfo[$key]['check'] = "<input type='checkbox' clientId='".$value['clientId']."' name='power[]'/>";
+        	}
+		}
+		return array(
+			'count' => $count,
+			'data'  => $clientInfo
+		);
+	}
 }

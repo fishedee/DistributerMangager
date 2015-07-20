@@ -60,6 +60,8 @@ create table t_client(
 	clientId integer not null auto_increment,
 	userId integer not null,
 	openId varchar(128) not null,
+	headImgUrl varchar(255) not null,
+	nickName varchar(255) not null,
 	type integer not null,
 	createTime timestamp not null default CURRENT_TIMESTAMP,
 	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
