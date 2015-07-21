@@ -140,6 +140,11 @@ class OrderAo extends CI_Model
 				$shopOrder['commodity'][$key]['price']
 			);
 		}
+		
+		//查快递信息
+		if ($shopOrder['expressageName'] != 0 && $shopOrder['expressageNum'] != '')
+			$shopOrder['expMsg'] = $this->getExpMsg($shopOrder['expressageName'],$shopOrder['expressageNum']);
+
 		return $shopOrder;
 	}
 
@@ -201,5 +206,32 @@ class OrderAo extends CI_Model
          	throw new CI_MyException(1, "该订单未支付，不能扭转为已发货状态");
 
         $this->orderDb->mod($shopOrderId, array('state'=>$this->orderStateEnum->HAS_SEND));
+	}
+	
+	//获取快递信息
+	public function getExpMsg($expressageName,$expressageNum){
+		$this->load->model('order/expressageEnum','expressageEnum');
+		$exp=$this->expressageEnum->enums;
+		//获取快递公司拼音
+		$expPY='';
+		foreach ($exp as $k=>$v){
+			if ($v[0] == $expressageName){
+				$expPY = $v[1];
+				break;
+			}	
+		}
+		//print_r($expPY);die;
+		
+		//curl数据
+		$this->load->library('http');
+		$httpResponse = $this->http->ajax(array(
+				'url'=>'http://www.kuaidi100.com/query?id=1&type='.$expPY.'&postid='.$expressageNum.'&valicode=&temp='.rand(1,99999),
+				'type'=>'get',
+				'data'=>array(),
+				'dataType'=>'',
+				'responseType'=>'json'
+		));
+
+		return $httpResponse['body']['data'];
 	}
 }

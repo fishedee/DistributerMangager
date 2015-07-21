@@ -8,6 +8,7 @@
 		var subPage = require('/fishstrap/page/subPage.js');
 		var shopOrderId = $.location.getQueryArgv('shopOrderId');
 		var mapPayment = {1:'微信支付',2:'货到付款'};
+		var expName = {0:'请选择...',1:'EMS',2: '中国邮政',3: '申通快递',4: '圆通速递',5: '顺丰速运',6: '天天快递',7: '韵达快递',8: '中通速递',9: '龙邦物流',10: '宅急送',11: '全一快递',12: '汇通速递'};
 		var allState = {};
 		var shopOrder = {};
 		function getAllState(next){
@@ -59,17 +60,37 @@
 					{id:'city',type:'read',name:'收货城市'},
 					{id:'address',type:'read',name:'收货地址'},
 					{id:'phone',type:'read',name:'收货号码'},
-					{id:'payment',type:'enum',name:'支付方式',map:mapPayment,disabled:true}
+					{id:'payment',type:'enum',name:'支付方式',map:mapPayment,disabled:true},
+					{id:'expressageName',type:'enum',name:'快递公司',map:expName},
+					{id:'expressageNum',type:'text',name:'快递单号'},
+					{id:'expMsg',type:'table',name:'快递信息',
+						option:{
+							column:[
+								{name:'时间',type:'text',id:'time'},
+								{name:'标题',type:'text',id:'context'},
+							],
+							operate:[],
+							button:[]
+						}},
 				],
 				value:shopOrder,
-				submit:undefined,
+				submit:function(data){
+					$.post('/deal/modExp',data,function(data){
+						data = $.JSON.parse(data);
+						if( data.code != 0 ){
+							dialog.message(data.msg);
+							return;
+						}
+						history.back();
+					});
+				},
 				cancel:function(){
 					history.back();
 				},
 			});
 		}
 		getAllState(function(){
-			getOrder(go);
+				getOrder(go);
 		});
 	</script>
 <link rel="import" href="../common/footer.html?__inline">

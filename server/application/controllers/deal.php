@@ -251,7 +251,24 @@ class Deal extends CI_Controller {
 
 		log_message('info','wxpaycallback:'.json_encode($data));
 	}
+	
+	/**
+	 * @view json
+	 * 获取快递公司名称
+	 */
+	public function modExp(){
+		$shopOrderId = $this->input->post('shopOrderId');
+		$data['expressageName'] = $this->input->post('expressageName');
+		$data['expressageNum'] = $this->input->post('expressageNum');
+		if ($data['expressageName'] == 0)
+			throw new CI_MyException(1,"请选择快递公司");
 
+		if ($data['expressageNum'] == 0)
+			throw new CI_MyException(1,"请填写快递单号");
+		
+		$this->load->model('order/orderDb','orderDb');
+		$this->orderDb->mod($shopOrderId,$data);
+	}
 }
 
 /* End of file welcome.php */

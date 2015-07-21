@@ -1,5 +1,21 @@
 <link rel="import" href="header.html?__inline">
 	<title>购物车页面</title>
+<style>
+	.kdxx {
+		padding-left: 12px;
+		padding-right: 12px;
+	}
+	
+	.kdxx span {
+		font-size: 18px;
+		line-height: 45px;
+		color: #000000;
+		word-break: break-all;
+	}
+	.kdxx td{
+		color: #352E2E;
+	}
+</style>
 </head>
 <body>
 	<div id="body"></div>
@@ -14,6 +30,7 @@
 		var shopOrderId = $.location.getQueryArgv('shopOrderId');
 		var orderStateIdToName = {0:'全部',1:'未支付',2:'待发货',3:'已发货'};
 		var paymentIdToName = {1:'微信支付',2:'货到付款'};
+		var exp = {0:'商户未填写',1:'EMS',2: '中国邮政',3: '申通快递',4: '圆通速递',5: '顺丰速运',6: '天天快递',7: '韵达快递',8: '中通速递',9: '龙邦物流',10: '宅急送',11: '全一快递',12: '汇通速递'};
 		var shopOrder = {};
 		function orderPay(shopOrderId,next){
 			$.get('/deal/wxjspay',{shopOrderId:shopOrderId},function(data){
@@ -82,6 +99,14 @@
 				tip:'地址：',
 				text:shopOrder.address.address
 			});
+			var expressageName = new HeaderTitle({
+				tip:'快递公司：',
+				text:exp[shopOrder.expressageName]
+			});
+			var expressageNum = new HeaderTitle({
+				tip:'快递单号：',
+				text:shopOrder.expressageNum
+			});
 			var payTitle = new HeaderTitle({
 				tip:'支付：',
 				text:paymentIdToName[shopOrder.address.payment]
@@ -123,11 +148,23 @@
 					}
 				]);
 			}
+			
+			
+			var kdxx ="<div class='kdxx'><span>快递信息:</span><table><tbody>";
+			
+			for(var i in shopOrder.expMsg ){
+				var single = shopOrder.expMsg[i];
+				kdxx +="<tr><td>"+single.time+"&nbsp;&nbsp;</td><td>"+single.context+"</td></tr>";
+			}
+			
+			kdxx += "</tbody></table></div>";
+			
+			
 			var pageHtml = header.el + 
 				dealIdTitle.el + dealStateTitle.el + dealPriceTitle.el+
 
 				biglist.el +
-				 nameTitle.el + provinceTitle.el+cityTitle.el+addressTitle.el + phoneTitle.el + payTitle.el+
+				 nameTitle.el + provinceTitle.el+cityTitle.el+addressTitle.el + phoneTitle.el + payTitle.el + expressageName.el + expressageNum.el+ kdxx +
 				footerbutton.el;
 			$.page.setGrey();
 			$.page.start(pageHtml);
