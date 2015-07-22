@@ -2,6 +2,7 @@ var $ = require('../core/global.js');
 var html5 = require('../core/html5.js');
 var imageCompresser = require('./imageCompresser.js');
 var jpegMeta = require('./jpegMeta.js').JpegMeta;
+var wxSdk = require('fishstrap/module/jweixin.js');
 module.exports = {
 	_checkFileSize:function( file , defaultOption , nextStep ){
 		function checkMaxSize(size){
@@ -52,7 +53,7 @@ module.exports = {
 		if ($.os.android) {
 			var MQQBrowser = navigator.userAgent.match(/MQQBrowser\/([^\s]+)/);
 			if (!MQQBrowser || MQQBrowser && MQQBrowser[1] < '5.2') {
-				if ($.os.version.toString().indexOf('4.4') === 0 || $.os.version.toString() <= '2.1') {
+				if ( $.os.version.toString() <= '2.1') {
 					defaultOption.onFail('您的安卓手机系统暂不支持上传功能，请下载最新版的QQ浏览器');
 					return;
 				}
@@ -363,6 +364,106 @@ module.exports = {
 				});
 			});
 		});
+	},
+	_wxImage:function(defaultOption){
+		var currentLocalId = null;
+		var currentServerId = null;
+		function chooseImage(next){
+			wxSdk.chooseImage({
+				success: function (res) {
+			        var localIds = res.localIds;
+			        if( localIds.length == 0 )
+			        	return;
+			        currentLocalId = localIds[0];
+			        defaultOption.onOpen(currentLocalId);
+			        defaultOption.onProgress(0);
+			        next();
+			    }
+			});
+		}
+		function uploadImageToWeixin(next){
+			wxSdk.uploadImage({
+			    localId:currentLocalId,
+			    isShowProgressTips: 1,
+			    success: function (res) {
+			      	currentServerId = res.serverId;
+			      	next();
+			    },
+			    fail:function(){
+			    	defaultOption.onFail('上传图片到微信服务器失败');
+			    }
+			});
+		}
+		function uploadImageToServer(next){
+			//构造数据
+			var formData = new FormData();
+			formData.append('data', currentServerId);
+			//提交表单
+			var progress = function(e) {
+				if(e.lengthComputable){
+					var progress = Math.ceil(100 * (e.loaded / e.total));
+					defaultOption.onProgress(progress);
+				}
+			}
+			var complete = function(e) {
+				defaultOption.onSuccess(e.target.response);
+			}
+			var failed = function() {
+				defaultOption.onFail('下载微信图片断开，请稍后重新操作');
+			}
+			var abort = function() {
+				defaultOption.onFail('上传已取消');
+			}
+			var httpReuqest = new XMLHttpRequest();
+			if( httpReuqest.upload ){
+				httpReuqest.upload.addEventListener('progress',progress, false);
+			}
+			httpReuqest.open("POST", defaultOption.url + '?t=' + Date.now(),true);
+			httpReuqest.addEventListener('progress',progress, false);
+			httpReuqest.addEventListener("load", complete, false);
+			httpReuqest.addEventListener("abort", abort, false);
+			httpReuqest.addEventListener("error", failed, false);
+			httpReuqest.send(formData);
+		}
+		function go(){
+			if ($.os.wxVersion.toString() < '6.1' ) {
+				alert('您的微信版本过低，微信上传图功能将不能正常使用，请升级微信至6.1及以上');
+				return;
+			}
+			chooseImage(function(){
+				uploadImageToWeixin(function(){
+					uploadImageToServer();
+				});
+			});
+		}
+		$('#'+defaultOption.target).click(go);
+	},
+	imageV3:function( option ){
+		//初始化option
+		var defaultOption = {
+			url:'',
+			field:'',
+			target:'',
+			width:null,
+			height:null,
+			quality:0.8,
+			onOpen:function(data){
+			},
+			onProgress:function(data){
+			},
+			onSuccess:function(){
+			},
+			onFail:function(msg){
+			},
+		};
+		defaultOption = $.extend(defaultOption,option);
+		//处理
+		if( $.os.wx ){
+			return this._wxImage(defaultOption);
+		}else{
+			return this.image( defaultOption );
+		}
+
 	},
 	imageV2:function( option ){
 		//初始化option

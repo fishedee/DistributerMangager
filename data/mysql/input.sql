@@ -617,6 +617,15 @@ create table t_chips_contract(
     phone varchar(32) not null
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
 
+#创建卡券列表
+create table t_coupons(
+    couponsId int(11) not null auto_increment primary key,
+    card_id varchar(255) not null,
+    userId int(11) not null,
+    title varchar(128) not null
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+alter table t_coupons add index couponsUserId(userId);
+
 #建立初始数据
 insert into t_user(userId,name,password,company,phone,type,downDistributionNum) values
 (10001,"fish","$2y$10$xKsYkwOJFQo2Ack68DqZuebTX99IgHL0lYBKmpwQpkxqzhJbKYgMG",'烘焙帮信息科技有限公司','15018749403',1,0),

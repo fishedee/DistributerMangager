@@ -1,0 +1,60 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		function go(){
+			query.simpleQuery({
+				id:'container',
+				url:'/coupons/search',
+				column:[
+					{id:'card_id',type:'text',name:'卡券ID'},
+					{id:'logo_url',type:'image',name:'卡券图片'},
+					{id:'card_type',type:'enum',name:'卡券类型',map:{'GROUPON':'团购券','CASH':'代金券','DISCOUNT':'折扣券','GIFT':'礼品券','GENERAL_COUPON':'优惠券'}},
+					{id:'title',type:'text',name:'卡券名称'},
+					{id:'time',type:'text',name:'卡券有限期'},
+					{id:'status',type:'enum',name:'状态',map:{'CARD_STATUS_DISPATCH':'已经开始投放','CARD_STATUS_NOT_VERIFY':'待审核','CARD_STATUS_VERIFY_FALL':'审核失败','CARD_STATUS_VERIFY_OK':'通过审核','CARD_STATUS_USER_DELETE':'卡券被用户删除','CARD_STATUS_USER_DISPATCH':'卡券在公众平台投放过','CARD_STATUS_DELETE':'卡券已经被删除'}},
+					{id:'num',type:'text',name:'库存'},
+					{id:'now_num',type:'text',name:'剩余'},
+				],
+				operate:[
+				{
+					name:'删除',
+					click:function(data){
+						$.post('/coupons/delCoupons', {card_id:data.card_id}, function(data) {
+							data = $.JSON.parse(data);
+							if(data.code != 0){
+								dialog.message(data.msg);
+								return;
+							}
+							if(data.data == 1){
+								alert('删除成功');
+								window.location.href = 'check.html';
+							}else{
+								alert('删除失败');
+							}
+						});
+					}
+				}
+				],
+				button:[
+				{
+					name:'添加商品',
+					click:function(){
+						location.href = 'view.html';
+					}
+				},
+				{
+					name:'导入商品',
+					click:function(){
+						location.href = 'viewLink.html';
+					}
+				}
+				],
+			});
+		}
+		go();
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

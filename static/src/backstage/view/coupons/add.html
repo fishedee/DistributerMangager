@@ -1,0 +1,75 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container"></div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var shopCommodityId = $.location.getQueryArgv('shopCommodityId');
+		var shopCommodity = {};
+		var shopList = [];
+
+		//获取门店列表
+		function getPoiId(next){
+			$.ajax({
+				url: '/coupons/getPoiId',
+				type: 'POST',
+				dataType: 'JSON',
+				success:function(data){
+					data = $.JSON.parse(data);
+					if(data.code != 0){
+						dialog.message(data.msg);
+						return;
+					}
+					shopList = data.data;
+					next();
+				},
+				error:function(){
+
+				}
+			})
+		}
+
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'card_type',type:'enum',name:'卡券类型',map:{'GROUPON':'团购卷','CASH':'代金券','DISCOUNT':'折扣券','GIFT':'礼品券','GENERAL_COUPON':'优惠券'}},
+					{id:'code_type',type:'enum',name:'code展示类',map:{'CODE_TYPE_TEXT':'文本','CODE_TYPE_BARCODE':'一维码','CODE_TYPE_QRCODE':'二维码','CODE_TYPE_ONLY_QRCODE':'二维码无code显示','CODE_TYPE_ONLY_BARCODE':'一维码无code显示'}},
+					{id:'brand_name',type:'text',name:'商户名字'},
+					{id:'logo_url',type:'image',name:'卡券logo图片',option:{url:'/upload/image',width:300}},
+					{id:'title',type:'text',name:'卡券名'},
+					{id:'sub_title',type:'text',name:'券名'},
+					{id:'notice',type:'text',name:'卡券使用提醒'},
+					{id:'description',type:'text',name:'卡券使用说明'},
+					{id:'quantity',type:'text',name:'库存'},
+					{id:'start_time',type:'time',name:'开始时间'},
+					{id:'end_time',type:'time',name:'结束时间'},
+					{id:'can_give_friend',type:'enum',name:'卡券是否可赠',map:{true:'可赠',false:'不可赠'}},
+					{id:'can_share',type:'enum',name:'卡券页面可否分享',map:{false:'不可',true:'可以'}},
+					{id:'bind_openid',type:'enum',name:'是否指定用户领取',map:{false:'不是',true:'是'}},
+					{id:'detail',type:'text',name:'卡券详情'},
+					{id:'least_cost',type:'text',name:'启用金额'},
+					{id:'reduce_cost',type:'text',name:'减免金额'},
+					{id:'service_phone',type:'text',name:'客服电话'},
+					{id:'poi_id',type:'check',name:'使用门店',map:shopList},
+					{id:'get_limit',type:'text',name:'每人可领取数量'},
+				],
+				submit:function(data){
+					$.post('/coupons/add',{data:data},function(data){
+						data = $.JSON.parse(data);
+						if( data.code != 0 ){
+							dialog.message(data.msg);
+							return;
+						}
+						alert('卡券创建成功');
+						history.go(0);
+					});										
+				},
+				cancel:function(){
+					history.back();
+				}
+			});
+		}
+		getPoiId(go);
+	</script>
+<link rel="import" href="../common/footer.html?__inline">
