@@ -206,6 +206,31 @@ class OrderAo extends CI_Model
          	throw new CI_MyException(1, "该订单未支付，不能扭转为已发货状态");
 
         $this->orderDb->mod($shopOrderId, array('state'=>$this->orderStateEnum->HAS_SEND));
+        
+        $this->load->model('shop/commodityAo','commodityAo');
+        $priceShow = $this->commodityAo->getFixedPrice($shopOrder['price']);
+        
+        $this->load->model('address/addressDb', 'addressDb');
+        $clientAddress = $this->addressDb->getByClientId($shopOrder['clientId'])[0];
+        
+        //发送消息模板,模板标题：订单标记发货通知，TM00015
+        $sendData['url']='http://'.$_SERVER['HTTP_HOST'].'/'.$shopOrder['userId'].'/deal.html';
+        $sendData['topcolor']='#FF0000';
+        $sendData['data']['first']['value']="您的订单已经标记发货，请留意查收。\n >>查询订单物流状态";
+        $sendData['data']['first']['color']='#173177';
+        $sendData['data']['orderProductPrice']['value']=$priceShow;
+        $sendData['data']['orderProductPrice']['color']='#173177';
+        $sendData['data']['orderAddress']['value']=$clientAddress['province'].$clientAddress['city'].$clientAddress['address'];
+        $sendData['data']['orderAddress']['color']='#173177';
+        $sendData['data']['orderProductName']['value']=$shopOrder['description'];
+        $sendData['data']['orderProductName']['color']='#173177';
+        $sendData['data']['orderName']['value']=$shopOrderId;
+        $sendData['data']['orderName']['color']='#173177';
+        $sendData['data']['remark']['value']='欢迎再次购买！';
+        $sendData['data']['remark']['color']='#173177';
+        
+        $this->load->model('weixin/wxTemplateAo','wxTemplateAo');
+        $this->wxTemplateAo->notice($shopOrder['userId'],$shopOrder['clientId'],$sendData,'TM00505');
 	}
 	
 	//获取快递信息

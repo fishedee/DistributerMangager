@@ -45,9 +45,6 @@ class Wxadvancedinterface extends CI_Controller {
 		if (!empty($_POST['sub_button1'])){$data[0]['sub_button'] = $this->input->post('sub_button1');}
  		if (!empty($_POST['sub_button2'])){$data[1]['sub_button'] = $this->input->post('sub_button2');}
  		if (!empty($_POST['sub_button3'])){$data[2]['sub_button'] = $this->input->post('sub_button3');}
-//  		if (!empty($_POST['name1'])){$data[0]['type']='view';}
-//  		if (!empty($_POST['name2'])){$data[1]['type']='view';}
-//  		if (!empty($_POST['name3'])){$data[2]['type']='view';}
  		
  		//存入数据库的数据
  		$mysqlData = $this->argv->checkPost(array(
@@ -226,4 +223,38 @@ class Wxadvancedinterface extends CI_Controller {
 		
 	}
 	
+	/**
+	 * @view json
+	 * 获取模板信息开启状态
+	 */
+	public function getTemplateState(){
+		
+		//检查权限
+		$userData = $this->loginAo->checkMustLogin();
+		$userId =$userData['userId'];
+	
+		$this->load->model('weixin/wxTemplateAo','wxTemplateAo');
+		return $this->wxTemplateAo->get($userId);
+		
+	}
+	
+	/**
+	 * @view json
+	 * 获取模板信息开启状态
+	 */
+	public function modTemplateState(){
+	
+		//检查权限
+		$userData = $this->loginAo->checkMustLogin();
+		$userId =$userData['userId'];
+		
+		$data = $this->argv->checkPost(array(
+				array('openState','require'),
+		));
+	
+		$this->load->model('weixin/wxTemplateAo','wxTemplateAo');
+		return $this->wxTemplateAo->mod($userId,$data);
+	
+	}
+
 }

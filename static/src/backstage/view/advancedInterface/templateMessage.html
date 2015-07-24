@@ -1,0 +1,45 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div class="alert alert-danger" role="alert">注意：请到微信公众平台添加功能插件“模板消息”，填写选项 行业IT科技 - 互联网|电子商务。</div>
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var subPage = require('/fishstrap/page/subPage.js');
+		var state = {0:'关闭',1:'启动'};
+		var temState = {};;
+		function getState(next){
+			$.get('/wxadvancedinterface/getTemplateState',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				temState = data.data;
+				next();
+			});
+		}
+		function go(){
+			inputOperation = input.verticalInput({
+				id:'container',
+				field:[
+					{id:'openState',type:'enum',name:'是否开启模板消息',map:state},
+				],
+				value:temState,
+				submit:function(data){
+					$.post('/wxadvancedinterface/modTemplateState',data,function(data){
+						data = $.JSON.parse(data);
+						if( data.code != 0 ){
+							dialog.message(data.msg);
+							return;
+						}
+						location.reload();
+					});
+				},
+				cancel:undefined,
+			});
+		}
+		getState(go);
+	</script>
+<link rel="import" href="../common/footer.html?__inline">
