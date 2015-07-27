@@ -47,6 +47,8 @@ create table t_user_app(
 	appAccessTokenExpire timestamp not null,
 	appJsApiTicket varchar(128) not null,
 	appJsApiTicketExpire timestamp not null,
+	cardTicket varchar(128) not null,
+	cardTicketExpire timestamp not null default '0000-00-00 00:00:00',
 	remark varchar(128) not null,
 	createTime timestamp not null default CURRENT_TIMESTAMP,
 	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
