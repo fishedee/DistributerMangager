@@ -96,4 +96,11 @@ class ClientDb extends CI_Model
 			'data'  => $clientInfo
 		);
 	}
+
+	//根据openid获取clientid
+	public function getClientId($openId){
+		$openIdInfo = $this->db->select('clientId')->from($this->tableName)->where('openId',$openId)->get()->result_array();
+		return $openIdInfo[0]['clientId'];
+	}
+
 }

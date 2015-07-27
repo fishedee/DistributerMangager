@@ -43,10 +43,10 @@ create table t_user_app(
 	mchKey varchar(128) not null,
 	mchSslCert varchar(128) not null,
 	mchSslKey varchar(128) not null,
-    appAccessToken varchar(128) not null,
-    appAccessTokenExpire timestamp not null,
-    appJsApiTicket varchar(128) not null,
-    appJsApiTicketExpire timestamp not null,
+	appAccessToken varchar(128) not null,
+	appAccessTokenExpire timestamp not null,
+	appJsApiTicket varchar(128) not null,
+	appJsApiTicketExpire timestamp not null,
 	remark varchar(128) not null,
 	createTime timestamp not null default CURRENT_TIMESTAMP,
 	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
@@ -427,6 +427,9 @@ create table t_vip_client(
     score integer not null,
     createTime timestamp not null default CURRENT_TIMESTAMP,
     modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
+    userCardCode varchar(125) not null,
+    card_id varchar(125) not null,
+    active tinyint(1) not null default '0',
     primary key(vipClientId)
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
 
@@ -625,6 +628,19 @@ create table t_coupons(
     title varchar(128) not null
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
 alter table t_coupons add index couponsUserId(userId);
+
+#创建会员卡表
+create table t_member_card(
+    memberCardId int(11) not null auto_increment primary key,
+    card_id varchar(125) not null,
+    userId int(11) not null,
+    title varchar(128) not null,
+    status varchar(100) not null default 'CARD_STATUS_NOT_VERIFY',
+    num int(11) not null,
+    defaultCard tinyint(1) not null default '0'
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+alter table t_member_card add index memberCardUserId(userId);
+
 
 #建立初始数据
 insert into t_user(userId,name,password,company,phone,type,downDistributionNum) values

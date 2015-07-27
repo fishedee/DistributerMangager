@@ -150,4 +150,36 @@ class UserAppAo extends CI_Model{
 
 		return $this->userAppDb->modByUser($userId,$data);
 	}
+
+	//获取ticket
+	public function getTicket($userId){
+		// var_dump($userId);die;
+		$userAppInfo = $this->userAppDb->getTicket($userId);
+		// var_dump($userAppInfo);die;
+		//判断ticket时间
+		if(strtotime($userAppInfo[0]['cardTicketExpire']) -time() < 60){
+			//准备过期 重新获取
+			$info = $this->getTokenAndTicket($userId);
+			$access_token = $info['appAccessToken'];
+			$url = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=".$access_token."&type=wx_card";
+			$httpResponse = $this->http->ajax(array(
+				'url'=>$url,
+				'type'=>'post',
+				'data'=>array(),
+				'dataType'=>'plain',
+				'responseType'=>'json'
+			));
+			$data['cardTicket'] = $httpResponse['body']['ticket'];
+			$data['cardTicketExpire'] = date('Y-m-d H:i:s',time() + 7200);
+			$this->userAppDb->updateTicket($userId,$data);
+			return $data['cardTicket'];
+		}else{
+			return $userAppInfo[0]['cardTicket'];
+		}
+	}
+
+	//根据微信号获取userId
+	public function getUserId($ToUserName){
+		return $this->userAppDb->getUserId($ToUserName);
+	}
 }

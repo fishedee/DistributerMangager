@@ -1,0 +1,81 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		function go(){
+			query.simpleQuery({
+				id:'container',
+				url:'/membercard/getMemberCard',
+				column:[
+					{id:'card_id',type:'text',name:'会员卡ID'},
+					{id:'title',type:'text',name:'会员卡标题'},
+					{id:'num',type:'text',name:'库存'},
+					{id:'status',type:'enum',name:'状态',map:{'CARD_STATUS_NOT_VERIFY':'待审核','CARD_STATUS_VERIFY_FALL':'审核失败','CARD_STATUS_VERIFY_OK':'通过审核','CARD_STATUS_USER_DELETE':'会员卡被用户删除','CARD_STATUS_USER_DISPATCH':'在公众平台投放过','CARD_STATUS_DELETE':'已经删除'}},
+					{id:'defaultCard',type:'enum',name:'系统默认状态',map:{'0':' ','1':'系统默认会员卡'}}
+				],
+				queryColumn:['title'],
+				operate:[
+				{
+					name:'删除',
+					click:function(data){
+						$.post('/coupons/delCoupons', {card_id:data.card_id}, function(data) {
+							data = $.JSON.parse(data);
+							if(data.code != 0){
+								dialog.message(data.msg);
+								return;
+							}
+							if(data.data == 1){
+								alert('删除成功');
+								window.location.href = 'check.html';
+							}else{
+								alert('删除失败');
+							}
+						});
+					}
+				},
+				{
+					name:'设置默认会员卡',
+					click:function(data){
+						$.post('/membercard/defaultCard',{card_id:data.card_id}, function(data) {
+							data = $.JSON.parse(data);
+							if(data.data){
+								window.location.href = 'check.html';
+							}else{
+								alert(data.msg);
+							}
+						});
+					}
+				},
+				{
+					name:'修改',
+					click:function(data){
+						window.location.href = 'edit.html?card_id='+data.card_id;
+					}
+				}
+				],
+				button:[
+				{
+					name:'刷新数据',
+					click:function(data){
+						$.ajax({
+							url: '/membercard/updateMemberCard',
+							type: 'POST',
+							dataType: 'JSON',
+							success:function(data){
+								window.location.href = 'check.html';
+							},
+							error:function(){
+
+							}
+						})
+					}
+				},
+				],
+			});
+		}
+		go();
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

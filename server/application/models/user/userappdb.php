@@ -71,4 +71,19 @@ class UserAppDb extends CI_Model
 		$this->db->update($this->tableName,$data);
 	}
 
+	public function getTicket($userId){
+		return $this->db->select('cardTicket,cardTicketExpire')->from($this->tableName)->where('userId',$userId)->get()->result_array();
+	}
+
+	public function updateTicket($userId,$data){
+		$this->db->where('userId',$userId);
+		$this->db->update($this->tableName,$data);
+	}
+
+	//根据微信号获取userId
+	public function getUserId($ToUserName){
+		$userAppInfo = $this->db->select('userId')->from($this->tableName)->where('weixinNum',$ToUserName)->get()->result_array();
+		return $userAppInfo[0]['userId'];
+	}
+
 }

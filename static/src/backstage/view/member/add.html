@@ -1,0 +1,147 @@
+<link rel="import" href="../common/header.html?__inline">
+	<style type="text/css">
+		.color_list{
+			display: none;
+			position: relative;
+			top:-907px;
+			left: 310px;
+			width: 139px;
+			height: 60px;
+			background: white;
+			border: 1px solid;
+		}
+		.dropdown_data_list{
+			width: 135px;
+		}
+		ul li{
+			float:left;
+			display: inline-block;
+			width: 22px;
+			height: 22px;
+			margin-left: 5px;
+			margin-top: 5px;
+			cursor: pointer;
+		}
+	</style>
+	<div id="container"></div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var shopCommodityId = $.location.getQueryArgv('shopCommodityId');
+		var shopCommodity = {};
+		var shopList = [];
+
+		//获取门店列表
+		function getPoiId(next){
+			$.ajax({
+				url: '/coupons/getPoiId',
+				type: 'POST',
+				dataType: 'JSON',
+				success:function(data){
+					data = $.JSON.parse(data);
+					if(data.code != 0){
+						dialog.message(data.msg);
+						return;
+					}
+					shopList = data.data;
+					next();
+				},
+				error:function(){
+
+				}
+			})
+		}
+
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'code_type',type:'enum',name:'code展示类',map:{'CODE_TYPE_TEXT':'文本','CODE_TYPE_BARCODE':'一维码','CODE_TYPE_QRCODE':'二维码','CODE_TYPE_ONLY_QRCODE':'二维码无code显示','CODE_TYPE_ONLY_BARCODE':'一维码无code显示'}},
+					{id:'brand_name',type:'text',name:'商户名字'},
+					{id:'logo_url',type:'image',name:'卡券logo图片',option:{url:'/upload/image',width:300}},
+					{id:'title',type:'text',name:'会员卡标题'},
+					{id:'sub_title',type:'text',name:'会员卡副标题'},
+					{id:'color',type:'text',name:'卡券背景颜色'},
+					{id:'notice',type:'text',name:'会员卡使用提醒'},
+					{id:'description',type:'text',name:'会员卡使用说明'},
+					{id:'start_time',type:'time',name:'开始时间'},
+					{id:'end_time',type:'time',name:'结束时间'},
+					{id:'detail',type:'text',name:'会员卡详情'},
+					{id:'service_phone',type:'text',name:'客服电话'},
+					{id:'poi_id',type:'check',name:'使用门店',map:shopList},
+					{id:'prerogative',type:'text',name:'会员卡特权说明'},
+					{id:'supply_bonus',type:'enum',name:'显示积分',map:{true:'显示',false:'不显示'}},
+					{id:'bonus_cleared',type:'text',name:'清零规则'},
+					{id:'bonus_rules',type:'text',name:'积分规则'},
+					{id:'cell_name',type:'text',name:'自定义入口名称'},
+					{id:'cell_tips',type:'text',name:'自定义入口右侧提示'},
+					{id:'cell_url',type:'text',name:'自定义入口链接'}
+				],
+				submit:function(data){
+					$.post('/membercard/add',{data:data},function(data){
+						data = $.JSON.parse(data);
+						if( data.code != 0 ){
+							dialog.message(data.msg);
+							return false;
+						}
+						alert('创建卡券成功');
+						window.location.href = 'check.html';
+					});										
+				},
+				cancel:function(){
+					history.back();
+				}
+			});
+
+			setTimeout(option,100);
+		}
+
+		function option(){
+			$('input[name=color]').attr('readonly','readonly');
+			var html = "<div class='color_list'>\
+						    <ul class='dropdown_data_list'>\
+					            <li style='background:#63B359' color='Color010'>\
+					            </li>\
+					            <li style='background:#2C9F67' color='Color020'>\
+					            </li>\
+					            <li style='background:#509FC9' color='Color030'>\
+					            </li>\
+					            <li style='background:#5885CF' color='Color040'>\
+					            </li>\
+					            <li style='background:#9062C0' color='Color050'>\
+					            </li>\
+					            <li style='background:#D09A45' color='Color060'>\
+					            </li>\
+					            <li style='background:#E4B138' color='Color070'>\
+					            </li>\
+					            <li style='background:#EE903C' color='Color080'>\
+					            </li>\
+					            <li style='background:#DD6549' color='Color090'>\
+					            </li>\
+					            <li style='background:#CC463D' color='Color100'>\
+					            </li>\
+						    </ul>\
+						</div>";
+			$('table').append(html);
+
+			// $('html').on('click', 'body', function() {
+			// 	$('.color_list').hide();
+			// });
+
+			$('table').on('focus', 'input[name=color]', function(event) {
+				console.info(event);
+				event.stopPropagation();
+				$('.color_list').show();
+			});
+
+			$('.color_list').on('click', 'li', function() {
+				event.stopPropagation();
+				var color = $(this).attr('color');
+				$('input[name=color]').val(color);
+				$('.color_list').hide();
+			});
+		}
+		getPoiId(go);
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

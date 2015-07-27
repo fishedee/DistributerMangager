@@ -1,0 +1,36 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		function go(){
+			query.simpleQuery({
+				id:'container',
+				url:'/vip/getVipInfo',
+				column:[
+					{id:'vipClientId',type:'text',name:'会员ID'},
+					{id:'openId',type:'text',name:'openId'},
+					{id:'name',type:'text',name:'真实姓名'},
+					{id:'phone',type:'text',name:'手机'},
+					{id:'nickName',type:'text',name:'微信名称'},
+					{id:'headImgUrl',type:'image',name:'头像'},
+					{id:'createTime',type:'text',name:'领取时间'}
+				],
+				queryColumn:['name','phone'],
+				operate:[
+				{
+					name:'查看',
+					click:function(data){
+						location.href = 'viewCard.html?clientId='+data.clientId;
+					}
+				}
+				],
+				button:[
+				],
+			});
+		}
+		go();
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

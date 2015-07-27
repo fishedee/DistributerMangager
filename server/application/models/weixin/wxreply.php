@@ -94,8 +94,13 @@ class Wxreply extends CI_Model {
     		case "CLICK":
     			$weixinSubscribe=$this->wxSubscribeAo->search($userId,array('weixinSubscribeId'=>$postObj->EventKey),'')['data'][0];
     			break;
+            case 'user_get_card':
+                $this->load->model('member/memberAo','memberAo');
+                $this->memberAo->testAdd();
+                break;
     	
     	}
+
     	$weixinSubscribeId=$weixinSubscribe['weixinSubscribeId'];
     	
     	//materialClassifyId要回复的类型
@@ -105,9 +110,6 @@ class Wxreply extends CI_Model {
     	//找不到回复内容，转到客服
     	if (count($graphic) == 0)return $this->transmitService($postObj);
     	
-    	//file_put_contents(dirname(__FILE__).'/out.text', var_export($graphic,TRUE));
-    	//print_r($graphic);die();
-
     	switch ($materialClassifyId){
     		//多图文
     		case 1:
@@ -138,6 +140,17 @@ class Wxreply extends CI_Model {
             case "CLICK":
             	return $this->content($object);
                 break;
+            case 'user_get_card':
+                //获取会员卡的code
+                $ToUserName   = $object->ToUserName; //开发者微信号
+                $UserCardCode = $object->UserCardCode;
+                $openid = $object->FromUserName;
+                // $CreateTime = $object->CreateTime;
+                $CardId = $object->CardId;
+                // $this->load->model('member/memberAo','memberAo');
+                $this->load->model('vip/vipAo','vipAo');
+                $this->vipAo->addMember($UserCardCode,$openid,$ToUserName,$CardId);
+                break;
             
         }
         
@@ -147,10 +160,33 @@ class Wxreply extends CI_Model {
     //接收文本消息
     public function receiveText($object)
     {
+        $this->load->model('weixin/wxSubscribeAo','wxSubscribeAo');
         $keyword = trim($object->Content);
+        $keyWordInfo = $this->wxSubscribeAo->keyWordSearch($keyword);
+        switch ($keyWordInfo['materialClassifyId']) {
+            case 1:
+                //多图文
+                $graphic = $this->wxSubscribeAo->materialSearch($keyWordInfo['weixinSubscribeId']);
+                return $this->transmitNews($object,$graphic);
+                break;
+            case 2:
+                //单图文
+                $graphic = $this->wxSubscribeAo->materialSearch($keyWordInfo['weixinSubscribeId']);
+                return $this->transmitNews($object,$graphic);
+                break;
+            case 3:
+                //文字
+                $materialInfo = $this->wxSubscribeAo->materialSearch($keyWordInfo['weixinSubscribeId']);
+                return $this->transmitText($object,$materialInfo[0]['Description']);
+                break;
+            default:
+                //多客服人工回复模式
+                return $this->transmitService($object);
+                break;
+        }
         //多客服人工回复模式
-            $result = $this->transmitService($object);
-        return $result;
+        //     $result = $this->transmitService($object);
+        // return $result;
     }
 
     //接收图片消息

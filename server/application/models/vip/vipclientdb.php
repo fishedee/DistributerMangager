@@ -51,9 +51,70 @@ class VipClientDb extends CI_Model
 
 	public function modByUserAndClient($userId,$clientId,$data)
 	{
+		// $this->db->where("userId",$userId);
+		// $this->db->where("clientId",$clientId);
+		// return $this->db->update($this->tableName,$data);
+		$data['userId'] = $userId;
+		$data['clientId'] = $clientId;
+		$this->db->insert($this->tableName,$data);
+	}
+
+	public function modCardInfo($userId,$clientId,$data){
 		$this->db->where("userId",$userId);
 		$this->db->where("clientId",$clientId);
 		return $this->db->update($this->tableName,$data);
+	}
+
+	//增加会员
+	public function addMember($userId,$UserCardCode,$clientId,$CardId){
+		$condition['userId'] = $userId;
+		$condition['clientId'] = $clientId;
+		$data['userCardCode'] = $UserCardCode;
+		$data['createTime'] = date('Y-m-d H:i:s',time());
+		$data['card_id'] = $CardId;
+		// $this->db->insert($this->tableName,$data);
+		$this->db->where($condition);
+		$this->db->update($this->tableName,$data);
+	}
+
+	//判断有无会员卡
+	public function judge($userId,$clientId){
+		$this->load->model('member/memberCardDb','memberCardDb');
+		$condition['userId'] = $userId;
+		$condition['clientId'] = $clientId;
+		$result = $this->db->select('UserCardCode')->from($this->tableName)->where($condition)->get()->result_array();
+		if($result[0]['UserCardCode']){
+			return 0;
+		}else{
+			//无卡券
+			return $this->memberCardDb->getDefaultCard($userId);
+		}
+	}
+
+	//判断会员卡是否激活
+	public function judgeActive($userId,$clientId){
+		$condition['userId'] = $userId;
+		$condition['clientId'] = $clientId;
+		$result = $this->db->select('active')->from($this->tableName)->where($condition)->get()->result_array();
+		return $result[0]['active'];
+	}
+
+	//激活会员卡
+	public function activeMember($userId,$clientId,$score){
+		$this->db->where('userId',$userId);
+		$this->db->where('clientId',$clientId);
+		$data['score'] = $score;
+		$data['active']= 1;
+		$this->db->update($this->tableName,$data);
+		return $this->db->affected_rows();
+	}
+
+	//判断有无填写手机和姓名
+	public function judgeMobilName($userId,$clientId){
+		// $condition['userId'] = $userId;
+		// $condition['clientId'] = $clientId;
+		$result = $this->db->select('name,phone')->from($this->tableName)->where(array('clientId'=>$clientId,'userId'=>$userId))->get()->result_array();
+		return $result;
 	}
 
 }

@@ -1,0 +1,48 @@
+<link rel="import" href="header.html?__inline">
+	<title>修改会员卡信息</title>
+</head>
+<body>
+	<div id="body"></div>
+	<script type="text/javascript">
+		var $ = require('common/core/core.js');
+		var dialog = require('common/dialog/dialog.js');
+		var Header = require('common/header/header.js');
+		var Vip = require('common/vip/vip.js');
+		var FooterButton = require('common/footerbutton/footerbutton.js');
+		var vipCard = {};
+
+		//获取vipcard信息
+		function getVip(next){
+			$.get('/vip/getCard',{},function(data){
+				if(data.code!=0){
+					dialog.message(data.msg);
+					return;
+				}
+				vipCard = data.data;
+				next();
+			});
+		}
+
+		//打开弹窗
+		function openInfo(){
+			name = vipCard.name;
+			phone= vipCard.phone;
+			dialog.inputInfo(name,phone,function(data){
+				$.post('/vip/modCardInfo',data,function(data){
+					if(data.code!=0){
+						dialog.message(data.msg);
+						return;
+					}
+					dialog.message('修改会员卡信息成功',function(){
+						location.href = 'vip.html';
+					});
+				});
+			});
+		}
+
+		$.checkMustLogin(function(){
+			getVip(openInfo);
+		});
+	</script>
+</body>
+<link rel="import" href="footer.html?__inline">

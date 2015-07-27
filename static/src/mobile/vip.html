@@ -3,6 +3,7 @@
 </head>
 <body>
 	<div id="body"></div>
+	<script type="text/javascript" src='http://res.wx.qq.com/open/js/jweixin-1.0.0.js'></script>
 	<script type="text/javascript">
 		var $ = require('common/core/core.js');
 		var dialog = require('common/dialog/dialog.js');
@@ -12,6 +13,180 @@
 		var vipCard = {};
 		var phone = '';
 		var name = '';
+		var cardExt = '';
+		var card_id = '';
+		//获取js注入权限
+		function getJsConfig(next){
+			$.get('/redpack/getJsConfig',{url:location.href},function(data){
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				jsConfig = data.data;
+				wx.config($.extend(
+					jsConfig,
+					{
+						debug:false,
+						jsApiList:[
+							'closeWindow',
+							'onMenuShareTimeline',
+							'scanQRCode',
+							'addCard',
+							'openCard'
+						]
+					}
+				));
+				next();
+
+				wx.error(function(){
+					alert('微信接口配置失败，请检查appId与appKey是否设置正确');
+				});
+			});
+		}
+		
+		//领取会员卡时候的签名
+		function getCardExt(next){
+			$.ajax({
+				url: '/coupons/getCardExt',
+				type: 'POST',
+				dataType: 'JSON',
+				data: {card_id:card_id},
+				success:function(data){
+					cardExt = data.data;
+					// alert(cardExt);return false;
+					next();
+				},
+				error:function(){
+
+				}
+			})
+		}
+
+		//领取会员卡
+		function getCoupons(){
+			var c = cardExt;
+			wx.ready(function(){
+				wx.addCard({
+				    cardList: [
+				    {
+				        cardId: card_id,
+				        cardExt: c
+				    },
+				    ], // 需要添加的卡券列表
+				    success: function (res) {
+				        var cardList = res.cardList; // 添加的卡券列表信息
+				        location.href = 'vip.html';
+				    },
+				    fail:function(msg){
+						data = $.JSON.parse(msg);
+						alert(data);
+					}
+				});
+			})
+		}
+
+		function getMemberCard(){
+			$.ajax({
+				url: '/vip/judge',
+				type: 'POST',
+				dataType: 'JSON',
+				success:function(data){
+					card_id = data.data;
+					if(card_id){
+						//无会员卡
+						getJsConfig(function(){
+							getCardExt(getCoupons);
+						})
+					}else{
+						//有会员卡 判断有无激活
+						judgeActive();
+					}
+				},
+				error:function(){
+
+				}
+			})
+		}
+
+		//打开会员卡
+		function openMemberCard(){
+			$.ajax({
+				url: '/vip/getCardDetail',
+				type: 'POST',
+				dataType: 'JSON',
+				success:function(data){
+					data = data.data;
+					code = data['userCardCode'];
+					cardId = data['card_id'];
+					wx.ready(function(){
+						wx.openCard({
+						    cardList: [{
+						        cardId: cardId,
+						        code: code
+						    }]// 需要打开的卡券列表
+						});
+					})
+				},
+				error:function(){
+
+				}
+			})			
+		}
+
+		//判断用户有没有填写手机和姓名
+		function judgeMobilName(){
+			$.ajax({
+				url: '/vip/judgeMobilName',
+				type: 'POST',
+				dataType: 'JSON',
+				success:function(data){
+					data = data.data;
+					card_id = data;
+					if(data.length){
+						//有填写
+						getMemberCard();
+					}else{
+						//无填写
+						dialog.inputInfo(name,phone,function(data){
+							$.post('/vip/modCard',data,function(data){
+								if(data.code!=0){
+									dialog.message(data.msg);
+									return;
+								}
+								dialog.message('设置会员卡成功',function(){
+									getJsConfig(function(){
+										getCardExt(getCoupons);
+									})
+								});
+							});
+						});
+					}
+				},
+				error:function(){
+
+				}
+			})
+		}
+
+		//判断会员卡有无激活
+		function judgeActive(){
+			$.ajax({
+				url: '/vip/judgeActive',
+				type: 'POST',
+				dataType: 'JSON',
+				success:function(data){
+					if(data.data == 1){
+						getJsConfig(openMemberCard);
+					}else{
+						alert('请先激活会员卡');
+					}
+				},
+				error:function(){
+
+				}
+			})			
+		}
+
 		function getVip(next){
 			$.get('/vip/getCard',{},function(data){
 				if(data.code!=0){
@@ -41,7 +216,7 @@
 			});
 			var vip = new Vip({
 				cardImage:vipCard.cardImage,
-				id:vipCard.phone,
+				id:vipCard.userCardCode,
 				name:vipCard.name,
 				phone:vipCard.phone,
 				score:vipCard.score,
@@ -69,11 +244,7 @@
 			$.page.start(pageHtml);
 		}
 		$.checkMustLogin(function(){
-			getVip(function(){
-				getMyAddress(function(){
-					go();
-				});
-			});
+			judgeMobilName();
 		});
 	</script>
 </body>

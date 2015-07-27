@@ -75,4 +75,8 @@ class ClientAo extends CI_Model {
     	$this->clientDb->refreshUserInfo($clientId,$data);
 	}
 
+	public function getClientId($openId){
+		return $this->clientDb->getClientId($openId);
+	}
+
 }
