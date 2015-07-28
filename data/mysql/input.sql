@@ -624,6 +624,16 @@ create table t_chips_contract(
     phone varchar(32) not null
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
 
+#创建模板信息列表
+create table t_weixin_template(
+	userId integer not null,
+	openState int(1) not null default'0',
+	TM00015 varchar(80),
+	TM00505 varchar(80),
+	primary key( userId )
+)engine=innodb default charset=utf8mb4;
+alter table t_weixin_template add index userIdIndex(userId);
+
 #创建卡券列表
 create table t_coupons(
     couponsId int(11) not null auto_increment primary key,
