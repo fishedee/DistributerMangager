@@ -275,6 +275,8 @@ create table t_shop_order(
     wxPrePayId varchar(128) not null,
     state integer not null,
     remark varchar(128) not null,
+    expressageName varchar(20) not null ,
+    expressageNum` varchar(30) not null ,
     createTime timestamp not null default CURRENT_TIMESTAMP,
 	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
     primary key(shopOrderId)
