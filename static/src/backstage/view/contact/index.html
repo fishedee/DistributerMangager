@@ -1,0 +1,59 @@
+<link rel="import" href="../common/header.html?__inline">
+<div class="alert alert-danger" role="alert"></div>
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var url = 'http://'+$.location.getQueryArgv('userId')+'.'+location.hostname+'/'+$.location.getQueryArgv('userId')+'/contact.html';
+		var companyContact = {};
+		$('div[role=alert]').text('联系我们的地址:'+url);
+		function get(next){
+			$.get('/contact/get',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				companyContact = data.data;
+				next();
+			});
+		}
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'content',type:'fullEditor',name:'内容',option:{url:'/upload/ueditor'}},
+				],
+				value:companyContact,
+				submit:function(data){
+					if( companyContact != '' ){
+						$.post('/contact/mod',data,function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							location.href = 'index.html';
+						});
+					}else{
+						$.post('/contact/add',data,function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							location.href = 'index.html';
+						});
+					}
+				},
+
+			});
+		}
+
+				get(go);
+
+
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

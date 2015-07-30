@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+<!-- Added by HTTrack -->
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+<!-- /Added by HTTrack -->
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, width=device-width">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta content="black" name="apple-mobile-web-app-status-bar-style">
+	<meta name="format-detection" content="telephone=no">
+	<meta content="telephone=no" name="format-detection">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+	<title>联系我们</title>
+
+	<link type="text/css" rel="stylesheet" href="tpl/static/tpl/cont/com/css/comstyle.css" />
+	<link type="text/css" rel="stylesheet" href="tpl/static/tpl/cont/com/css/font-awesome.css" />
+	<link href="tpl/static/tpl/cont/3/css/article6.css" media="screen" rel="stylesheet" type="text/css" />
+
+	<script src="tpl/static/tpl/cont/com/js/comjs.js" type="text/javascript"></script>
+</head>
+    <script type="text/javascript" src="/fishstrap/lib/jquery.js"></script>
+<body>
+
+
+	<div class="html">
+		<div class="stage" id="stage">
+			<section id="sec-index">
+
+				<div class="body">
+
+
+
+					<div class="article ckeditor_content" id="article">
+
+						<div class="hd">
+							<h1>联系我们</h1>
+						</div>
+
+						<div class="bd">
+
+							<div class="text" id="content">
+
+
+							</div>
+						</div>
+
+
+					</div>
+
+					<script>
+						$(function () {
+							$(".ckeditor_content img").css({
+								"height": "auto",
+								"width": "auto",
+								"width": "100%",
+								"max-width": "100%"
+							});
+						});
+					</script>
+
+				</div>
+			</section>
+
+
+			<section class="mod-share share-1">
+				<a class="share-btn" onclick="showPop('#pop-share')"><span class="ico-share">发送给朋友</span></a>
+				<a class="share-btn" onclick="showPop('#pop-share')"><span class="ico-pyq">分享到朋友圈</span></a>
+			</section>
+
+		</div>
+		<!--.stage end-->
+	</div>
+	<!--.html end-->
+
+
+	<div class="mod-pop" id="pop-share" onclick="hidePop('#pop-share')"><span class="text-share"></span>
+	</div>
+	<div style="display:none"></div>
+
+	<div class="copyright">
+	</div>
+	<script src="../libs.baidu.com/jquery/2.0.0/jquery.min.js" type="text/javascript"></script>
+	<script>
+		function displayit(n) {
+			for (i = 0; i < 4; i++) {
+				if (i == n) {
+					var id = 'menu_list' + n;
+					if (document.getElementById(id).style.display == 'none') {
+						document.getElementById(id).style.display = '';
+						document.getElementById("plug-wrap").style.display = '';
+					} else {
+						document.getElementById(id).style.display = 'none';
+						document.getElementById("plug-wrap").style.display = 'none';
+					}
+				} else {
+					if ($('#menu_list' + i)) {
+						$('#menu_list' + i).css('display', 'none');
+					}
+				}
+			}
+		}
+
+		function closeall() {
+			var count = document.getElementById("top_menu").getElementsByTagName("ul").length;
+			for (i = 0; i < count; i++) {
+				document.getElementById("top_menu").getElementsByTagName("ul").item(i).style.display = 'none';
+			}
+			document.getElementById("plug-wrap").style.display = 'none';
+		}
+
+		document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+			WeixinJSBridge.call('hideToolbar');
+		});
+	</script>
+	<script>
+		
+		var tepData = {};
+		$.get('/contact/getByUserId', {}, function (data) {
+			data = $.JSON.parse(data);
+			console.log(data);
+			if (data.code != 0) {
+//				alert(data.msg);
+			}
+			temData = data.content;
+			$('#content').html(temData);
+		});
+	</script>
+</body>
+
+</html>

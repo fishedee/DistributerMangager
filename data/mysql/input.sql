@@ -655,6 +655,14 @@ create table t_member_card(
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
 alter table t_member_card add index memberCardUserId(userId);
 
+#公司联系我们
+create table t_user_company_contact(
+	contactId integer not null auto_increment,
+	userId int,
+	content text,
+	primary key(contactId)
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+alter table t_user_company_contact add index contactIndex(userId);
 
 #建立初始数据
 insert into t_user(userId,name,password,company,phone,type,downDistributionNum) values

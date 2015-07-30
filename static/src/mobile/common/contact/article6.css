@@ -1,0 +1,86 @@
+*{margin: 0px;padding: 0px;font-style: normal;}
+body{font-family: "Helvetica Neue",Helvetica,"Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif; background: #4a5068;line-height: inherit;}
+.clear{float:none;clear:both;}
+.article{ width: 100%; padding: 10px; background: #fff;}
+.article .hd,
+.article .bd{ padding: 0px 5px; line-height: 20px;}
+.article .hd{ padding: 10px 5px;}
+.article .hd h1{ padding-bottom: 10px;margin-bottom: 5px;border-bottom: 1px solid #E7E7EB;line-height: 1.2;font-weight: 700;font-size: 20px;}
+.article .hd small{font-size: 12px;color: #8C8C8C;margin-top:5px;margin-right:10px;}
+.article .bd{}
+.article img{ max-width: 100%;}
+.article .bd ul,
+.article .bd ol{-webkit-padding-start:20px;}
+.btn-up-1{ background: #4a5068;}
+.btn-up-1 .fa{ background: #fff; color: #4a5068;}
+.navPop-1 .navPop-btn{ background: #4a5068;}
+.navPop-1 .navPop-btn .fa{ background: #fff; color: #4a5068;}
+.navPop-wrap>div a{
+    background: #4a5068;
+    color: #fff;
+}
+/*fixed 2015-01-18 文章系统*/
+.article .text{word-wrap: break-word;line-height: inherit;}
+.text p{clear: both;min-height: 1em;}
+.text .m{font-size:16px;padding:5px 0px;}
+.text .m span{border-bottom:1px solid #555;}
+.text .s{font-size:16px;padding:5px 0px;}
+.text .s span{border-bottom:1px solid #555;}
+.text .l{width:100%;}
+.text .l ul{list-style-type:square;}
+.text .l li{width:50%;float:left;padding-right:25px;line-height: 24px;margin: 3px 0px;}
+/*专用于冷柜样式*/
+.text .lg{width:100%;min-height:200px;}
+.text .lg ul{list-style-type:square;}
+.text .lg li{width:100%;float:left;padding-right:5px;line-height: 24px;margin: 3px 0px;}
+
+.text .param{}
+.param table{width:100%;}
+.param table caption, table th, table td {
+    font-size: 12px;
+    padding: 0.1em 0.5em;
+    margin: 0.1em;
+    vertical-align: top;
+}
+.param th {
+    font-weight: normal;
+    vertical-align: middle;
+    color: #000;
+    font-size:10px;
+    background: none repeat scroll 0% 0% #8b8c8e;
+}
+.param table tr.odd th, table tr.odd, table tr.even th, table tr.even {
+    text-align: center;
+    font-size:12px;
+}
+.param table tr.odd th, .odd {
+    background: none repeat scroll 0% 0% #dbdcde;
+    font-size:12px;
+}
+
+.media-pic-list {
+overflow: hidden;
+width: 100%;;
+margin-top: 7px;
+}
+.media-pic-list ul {
+list-style-type:none;
+margin-top: -5px;
+font-size:0;
+}
+.media-pic-list li {
+    padding-right:5px;
+    display:inline-block;
+vertical-align:top;
+font-size:12px; 
+}
+.media-pic-list li p{text-align:center;font-size:12px;}
+.m1 li{width:100%;height:100%;}
+.m2 li{width:50%;height:100%;}
+.m3 li{width:33.3%;height:100%;}
+.m4 li{width:25%;height:100%;}
+/*.m2 li:nth-child(n){padding-right:5px;}
+.m2 li:nth-child(2n){padding-right:5px;}
+.m3 li{padding:2px;}
+.m4 li:nth-child(n){padding-right:5px;}
+.m4 li:nth-child(2n){padding-right:5px;}*/
