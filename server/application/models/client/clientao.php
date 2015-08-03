@@ -72,11 +72,22 @@ class ClientAo extends CI_Model {
     	}
     	$data['nickName'] = $nickname;
     	$data['headImgUrl'] = $headimgurl;
+    	$data['subscribe']  = $yonghu['subscribe'];
     	$this->clientDb->refreshUserInfo($clientId,$data);
 	}
 
 	public function getClientId($openId){
 		return $this->clientDb->getClientId($openId);
+	}
+
+	//判断有无关注
+	public function judgeSub($userId,$clientId){
+		$clientInfo = $this->get($userId,$clientId);
+		if($clientInfo['subscribe'] == 1){
+			return true;
+		}else{
+			return false;
+		}
 	}
 
 }

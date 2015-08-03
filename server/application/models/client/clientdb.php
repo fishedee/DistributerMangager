@@ -102,5 +102,4 @@ class ClientDb extends CI_Model
 		$openIdInfo = $this->db->select('clientId')->from($this->tableName)->where('openId',$openId)->get()->result_array();
 		return $openIdInfo[0]['clientId'];
 	}
-
 }

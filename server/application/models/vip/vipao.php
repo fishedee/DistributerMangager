@@ -53,7 +53,7 @@ class VipAo extends CI_Model {
 	}
 
 	public function getCard($userId,$clientId){
-		// $this->addOnceCard($userId,$clientId);
+		$this->addOnceCard($userId,$clientId);
 
 		$card = $this->vipClientDb->getByUserAndClient($userId,$clientId)[0];
 

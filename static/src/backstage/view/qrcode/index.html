@@ -1,0 +1,73 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		function go(){
+			query.simpleQuery({
+				id:'container',
+				url:'/qrcodecontroller/getAllInfo',
+				column:[
+					{id:'username',type:'text',name:'姓名'},
+					{id:'phone',type:'text',name:'移动电话'},
+					{id:'workPhone',type:'text',name:'工作电话'},
+					{id:'email',type:'text',name:'电子邮件'},
+					{id:'company',type:'text',name:'公司'},
+					{id:'company_url',type:'text',name:'公司主页'},
+					{id:'company_address',type:'text',name:'公司地址'},
+				],
+				queryColumn:['username'],
+				operate:[
+				{
+					name:'删除',
+					click:function(data){
+						$.post('/coupons/delCoupons', {card_id:data.card_id}, function(data) {
+							data = $.JSON.parse(data);
+							if(data.code != 0){
+								dialog.message(data.msg);
+								return;
+							}
+							if(data.data == 1){
+								alert('删除成功');
+								window.location.href = 'check.html';
+							}else{
+								alert('删除失败');
+							}
+						});
+					}
+				},
+				{
+					name:'设置默认会员卡',
+					click:function(data){
+						$.post('/membercard/defaultCard',{card_id:data.card_id}, function(data) {
+							data = $.JSON.parse(data);
+							if(data.data){
+								window.location.href = 'check.html';
+							}else{
+								alert(data.msg);
+							}
+						});
+					}
+				},
+				{
+					name:'修改',
+					click:function(data){
+						window.location.href = 'edit.html?card_id='+data.card_id;
+					}
+				}
+				],
+				button:[
+				{
+					name:'刷新数据',
+					click:function(data){
+						
+					}
+				},
+				],
+			});
+		}
+		go();
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

@@ -53,7 +53,6 @@
 				data: {card_id:card_id},
 				success:function(data){
 					cardExt = data.data;
-					// alert(cardExt);return false;
 					next();
 				},
 				error:function(){
@@ -91,6 +90,10 @@
 				type: 'POST',
 				dataType: 'JSON',
 				success:function(data){
+					if(data.code != 0){
+						alert(data.msg);
+						return false;
+					}
 					card_id = data.data;
 					if(card_id){
 						//无会员卡
@@ -141,7 +144,6 @@
 				dataType: 'JSON',
 				success:function(data){
 					data = data.data;
-					card_id = data;
 					if(data.length){
 						//有填写
 						getMemberCard();
@@ -216,7 +218,7 @@
 			});
 			var vip = new Vip({
 				cardImage:vipCard.cardImage,
-				id:vipCard.userCardCode,
+				id:vipCard.phone,
 				name:vipCard.name,
 				phone:vipCard.phone,
 				score:vipCard.score,
@@ -243,8 +245,15 @@
 			var pageHtml = header.el + vip.el + footerbutton.el;
 			$.page.start(pageHtml);
 		}
+		// $.checkMustLogin(function(){
+		// 	judgeMobilName();
+		// });
 		$.checkMustLogin(function(){
-			judgeMobilName();
+			getVip(function(){
+				getMyAddress(function(){
+					go();
+				});
+			});
 		});
 	</script>
 </body>

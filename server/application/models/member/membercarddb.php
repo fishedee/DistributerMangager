@@ -69,7 +69,11 @@ class MemberCardDb extends CI_Model {
 		$condition['userId'] = $userId;
 		$condition['defaultCard'] = 1;
 		$result = $this->db->select('card_id')->from($this->tableName)->where($condition)->get()->result_array();
-		return $result[0]['card_id'];
+		if($result){
+			return $result[0]['card_id'];
+		}else{
+			throw new CI_MyException(1,'商户没定默认会员卡');
+		}
 	}
 
 	public function testAdd(){

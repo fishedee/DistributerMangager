@@ -103,9 +103,9 @@ class Vip extends CI_Controller {
 		$clientId = $client['clientId'];
 		
 		//执行业务逻辑
-		// $card = $this->vipAo->getCard($userId,$clientId);
-		// if( $card['name'] != '') 
-			// throw new CI_MyException(1,'你已经设置过会员卡了，请勿重复设置');
+		$card = $this->vipAo->getCard($userId,$clientId);
+		if( $card['name'] != '') 
+			throw new CI_MyException(1,'你已经设置过会员卡了，请勿重复设置');
 
 		return $this->vipAo->modCard($userId,$clientId,$data);
 	}
@@ -195,17 +195,6 @@ class Vip extends CI_Controller {
 		
 		//执行业务逻辑
 		return $this->vipAo->setSetting($userId,$data);
-	}
-
-	//激活会员卡
-	public function activeMember(){
-		$this->load->model('member/memberAo','memberAo');
-		$clientId = $this->session->userdata('clientId');
-		$data = $this->argv->checkGet(array(
-			array('userId','require'),
-		));
-		$userId = $data['userId'];
-		$this->memberAo->activeMember($userId,$clientId);
 	}
 
 	/**

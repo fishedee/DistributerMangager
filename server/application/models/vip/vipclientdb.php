@@ -51,12 +51,12 @@ class VipClientDb extends CI_Model
 
 	public function modByUserAndClient($userId,$clientId,$data)
 	{
-		// $this->db->where("userId",$userId);
-		// $this->db->where("clientId",$clientId);
-		// return $this->db->update($this->tableName,$data);
-		$data['userId'] = $userId;
-		$data['clientId'] = $clientId;
-		$this->db->insert($this->tableName,$data);
+		$this->db->where("userId",$userId);
+		$this->db->where("clientId",$clientId);
+		return $this->db->update($this->tableName,$data);
+		// $data['userId'] = $userId;
+		// $data['clientId'] = $clientId;
+		// $this->db->insert($this->tableName,$data);
 	}
 
 	public function modCardInfo($userId,$clientId,$data){

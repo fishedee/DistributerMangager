@@ -1,0 +1,346 @@
+<link rel="import" href="header.html?__inline">
+	<meta charset="UTF-8">
+	<title>电子名片的制作</title>
+	<meta name="viewport" content="width=320,initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=medium-dpi">
+	<style>
+		body {
+			position: relative;
+			margin: 0 auto;
+			max-width: 360px;
+			background: white;
+			min-height: 500px;
+		}
+		
+		textarea {
+			resize: none;
+			width: 210px;
+		}
+		
+		td span {
+			color: #ff1414;
+			font-weight: 600;
+		}
+		
+		.title {
+			width: 100%;
+			height: 50px;
+			margin-top: 5px;
+			border: 1px solid #ddd;
+			/*background: -webkit-linear-gradient(#457194, #26547a);
+			background: -moz-linear-gradient(#457194, #26547a);
+			background: -o-linear-gradient(#457194, #26547a);
+			background: -ms-linear-gradient(#457194, #26547a);
+			background: linear-gradient(#457194, #26547a);*/
+			background: #039824;
+			border-radius: 5px;
+		}
+
+		table td input{
+			border-radius: 5px;
+		}
+		
+		table td:nth-of-type(1) {
+			width: 80px;
+			vertical-align: top;
+			text-align: left;
+			height: 20px;
+			position: relative;
+			top: 3px;
+			color: #747474;
+			font-family: '微软雅黑';
+		}
+		
+		table td:nth-of-type(2) {
+			width: 150px;
+			vertical-align: top;
+			text-align: left;
+		}
+		
+		table td:nth-of-type(3) {
+			vertical-align: top;
+			text-align: left;
+		}
+		
+		select[name=province],
+		select[name=city] {
+			width: 99px;
+		}
+		
+		input {
+			width: 202px;
+		}
+		
+		input,
+		select,
+		option {
+			height: 22px;
+		}
+
+		select,option{
+			height: 40px;
+		}
+		
+		input[name=newlocation] {
+			margin-top: 5px;
+		}
+		
+		.title>p {
+			color: aliceblue;
+			font-size: 28px;
+			margin-top: 10px;
+			margin-left: 5px;
+			font-weight: 600;
+			font-size: 微软雅黑;
+		}
+		
+		input[type=submit]{
+			position: absolute;
+			width: 100%;
+			height: 60px;
+			font-size: 18px;
+			font-weight: 600;
+			/*margin-left: 20%;*/
+			margin-top: 10px;
+			bottom: -100px;
+		}
+
+		.choose{
+			border:1px solid;
+			height: 30px;
+			border-radius: 5px;
+			line-height: 30px;
+			text-align: center;
+		}
+		.submitQr{
+			background: #4F9703;
+			color: black;
+			border-radius: 3px;
+			font-family: '微软雅黑';
+			width: 200px;
+			text-align: center;
+			margin: 0 auto;
+			font-weight: 500;
+			height: 30px;
+			line-height: 30px;
+		}
+		#warp{
+			min-height: 97%;
+		}
+		#main{
+			margin-top: 5px;
+			border:1px solid #D3D3D3;
+			overflow: auto;
+			padding-bottom: 5px;
+		}
+		#main table{
+			margin: 0 auto;
+		}
+		#footer {
+			position: fixed;
+		    /*margin-top: 0px; */
+		    height: 40px;
+		    clear:both;
+		    background:white;
+		    /*border-right: 1px solid #D3D3D3;*/
+		    line-height: 40px;
+		    bottom: 0;
+		}
+
+		#footer .wyd{
+			/*display: inline-block;*/
+			position: relative;
+			top: 6px;
+			width: 100px;
+			height: 24px;
+			margin-left: 20px;
+			margin-top: 0px;
+		}
+		#footer span{
+			font-family: '微软雅黑';
+			font-size: 15px;
+			color: #A8A8A8;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="title">
+		<p>电子名片的制作</p>
+	</div>
+	<div id="warp">
+		<div id="main">
+			<form action="/qrcodecontroller/create" method="POST" autocomplete="on" name="creator" enctype='multipart/form-data'>
+				<table>
+					<tr>
+						<td>姓名：</td>
+						<td>
+							<input type="text" text="" required="required" name='name'>
+					</tr>
+					<tr>
+						<td>手机：</td>
+						<td>
+							<input type="text" text="" required="required" name='mobile'>
+						</td>
+					</tr>
+					<tr>
+						<td>职位：</td>
+						<td>
+							<input type="text" text="" required="required" name='position'>
+						</td>
+					</tr>
+					<tr>
+						<td>工作电话：</td>
+						<td>
+							<input type="text" text="" required="required" name='work_phone'>
+						</td>
+					</tr>
+					<tr>
+						<td>公司：</td>
+						<td>
+							<input type="text" text="" required="required" name='company_name'>
+						</td>
+					</tr>
+					<tr>
+						<td>公司网址：</td>
+						<td>
+							<input type="text" text="" required="required" name='company_url'>
+						</td>
+					</tr>
+					<tr>
+						<td>公司省份：</td>
+						<td>
+							<input type="text" text="" required="required" name='company_province'>
+						</td>
+					</tr>
+					<tr>
+						<td>公司城市：</td>
+						<td>
+							<input type="text" text="" required="required" name='company_city'>
+						</td>
+					</tr>
+					<tr>
+						<td>公司地址：</td>
+						<td>
+							<input type="text" text="" required="required" name='company_address'>
+						</td>
+					</tr>
+					<tr>
+						<td>电子邮箱：</td>
+						<td>
+							<input type="text" text="" required="required" name='email'>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<input type="file" style="display:none;" >
+							<input type="hidden" name='img'>
+							<div class='choose'>请选择你所需要的图片</div>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<div class="submitQr">生成二维码</div>
+						</td>
+					</tr>
+				</table>
+				<!-- <input type="submit" value="提交" name='sub' id='sub'> -->
+			</form>
+		</div>
+	</div>
+	<div id="imgdiv" style="display:none;"></div>
+	<div id="footer">
+		<img src="common/chips/image/wyd.jpg" alt="" class="wyd">
+		<span class='line'>|</span>
+		<span class='telogo'>行业·定制·专业·深度微营销专家</span>
+	</div>
+</body>
+
+<!-- <script src="common/reduce/mobileFix.mini.js"></script>
+<script src="common/reduce/exif.js"></script>
+<script src="common/reduce/lrz.js"></script>
+<script src="common/reduce/index.js"></script> -->
+<script type="text/javascript">
+	// require('common/reduce/index.js');
+	var $ = require('/fishstrap/core/global.js');
+	require('common/reduce/mobileFix.mini.js');
+	require('common/reduce/exif.js');
+	require('common/reduce/lrz.js');
+	require('common/reduce/index2.js');
+	var clientId = 1;
+	function checkMustLogin(next){
+	 	$.get('/clientlogin/islogin',{},function(data){
+	 		data = $.JSON.parse(data);
+	 		if( data.code != 0 ){
+	 			location.href = $.url.buildQueryUrl('/clientlogin/wxlogin',{callback:location.href});
+	 			return;
+	 		}
+	 		clientId = data.data;
+	 		$('table').hide();
+	 		next();
+	 	});
+	}
+	function judgeSub(){
+		$.ajax({
+			url: '/qrcodecontroller/judgeSub',
+			type: 'POST',
+			dataType: 'JSON',
+			success:function(data){
+				data = $.JSON.parse(data);
+				if(data.data){
+					$('table').show();
+				}else{
+					createWeixinCode();
+				}
+			},
+			error:function(){
+
+			}
+		})		
+	}
+
+	//创建公众号二维码
+	function createWeixinCode(){
+		$.ajax({
+			url: '/qrcodecontroller/createCode',
+			type: 'POST',
+			dataType: 'JSON',
+			success:function(data){
+				var html = "<img src='"+data+"' id='mmg' />";
+				$('#main').append(html);
+				$('#mmg').css({
+					width: '350px',
+					height: '350px'
+				});
+				$('.title').children('p').text('请先扫面关注公众号');
+			},
+			error:function(){
+
+			}
+		})		
+	}
+
+	//选择城市
+	$('select[name=province]').change(function() {
+		var address = $(this).val() + $('select[name=city]').val();
+		$('input[name=newlocation]').val(address);
+	});
+	$('select[name=city]').change(function() {
+		var address = $('select[name=province]').val() + $(this).val();
+		$('input[name=newlocation]').val(address);
+	});
+	checkMustLogin(function(){
+		judgeSub();
+	});
+
+	//点击上传图片
+	$('.choose').click(function() {
+		$('input[type=file]').trigger('click');
+	});
+
+	$('.submitQr').click(function() {
+		$('form').submit();
+	});
+
+
+</script>
+<link rel="import" href="footer.html?__inline">

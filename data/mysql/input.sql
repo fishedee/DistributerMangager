@@ -64,6 +64,7 @@ create table t_client(
 	openId varchar(128) not null,
 	headImgUrl varchar(255) not null,
 	nickName varchar(255) not null,
+	subscribe int(1) not null,
 	type integer not null,
 	createTime timestamp not null default CURRENT_TIMESTAMP,
 	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
@@ -663,6 +664,25 @@ create table t_user_company_contact(
 	primary key(contactId)
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
 alter table t_user_company_contact add index contactIndex(userId);
+
+#创建电子名片
+create table t_qrcode(
+	qrcodeId int(11) not null auto_increment primary key,
+	userId int(11) not null,
+	clientId int(11) not null,
+	username varchar(100) not null,
+	phone varchar(32) not null,
+	workPhone varchar(32) not null,
+	email varchar(100) not null,
+	company varchar(128) not null,
+	company_url varchar(255) not null,
+	company_address varchar(255) not null,
+	qr text not null,
+	logo text not null,
+	qrX double not null,
+	qrY double not null
+)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+alter table t_qrcode add index qrcodeUserId(userId);
 
 #建立初始数据
 insert into t_user(userId,name,password,company,phone,type,downDistributionNum) values

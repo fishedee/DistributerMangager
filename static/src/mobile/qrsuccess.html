@@ -1,0 +1,310 @@
+<link rel="import" href="header.html?__inline">
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>生成的二维码</title>
+	<style type="text/css">
+		*{
+			padding: 0;
+			margin: 0;
+		}
+		body {
+			position: relative;
+			margin: 0 auto;
+			max-width: 360px;
+			background: white;
+		}
+		.title {
+			width: 100%;
+			height: 50px;
+			margin-top: 5px;
+			border: 1px solid #ddd;
+			/*background: -webkit-linear-gradient(#457194, #26547a);
+			background: -moz-linear-gradient(#457194, #26547a);
+			background: -o-linear-gradient(#457194, #26547a);
+			background: -ms-linear-gradient(#457194, #26547a);
+			background: linear-gradient(#457194, #26547a);*/
+			background: #039824;
+			border-radius: 5px;
+			line-height: 33px;
+		}
+		.title>p {
+			color: aliceblue;
+			font-size: 28px;
+			margin-top: 10px;
+			margin-left: 5px;
+			font-weight: 600;
+			font-size: 微软雅黑;
+		}
+		#mainContent{
+			position: relative;
+			width: 100%;
+		}
+		#warp{
+			min-height: 90%;
+		}
+
+		#main{
+			margin-top: 5px;
+			border:1px solid #D3D3D3;
+			overflow: auto;
+			padding-bottom: 5px;
+		}
+		#bg{
+			background: white;
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			z-index: 10;
+		}
+		.qr img.qr1{
+			width: 300px;
+			height: 300px;
+			margin: 0 auto;
+		}
+		.logo{
+			position: absolute;
+			top: 102px;
+			left: 107px;
+		}
+		#id2{
+			width: 100%;
+		}
+		#id2 img{
+			display: block;
+			width: 300px;
+			margin: 0 auto;
+		}
+		.submitQr{
+			background: #4F9703;
+			color: black;
+			border-radius: 3px;
+			font-family: '微软雅黑';
+			width: 200px;
+			text-align: center;
+			margin: 0 auto;
+			font-weight: 600;
+			height: 30px;
+			line-height: 30px;
+		}
+		#footer {
+			position: fixed;
+		    /*margin-top: 0px; */
+		    height: 40px;
+		    clear:both;
+		    background:white;
+		    /*border-right: 1px solid #D3D3D3;*/
+		    line-height: 40px;
+		    bottom: 0;
+		}
+
+		#footer .wyd{
+			/*display: inline-block;*/
+			position: relative;
+			top: 6px;
+			width: 100px;
+			height: 24px;
+			margin-left: 20px;
+			margin-top: 0px;
+		}
+		#footer span{
+			font-family: '微软雅黑';
+			font-size: 15px;
+			color: #A8A8A8;
+		}
+	</style>
+</head>
+<body>
+	<div class="title">
+		<p></p>
+	</div>
+	<div id="warp">
+		<div id="main">
+			<div id="mainContent"></div>
+			<div class="submitQr">免费创建自己的二维码名片</div>
+		</div>
+	</div>
+	<div id="footer">
+		<img src="common/chips/image/wyd.jpg" alt="" class="wyd">
+		<span class='line'>|</span>
+		<span class='telogo'>行业·定制·专业·深度微营销专家</span>
+	</div>
+	<div id="bg">二维码正在生成</div>
+	<script type="text/javascript">
+		var $ = require('common/core/core.js');
+		require('common/js/html2canvas.js');
+		var wxSdk = require('/fishstrap/module/jweixin.js');
+		var bw = 0;
+		var bh = 0;
+		var sw = 0;
+		var sh = 0;
+		var clientId = '';
+		var qrInfo   = {};
+		var enjonyClientId = $.location.getQueryArgv('clientId');
+		var qrcode   = '';
+		var shareInfo= {};
+		var createUrl= '';
+		//注入js权限
+		function getJsConfig(next){
+			$.get('/redpack/getJsConfig',{url:location.href},function(data){
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				jsConfig = data.data;
+				wxSdk.config($.extend(
+					jsConfig,
+					{
+						debug:false,
+						jsApiList:[
+							'closeWindow',
+							'onMenuShareTimeline'
+						]
+					}
+				));
+				wxSdk.error(function(){
+					alert('微信接口配置失败，请检查appId与appKey是否设置正确');
+				});
+				next();
+			});
+		}
+		
+		//获取分享信息
+		function getShareInfo(next){
+			$.ajax({
+				url: '/qrcodecontroller/getShareInfo',
+				type: 'POST',
+				dataType: 'JSON',
+				data: {qrcode: qrcode},
+				success:function(data){
+					shareInfo = data.data;
+					next();
+				},
+				error:function(){
+
+				}
+			})
+		}
+
+		//设置分享按钮
+		function share(next){
+			wxSdk.onMenuShareTimeline({
+			    title: '我的电子名片', // 分享标题
+			    link: shareInfo['link'], // 分享链接
+			    imgUrl: shareInfo['imgUrl'], // 分享图标
+			    success: function () { 
+			        //分享成功 插入数据
+			    },
+			    cancel: function () { 
+			    }
+			});
+			next();
+		}
+
+		//开始截图
+		function screenShot(){
+
+			var fe = $("#id1");
+
+			html2canvas(fe, {
+				allowTaint: true,
+				taintTest: false,
+				onrendered: function(canvas) {
+					canvas.id = "mycanvas";
+					//document.body.appendChild(canvas);
+					//生成base64图片数据
+					
+					var dataUrl = canvas.toDataURL();
+					var newImg = document.createElement("img");
+					newImg.src =  dataUrl;
+					$('#id1').hide();
+					$('#id2').append(newImg);
+					$('#bg').hide();
+					qrcode = $('#id2').children('img').attr('src');
+				}
+			});
+
+			getCreateUrl();
+	   	}
+
+	   	function getQrcodeInfo(next){
+	   		$.ajax({
+	   			url: '/qrcodecontroller/getQrcodeInfo',
+	   			type: 'POST',
+	   			dataType: 'JSON',
+	   			success:function(data){
+	   				// data = $.JSON.parse(data);
+	   				if( data.code != 0 ){
+						alert(data.msg);
+						return;
+					}
+	   				qrInfo = data.data;
+	   				next();
+	   			},
+	   			error:function(){
+
+	   			}
+	   		})  		
+	   	}
+
+	   	//获取别人二维码信息
+	   	function getOtherQrcodeInfo(next){
+	   		$.ajax({
+	   			url: '/qrcodecontroller/getOtherQrcodeInfo',
+	   			type: 'POST',
+	   			dataType: 'JSON',
+	   			data: {clientId: enjonyClientId},
+	   			success:function(data){
+	   				if( data.code != 0 ){
+						alert(data.msg);
+						return;
+					}
+	   				qrInfo = data.data;
+	   				next();
+	   			},
+	   			error:function(){
+
+	   			}
+	   		})
+	   	}
+
+	   	//开始追加图片
+	   	function appendQr(){
+	   		var width= qrInfo['qrX'];
+	   		var height = qrInfo['qrY'];
+	   		var html = "<div id='id1' class='qr' style='position:relative;width:300px;height:300px;margin:0 auto;'>\
+							<img src='"+qrInfo['qr']+"' alt='' class='qr1' name='qr' />\
+							<img src='"+qrInfo['logo']+"' alt='' class='logo' />\
+						</div>\
+						<div id='id2'></div>";
+			$('.title').children('p').text(qrInfo['username']+'的二维码名片');
+			$('#mainContent').append(html);
+			screenShot();
+	   	}
+
+	   	function getCreateUrl(){
+	   		$.get('/qrcodecontroller/getCreateUrl',{}, function(data) {
+	   			createUrl = data.data;
+	   		});
+	   		$('.submitQr').click(function() {
+	   			window.location.href = createUrl;
+	   		});
+	   	}
+
+	   	if(enjonyClientId){
+	   		getOtherQrcodeInfo(function(){
+	   			share(appendQr);
+	   		});
+	   	}else{
+	   		$.checkMustLogin(function(){
+	   			getQrcodeInfo(function(){
+		   			getJsConfig(function(){
+		   				getShareInfo(function(){
+		   					share(appendQr);
+		   				})
+		   			})
+		   		});
+	   		})
+	   	}
+	</script>
+</body>
+
+<link rel="import" href="footer.html?__inline">
