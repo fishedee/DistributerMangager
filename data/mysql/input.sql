@@ -669,7 +669,6 @@ alter table t_user_company_contact add index contactIndex(userId);
 create table t_qrcode(
 	qrcodeId int(11) not null auto_increment primary key,
 	userId int(11) not null,
-	clientId int(11) not null,
 	username varchar(100) not null,
 	phone varchar(32) not null,
 	workPhone varchar(32) not null,

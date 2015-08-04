@@ -98,26 +98,24 @@
 
 		//创建二维码
 		public function create(){
-			// require_once(BASEPATH.'libraries/phpqrcode/phpqrcode.php');
-			$this->load->library('QrCode');
-			// var_dump($this);die;
+			$this->load->library('QrCode','qrcode');
 			if($_POST){
 				if($this->is_mobile_request()){
 					$userInfo = $this->argv->checkGet(array(
 						array('userId','require'),
 					));
 					$userId = $userInfo['userId'];
-					$clientId = $this->session->userdata('clientId');
+					// $clientId = $this->session->userdata('clientId');
 					$mobileRequest = 1;
 				}else{
 					$userId = 10001;
-					$clientId = 1;
+					// $clientId = 1;
 					$mobileRequest = 0;
 				}
 				//处理上传图片
 				if($this->input->post('img')){
 					//设置上传的图片
-					$dirName = dirName(__FILE__).'/../../../data/upload/qrcode/'.$clientId;
+					$dirName = dirName(__FILE__).'/../../../data/upload/qrcode';
 					if(!is_dir($dirName)){
 						mkdir($dirName,0777,true);
 					}
@@ -128,7 +126,7 @@
 					  	$fileName = $dirName.'/'.$qrlogo;
 					  	//保存图片
 					  	file_put_contents($fileName, base64_decode(str_replace($result[1], '', $base64_image_content)));
-					  	$qrlogo = '/data/upload/qrcode/'.$clientId.'/'.$qrlogo;
+					  	$qrlogo = '/data/upload/qrcode/'.$qrlogo;
 					}
 				}else{
 					echo '请选择上传的logo';die;
@@ -151,8 +149,9 @@
 				//二维码图片
 				$qr = time().'_'.mt_rand(0,999).'qrcode.jpg';
 				$qrFileName = $dirName.'/'.$qr;
-				QRcode::png($info , $qrFileName , $errorCorrectionLevel,$matrixPointSize,$margin);
-				$qr = '/data/upload/qrcode/'.$clientId.'/'.$qr;
+				// QRcode::png($info , $qrFileName , $errorCorrectionLevel,$matrixPointSize,$margin);
+				$this->qrcode->createCodeToFile($info , $qrFileName , $errorCorrectionLevel,$matrixPointSize,$margin);
+				$qr = '/data/upload/qrcode/'.$qr;
 				//组合
 				if($this->input->post('img')){
 					//开始组合两张图片
@@ -186,16 +185,18 @@
 				    $data['logo'] = $qrlogo;
 				    $data['qrX'] = $QR_width;
 				    $data['qrY'] = $QR_height;
-				    $result = $this->qrCodeAo->addOrMod($clientId,$data,$mobileRequest);
+				    $result = $this->qrCodeAo->addOrMod($data,$mobileRequest);
 				    if($this->is_mobile_request()){
 				    	if($result){
-					    	$url = 'http://'.$_SERVER['HTTP_HOST'].'/'.$userId.'/qrsuccess.html';
+					    	$url = 'http://'.$_SERVER['HTTP_HOST'].'/'.$userId.'/qrsuccess.html?qrcodeId='.$result;
 					    	header('Location:'.$url);
 					    }
 				    }else{
-				    	$url = 'http://'.$_SERVER['HTTP_HOST'].'/backstage/pcinfo.html?qrcodeId='.$result;
-				    	header('Location:'.$url);
-				    	// echo $url;
+				    	echo $result;
+				    	// if($result){
+					    // 	$url = 'http://'.$_SERVER['HTTP_HOST'].'/'.$userId.'/qrsuccess.html?qrcodeId='.$result;
+					    // 	header('Location:'.$url);
+					    // }
 				    }
 				}
 			}
@@ -292,9 +293,10 @@
 		 * 获取二维码信息
 		 */
 		public function getQrcodeInfo(){
-			$clientId = $this->session->userdata('clientId');
+			// $clientId = $this->session->userdata('clientId');
+			$qrcodeId = $this->input->post('qrcodeId');
 			if($this->input->is_ajax_request()){
-				return $this->qrCodeAo->getQrcodeInfo($clientId)[0];
+				return $this->qrCodeAo->getQrcodeInfo($qrcodeId)[0];
 			}
 		}
 
@@ -304,8 +306,9 @@
 		 */
 		public function getOtherQrcodeInfo(){
 			if($this->input->is_ajax_request()){
-				$clientId = $this->input->post('clientId');
-				$result = $this->qrCodeAo->getQrcodeInfo($clientId);
+				// $clientId = $this->input->post('clientId');
+				$qrcodeId = $this->input->post('qrcodeId');
+				$result = $this->qrCodeAo->getQrcodeInfo($qrcodeId);
 				if($result){
 					return $result[0];
 				}else{
@@ -323,6 +326,11 @@
 			return $this->qrCodeAo->getInfo($qrcodeId);
 		}
 
+		public function PcGetInfo(){
+			$qrcodeId = $this->input->post('qrcodeId');
+			echo json_encode($this->qrCodeAo->getInfo($qrcodeId));
+		}
+
 		/**
 		 * @view json
 		 * 获取分享信息
@@ -333,13 +341,14 @@
 					array('userId','require'),
 				));
 				$userId = $userInfo['userId'];
-				$clientId = $this->session->userdata('clientId');
-				$qrcode   = $this->session->userdata('qrcode');
-				$url = 'http://'.$_SERVER['HTTP_HOST'].'/'.$userId.'/qrsuccess.html?clientId='.$clientId;
-				$qrCodeInfo = $this->qrCodeAo->getQrcodeInfo($clientId)[0];
+				// $clientId = $this->session->userdata('clientId');
+				$qrcodeId = $this->input->post('qrcodeId');
+				// $qrcode   = $this->session->userdata('qrcode');
+				$url = 'http://'.$_SERVER['HTTP_HOST'].'/'.$userId.'/qrsuccess.html?qrenjoycodeId='.$qrcodeId;
+				$qrCodeInfo = $this->qrCodeAo->getQrcodeInfo($qrcodeId)[0];
 				$arr['title'] = '这是我的电子名片';
 				$arr['link']  = $url;
-				$arr['imgUrl']= $qrcode;
+				// $arr['imgUrl']= $qrcode;
 				return $arr;
 			}
 		}

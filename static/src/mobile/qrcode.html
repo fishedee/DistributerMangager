@@ -275,7 +275,7 @@
 	 			return;
 	 		}
 	 		clientId = data.data;
-	 		$('table').hide();
+	 		// $('table').hide();
 	 		next();
 	 	});
 	}
@@ -328,9 +328,9 @@
 		var address = $('select[name=province]').val() + $(this).val();
 		$('input[name=newlocation]').val(address);
 	});
-	checkMustLogin(function(){
-		judgeSub();
-	});
+	// checkMustLogin(function(){
+		// judgeSub();
+	// });
 
 	//点击上传图片
 	$('.choose').click(function() {

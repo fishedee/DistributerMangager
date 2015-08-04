@@ -138,10 +138,11 @@
 		var sh = 0;
 		var clientId = '';
 		var qrInfo   = {};
-		var enjonyClientId = $.location.getQueryArgv('clientId');
+		var enjonyClientId = $.location.getQueryArgv('qrenjoycodeId');
 		var qrcode   = '';
 		var shareInfo= {};
 		var createUrl= '';
+		var qrcodeId = $.location.getQueryArgv('qrcodeId');
 		//注入js权限
 		function getJsConfig(next){
 			$.get('/redpack/getJsConfig',{url:location.href},function(data){
@@ -173,8 +174,11 @@
 				url: '/qrcodecontroller/getShareInfo',
 				type: 'POST',
 				dataType: 'JSON',
-				data: {qrcode: qrcode},
+				data: {
+					qrcodeId: qrcodeId
+				},
 				success:function(data){
+					console.info(data);
 					shareInfo = data.data;
 					next();
 				},
@@ -230,6 +234,7 @@
 	   			url: '/qrcodecontroller/getQrcodeInfo',
 	   			type: 'POST',
 	   			dataType: 'JSON',
+	   			data: {qrcodeId:qrcodeId},
 	   			success:function(data){
 	   				// data = $.JSON.parse(data);
 	   				if( data.code != 0 ){
@@ -251,7 +256,7 @@
 	   			url: '/qrcodecontroller/getOtherQrcodeInfo',
 	   			type: 'POST',
 	   			dataType: 'JSON',
-	   			data: {clientId: enjonyClientId},
+	   			data: {qrcodeId: enjonyClientId},
 	   			success:function(data){
 	   				if( data.code != 0 ){
 						alert(data.msg);
@@ -294,7 +299,7 @@
 	   			share(appendQr);
 	   		});
 	   	}else{
-	   		$.checkMustLogin(function(){
+	   		// $.checkMustLogin(function(){
 	   			getQrcodeInfo(function(){
 		   			getJsConfig(function(){
 		   				getShareInfo(function(){
@@ -302,7 +307,7 @@
 		   				})
 		   			})
 		   		});
-	   		})
+	   		// })
 	   	}
 	</script>
 </body>

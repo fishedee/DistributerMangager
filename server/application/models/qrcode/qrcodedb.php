@@ -9,8 +9,8 @@ class QrCodeDb extends CI_Model {
 	}
 
 	//获取信息
-	public function getQrcodeInfo($clientId){
-		$this->db->where('clientId',$clientId);
+	public function getQrcodeInfo($qrcodeId){
+		$this->db->where('qrcodeId',$qrcodeId);
 		$info = $this->db->get($this->tableName)->result_array();
 		return $info;
 	}
@@ -21,21 +21,22 @@ class QrCodeDb extends CI_Model {
 		return $result[0];
 	}
 
-	public function addOrMod($clientId,$data,$mobileRequest){
-		$result = $this->getQrcodeInfo($clientId);
+	public function addOrMod($data,$mobileRequest){
+		// $result = $this->getQrcodeInfo($clientId);
 		if($mobileRequest == 1){
-			if($result){
-				//有记录 更新
-				$this->db->where('clientId',$clientId);
-				$this->db->update($this->tableName,$data);
-			}else{
-				//没记录 插入
-				$data['clientId'] = $clientId;
-				$this->db->insert($this->tableName,$data);
-			}
-			return $this->db->affected_rows();
+			// if($result){
+			// 	//有记录 更新
+			// 	$this->db->where('clientId',$clientId);
+			// 	$this->db->update($this->tableName,$data);
+			// }else{
+			// 	//没记录 插入
+			// 	// $data['clientId'] = $clientId;
+			// 	$this->db->insert($this->tableName,$data);
+			// }
+			$this->db->insert($this->tableName,$data);
+			return $this->db->insert_id();
 		}else{
-			$data['clientId'] = 1;
+			// $data['clientId'] = 1;
 			$this->db->insert($this->tableName,$data);
 			return $this->db->insert_id();
 		}

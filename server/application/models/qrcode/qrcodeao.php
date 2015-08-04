@@ -9,16 +9,16 @@ class QrCodeAo extends CI_Model {
 	}
 
 	//获取信息
-	public function getQrcodeInfo($clientId){
-		return $this->qrCodeDb->getQrcodeInfo($clientId);
+	public function getQrcodeInfo($qrcodeId){
+		return $this->qrCodeDb->getQrcodeInfo($qrcodeId);
 	}
 
 	public function getInfo($qrcodeId){
 		return $this->qrCodeDb->getInfo($qrcodeId);
 	}
 
-	public function addOrMod($clientId,$data,$mobileRequest){
-		return $this->qrCodeDb->addOrMod($clientId,$data,$mobileRequest);
+	public function addOrMod($data,$mobileRequest){
+		return $this->qrCodeDb->addOrMod($data,$mobileRequest);
 	}
 
 	public function getAllInfo($userId,$dataWhere,$dataLimit){
