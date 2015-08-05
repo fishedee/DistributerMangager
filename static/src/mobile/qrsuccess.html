@@ -145,6 +145,8 @@
 		var qrcodeId = $.location.getQueryArgv('qrcodeId');
 		//注入js权限
 		function getJsConfig(next){
+			// var testurl = '10062.shop.tongyinyang.com/10062/qrsuccess.html';
+			// var testurl = location.href;
 			$.get('/redpack/getJsConfig',{url:location.href},function(data){
 				if( data.code != 0 ){
 					dialog.message(data.msg);
@@ -154,7 +156,7 @@
 				wxSdk.config($.extend(
 					jsConfig,
 					{
-						debug:false,
+						debug:true,
 						jsApiList:[
 							'closeWindow',
 							'onMenuShareTimeline'
@@ -281,6 +283,7 @@
 						</div>\
 						<div id='id2'></div>";
 			$('.title').children('p').text(qrInfo['username']+'的二维码名片');
+			$('title').text($('.title').children('p').text());
 			$('#mainContent').append(html);
 			screenShot();
 	   	}
@@ -293,19 +296,20 @@
 	   			window.location.href = createUrl;
 	   		});
 	   	}
-
 	   	if(enjonyClientId){
 	   		getOtherQrcodeInfo(function(){
-	   			share(appendQr);
+	   			// share(appendQr);
+	   			appendQr();
 	   		});
 	   	}else{
 	   		// $.checkMustLogin(function(){
 	   			getQrcodeInfo(function(){
-		   			getJsConfig(function(){
-		   				getShareInfo(function(){
-		   					share(appendQr);
-		   				})
-		   			})
+	   				appendQr();
+		   			// getJsConfig(function(){
+		   			// 	getShareInfo(function(){
+		   			// 		share(appendQr);
+		   			// 	})
+		   			// })
 		   		});
 	   		// })
 	   	}

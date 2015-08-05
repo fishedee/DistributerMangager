@@ -169,7 +169,7 @@
 	</div>
 	<div id="warp">
 		<div id="main">
-			<form action="/qrcodecontroller/create" method="POST" autocomplete="on" name="creator" enctype='multipart/form-data'>
+			<form action="/qrcodecontroller/create2" method="POST" name="creator" enctype='multipart/form-data'>
 				<table>
 					<tr>
 						<td>姓名：</td>
@@ -232,8 +232,8 @@
 					</tr>
 					<tr>
 						<td colspan="2">
-							<input type="file" style="display:none;" >
-							<input type="hidden" name='img'>
+							<input type="file" name='img' style="display:none;">
+							<!-- <input type="hidden" name='img'> -->
 							<div class='choose'>请选择你所需要的图片</div>
 						</td>
 					</tr>
@@ -262,10 +262,10 @@
 <script type="text/javascript">
 	// require('common/reduce/index.js');
 	var $ = require('/fishstrap/core/global.js');
-	require('common/reduce/mobileFix.mini.js');
-	require('common/reduce/exif.js');
-	require('common/reduce/lrz.js');
-	require('common/reduce/index2.js');
+	// require('common/reduce/mobileFix.mini.js');
+	// require('common/reduce/exif.js');
+	// require('common/reduce/lrz.js');
+	// require('common/reduce/index2.js');
 	var clientId = 1;
 	function checkMustLogin(next){
 	 	$.get('/clientlogin/islogin',{},function(data){
