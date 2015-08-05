@@ -11,7 +11,8 @@ class LuckyDrawCommodityDb extends CI_Model
 		'quantity'=>'',
 		'coupon_id'=>'',
 		'precent'=>'',
-		'sort'=>''
+		'sort'=>'',
+		'card_id'=>'',
 	);
 
 	public function __construct(){

@@ -3,6 +3,7 @@
 </head>
 <body>
 	<div id="body"></div>
+	<script type="text/javascript" src='http://res.wx.qq.com/open/js/jweixin-1.0.0.js'></script>
 	<script type="text/javascript">
 		var $ = require('common/core/core.js');
 		var dialog = require('common/dialog/dialog.js');
@@ -19,6 +20,82 @@
 				next();
 			});
 		}
+		
+		//获取签名
+		function getCardExt(card_id,list_id){
+			$.ajax({
+				url: '/coupons/getCardExt',
+				type: 'POST',
+				dataType: 'JSON',
+				data: {card_id: card_id},
+				success:function(data){
+					data = data.data;
+					cardExt = data;
+					
+					//注入权限
+					$.get('/redpack/getJsConfig',{url:location.href},function(data){
+						if( data.code != 0 ){
+							dialog.message(data.msg);
+							return;
+						}
+						jsConfig = data.data;
+						wx.config($.extend(
+							jsConfig,
+							{
+								debug:false,
+								jsApiList:[
+									'closeWindow',
+									'onMenuShareTimeline',
+									'scanQRCode',
+									'addCard'
+								]
+							}
+						));
+						
+						//领取卡券
+						wx.ready(function(){
+							wx.addCard({
+							    cardList: [
+							    {
+							        cardId: card_id,
+							        cardExt: cardExt
+							    }], // 需要添加的卡券列表
+							    success: function (res) {
+							        var cardList = res.cardList; // 添加的卡券列表信息
+							        //领取成功后 注销中奖卡券的领取方式
+							        $.ajax({
+							        	url: '/luckydraw/withDraw',
+							        	type: 'POST',
+							        	dataType: 'JSON',
+							        	data: {
+							        		list_id: list_id
+							        	},
+							        	success:function(data){
+							        	},
+							        	error:function(){
+
+							        	}
+							        })
+							    },
+							    fail:function(msg){
+									data = $.JSON.parse(msg);
+									alert(data);
+								}
+							});
+						})
+
+						wx.error(function(){
+							alert('微信接口配置失败，请检查appId与appKey是否设置正确');
+						});
+					});
+				},
+				error:function(){
+
+				}
+			})
+		}
+
+
 		function go(){
 			var header = new Header({
 				title:'中奖列表',
@@ -30,12 +107,50 @@
 					image:single.image,
 					title:single.title,
 					name:single.name,
-					phone:single.phone
+					phone:single.phone,
+					card_id:single.card_id,
+					type:single.type,
+					luckyDrawClientId:single.luckyDrawClientId
 				};
 			}));
 			var pageHtml = header.el + luckylist.el;
 			$.page.setGrey();
 			$.page.start(pageHtml);
+			$('.card_id').css('display','none');
+			$('.lucky_type').css('display','none');
+			$('.list_id').css('display','none');
+
+			//点击卡券列表
+			$('ul').on('click', 'li', function() {
+				//判断列表类型
+				var type = $(this).find('.lucky_type').children('.text').text();
+				if(type == 4){
+					var card_id = $(this).find('.card_id').children('.text').text();
+					var list_id = $(this).find('.list_id').children('.text').text();
+					//判断card_id和list_id的合理性
+					$.ajax({
+						url: '/luckydraw/judge',
+						type: 'POST',
+						dataType: 'JSON',
+						data: {
+							card_id: card_id,
+							list_id: list_id
+						},
+						success:function(data){
+							console.info(data);
+							var status = data.data;
+							if(status == 0){
+								alert('您已经领取过了');
+							}else{
+								getCardExt(card_id,list_id);
+							}
+						},
+						error:function(){
+
+						}
+					})
+				}
+			});
 		}
 		$.checkMustLogin(function(){
 			getLuckyDraw(function(){

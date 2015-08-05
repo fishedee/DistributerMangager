@@ -10,6 +10,7 @@ class LuckyDraw extends CI_Controller {
 		$this->load->model('luckydraw/luckyDrawAo','luckyDrawAo');
 		$this->load->model('luckydraw/luckyDrawStateEnum','luckyDrawStateEnum');
 		$this->load->model('luckydraw/luckyDrawTypeEnum','luckyDrawTypeEnum');
+		$this->load->model('luckydraw/luckyDrawMethodEnum','luckyDrawMethodEnum');
 		$this->load->library('argv','argv');
     }
 	
@@ -85,6 +86,7 @@ class LuckyDraw extends CI_Controller {
 		//检查输入参数
 		$data = $this->argv->checkPost(array(
 			array('title','require'),
+			array('method','require'),
 			array('summary','require'),
 			array('state','require'),
 			array('beginTime','require'),
@@ -136,6 +138,7 @@ class LuckyDraw extends CI_Controller {
 		
 		$data = $this->argv->checkPost(array(
 			array('title','require'),
+			array('method','require'),
 			array('summary','require'),
 			array('state','require'),
 			array('beginTime','require'),
@@ -240,6 +243,25 @@ class LuckyDraw extends CI_Controller {
 			$data['userId'],
 			$client['clientId']
 		);
+	}
+
+	/**
+	 * @view json
+	 * 判断合理性
+	 */
+	public function judge(){
+		if($this->input->is_ajax_request()){
+			$card_id = $this->input->post('card_id');
+			$list_id = $this->input->post('list_id');
+			return $this->luckyDrawAo->judge($list_id);
+		}
+	}
+
+	/**
+	 * @view json
+	 */
+	public function getLuckyMethod(){
+		return $this->luckyDrawMethodEnum->names;
 	}
 }
 

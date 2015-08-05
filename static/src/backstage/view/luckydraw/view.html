@@ -9,8 +9,10 @@
 		var input = require('/fishstrap/ui/input.js');
 		var subPage = require('/fishstrap/page/subPage.js');
 		var luckyDrawId = $.location.getQueryArgv('luckyDrawId');
+		var userId = $.location.getQueryArgv('userId');
 		var allState = {};
 		var luckyDraw = {};
+		var allMethod = {};
 		function getAllState(next){
 			$.get('/luckydraw/getAllState',{},function(data){
 				data = $.JSON.parse(data);
@@ -19,6 +21,19 @@
 					return;
 				}
 				allState = data.data;
+				next();
+			});
+		}
+		function getLuckyMethod(next){
+			$.get('/luckydraw/getLuckyMethod',{},function(data){
+				console.info(data);
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				allMethod = data.data;
+				console.info(allMethod);
 				next();
 			});
 		}
@@ -39,6 +54,7 @@
 				field:[
 					{id:'link',type:'read',name:'外部链接'},
 					{id:'title',type:'text',name:'标题'},
+					{id:'method',type:'enum',name:'抽奖方式',map:allMethod},
 					{id:'summary',type:'area',name:'简介'},
 					{id:'totalQuantity',type:'read',name:'中奖基数'},
 					{id:'beginTime',type:'time',name:'开始时间'},
@@ -52,6 +68,7 @@
 								{id:'typeName',type:'text',name:'类型'},
 								{id:'quantity',type:'text',name:'数量'},
 								{id:'coupon_id',type:'text',name:'代金券批次ID'},
+								{id:'card_id',type:'text',name:'卡券'},
 							],
 							operate:[
 							{
@@ -133,12 +150,31 @@
 					history.back();
 				}
 			});
+
+			
+
+		$('table').on('change', 'select[name=method]', function() {
+			 //大转盘
+			if($(this).val() == 1 && luckyDrawId != null){
+				var url = 'http://'+userId+'.'+location.hostname+'/'+userId+'/lucky.html?luckyDrawId='+luckyDrawId;
+				console.log(url);
+				$('div [name=link]').text(url);
+			}else if($(this).val() == 2 && luckyDrawId != null){
+			//摇一摇
+				var url = 'http://'+userId+'.'+location.hostname+'/'+userId+'/shake.html?luckyDrawId='+luckyDrawId;
+				console.log(url);
+				$('div [name=link]').text(url);
+			}
+		});
+
 		}
 		getAllState(function(){
-			if( luckyDrawId != null )
-				get(go);
-			else
-				go();
+			getLuckyMethod(function(){
+				if( luckyDrawId != null )
+					get(go);
+				else
+					go();
+			})
 		});
 	</script>
 <link rel="import" href="../common/footer.html?__inline">

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=640, user-scalable=no,target-densitydpi=medium-dpi">
+	<script src="//cdn.bootcss.com/jquery/2.1.4/jquery.js"></script>
+	<title>摇一摇抽奖活动</title>
+	<style>
+		p{
+			margin: 0;
+		}
+		input{
+			background: none;
+			border: none;
+		}
+		body{
+			margin: 0 auto;
+			max-width: 640px;
+			background: #ea4146;
+		}
+		.head img{
+			display: block;
+			margin:20px auto 0 auto;
+			width: 350px;
+			position: relative;
+			right: 13px;
+		}
+		.click img{
+			display: block;
+			margin: 30px auto;
+			width: 300px;
+		}
+		.banner .bannerHead img,.banner .bannerFooter img{
+			display: block;
+			margin: 0 auto;
+		}
+		.banner .bannerContent{
+			margin: 0 auto;
+			background-color: #ffffff;
+			min-height: 200px;
+			width: 543px;
+			position: relative;
+			left: 3px;
+			color: #7b5601;
+		}
+		.banner .bennerText{
+			padding: 13px 10px;
+		}
+		.banner .bennerText p {
+			line-height: 25px
+		}
+		/*屏幕*/
+		.tent{
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: hsla(0, 1%, 18%, 0.44);
+			z-index: 1;
+/*			display: none;*/
+		}
+		/*您的信息*/
+		.info{
+			width: 400px;
+			height: 300px;
+			border: 8px solid #ffffff;
+			background: #f6c238;
+			position: fixed;
+			top: 30%;
+			left: 16%;
+			z-index: 2;
+			display: none;
+		}
+		.info .infoTitle{
+			text-align: center;
+			color: #f53060;
+			font-size: 25px;
+			font-weight: 600;
+			margin-top: 20px;
+		}
+		.info .infoContent{
+			margin-top: 35px;
+			margin-left: 20px;
+			color: #f53060;
+			font-size: 23px;
+			font-weight: 600;
+		}
+		.info .infoContent input{
+			border-bottom: 1px solid #000000;
+			margin-left: 5px;
+			margin-bottom: 20px;
+			width: 88%;
+			height: 30px;
+			z-index: 20;
+			font-size: 18px;
+		}
+		.info .button{
+			text-align: center;
+			margin-top: 10px;
+		}
+		.info .button button{
+			width: 80px;
+			height: 30px;
+			font-size: 14px;
+			border: 0;
+			color: aliceblue;
+		}
+		.info .button .confirm{
+			background: #f70000;
+		}
+		.info .button .cancel{
+			background: #44ac36;
+		}
+		.yaoYiYao{
+			position: fixed;
+			z-index: 3;
+		}
+		.yaoYiYao .image img{
+			position: fixed;
+			top: 0;
+			left: 25%;
+		}
+		.yaoYiYao .image .shang{
+			top:130px;
+			-webkit-transition: top 0.5s ease;
+			transition: top 0.5s ease;
+		}
+		.yaoYiYao .image .xia{
+			top:298px;
+			-webkit-transition: top 0.5s ease;
+			transition: top 0.5s ease;
+		}
+		
+
+/*
+		.yaoYiYao .image .shang:hover{
+			top:130px;
+			-webkit-transition: top 2s ease;
+			transition: top 2s ease;
+		}
+		.yaoYiYao .image .xia:hover{
+			top:378px;
+			-webkit-transition: top 5s ease ;
+			transition: top 5s ease ;
+		}
+*/
+
+		
+		.yaoYiYaoText{
+			position: fixed;
+			z-index: 3;
+			top: 650px;
+			left: 7%;
+			text-align: center;
+			color: #eee;
+			font-size: 42px;
+			font-weight: 900;
+			display: none;
+		}
+		.yaoYiYaoPrize{
+			position: fixed;
+			top: 600px;
+			left: 19%;
+			text-align: center;
+			z-index: 3;
+			font-size: 22px;
+			font-weight: 600;
+			border: 8px solid #ffffff;
+			background: #f6c238;
+			width: 400px;
+			height: 90px;
+		}
+		.yaoYiYaoPrize a{
+			color:#000000;
+			text-decoration:none;
+			height: 100%;
+		}
+		.yaoYiYaoPrize p{
+			margin-top: 13px;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="head"><img src="head.png" alt=""></div>
+	<div class="click"><img src="click.png" alt=""></div>
+	<div class="banner">
+		<div class="bannerHead"><img src="banner1.png" alt=""></div>
+		<div class="bannerContent">
+			<div class="bennerText">
+				<p>活动规则：</p>
+<p>iPhone6  （1名）iPhone6  （洲际豪华客房 一晚（1名）iPhone6  （1名）iPhone6  （1名）iPhone6  （1名）iPhone6  （1名）iPhone6  （1名）iPhone6  （1名）</p>
+<p>活动时间：</p>
+<p>2015-05-26 ~ 2015-06-30</p>
+<p>鼓励奖：</p>
+<p>洲际早餐抵用卷一张（30名）</p><p>鼓励奖：</p>
+<p>洲际早餐抵用卷一张（30名）</p><p>鼓励奖：</p>
+<p>洲际早餐抵用卷一张（30名）</p>
+			</div>
+		</div>
+		<div class="bannerFooter"><img src="banner2.png" alt=""></div>
+		
+	</div>
+	<div class="tent"></div>
+	<div class="info">
+		<p class="infoTitle">您的信息</p>
+		<div class="infoContent">
+			<p>名字:</p>
+			<input type="text" placeholder="请在这里输入名字">
+			<p>手机号码:</p>
+			<input type="text" placeholder="请在这里输入11位手机号码">
+		</div>
+		<div class="button">
+			<button class="confirm">确认</button>
+			<button class="cancel">取消</button>
+		</div>
+	</div>
+	<div class="yaoYiYao">
+		<div class="image"><img class="shang" src="shang.png" alt=""><img class="xia" src="xia.png" alt=""></div>
+	</div>
+	<div class="yaoYiYaoText">
+		<p>大力摇呀！</p>
+<p>大奖正朝你的怀抱全力冲刺呢！</p>
+	</div>
+	<div class="yaoYiYaoPrize">
+		<a href="">
+			<p>洲际早餐抵用卷一张（30名）</p>
+			<p>点击打开</p>
+		</a>
+	</div>
+
+	<audio class="music" src="1.mp3" ></audio>
+	<audio class="music" src="2.mp3" ></audio>
+</body>
+<script>
+	function yaoyiyao (){
+		$('.music').attr({src:'1.mp3',autoplay:'autoplay'})
+		var shang = $('.yaoYiYao .image .shang').css('top');
+		var xia = $('.yaoYiYao .image .xia').css('top');
+		$('.yaoYiYao .image .shang').css('top','80px');
+		$('.yaoYiYao .image .xia').css('top','348px');
+		setTimeout(function(){
+			$('.yaoYiYao .image .shang').css('top',shang);
+			$('.yaoYiYao .image .xia').css('top',xia);
+//			$('.music').attr({'src':'2.mp3',autoplay:'autoplay'})
+		},500);
+		
+	}
+
+	function test (){
+		alert('hehedddd');
+	}
+	</script>
+</html>

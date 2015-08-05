@@ -1,11 +1,9 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class LuckyDrawTypeEnum extends CI_Model{
+class LuckyDrawMethodEnum extends CI_Model{
 	public $enums = array(
-		array(1,'COMMODITY','商品'),
-        array(2,'THANKYOU', '谢谢参与'),
-		array(3,'COUPON','代金券'),
-		array(4,'CARD','卡券'),
+		array(1,'TURNTABLE','大转盘'),
+        array(2,'SHAKE', '摇一摇'),
 	);
 	
 	public function __construct(){

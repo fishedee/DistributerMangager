@@ -16,7 +16,7 @@ class LuckyDrawAo extends CI_Model
 	private function check($userId,$data){
 		if( $data['state'] != $this->luckyDrawStateEnum->ON_STORAGE )
 			return;
-		if( count($data['commodity']) != 8 )
+		if( $data['method'] == 1 && count($data['commodity']) != 8 )//大抽奖
 			throw new CI_MyException(1,'必须选择刚好8个抽奖商品');
 		foreach( $data['commodity'] as $singleCommodity ){
 			if( $singleCommodity['type'] == $this->luckyDrawTypeEnum->COMMODITY ){
@@ -25,6 +25,8 @@ class LuckyDrawAo extends CI_Model
 				//谢谢抽奖
 			}else if( $singleCommodity['type'] == $this->luckyDrawTypeEnum->COUPON ){
 				$this->conponAo->queryCouponStock($userId,$singleCommodity);
+			}else if( $singleCommodity['type'] == $this->luckyDrawTypeEnum->CARD){
+				//卡券
 			}else{
 				//抛出异常
 				throw new CI_MyException(1,'不合法的抽奖类型');
@@ -212,6 +214,7 @@ class LuckyDrawAo extends CI_Model
 			'title'=>$currentCommodity['title'],
 			'image'=>$currentCommodity['image'],
 			'type'=>$currentCommodity['type'],
+			'card_id'=>$currentCommodity['card_id'],
 			'name'=>$name,
 			'phone'=>$phone
 		));
@@ -225,5 +228,15 @@ class LuckyDrawAo extends CI_Model
 
 	public function getClientAllResult($userId,$clientId){
 		return $this->luckyDrawClientDb->getByClientId($clientId);
+	}
+
+	//注销
+	public function withDraw($list_id){
+		return $this->luckyDrawClientDb->withDraw($list_id);
+	}
+
+	//判断合理性
+	public function judge($list_id){
+		return $this->luckyDrawClientDb->judge($list_id);
 	}
 }

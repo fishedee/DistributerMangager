@@ -11,9 +11,11 @@
 	var quantity = $.location.getQueryArgv('quantity');
 	var coupon_id = $.location.getQueryArgv('coupon_id');
 	var precentShow = $.location.getQueryArgv('precentShow');
+	var userId = $.location.getQueryArgv('userId');
 	var data = {};
 	var allType = {};
-	if(title!=null && image!=null){
+	var card = '';
+	if(title!=null || image!=null){
 		data = {
 			title:title,
 			image:image,
@@ -22,6 +24,21 @@
 			coupon_id:coupon_id,
 			precentShow:precentShow,
 		};
+	}
+	function getCoupons(next){
+		$.ajax({
+			url: '/coupons/getCoupons',
+			type: 'POST',
+			dataType: 'JSON',
+			success:function(data){
+				data = $.JSON.parse(data);
+				card = data.data;
+				next();
+			},
+			error:function(){
+
+			}
+		})
 	}
 	function getAllType(next){
 		$.get('/luckydraw/getAllType',{},function(data){
@@ -52,14 +69,79 @@
 				{id:'type',type:'enum',name:'类型',map:allType},
 				{id:'quantity',type:'text',name:'数量'},
 				{id:'coupon_id',type:'text',name:'代金券批次ID'},
+				{id:'card_id',type:'enum',name:'卡券',map:card},
 			],
 			value:data,
 			submit:undefined,
 			cancel:undefined
 		});
+
+		$('select[name=card_id]').parents('tr').css('display','none');
+		$('input[name=coupon_id]').parents('tr').css('display','none');
+
+		$('table').on('change', 'select[name=type]', function() {
+			if($(this).val() == 4){
+				$('select[name=card_id]').parents('tr').show();
+			}else{
+				$('select[name=card_id]').parents('tr').hide();
+				$('select[name=card_id]').val(null);
+			}
+		});
+
+		$('table').on('change', 'select[name=type]', function() {
+			if($(this).val() == 3){
+				$('input[name=coupon_id]').parents('tr').show();
+			}else{
+				$('input[name=coupon_id]').parents('tr').hide();
+				$('input[name=coupon_id]').val('0');
+			}
+		});
+
+		//验证选择的卡券
+		$('table').on('change', 'select[name=card_id]', function() {
+			var card_id = $(this).val();
+			var quantity= $('input[name=quantity]').val();
+			if(card_id){
+				$.ajax({
+					url: '/coupons/cardInfo',
+					type: 'POST',
+					dataType: 'JSON',
+					data: {card_id: card_id},
+					success:function(data){
+						data = $.JSON.parse(data);
+						var errcode = data['data']['errcode'];
+						var card    = data['data']['card'];
+						if(errcode != 0){
+							alert('获取卡券信息失败');
+						}else{
+							console.info(card);
+							status = card[card['card_type'].toLowerCase()]['base_info']['status'];
+							card_quantity = card[card['card_type'].toLowerCase()]['base_info']['sku']['quantity'];
+							if(status != 'CARD_STATUS_VERIFY_OK' && status != 'CARD_STATUS_USER_DISPATCH'){
+								alert('该卡券还没通过审核');
+								$('select[name=type]').val(1);
+								$('select[name=card_id]').val(null);
+								$('select[name=card_id]').parents('tr').hide();
+								return false;
+							}
+							if(parseInt(card_quantity) < parseInt(quantity)){
+								alert('该卡券库存不足');
+								$('select[name=type]').val(1);
+								$('select[name=card_id]').val(null);
+								$('select[name=card_id]').parents('tr').hide();
+								return false;
+							}
+						}
+					},
+					error:function(){
+
+					}
+				})
+			}
+		});
 	}
 	getAllType(function(){
-		go();
+		getCoupons(go);
 	});
 </script>
 <link rel="import" href="../common/footer.html?__inline">

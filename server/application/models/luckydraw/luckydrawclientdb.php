@@ -29,4 +29,18 @@ class LuckyDrawClientDb extends CI_Model
 		return $this->db->insert_id();
 	}
 
+	//注销
+	public function withDraw($list_id){
+		$this->db->where('luckyDrawClientId',$list_id);
+		$data['status'] = 0;
+		$this->db->update($this->tableName,$data);
+		return $this->db->affected_rows();
+	}
+
+	//判断合理性
+	public function judge($list_id){
+		$statusInfo = $this->db->select('status')->from($this->tableName)->where('luckyDrawClientId',$list_id)->get()->result_array();
+		return $statusInfo[0]['status'];
+	}
+
 }

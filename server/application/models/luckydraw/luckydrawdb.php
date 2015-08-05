@@ -6,10 +6,12 @@ class LuckyDrawDb extends CI_Model
 	var $field = array(
 		'userId'=>'',
 		'title'=>'',
+		'method'=>'',
 		'summary'=>'',
 		'state'=>1,
 		'beginTime'=>'',
-		'endTime'=>''
+		'endTime'=>'',
+		'card_id'=>'',
 	);
 	public function __construct(){
 		parent::__construct();
