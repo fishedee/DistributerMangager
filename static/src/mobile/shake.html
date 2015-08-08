@@ -215,6 +215,57 @@
 			left: 48%;
 			display: none;
 		}
+		/* 滚动中奖名单 */
+		
+		.txtMarquee-left {
+			position: fixed;
+			top: -770px;
+			left: 17%;
+			border: 1px solid #ccc;
+			width: 440px;
+			margin: 0 auto;
+			z-index: 5;
+/*			display: none;*/
+		}
+		
+		.txtMarquee-left .hd {
+			overflow: hidden;
+			height: 40px;
+			background: #f4f4f4;
+			padding: 0 10px;
+			font-size: 25px;
+			font-weight: 600;
+			line-height: 40px;
+		}
+		
+		.txtMarquee-left .bd {
+			padding: 10px;
+			background: #f6c238;
+			font-size: 20px;
+		}
+		
+		.txtMarquee-left .bd .tempWrap {
+			width: 425px !important;
+		}
+		
+		.txtMarquee-left .bd ul {
+			overflow: hidden;
+			zoom: 1;
+		}
+		
+		.txtMarquee-left .bd ul li {
+			margin-right: 20px;
+			float: left;
+			height: 24px;
+			line-height: 24px;
+			text-align: left;
+			display: inline;
+			width: auto !important;
+		}
+		
+		.txtMarquee-left .bd ul li span {
+			color: #e83737;
+		}
 	</style>
 </head>
 
@@ -268,13 +319,26 @@
 	</div>
 	<div class="loading"><img src="common/shake/loading.gif" alt="">
 	</div>
+<!--中奖名单-->
+	<div class="txtMarquee-left">
+		<div class="hd">
+			<p>中奖名单</p>
+		</div>
+		<div class="bd">
+			<ul class="infoList">
+<!--<li>珍珠<span>[顺辰饮水机100元代金劵]</span></li>-->
 
-	<audio class="music1" src="common/shake/1.mp3"></audio>
-	<audio class="music2" src="common/shake/2.mp3"></audio>
+			</ul>
+		</div>
+	</div>
+
+	<audio id="music1" class="music1" src="common/shake/1.mp3"></audio>
+	<audio id="music2" class="music2" src="common/shake/2.mp3"></audio>
 </body>
 <script>
 	var $ = require('common/core/core.js');
 	var dialog = require('common/dialog/dialog.js');
+	require('common/shake/jquery.SuperSlide.2.1.1.js');
 
 	$('.click').click(function () {
 		$('.info').show();
@@ -327,19 +391,54 @@
 			phone = data.data.phone;
 			$('input[name="name"]').val(name);
 			$('input[name="phone"]').val(phone);
+			next();
+		});
+	}
+
+	function winningList(){
+		$.post('/luckydraw/winningList', {luckyDrawId: luckyDrawId}, function (data) {
+			if (data.code != 0) {
+				dialog.message(data.msg);
+				return;
+			}
+			var winList = data.data;
+			var winListHtml = '';
+			for(var i in winList){
+				winListHtml += "<li>"+winList[i]['nickName']+"<span>["+winList[i]['title']+"]</span></li>"
+			}
+
+			$('.txtMarquee-left ul').html(winListHtml);
+
+	jQuery(".txtMarquee-left").slide({
+		mainCell: ".bd ul",
+		autoPlay: true,
+		effect: "leftMarquee",
+		interTime: 25,
+		pnLoop: false,
+		trigger: "click",
+		mouseOverStop: false
+	});
 
 		});
 	}
 
 
 
+	$.checkMustLogin(function () {
+		getLuckyDraw(function () {
+			getMyAddress(function(){
+				winningList()
+			});
+		});
+	});
+
 	//开始摇一摇
 	function init() {　　
 		if (window.DeviceMotionEvent) {　　　　 // 移动浏览器支持运动传感事件　　　
 			window.addEventListener('devicemotion', deviceMotionHandler, false);　　
 		} else {
-        alert('本设备不支持摇一摇（devicemotion）事件');
-    }
+			alert('本设备不支持摇一摇（devicemotion）事件');
+		}
 	}
 
 	var y;
@@ -349,13 +448,13 @@
 	function deviceMotionHandler(eventData) {　　 // 获取含重力的加速度
 		　　
 		y = eventData.accelerationIncludingGravity.y;　　　　　　　　　　　　 // TODO:在此处可以实现摇一摇之后所要进行的数据逻辑操作
-		
-		if(test == true){
+
+		if (test == true) {
 			last_y = eventData.accelerationIncludingGravity.y;
 			test = false;
 		}
 
-		if ( y != last_y && y > 18) {
+		if (y != last_y && y > 18) {
 
 			window.removeEventListener('devicemotion', deviceMotionHandler, false);
 			yaoyiyao();
@@ -365,19 +464,12 @@
 
 	}
 
-	$.checkMustLogin(function () {
-		getLuckyDraw(function () {
-			getMyAddress();
-		});
-	});
-
-
 	function yaoyiyao() {
-		$('.music1').attr({
-			src: 'common/shake/1.mp3',
-			autoplay: 'autoplay'
-		})
-
+		// $('.music1').attr({
+		// 	src: 'common/shake/1.mp3',
+		// 	autoplay: 'autoplay'
+		// })
+document.getElementById('music1').play();
 
 		var shang = $('.yaoYiYao .image .shang').css('top');
 		var xia = $('.yaoYiYao .image .xia').css('top');
@@ -386,7 +478,7 @@
 		setTimeout(function () {
 			$('.yaoYiYao .image .shang').css('top', shang);
 			$('.yaoYiYao .image .xia').css('top', xia);
-			//			$('.music').attr({'src':'2.mp3',autoplay:'autoplay'})
+
 		}, 500);
 		setTimeout(function () {
 			$('.yaoYiYaoText').hide();
@@ -396,10 +488,11 @@
 				name: $('input[name="name"]').val(),
 				phone: $('input[name="phone"]').val(),
 			}, function (data) {
-				$('.music2').attr({
-					src: 'common/shake/2.mp3',
-					autoplay: 'autoplay'
-				})
+				// $('.music2').attr({
+				// 	src: 'common/shake/2.mp3',
+				// 	autoplay: 'autoplay'
+				// })
+			document.getElementById('music2').play();
 				if (data.code != 0) {
 					var errorTitle = data.msg;
 					//					dialog.message(data.msg);
@@ -413,17 +506,21 @@
 				}
 
 				$('.loading').hide();
-				if(typeof errorTitle == 'string'){
-//					alert(errorTitle);
+				if (typeof errorTitle == 'string') {
+					//					alert(errorTitle);
 					$('.yaoYiYaoPrizeText').text(errorTitle);
-				}else{
+				} else {
 					$('.yaoYiYaoPrizeText').text('恭喜你，你获得的是：' + rotateFinishTip);
 				}
-				
+
 				$('.yaoYiYaoPrize').show();
+
+				$('.txtMarquee-left').css('top','770px');//显示中奖名单
 			});
 		}, 1000);
 	}
+
+
 </script>
 
 </html>

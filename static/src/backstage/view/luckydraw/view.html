@@ -151,7 +151,17 @@
 				}
 			});
 
-			
+　		if($('select[name=method]').val() == 1 && luckyDrawId != null){
+			//大转盘
+				var url = 'http://'+userId+'.'+location.hostname+'/'+userId+'/lucky.html?luckyDrawId='+luckyDrawId;
+				console.log(url);
+				$('div [name=link]').text(url);
+			}else if( $('select[name=method]').val() == 2 && luckyDrawId != null){
+			//摇一摇
+				var url = 'http://'+userId+'.'+location.hostname+'/'+userId+'/shake.html?luckyDrawId='+luckyDrawId;
+				console.log(url);
+				$('div [name=link]').text(url);
+			}
 
 		$('table').on('change', 'select[name=method]', function() {
 			 //大转盘
@@ -160,6 +170,7 @@
 				console.log(url);
 				$('div [name=link]').text(url);
 			}else if($(this).val() == 2 && luckyDrawId != null){
+				console.log('d');
 			//摇一摇
 				var url = 'http://'+userId+'.'+location.hostname+'/'+userId+'/shake.html?luckyDrawId='+luckyDrawId;
 				console.log(url);
@@ -168,6 +179,7 @@
 		});
 
 		}
+
 		getAllState(function(){
 			getLuckyMethod(function(){
 				if( luckyDrawId != null )
@@ -176,5 +188,6 @@
 					go();
 			})
 		});
+
 	</script>
 <link rel="import" href="../common/footer.html?__inline">

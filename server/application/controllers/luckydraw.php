@@ -263,6 +263,25 @@ class LuckyDraw extends CI_Controller {
 	public function getLuckyMethod(){
 		return $this->luckyDrawMethodEnum->names;
 	}
+
+	/**
+	 * @view json
+	 * 给抽奖前端显示其他中奖用户
+	 */
+	 public function winningList(){
+	 	//检查输入参数
+		$data = $this->argv->checkPost(array(
+			array('userId','require'),
+			array('luckyDrawId','require'),
+		));
+
+		//检查权限
+		//$client = $this->clientLoginAo->checkMustLogin($data['userId']);
+
+		$sql="select nickName,title from t_lucky_draw_client left join t_client on t_lucky_draw_client.clientId=t_client.clientId where luckyDrawId='".$data['luckyDrawId']."' and nickName not like '' and nickName not like '用户没关注' order by luckyDrawClientId desc limit 10;";
+		$data = $this->db->query($sql)->result_array();
+		return $data;
+	 }
 }
 
 /* End of file welcome.php */
