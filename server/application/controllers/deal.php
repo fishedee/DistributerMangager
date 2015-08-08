@@ -241,15 +241,18 @@ class Deal extends CI_Controller {
 		);
 	}
 
-	/**
-	* @view json
-	*/
 	public function wxpaycallback($userId=0)
 	{
 		//业务逻辑
 		$data = $this->orderPayAo->wxPayCallback($userId);
 
 		log_message('info','wxpaycallback:'.json_encode($data));
+		
+		echo 
+		'<xml>
+		  <return_code><![CDATA[SUCCESS]]></return_code>
+		  <return_msg><![CDATA[OK]]></return_msg>
+		</xml>';
 	}
 	
 	/**
