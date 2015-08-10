@@ -185,4 +185,82 @@ class Distribution extends CI_Controller
 
         return $this->distributionAo->getLink($data['upUserId'], $data['downUserId']);
     }
+
+    /**
+     * @view json
+     * 判断有无绑定
+     */
+    public function judgeBind(){
+        if($this->input->is_ajax_request()){
+            $argv = $this->argv->check(array(
+                array('userId', 'require')
+            ));
+            $userId = $argv['userId'];
+            $clientId = $this->session->userdata('clientId');
+            return $this->distributionAo->judgeBind($userId,$clientId);
+        }
+    }
+
+    /**
+     * @view json
+     * 绑定
+     */
+    public function bind(){
+        if($this->input->is_ajax_request()){
+            $username = $this->input->post('username');
+            $password = $this->input->post('password');
+            $argv = $this->argv->check(array(
+                array('userId', 'require')
+            ));
+            $userId = $argv['userId'];
+            $clientId = $this->session->userdata('clientId');
+            return $this->distributionAo->bind($userId,$clientId,$username,$password);
+        }
+    }
+
+    /**
+     * @view json
+     * 解绑
+     */
+    public function unBind(){
+        if($this->input->is_ajax_request()){
+            $argv = $this->argv->check(array(
+                array('userId', 'require')
+            ));
+            $userId = $argv['userId'];
+            $clientId = $this->session->userdata('clientId');
+            return $this->distributionAo->unBind($userId,$clientId);
+        }
+    }
+
+    /**
+     * @view json
+     * 手机端查询
+     */
+    public function mobileSearch(){
+        if($this->input->is_ajax_request()){
+            $argv = $this->argv->check(array(
+                array('userId', 'require')
+            ));
+            $userId = $argv['userId'];
+            $clientId = $this->session->userdata('clientId');
+            $data   = $this->input->post();   //ajax 通过post方式提交过来的数据
+            return $this->distributionAo->mobileSearch($userId,$clientId,$data);
+        }
+    }
+
+    /**
+     * @view json
+     * 手机端分销商申请
+     */
+    public function ask(){
+        if($this->input->is_ajax_request()){
+            $argv = $this->argv->check(array(
+                array('userId', 'require')
+            ));
+            $userId = $argv['userId'];
+            $data = $this->input->post();
+            return $this->distributionAo->ask($userId,$data);
+        }
+    }
 }

@@ -81,4 +81,57 @@ class UserDb extends CI_Model
 		return $this->db->get($this->tableName)->result_array();
 	}
 
+	/**
+	 * @author:zzh
+	 * 2015.8.5
+	 */
+
+	//判断openid有无绑定用户名密码
+	public function searchOpenId($openId){
+		$this->db->where('openId',$openId);
+		$result = $this->db->get($this->tableName)->result_array();
+		if($result){
+			return $result[0]['userId'];
+		}else{
+			return FALSE;
+		}
+	}
+
+	//绑定openId 和 userId
+	public function bind($userId,$openId){
+		$this->db->where('userId',$userId);
+		$this->db->update($this->tableName,array('openId'=>$openId));
+		if($this->db->affected_rows()){
+			return $userId;
+		}else{
+			throw new CI_MyException(1,'绑定失败');
+		}
+	}
+
+	//解绑
+	public function unBind($userId){
+		$this->db->where('userId',$userId);
+		$this->db->update($this->tableName,array('openId'=>NULL));
+		if($this->db->affected_rows()){
+			return $userId;
+		}else{
+			throw new CI_MyException(1,'解绑失败');
+		}
+	}
+
+	// 检测登陆信息
+	public function checkLoginInfo($username,$hasPassword,$password){
+		$condition['name'] = $username;
+		$this->db->where($condition);
+		$userInfo = $this->db->get($this->tableName)->result_array();
+		if(!$userInfo){
+			throw new CI_MyException(1,'不存在此用户');
+		}
+		if(password_verify($password,$userInfo[0]['password']) == FALSE){
+			throw new CI_MyException(1,'账号或密码错误');
+		}else{
+			return $userInfo[0]['userId'];
+		}
+	}
+
 }

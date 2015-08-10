@@ -187,4 +187,28 @@ class UserAo extends CI_Model {
 		//修改密码
 		$this->modPassword($userId,$newPassword);
 	}
+
+	/**
+	 * @author:zzh
+	 * 2015.8.5
+	 */
+
+	public function searchOpenId($openId){
+		return $this->userDb->searchOpenId($openId);
+	}
+
+	//绑定userId 和 openId
+	public function bind($userId,$openId){
+		return $this->userDb->bind($userId,$openId);
+	}
+
+	//解绑
+	public function unBind($userId){
+		return $this->userDb->unBind($userId);
+	}
+
+	//检测登录名和密码
+	public function checkLoginInfo($username,$hasPassword,$password){
+		return $this->userDb->checkLoginInfo($username,$hasPassword,$password);
+	}
 }

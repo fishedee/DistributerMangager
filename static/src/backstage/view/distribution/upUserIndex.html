@@ -1,4 +1,5 @@
 <link rel="import" href="../common/header.html?__inline">
+	<div class="alert alert-danger" role="alert"></div>
 	<div id="container">
 	</div>
 	<script type="text/javascript">
@@ -6,6 +7,8 @@
 		var dialog = require('/fishstrap/ui/dialog.js');
 		var query = require('/fishstrap/ui/query.js');
 		var distributionState = {};
+		var userId = $.location.getQueryArgv('userId');
+		$('div[role=alert]').text('手机端分销商申请地址为：http://'+userId+'.'+location.hostname+'/'+userId+'/distributionAsk.html');
 		function getAllState(next){
 			$.get('/distribution/getAllState',{},function(data){
 				data = $.JSON.parse(data);

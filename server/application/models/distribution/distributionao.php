@@ -7,6 +7,8 @@ class DistributionAo extends CI_Model
 	    $this->load->model('distribution/distributionDb', 'distributionDb');
         $this->load->model('distribution/distributionstateEnum', 'distributionStateEnum');
         $this->load->model('user/userAo','userAo');
+        $this->load->model('client/clientAo','clientAo');
+        $this->load->model('user/loginAo','loginAo');
     }
 
     public function getFixedPrice($price){
@@ -202,6 +204,91 @@ class DistributionAo extends CI_Model
     	$this->result_path = array();
         $this->dfs($originUserId, $userId);
         return $this->result_path;
+    }
+
+    //判断有无绑定
+    public function judgeBind($userId,$clientId){
+        $clientInfo = $this->clientAo->get($userId,$clientId);
+        $openId     = $clientInfo['openId'];
+        return $this->userAo->searchOpenId($openId);
+    }
+
+    //绑定
+    public function bind($userId,$clientId,$username,$password){
+        $this->loginAo->login($username,$password);
+        if($this->session->userdata('userId')){
+            $userInfo   = $this->userAo->get($this->session->userdata('userId'));
+            if($userInfo['openId'] != NULL){
+                throw new CI_MyException(1, "该账号已经绑定了");
+            }
+            $clientInfo = $this->clientAo->get($userId,$clientId);
+            $openId     = $clientInfo['openId'];
+            //验证openId 是否存在
+            $result     = $this->userAo->searchOpenId($openId);
+            if($result == FALSE){
+                return $this->userAo->bind($this->session->userdata('userId'),$openId);
+            }else{
+               throw new CI_MyException(1, "该openId已经被绑定");
+            }
+        }else{
+            throw new CI_MyException(1, "非法错误");
+        }
+    }
+
+    //解绑
+    public function unBind($userId,$clientId){
+        $clientInfo = $this->clientAo->get($userId,$clientId);
+        $openId     = $clientInfo['openId'];
+        $result     = $this->userAo->searchOpenId($openId);
+        if($result == FALSE){
+            throw new CI_MyException(1, "该openId没有绑定");
+        }else{
+            return $this->userAo->unBind($result);
+        }
+    }
+
+    //手机端查询
+    public function mobileSearch($userId,$clientId,$data){
+        $clientInfo = $this->clientAo->get($userId,$clientId);
+        $openId     = $clientInfo['openId'];
+        $result     = $this->userAo->searchOpenId($openId);
+        if($result == FALSE){
+            throw new CI_MyException(1, "该openId没有绑定");
+        }else{
+            //有绑定 可以开始查询
+            if(isset($data['down'])){
+                //查询供货商
+                $where = array(
+                    'downUserId'=>$result
+                );
+                return $this->search($where,array());
+            }elseif(isset($data['up'])){
+                //查询分销商
+                $where = array(
+                    'upUserId'=>$result
+                    );
+                return $this->search($where,array());
+            }
+        }
+    }
+
+    //手机端分销商申请
+    public function ask($userId,$data){
+        $username = $data['zhanghao'] ? $data['zhanghao'] : null;
+        $password = $data['mima'] ? $data['mima'] : null;
+        if(!$username){
+            throw new CI_MyException(1, "请输入账号");
+        }
+        if(!$password){
+            throw new CI_MyException(1, "请输入密码");
+        }
+        //根据账号 密码 获取 userId
+        $hasPassword = $this->userAo->getPasswordHash($password);
+        $askUserId   = $this->userAo->checkLoginInfo($username,$hasPassword,$password);
+        if($userId == $askUserId){
+            throw new CI_MyException(1, "自己不用申请");
+        }
+        return $this->request($userId, $askUserId);
     }
 }
 
