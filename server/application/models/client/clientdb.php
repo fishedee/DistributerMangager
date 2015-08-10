@@ -97,6 +97,25 @@ class ClientDb extends CI_Model
 		);
 	}
 
+	public function getUserInfo($dataWhere,$limit){
+		$this->load->model('chips/chipsPowerDb','chipsPowerDb');
+		$count = $this->db->where($dataWhere)->count_all_results($this->tableName);
+		if( isset($limit["pageIndex"]) && isset($limit["pageSize"])){
+			$this->db->limit($limit["pageSize"],$limit["pageIndex"]);
+		}
+		if(count($dataWhere) > 1){
+			$this->db->where('userId',$dataWhere['userId']);
+			$this->db->like('nickName',$dataWhere['nickName'],'both');
+		}else{
+			$this->db->where('userId',$dataWhere['userId']);
+		}
+		$clientInfo = $this->db->get($this->tableName)->result_array();
+		return array(
+			'count' => $count,
+			'data'  => $clientInfo
+			);
+	}
+
 	//根据openid获取clientid
 	public function getClientId($openId){
 		$openIdInfo = $this->db->select('clientId')->from($this->tableName)->where('openId',$openId)->get()->result_array();

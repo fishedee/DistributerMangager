@@ -90,4 +90,9 @@ class ClientAo extends CI_Model {
 		}
 	}
 
+	//获取用户信息
+	public function getUserInfo($dataWhere,$dataLimit){
+		return $this->clientDb->getUserInfo($dataWhere,$dataLimit);
+	}
+
 }

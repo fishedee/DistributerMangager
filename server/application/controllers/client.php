@@ -67,6 +67,23 @@ class Client extends CI_Controller {
 			$clientId
 		);
 	}
+
+	/**
+	 * @view json
+	 * getUserInfo
+	 */
+	public function getUserInfo(){
+		$dataLimit = $this->argv->checkGet(array(
+			array('pageIndex','require'),
+			array('pageSize','require'),
+		));
+		$dataWhere = $this->argv->checkGet(array(
+			array('nickName','option'),
+		));
+		$dataWhere['userId'] = $this->session->userdata('userId');
+		$result = $this->clientAo->getUserInfo($dataWhere,$dataLimit);
+		return $result;
+	}
 	
 }
 
