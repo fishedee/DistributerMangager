@@ -71,66 +71,7 @@
 			z-index: 1;
 			display: none;
 		}
-		/*您的信息*/
-		
-		.info {
-			width: 400px;
-			height: 350px;
-			border: 8px solid #ffffff;
-			background: #f6c238;
-			position: fixed;
-			top: 30%;
-			left: 16%;
-			z-index: 2;
-			display: none;
-		}
-		
-		.info .infoTitle {
-			text-align: center;
-			color: #f53060;
-			font-size: 25px;
-			font-weight: 600;
-			margin-top: 20px;
-		}
-		
-		.info .infoContent {
-			margin-top: 35px;
-			margin-left: 20px;
-			color: #f53060;
-			font-size: 23px;
-			font-weight: 600;
-		}
-		
-		.info .infoContent input {
-			border-bottom: 1px solid #000000;
-			margin-left: 5px;
-			margin-bottom: 20px;
-			width: 88%;
-			height: 30px;
-			z-index: 20;
-			font-size: 18px;
-		}
-		
-		.info .button {
-			text-align: center;
-			margin-top: 10px;
-		}
-		
-		.info .button button {
-			width: 90px;
-			height: 60px;
-			font-size: 28px;
-			border: 0;
-			color: aliceblue;
-		}
-		
-		.info .button .confirm {
-			background: #f70000;
-		}
-		
-		.info .button .cancel {
-			background: #44ac36;
-		}
+
 		/*摇一摇页面*/
 		
 		.yaoYiYao {
@@ -219,13 +160,13 @@
 		
 		.txtMarquee-left {
 			position: fixed;
-			top: -770px;
+			top: 270px;
 			left: 17%;
 			border: 1px solid #ccc;
 			width: 440px;
 			margin: 0 auto;
 			z-index: 5;
-/*			display: none;*/
+			display: none;
 		}
 		
 		.txtMarquee-left .hd {
@@ -269,11 +210,15 @@
 	</style>
 </head>
 
-<body>
+<body onload="init()">
 	<div class="head"><img src="common/shake/head.png" alt="">
 	</div>
 	<div class="click"><img src="common/shake/click.png" alt="">
 	</div>
+
+<!-- 	<div onclick="yaoyiyao()" class="click"><img src="common/shake/click.png" alt="">
+	</div> -->
+
 	<div class="banner">
 		<div class="bannerHead"><img src="common/shake/banner1.png" alt="">
 		</div>
@@ -290,19 +235,6 @@
 
 	</div>
 	<div class="tent"></div>
-	<div class="info">
-		<p class="infoTitle">您的信息</p>
-		<div class="infoContent">
-			<p>名字:</p>
-			<input type="text" name="name" placeholder="请在这里输入名字">
-			<p>手机号码:</p>
-			<input type="text" name="phone" placeholder="请在这里输入11位手机号码">
-		</div>
-		<div class="button">
-			<button class="confirm">确认</button>
-			<button class="cancel">取消</button>
-		</div>
-	</div>
 	<div class="yaoYiYao">
 		<div class="image"><img class="shang" src="common/shake/shang.png" alt=""><img class="xia" src="common/shake/xia.png" alt="">
 		</div>
@@ -341,25 +273,10 @@
 	require('common/shake/jquery.SuperSlide.2.1.1.js');
 
 	$('.click').click(function () {
-		$('.info').show();
-		$('.tent').show();
-	});
-
-	$('.cancel').click(function () {
-		$('.info').hide();
-		$('.tent').hide();
-	});
-
-	$('.confirm').click(function () {
-		$('.info').hide();
 		$('.yaoYiYao').show();
 		$('.yaoYiYaoText').show();
 		$('.tent').show();
-		init();
 	});
-
-
-
 
 	var luckyDrawId = $.location.getQueryArgv('luckyDrawId');
 	var luckyDraw = {};
@@ -409,16 +326,6 @@
 
 			$('.txtMarquee-left ul').html(winListHtml);
 
-	jQuery(".txtMarquee-left").slide({
-		mainCell: ".bd ul",
-		autoPlay: true,
-		effect: "leftMarquee",
-		interTime: 25,
-		pnLoop: false,
-		trigger: "click",
-		mouseOverStop: false
-	});
-
 		});
 	}
 
@@ -442,6 +349,8 @@
 	}
 
 	var y;
+	var x;
+	var z;
 	var last_y;
 	var test = true;
 
@@ -454,8 +363,10 @@
 			test = false;
 		}
 
-		if (y != last_y && y > 18) {
-
+		if (y != last_y && y > 18 || x > 10 || z > 10) {
+			$('.yaoYiYao').show();
+			$('.yaoYiYaoText').show();
+			$('.tent').show();
 			window.removeEventListener('devicemotion', deviceMotionHandler, false);
 			yaoyiyao();
 
@@ -465,12 +376,10 @@
 	}
 
 	function yaoyiyao() {
-		// $('.music1').attr({
-		// 	src: 'common/shake/1.mp3',
-		// 	autoplay: 'autoplay'
-		// })
-document.getElementById('music1').play();
 
+		document.getElementById('music1').play();
+
+		//摇一摇图片分裂效果
 		var shang = $('.yaoYiYao .image .shang').css('top');
 		var xia = $('.yaoYiYao .image .xia').css('top');
 		$('.yaoYiYao .image .shang').css('top', '80px');
@@ -480,23 +389,18 @@ document.getElementById('music1').play();
 			$('.yaoYiYao .image .xia').css('top', xia);
 
 		}, 500);
+
 		setTimeout(function () {
 			$('.yaoYiYaoText').hide();
 			$('.loading').show();
-			$.post('/luckydraw/draw', {
+			$.post('/luckydraw/shakeDraw', {
 				luckyDrawId: luckyDrawId,
-				name: $('input[name="name"]').val(),
-				phone: $('input[name="phone"]').val(),
 			}, function (data) {
-				// $('.music2').attr({
-				// 	src: 'common/shake/2.mp3',
-				// 	autoplay: 'autoplay'
-				// })
-			document.getElementById('music2').play();
+
+				document.getElementById('music2').play();
+
 				if (data.code != 0) {
 					var errorTitle = data.msg;
-					//					dialog.message(data.msg);
-					//					return;
 				} else {
 					for (var i = 0; i != luckyDraw.commodity.length; ++i)
 						if (luckyDraw.commodity[i].luckyDrawCommodityId == data.data) {
@@ -515,7 +419,7 @@ document.getElementById('music1').play();
 
 				$('.yaoYiYaoPrize').show();
 
-				$('.txtMarquee-left').css('top','770px');//显示中奖名单
+				$('.txtMarquee-left').show();//显示中奖名单
 			});
 		}, 1000);
 	}

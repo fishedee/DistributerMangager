@@ -165,7 +165,7 @@ class LuckyDrawAo extends CI_Model
 		return $luckyDraw;
 	}
 
-	public function luckyDraw($userId,$clientId,$luckyDrawId,$name,$phone){
+	public function luckyDraw($userId,$clientId,$luckyDrawId,$name='',$phone='',$isCheckNameAndPhone=true){
 		//校验权限
 		$luckyDraw = $this->getClientResult($userId,$clientId,$luckyDrawId);
 		if( $luckyDraw['state'] != $this->luckyDrawStateEnum->ON_STORAGE )
@@ -177,10 +177,14 @@ class LuckyDrawAo extends CI_Model
 			throw new CI_MyException(1,'抽奖活动已经结束啦');
 		if( isset($luckyDraw['client']) )
 			throw new CI_MyException(1,'你已经参与过这次抽奖活动，不能重复参与了');
-		if( strlen($name) == 0 )
-            throw new CI_MyException(1,'请输入名字');
-		if(preg_match_all('/^\d{11}$/',$phone) == 0 )
-            throw new CI_MyException(1,'请输入11位数字的电话号码以便获得抽奖奖品噢');
+		
+		if ($isCheckNameAndPhone == true) {
+			if( strlen($name) == 0 )
+	            throw new CI_MyException(1,'请输入名字');
+			if(preg_match_all('/^\d{11}$/',$phone) == 0 )
+	            throw new CI_MyException(1,'请输入11位数字的电话号码以便获得抽奖奖品噢');
+		}
+
 
 		//校验商品数量
 		$totalQuantity = 0;

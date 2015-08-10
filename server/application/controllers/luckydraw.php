@@ -202,6 +202,31 @@ class LuckyDraw extends CI_Controller {
 			$data['phone']
 		);
 	}
+	
+	/**
+	* @view json
+	*/
+	public function shakeDraw()
+	{
+		//检查输入参数
+		$data = $this->argv->checkPost(array(
+			array('userId','require'),
+			array('luckyDrawId','require'),
+		));
+		
+		//检查权限
+		$client = $this->clientLoginAo->checkMustLogin($data['userId']);
+		
+		//执行业务逻辑
+		return $this->luckyDrawAo->luckyDraw(
+			$data['userId'],
+			$client['clientId'],
+			$data['luckyDrawId'],
+			'',
+			'',		
+			false
+		);
+	}
 
 	/**
 	* @view json
@@ -276,7 +301,7 @@ class LuckyDraw extends CI_Controller {
 		));
 
 		//检查权限
-		//$client = $this->clientLoginAo->checkMustLogin($data['userId']);
+		$client = $this->clientLoginAo->checkMustLogin($data['userId']);
 
 		$sql="select nickName,title from t_lucky_draw_client left join t_client on t_lucky_draw_client.clientId=t_client.clientId where luckyDrawId='".$data['luckyDrawId']."' and nickName not like '' and nickName not like '用户没关注' order by luckyDrawClientId desc limit 10;";
 		$data = $this->db->query($sql)->result_array();
