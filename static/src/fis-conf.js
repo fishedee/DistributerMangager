@@ -6,8 +6,9 @@ fis.config.merge({
         },
 		parser: {
 			less : 'less',
-			tpl : 'utc'
-		},
+			tpl : 'utc',
+	    		jsx : 'react',
+    	},
         postpackager : 'autoload'
     },
     settings : {
@@ -16,7 +17,17 @@ fis.config.merge({
                 type : 'amd',
             }
         }
-    }
+    },
+    project : {
+        fileType : {
+                text : 'jsx'
+        }
+    },
+    roadmap : {
+    	ext : {
+		jsx : 'js'
+    	}
+    },
 });
 //压缩打包，减少HTTP请求
 fis.config.set('pack', {
@@ -70,15 +81,24 @@ fis.config.merge({
                 reg : /^\/mobile\/(.*)\.js$/i,
                 isMod : true,
 			},
+                        {
+                //mobile的其它目录下jsx文件设置为模块文件
+                reg : /^\/mobile\/(.*)\.jsx$/i,
+                isMod : true,
+                        },
 			{
                 //Makefile文件，不要发布
                 reg : /^\/Makefile$/i,
                 release : false
-            }
-        ],
+            },
+		{
+                reg : /^\/backstage\/test\/(.*)\.jsx$/i,
+                isMod : true,
+                        },
+            ],
 		ext:{
 			less:'css',
-			tpl:'js'
+			tpl:'js',
 		}
     },
 });
