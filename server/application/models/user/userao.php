@@ -78,10 +78,18 @@ class UserAo extends CI_Model {
 				throw new CI_MyException(1,'请输入密码');
 		}
 
+		if(isset($data['password']) && isset($data['password2'])){
+			$data['password'] = trim($data['password']);
+			$data['password2']= trim($data['password2']);
+			if($data['password'] != $data['password2'])
+				throw new CI_MyException(1,'两次密码不一致');
+			unset($data['password2']);
+		}
+
 		if( isset($data['company'])){
 			$data['company'] = trim($data['company']);
 			if( $data['company'] == '')
-			throw new CI_MyException(1,'请输入公司名称');
+				throw new CI_MyException(1,'请输入公司名称');
 		}
 		
 		if( isset($data['phone'])){
@@ -94,6 +102,15 @@ class UserAo extends CI_Model {
 			$data['telephone'] = trim($data['telephone']);
 			if( preg_match('/^[0-9-]+$/',$data['telephone']) == 0 )
 				throw new CI_MyException(1,'请输入只包含数字的电话号码');
+		}
+
+		if( isset($data['email'])){
+			$data['email'] = trim($data['email']);
+			if( preg_match('/^([0-9A-Za-z\\-_\\.]+)@([0-9a-z]+\\.[a-z]{2,3}(\\.[a-z]{2})?)$/i',$data['email']) == 0)
+				throw new CI_MyException(1,'输入的电子邮箱非法');
+			$result = $this->userDb->checkEmail($data['email']);
+			if($result)
+				throw new CI_MyException(1,'该邮箱已经被占用');
 		}
 
 		return $data;
@@ -136,6 +153,8 @@ class UserAo extends CI_Model {
 			},$data['client']);
 			$this->userClientDb->addBatch($userClientInfo);
 		}
+
+		return $userId;
 	}
 	
 	public function mod($userId,$data){

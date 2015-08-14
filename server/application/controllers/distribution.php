@@ -263,4 +263,55 @@ class Distribution extends CI_Controller
             return $this->distributionAo->ask($userId,$data);
         }
     }
+
+    /**
+     * @view json
+     * 手机端分销商申请 注册
+     */
+    public function askReg(){
+        if($this->input->is_ajax_request()){
+            $this->load->model('user/userTypeEnum','userTypeEnum');
+            $this->load->model('user/loginAo','loginAo');
+            //检查输入参数
+            $data = $this->argv->checkPost(array(
+                array('name','require'),
+                array('password','option','123456'),
+                array('type','option',$this->userTypeEnum->CLIENT),
+                array('phone','require'),
+                array('telephone','require'),
+                array('company','require'),
+                array('email','require'),
+                array('followLink','option|noxss'),
+                array('downDistributionNum','option',0),
+                array('permission','option',array()),
+                array('client','option',array()),
+            ));
+            //检查权限
+            if($this->session->userdata('clientId')){
+                //非登录用户只能添加商城用户
+                $data['type'] = $this->userTypeEnum->CLIENT;
+                unset($data['permission']);
+                //非登陆用户，注册账号有普通商城和普通分销权限
+                $data['permission']=array(2,3);
+                unset($data['client']);
+            }else{
+                throw new CI_MyException(1, "请用手机端登陆");
+            }
+            // var_dump($data);die;
+            $argv = $this->argv->check(array(
+                array('userId', 'require')
+            ));
+            $upUserId = $argv['userId'];
+            return $this->distributionAo->askReg($upUserId,$data);
+        }
+    }
+
+    //测试发送邮件
+    public function test(){
+        $this->load->library('MyEmail','','email');
+        $address = '330448219@qq.com';
+        $title   = '测试发送邮件';
+        $content = '测试发送邮件的内容';
+        $this->email->send($address,$title,$content);
+    }
 }

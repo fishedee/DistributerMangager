@@ -16,6 +16,7 @@ class DistributionDb extends CI_Model
     public function mod($distributionId, $data){
         $this->db->where('distributionId', $distributionId);
         $this->db->update($this->tableName, $data);
+        return $this->db->affected_rows();
     }
 
     public function del($distributionId){
@@ -62,6 +63,7 @@ class DistributionDb extends CI_Model
                 $this->db->where($key, $value);
         }
         $this->db->order_by('createTime', 'desc');
+        // $result = $this->db->get($this->tableName)->result_array();
         if(isset($limit['pageIndex']) && isset($limit['pageSize']))
             $this->db->limit($limit['pageSize'], $limit['pageIndex']);
         $query = $this->db->get($this->tableName)->result_array();

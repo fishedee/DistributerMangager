@@ -56,6 +56,12 @@
 
                 </div>
 
+                <div class="vote-entry custom-richtext">
+                    <p style="text-align: center;">
+                        <a href="distributionAskReg.html">没有账号</a>
+                    </p>
+                </div>
+
                 <div class="paginations clearfix first">
                     <button class="submit">提交</button>
                 </div>
@@ -68,32 +74,33 @@
     </div>
 </body>
 <script type="text/javascript">
-	var $ = require('/fishstrap/core/global.js');
+	var $ = require('common/core/core.js');
+	// $.checkMustLogin(function(){
+		$('.submit').click(function () {
+	        var zhanghao = $('[name=zhanghao]').val();
+	        var mima = $('[name=mima]').val();
+	        $.ajax({
+	        	url: '/distribution/ask',
+	        	type: 'POST',
+	        	dataType: 'JSON',
+	        	data: {
+	        		zhanghao: zhanghao,
+	        		mima    : mima
+	        	},
+	        	success:function(data){
+	        		// data = $.JSON.parse(data);
+	        		if(data.code != 0){
+	        			alert(data.msg);
+	        			return false;
+	        		}
+	        		alert('申请已经提交,工作人员很快处理');
+	        		location.reload();
+	        	},
+	        	error:function(){
 
-	$('.submit').click(function () {
-        var zhanghao = $('[name=zhanghao]').val();
-        var mima = $('[name=mima]').val();
-        $.ajax({
-        	url: '/distribution/ask',
-        	type: 'POST',
-        	dataType: 'JSON',
-        	data: {
-        		zhanghao: zhanghao,
-        		mima    : mima
-        	},
-        	success:function(data){
-        		data = $.JSON.parse(data);
-        		if(data.code != 0){
-        			alert(data.msg);
-        			return false;
-        		}
-        		alert('申请已经提交,工作人员很快处理');
-        		location.reload();
-        	},
-        	error:function(){
-
-        	}
-        })
-    });
+	        	}
+	        })
+	    });
+	// });
 </script>
 <link rel="import" href="footer.html?__inline">

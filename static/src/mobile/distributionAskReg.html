@@ -1,0 +1,190 @@
+<link rel="import" href="header.html?__inline">
+	<meta charset="UTF-8">
+	<title>分销商申请</title>
+	<meta name="viewport" content="width=320,initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=medium-dpi">
+	<link rel="stylesheet" href="./common/distribution/vote.css">
+	<style>
+        .vote-entry {
+            min-height: 30px;
+        }
+        
+        .vote-details {
+            padding: 0px;
+        }
+    </style>
+</head>
+
+<body>
+	<div class="content">
+        <div class="content-body">
+            <div class="vote-title with-bs-bottom">
+                <h2 class="title ellipsis">分销商申请表</h2>
+            </div>
+            <div class="vote-details" action="/v2/apps/vote/vote.json?alias=i777ov4i&amp;p=1">
+
+                <div class="vote-entry" data-type="text" data-title="您的姓名" data-id="8176940" required="">
+                    <div class="control_title">
+                        <h3 class="title">
+                            <em class="required">[必选]</em>
+                        账号        </h3>
+                        <h4 class="sub_title">
+                    </h4>
+                    </div>
+                    <div class="control_conts">
+                        <input name="name" class="w_txt" type="text" value="">
+
+                    </div>
+                </div>
+
+                <div class="vote-entry" data-type="text" data-title="您的姓名" data-id="8176940" required="">
+                    <div class="control_title">
+                        <h3 class="title">
+                            <em class="required">[必选]</em>
+                        密码        </h3>
+                        <h4 class="sub_title">
+                    </h4>
+                    </div>
+                    <div class="control_conts">
+                        <input name="password" class="w_txt" type="password" value="">
+
+                    </div>
+                </div>
+
+                <div class="vote-entry" data-type="text" data-title="您的姓名" data-id="8176940" required="">
+                    <div class="control_title">
+                        <h3 class="title">
+                            <em class="required">[必选]</em>
+                        再次输入密码        </h3>
+                        <h4 class="sub_title">
+                    </h4>
+                    </div>
+                    <div class="control_conts">
+                        <input name="password2" class="w_txt" type="password" value="">
+
+                    </div>
+                </div>
+
+                <div class="vote-entry" data-type="text" data-title="您的姓名" data-id="8176940" required="">
+                    <div class="control_title">
+                        <h3 class="title">
+                            <em class="required">[必选]</em>
+                        联系电话        </h3>
+                        <h4 class="sub_title">
+                    </h4>
+                    </div>
+                    <div class="control_conts">
+                        <input name="phone" class="w_txt" type="text" value="">
+
+                    </div>
+                </div>
+
+                <div class="vote-entry" data-type="text" data-title="您的姓名" data-id="8176940" required="">
+                    <div class="control_title">
+                        <h3 class="title">
+                            <em class="required">[必选]</em>
+                        公司名称        </h3>
+                        <h4 class="sub_title">
+                    </h4>
+                    </div>
+                    <div class="control_conts">
+                        <input name="company" class="w_txt" type="text" value="">
+
+                    </div>
+                </div>
+
+                <div class="vote-entry" data-type="text" data-title="您的姓名" data-id="8176940" required="">
+                    <div class="control_title">
+                        <h3 class="title">
+                            <em class="required">[必选]</em>
+                        公司电话        </h3>
+                        <h4 class="sub_title">
+                    </h4>
+                    </div>
+                    <div class="control_conts">
+                        <input name="telephone" class="w_txt" type="text" value="">
+
+                    </div>
+                </div>
+
+                <div class="vote-entry" data-type="text" data-title="您的姓名" data-id="8176940" required="">
+                    <div class="control_title">
+                        <h3 class="title">
+                            <em class="required">[必选]</em>
+                        电子邮箱        </h3>
+                        <h4 class="sub_title">
+                    </h4>
+                    </div>
+                    <div class="control_conts">
+                        <input name="email" class="w_txt" type="text" value="">
+
+                    </div>
+                </div>
+
+                <div class="vote-entry custom-richtext">
+                    <p style="text-align: left;"><span style="text-align: center;">感谢您耐心填写，工作人员会在1-2个工作日内联系您</span>
+                    </p>
+
+                </div>
+
+                <div class="vote-entry custom-richtext">
+                    <p style="text-align: center;">
+                        <a href="distributionAsk.html">用已有账号</a>
+                    </p>
+                </div>
+
+                <div class="paginations clearfix first">
+                    <button class="submit">提交</button>
+                </div>
+
+
+            </div>
+
+		</div>
+
+    </div>
+</body>
+<script type="text/javascript">
+	var $ = require('common/core/core.js');
+	// $.checkMustLogin(function(){
+		$('.submit').click(function () {
+	        var username = $('input[name=name]').val();
+	        var password = $('input[name=password]').val();
+            var password2= $('input[name=password2]').val();
+            var phone    = $('input[name=phone]').val();
+            var company  = $('input[name=company]').val();
+            var telephone= $('input[name=telephone]').val();
+            var email    = $('input[name=email]').val();
+            if(password != password2){
+                alert('两次密码不一致');
+                return false;
+            }
+	        $.ajax({
+	        	url: '/distribution/askReg',
+	        	type: 'POST',
+	        	dataType: 'JSON',
+	        	data: {
+	        		name: username,
+	        		password: password,
+                    password2: password2,
+                    phone   : phone,
+                    company : company,
+                    telephone: telephone,
+                    email   : email
+	        	},
+	        	success:function(data){
+	        		// data = $.JSON.parse(data);
+	        		if(data.code != 0){
+	        			alert(data.msg);
+	        			return false;
+	        		}
+	        		alert('申请已经提交,工作人员很快处理');
+	        		location.reload();
+	        	},
+	        	error:function(){
+
+	        	}
+	        })
+	    });
+	// });
+</script>
+<link rel="import" href="footer.html?__inline">

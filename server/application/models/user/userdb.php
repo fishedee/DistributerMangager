@@ -134,4 +134,11 @@ class UserDb extends CI_Model
 		}
 	}
 
+	//检测电子邮箱
+	public function checkEmail($email){
+		$this->db->where('email',$email);
+		$userInfo = $this->db->get($this->tableName)->result_array();
+		return $userInfo;
+	}
+
 }

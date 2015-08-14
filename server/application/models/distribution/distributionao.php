@@ -58,7 +58,7 @@ class DistributionAo extends CI_Model
 
     }
 
-    private function check($upUserId, $downUserId){
+    private function check($upUserId, $downUserId , $agree = 0){
         //校验是否有相同的边
         if($upUserId == $downUserId)
             throw new CI_MyException(1,'禁止建立自己指向自己的分成关系');
@@ -71,6 +71,16 @@ class DistributionAo extends CI_Model
         ),array());
         if($data['count'] != 0 )
             throw new CI_MyException(1,'已经存在'.$upUserId.'->'.$downUserId.'之间的分成关系，请勿重复添加');
+
+        if($agree == 0){
+            $data = $this->distributionDb->search(array(
+                'upUserId'=>$upUserId,
+                'downUserId'=>$downUserId,
+                'state'=>$this->distributionStateEnum->ON_REQUEST
+            ),array());
+            if($data['count'] != 0 )
+                throw new CI_MyException(1,'您的申请已经提交，请耐心等候工作人员处理');
+        }
 
         //取出所有边的数据
         $data = $this->distributionDb->search(array(
@@ -127,11 +137,12 @@ class DistributionAo extends CI_Model
 
     public function request($upUserId, $downUserId){
         $this->check($upUserId, $downUserId);
-
+        $userInfo = $this->userAo->get($downUserId);
         $this->distributionDb->add(array(
             'upUserId'=>$upUserId,
             'downUserId'=>$downUserId,
-            'state'=>$this->distributionStateEnum->ON_REQUEST
+            'state'=>$this->distributionStateEnum->ON_REQUEST,
+            'phone'=>$userInfo['phone'],
         )); 
     }
 
@@ -139,13 +150,25 @@ class DistributionAo extends CI_Model
         $distribution = $this->get($userId, $distributionId);
         if($distribution['upUserId'] != $userId)
             throw new CI_MyException(1, "无权同意本用户的分成关系");
-        $this->check($distribution['upUserId'], $distribution['downUserId']);
+        $this->check($distribution['upUserId'], $distribution['downUserId'] , 1);
         if(preg_match('/^http:\/\/\d+\.[^\/]+\/\d+\/item\.html$/',$distribution['shopUrl']) == 0 )
             throw new CI_MyException(1, "请设置正确的商城URL");
 
-        $this->distributionDb->mod($distributionId,array(
+        $result = $this->distributionDb->mod($distributionId,array(
             'state'=>$this->distributionStateEnum->ON_ACCEPT
         ));
+        if($result){
+            //发送邮件
+            $downUserId = $distribution['downUserId'];
+            $userInfo   = $this->userAo->get($downUserId);
+            $arr['user'] = $userInfo['email'];
+            $arr['name'] = $userInfo['company'] ? $userInfo['company'] : '贵公司';
+            $address[] = $arr;
+            $title      = '分销商申请已经通过';
+            $content    = '已经通过您的分销商申请,系统信件不用回复';
+            $this->load->library('MyEmail','','email');
+            $this->email->send($address,$title,$content);
+        }
     }
 
     public function modPrecent($userId,$distributionId,$distributionPercentShow,$shopUrl){
@@ -289,6 +312,17 @@ class DistributionAo extends CI_Model
             throw new CI_MyException(1, "自己不用申请");
         }
         return $this->request($userId, $askUserId);
+    }
+
+    //手机端分销商申请 没有账号 进行注册
+    public function askReg($upUserId,$data){
+        $downUserId = $this->userAo->add($data);
+        if(!$downUserId){
+            throw new CI_MyException(1, "账号申请失败");
+        }
+        $userInfo['zhanghao'] = $data['name'];
+        $userInfo['mima']     = $data['password'];
+        return $this->ask($upUserId,$userInfo);
     }
 }
 
