@@ -10,15 +10,15 @@
 			$this->load->library('argv', 'argv');
 		}
 
-		/**
-		 * @view json
-		 */
-		public function fenxiang(){
-			$arr['title'] = '测试分享朋友圈标题';
-			$arr['link']  = '10007.shop.tongyinyang.com/10007/put.html';
-			$arr['imgUrl']= 'http:www.xx.com';
-			return $arr;
-		}
+		// /**
+		//  * @view json
+		//  */
+		// public function fenxiang(){
+		// 	$arr['title'] = '测试分享朋友圈标题';
+		// 	$arr['link']  = '10007.shop.tongyinyang.com/10007/put.html';
+		// 	$arr['imgUrl']= 'http:www.xx.com';
+		// 	return $arr;
+		// }
 
 		/**
 		 * @view json
@@ -104,50 +104,50 @@
 			return $httpResponse['body'];
 	  	}
 
-	  	/**
-	  	 * @view json
-	  	 * 权限验证
-	  	 */
-	  	public function getPower(){
-	  		//检查输入参数
-			$this->load->library('argv','argv');
-			$data = $this->argv->checkGet(array(
-				array('userId','require'),
-			));
-			$userId = $data['userId'];
-	  		$info 	= $this->userAppAo->getTokenAndTicket($userId);
+	  // 	/**
+	  // 	 * @view json
+	  // 	 * 权限验证
+	  // 	 */
+	  // 	public function getPower(){
+	  // 		//检查输入参数
+			// $this->load->library('argv','argv');
+			// $data = $this->argv->checkGet(array(
+			// 	array('userId','require'),
+			// ));
+			// $userId = $data['userId'];
+	  // 		$info 	= $this->userAppAo->getTokenAndTicket($userId);
 
-	  		$arr['timestamp'] = time();
-	  		$arr['nonceStr']  = $this->createNonceStr();
-	  		$arr['jsapi_ticket'] = $info['appJsApiTicket'];
+	  // 		$arr['timestamp'] = time();
+	  // 		$arr['nonceStr']  = $this->createNonceStr();
+	  // 		$arr['jsapi_ticket'] = $info['appJsApiTicket'];
 
-	  		// 注意 URL 一定要动态获取，不能 hardcode.
-		    $url = 'http://10007.shop.tongyinyang.com/10007/sweep.html';
+	  // 		// 注意 URL 一定要动态获取，不能 hardcode.
+		 //    $url = 'http://10007.shop.tongyinyang.com/10007/sweep.html';
 
-			$jsapiTicket = $arr['jsapi_ticket'];
-			$nonceStr    = $arr['nonceStr'];
-			$timestamp   = $arr['timestamp'];
+			// $jsapiTicket = $arr['jsapi_ticket'];
+			// $nonceStr    = $arr['nonceStr'];
+			// $timestamp   = $arr['timestamp'];
 
-			$string = "jsapi_ticket=$jsapiTicket&noncestr=$nonceStr&timestamp=$timestamp&url=$url";
+			// $string = "jsapi_ticket=$jsapiTicket&noncestr=$nonceStr&timestamp=$timestamp&url=$url";
 
-			$data = array();
-			$data['appId'] 	   = $info['appId'];
-			$data['timestamp'] = $arr['timestamp'];
-			$data['nonceStr']  = $arr['nonceStr'];
-			$data['signature'] = sha1($string);
+			// $data = array();
+			// $data['appId'] 	   = $info['appId'];
+			// $data['timestamp'] = $arr['timestamp'];
+			// $data['nonceStr']  = $arr['nonceStr'];
+			// $data['signature'] = sha1($string);
 
-			return $data;
-	  	}
+			// return $data;
+	  // 	}
 
-	  	//生成随机的签名串
-	  	private function createNonceStr($length = 16) {
-	    	$chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-		    $str = "";
-		    for ($i = 0; $i < $length; $i++) {
-		      	$str .= substr($chars, mt_rand(0, strlen($chars) - 1), 1);
-		    }
-		    return $str;
-	  	}
+	  // 	//生成随机的签名串
+	  // 	private function createNonceStr($length = 16) {
+	  //   	$chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+		 //    $str = "";
+		 //    for ($i = 0; $i < $length; $i++) {
+		 //      	$str .= substr($chars, mt_rand(0, strlen($chars) - 1), 1);
+		 //    }
+		 //    return $str;
+	  // 	}
 
 	  	/**
 	  	 * @view json

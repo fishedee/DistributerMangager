@@ -49,6 +49,12 @@ class Contact extends CI_Controller {
 		//检查输入参数
 		$data = $this->argv->checkPost(array(
 			array('content','require|noxss'),
+			array('latitude','require'),
+			array('longitude','require'),
+			array('name','require'),
+			array('address','require'),
+			array('scale','require'),
+			array('infoUrl','require'),
 		));
 		
 		//检查权限
@@ -69,6 +75,12 @@ class Contact extends CI_Controller {
 		//检查输入参数
 		$data = $this->argv->checkPost(array(
 			array('content','require|noxss'),
+			array('latitude','require'),
+			array('longitude','require'),
+			array('name','require'),
+			array('address','require'),
+			array('scale','require'),
+			array('infoUrl','require'),
 		));
 		
 		//检查权限

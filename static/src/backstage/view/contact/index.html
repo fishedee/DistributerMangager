@@ -1,5 +1,6 @@
 <link rel="import" href="../common/header.html?__inline">
 <div class="alert alert-danger" role="alert"></div>
+<div class="alert alert-danger">导航功能：html代码加上id='map' </div>
 	<div id="container">
 	</div>
 	<script type="text/javascript">
@@ -25,6 +26,12 @@
 				id:'container',
 				field:[
 					{id:'content',type:'fullEditor',name:'内容',option:{url:'/upload/ueditor'}},
+					{id:'latitude',type:'text',name:'地图纬度'},
+					{id:'longitude',type:'text',name:'地图经度'},
+					{id:'name',type:'text',name:'位置名'},
+					{id:'address',type:'text',name:'地址详情说明'},
+					{id:'scale',type:'text',name:'地图缩放级别'},
+					{id:'infoUrl',type:'text',name:'在查看位置界面底部显示的超链接,可点击跳转'},
 				],
 				value:companyContact,
 				submit:function(data){
@@ -50,10 +57,15 @@
 				},
 
 			});
+
 		}
 
 				get(go);
-
+		setTimeout(eduiCss, 1000)		
+		function eduiCss(){
+			$('#edui1').css('width',$('.edui-default').css('width').replace('px','')*0.8);
+		}
+		
 
 	</script>
 <link rel="import" href="../common/footer.html?__inline">

@@ -665,6 +665,12 @@ create table t_user_company_contact(
 	contactId integer not null auto_increment,
 	userId int,
 	content text,
+    	latitude varchar(30),
+    	longitude varchar(30),
+    	name varchar(128),        
+    	address varchar(128),
+    	scale int(2),      
+    	infoUrl varchar(128),
 	primary key(contactId)
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
 alter table t_user_company_contact add index contactIndex(userId);
