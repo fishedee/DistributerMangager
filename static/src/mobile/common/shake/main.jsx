@@ -18,6 +18,7 @@ var App = React.createClass({
       luckyDraw: '',
       winList: '',
       clientId: '',
+      rotateFinishTip: '',
       yaoYiYaoPrizeText:'',
       tentDisplay: false,
       yaoYiYaoDisplay: false,
@@ -147,9 +148,10 @@ var App = React.createClass({
         if (data.code != 0) {
           var errorTitle = data.msg;
         } else {
+          var luckyDraw=this.state.luckyDraw;
           for (var i = 0; i != luckyDraw.commodity.length; ++i)
             if (luckyDraw.commodity[i].luckyDrawCommodityId == data.data) {
-              rotateFinishTip = luckyDraw.commodity[i].title;
+              this.setState({rotateFinishTip : luckyDraw.commodity[i].title}) ;
               break;
             }
         }
@@ -163,7 +165,7 @@ var App = React.createClass({
           this.setState({yaoYiYaoPrizeText:errorTitle});
           // $('.yaoYiYaoPrizeText').text(errorTitle);
         } else {
-          this.setState({yaoYiYaoPrizeText:'恭喜你，你获得的是：' + rotateFinishTip});
+          this.setState({yaoYiYaoPrizeText:'恭喜你，你获得的是：' + this.state.rotateFinishTip});
           // $('.yaoYiYaoPrizeText').text('恭喜你，你获得的是：' + rotateFinishTip);
         }
 

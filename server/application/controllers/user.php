@@ -7,6 +7,7 @@ class User extends CI_Controller {
         parent::__construct();
 		$this->load->model('user/loginAo','loginAo');
 		$this->load->model('user/userAo','userAo');
+		$this->load->model('client/clientLoginAo','clientLoginAo');
 		$this->load->model('user/userAppAo','userAppAo');
 		$this->load->model('user/userPermissionEnum','userPermissionEnum');
 		$this->load->model('user/userTypeEnum','userTypeEnum');
@@ -32,6 +33,26 @@ class User extends CI_Controller {
 
 		//业务逻辑
 		return $this->userAppAo->get($userId,true);
+	}
+
+	/**
+	* @view json
+	*/
+	public function getAppName()
+	{
+        //检查输入参数
+        $data = $this->argv->checkGet(array(
+            array('userId', 'require')
+        ));
+
+        $userId = $data['userId'];
+
+         //检查权限
+        $client = $this->clientLoginAo->checkMustLogin($userId);
+		$userId = $client['userId'];
+
+		//业务逻辑
+		return $this->userAppAo->get($userId,true)['appName'];
 	}
 
 	/**

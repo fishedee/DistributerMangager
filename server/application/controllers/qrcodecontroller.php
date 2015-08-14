@@ -269,15 +269,18 @@
 				    $scale = $logo_width/$logo_qr_width;
 				    $logo_qr_height = $logo_height/$scale;   
 				    $from_width = ($QR_width - $logo_qr_width) / 2;
+                                    if($this->is_mobile_request()){
+                                        $imageInfo = getimagesize($fileName);
+                                        if($imageInfo[0] > $imageInfo[1]){
+                                                //翻转logo图片
+                                                $logo = imagecreatefromstring(file_get_contents($fileName));
+                                                $rotate = imagerotate($logo,-90,0);
+                                                imagejpeg($rotate,$fileName);
+                                        }
+                                    }
 				    $logo_qr_width = 78;
 				    $logo_qr_height= 86;
 				    $this->thumb($fileName,$logo_qr_width,$logo_qr_height,$fileName);
-				    if($this->is_mobile_request()){
-				    	//翻转logo图片
-				    	$logo = imagecreatefromstring(file_get_contents($fileName));
-				    	$rotate = imagerotate($logo,-90,0);
-				    	imagejpeg($rotate,$fileName);
-				    }
 				    $data['userId']   = $userId;
 				    $data['username'] = $username;
 				    $data['phone']    = $mobile;
