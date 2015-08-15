@@ -18,7 +18,7 @@ module.exports = React.createClass({
       luckyDrawId:this.props.luckyDrawId
     }, function(data) {
       if (data.code != 0) {
-        dialog.message(data.msg);
+        console.log(data.msg);
         return;
       }
 

@@ -47,7 +47,7 @@ var App = React.createClass({
       luckyDrawId: this.state.luckyDrawId
     }, function(data) {
       if (data.code != 0) {
-        dialog.message(data.msg);
+        console.log(data.msg);
         return;
       }
 
