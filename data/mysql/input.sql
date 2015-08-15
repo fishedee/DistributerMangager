@@ -20,6 +20,7 @@ create table t_user(
 	password char(60) not null,
 	company varchar(128) not null,
 	phone varchar(11) not null,
+	email varchar(50) not null,
     telephone varchar(11) not null,
     followLink varchar(256) not null,
 	type integer not null,
@@ -35,6 +36,8 @@ alter table t_user add index nameIndex(name,password);
 create table t_user_app(
 	userAppId integer not null auto_increment,
 	userId integer not null,
+	appBg varchar(128) not null,
+	appLogo varchar(128) not null,
 	appName varchar(128) not null,
 	weixinNum varchar(128),
 	appId varchar(128) not null,

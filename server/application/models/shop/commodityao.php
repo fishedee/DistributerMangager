@@ -338,4 +338,8 @@ class CommodityAo extends CI_Model
         $this->commodityDb->mod($newOtherId,array('sort'=>$newOtherSort));
         $this->commodityDb->mod($newCurrentId,array('sort'=>$newCurrentSort));
     }
+
+    public function getHeaderInfo($userId){
+        return $this->commodityDb->getHeaderInfo($userId);
+    }
 }

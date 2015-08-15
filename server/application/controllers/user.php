@@ -117,6 +117,8 @@ class User extends CI_Controller {
 		//检查输入参数
 		$data = $this->argv->checkPost(array(
 			array('appName','require'),
+			array('appBg','option'),
+			array('appLogo','option'),
 			array('weixinNum','require'),
 			array('appId','require'),
 			array('appKey','require'),
@@ -126,11 +128,9 @@ class User extends CI_Controller {
 			array('mchSslKey','require'),
 			array('remark','require'),
 		));
-
 		//检查权限
 		$userId = $this->loginAo->checkMustLogin();
 		$userId = $userId['userId'];
-
 		//业务逻辑
 		return $this->userAppAo->mod($userId,$data);
 	}
@@ -201,6 +201,7 @@ class User extends CI_Controller {
 			array('phone','require'),
 			array('telephone','require'),
 			array('company','require'),
+			array('email','require'),
 			array('followLink','option|noxss'),
 			array('downDistributionNum','option',0),
 			array('permission','option',array()),

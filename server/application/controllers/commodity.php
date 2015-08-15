@@ -311,6 +311,19 @@ class Commodity extends CI_Controller
         $this->commodityAo->move($userId,$shopCommodityId,'down');
     }
 
+    /**
+     * @view json
+     * 获取头部信息
+     */
+    public function getHeaderInfo(){
+        //检查输入参数
+        $data = $this->argv->checkPost(array(
+            array('userId','require'),
+        ));
+        $userId = $data['userId'];
+        return $this->commodityAo->getHeaderInfo($userId);
+    }
+
 }
 
 /* End of file commodity.php */

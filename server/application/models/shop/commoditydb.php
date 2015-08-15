@@ -100,4 +100,22 @@ class CommodityDb extends CI_Model
         if( $this->db->affected_rows() == 0 )
             throw new CI_MyException(1,'扣减库存失败');
     }
+
+    public function getHeaderInfo($userId){
+        $this->db->where('userId',$userId);
+        $this->db->where('state',1);
+        $info = $this->db->get($this->tableName)->result_array();
+        $num  = count($info);
+        $arr  = array();
+        foreach ($info as $key => $value) {
+            $createTime = strtotime($value['createTime']);
+            if(time() - $createTime < 86400 * 7){
+                $arr[] = $value['shopCommodityId'];
+            }
+        }
+        return array(
+            'num'=>$num,
+            'new'=>count($arr)
+            );
+    }
 }
