@@ -6,208 +6,272 @@
 	<meta name="viewport" content="width=640, user-scalable=no,target-densitydpi=medium-dpi">
 	<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
 	<title>摇一摇抽奖活动</title>
-	<style>
-		p {
-			margin: 0;
-		}
+<style>
+	.bg{
+		position: fixed;
+		width: 100%;
+		height: 100%;
+		top: 0;
+		left: 0;
+		z-index: -1;
+		background: #ea4146;
+	}
+	p {
+		margin: 0;
+	}
+	
+	input {
+		background: none;
+		border: none;
+	}
+	
+	body {
+		margin: 0 auto;
+		max-width: 640px;
+		background: #ea4146;
+	}
+	
+	.head img {
+		display: block;
+		margin: 20px auto 0 auto;
+		width: 350px;
+		position: relative;
+		right: 13px;
+	}
+	
+	.click img {
+		display: block;
+		margin: 30px auto;
+		width: 300px;
 		
-		input {
-			background: none;
-			border: none;
-		}
-		
-		body {
-			margin: 0 auto;
-			max-width: 640px;
-			background: #ea4146;
-		}
-		
-		.head img {
-			display: block;
-			margin: 20px auto 0 auto;
-			width: 350px;
-			position: relative;
-			right: 13px;
-		}
-		
-		.click img {
-			display: block;
-			margin: 30px auto;
-			width: 300px;
-		}
-		
-		.banner .bannerHead img,
-		.banner .bannerFooter img {
-			display: block;
-			margin: 0 auto;
-		}
-		
-		.banner .bannerContent {
-			margin: 0 auto;
-			background-color: #ffffff;
-			min-height: 200px;
-			width: 543px;
-			position: relative;
-			left: 3px;
-			color: #7b5601;
-		}
-		
-		.banner .bennerText {
-			padding: 13px 10px;
-		}
-		
-		.banner .bennerText p {
-			line-height: 25px
-		}
-		/*屏幕*/
-		
-		.tent {
-			position: fixed;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			background: hsla(0, 1%, 18%, 0.44);
-			z-index: 1;
-			display: none;
-		}
+	}
+	
+	.banner .bannerHead img,
+	.banner .bannerFooter img {
+		display: block;
+		margin: 0 auto;
+	}
+	
+	.banner .bannerContent {
+		margin: 0 auto;
+		background-color: #ffffff;
+		min-height: 200px;
+		width: 543px;
+		position: relative;
+		left: 3px;
+		color: #7b5601;
+	}
+	
+	.banner .bennerText {
+		padding: 13px 10px;
+	}
+	
+	.banner .bennerText p {
+		font-size: 20px;
+		line-height: 25px;
+		font-weight: 600;
+	}
+	/*屏幕*/
+	
+	.tent {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: hsla(0, 1%, 18%, 0.44);
+		z-index: 1;
+		display: none;
+	}
 
-		/*摇一摇页面*/
+	/*摇一摇页面*/
+	
+	.yaoYiYao {
+		position: fixed;
+		z-index: 3;
+		display: none;
+	}
+	
+	.yaoYiYao .image img {
+		position: fixed;
+		top: 0;
+		left: 25%;
+	}
+	
+	.yaoYiYao .image .shang {
+		top: 130px;
+		-webkit-transition: top 0.5s ease;
+		transition: top 0.5s ease;
+	}
+	
+	.yaoYiYao .image .xia {
+		top: 298px;
+		-webkit-transition: top 0.5s ease;
+		transition: top 0.5s ease;
+	}
+
+	/*准备摇一摇文字*/
+	
+	.yaoYiYaoText {
+		position: fixed;
+		z-index: 3;
+		top: 650px;
+		left: 7%;
+		text-align: center;
+		color: #eee;
+		font-size: 42px;
+		font-weight: 900;
+		display: none;
+	}
+
+	
+	.yaoYiYaoPrize a {
+		color: #000000;
+		text-decoration: none;
+		height: 100%;
+	}
+	
+	.yaoYiYaoPrize p {
+		margin-top: 13px;
+	}
+	/*加载中图标*/
+	
+	.loading {
+		z-index: 5;
+		position: fixed;
+		top: 640px;
+		left: 48%;
+		display: none;
+	}
+	
+	
+	/* 中奖名单 */
+	.txtMarquee-left .row{
+		margin: 65px 65px 0px 65px;
+	}	
+
+	.txtMarquee-left {
+		position: fixed;
+		top: 10%;
+		left: 7%;
+		width: 555px;
+	}
+
+	.txtMarquee-left .bd {
+		padding: 10px;
+		background: rgb(255, 149, 11);
+		font-size: 30px;
+		border-radius:5px;
+		font-weight: 900;
+	}
+
+	.txtMarquee-left .bd li {
+		line-height: 40px;
+		text-align:left;
+		width: auto !important;
+		font-family: 黑体;
+		color: aliceblue;
+		display: block;
+	}
+	.txtMarquee-left .textRight{
+		text-align: right!important;
+	}
+	
+	.txtMarquee-left .prize{
+		margin-top: 30px;
+	}
+
+	 .txtMarquee-left a{
+		text-decoration:none;
+		 color: black;
+	}
+
+	.prize p{
+		color: #7e0609!important;
+		text-align: center!important;
+		line-height: 50px!important;
 		
-		.yaoYiYao {
-			position: fixed;
-			z-index: 3;
-			display: none;
-		}
-		
-		.yaoYiYao .image img {
-			position: fixed;
-			top: 0;
-			left: 25%;
-		}
-		
-		.yaoYiYao .image .shang {
-			top: 130px;
-			-webkit-transition: top 0.5s ease;
-			transition: top 0.5s ease;
-		}
-		
-		.yaoYiYao .image .xia {
-			top: 298px;
-			-webkit-transition: top 0.5s ease;
-			transition: top 0.5s ease;
-		}
-		/*
-		.yaoYiYao .image .shang:hover{
-			top:130px;
-			-webkit-transition: top 2s ease;
-			transition: top 2s ease;
-		}
-		.yaoYiYao .image .xia:hover{
-			top:378px;
-			-webkit-transition: top 5s ease ;
-			transition: top 5s ease ;
-		}
-*/
-		/*准备摇一摇文字*/
-		
-		.yaoYiYaoText {
-			position: fixed;
-			z-index: 3;
-			top: 650px;
-			left: 7%;
-			text-align: center;
-			color: #eee;
-			font-size: 42px;
-			font-weight: 900;
-			display: none;
-		}
-		/*摇一摇奖品*/
-		
-		.yaoYiYaoPrize {
-			position: fixed;
-			top: 600px;
-			left: 19%;
-			text-align: center;
-			z-index: 3;
-			font-size: 22px;
-			font-weight: 600;
-			border: 8px solid #ffffff;
-			background: #f6c238;
-			width: 400px;
-			display: none;
-		}
-		
-		.yaoYiYaoPrize a {
-			color: #000000;
-			text-decoration: none;
-			height: 100%;
-		}
-		
-		.yaoYiYaoPrize p {
-			margin-top: 13px;
-		}
-		/*加载中图标*/
-		
-		.loading {
-			z-index: 5;
-			position: fixed;
-			top: 640px;
-			left: 48%;
-			display: none;
-		}
-		/* 滚动中奖名单 */
-		
-		.txtMarquee-left {
-			position: fixed;
-			top: 270px;
-			left: 17%;
-			border: 1px solid #ccc;
-			width: 440px;
-			margin: 0 auto;
-			z-index: 5;
-			display: none;
-		}
-		
-		.txtMarquee-left .hd {
-			overflow: hidden;
-			height: 40px;
-			background: #f4f4f4;
-			padding: 0 10px;
-			font-size: 25px;
-			font-weight: 600;
-			line-height: 40px;
-		}
-		
-		.txtMarquee-left .bd {
-			padding: 10px;
-			background: #f6c238;
-			font-size: 20px;
-		}
-		
-		.txtMarquee-left .bd .tempWrap {
-			width: 425px !important;
-		}
-		
-		.txtMarquee-left .bd ul {
-			overflow: hidden;
-			zoom: 1;
-		}
-		
-		.txtMarquee-left .bd ul li {
-			margin-right: 20px;
-			float: left;
-			height: 24px;
-			line-height: 24px;
-			text-align: left;
-			display: inline;
-			width: auto !important;
-		}
-		
-		.txtMarquee-left .bd ul li span {
-			color: #e83737;
-		}
-	</style>
+	}
+	.prizeText{
+		font-family: 黑体;
+		color: #7e0609;
+		text-align: center;
+		margin-bottom: 20px;
+	}
+
+	.zzzx{
+		width: 300px;
+		height: 50px;
+		background:#bc0a10;
+		border-radius: 5px;
+		margin: 0 auto;
+		line-height: 50px;
+		text-align: center;
+		font-weight: 900;
+		font-size: 30px;
+		font-family: 黑体;
+		color: aliceblue;
+		margin-top: 20px;
+		margin-bottom: 30px;
+	}
+	
+	.clock{
+		width: 40px;
+		height: 40px;
+		position: absolute;
+		top: -20px;
+		left: 95%;
+		background: #000000;
+		border-radius: 50%;
+		color: aliceblue;
+		font-size: 20px;
+		font-weight: 900;
+	}
+	.clock p{
+		margin-left: 9px;
+		margin-top: 9px;
+	}
+	
+	
+	
+	#wrapper {
+		position: relative;
+		height: 300px;
+		overflow: hidden;
+
+		/* Prevent native touch events on Windows */
+		-ms-touch-action: none;
+
+		/* Prevent the callout on tap-hold and text selection */
+		-webkit-touch-callout: none;
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+
+		/* Prevent text resize on orientation change, useful for web-apps */
+		-webkit-text-size-adjust: none;
+		-moz-text-size-adjust: none;
+		-ms-text-size-adjust: none;
+		-o-text-size-adjust: none;
+		text-size-adjust: none;
+	}
+
+	#scroller {
+		position: absolute;
+
+		/* Prevent elements to be highlighted on tap */
+		-webkit-tap-highlight-color: rgba(0,0,0,0);
+
+		/* Put the scroller into the HW Compositing layer right from the start */
+		-webkit-transform: translateZ(0);
+		-moz-transform: translateZ(0);
+		-ms-transform: translateZ(0);
+		-o-transform: translateZ(0);
+		transform: translateZ(0);
+	}
+	
+</style>
 </head>
 
 <body>

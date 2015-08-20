@@ -38,7 +38,7 @@ class User extends CI_Controller {
 	/**
 	* @view json
 	*/
-	public function getAppName()
+	public function getAppMsg()
 	{
         //检查输入参数
         $data = $this->argv->checkGet(array(
@@ -52,7 +52,13 @@ class User extends CI_Controller {
 		$userId = $client['userId'];
 
 		//业务逻辑
-		return $this->userAppAo->get($userId,true)['appName'];
+		$retureData=$this->userAppAo->get($userId,true);
+		$filter=array(	
+			'appBg' => '',
+			'appLogo'=> '',
+			'appName'=>'',
+			);
+		return array_merge($filter,array_intersect_key($retureData,$filter));
 	}
 
 	/**

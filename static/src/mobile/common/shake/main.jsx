@@ -1,30 +1,33 @@
 var React = require('/fishstrap/react/react-debug.js');
+var PureRenderMixin = require('/fishstrap/react/react-debug.js').addons.PureRenderMixin;
 var $ = require('/mobile/common/core/core.js');
 var WinList = require('./WinList.jsx');
 
 var App = React.createClass({
 
+  mixins: [PureRenderMixin],
 
   getInitialState: function() {
+
     var luckyDrawId = $.location.getQueryArgv('luckyDrawId');
 
     return {
-      y : '',
-      x : '',
-      z : '',
+      last_x : '',
       last_y : '',
+      last_z : '',
       test : true,
+      errorNum : '',
       luckyDrawId: luckyDrawId,
       luckyDraw: '',
-      winList: '',
       clientId: '',
       rotateFinishTip: '',
       yaoYiYaoPrizeText:'',
       tentDisplay: false,
       yaoYiYaoDisplay: false,
       yaoYiYaoTextDisplay: false,
-      yaoYiYaoPrizeDisplay: false,
       loadingDisplay: false,
+      WinListDisplay:false,
+      // WinListDisplay:true,
     };
 
   },
@@ -47,7 +50,7 @@ var App = React.createClass({
       luckyDrawId: this.state.luckyDrawId
     }, function(data) {
       if (data.code != 0) {
-        console.log(data.msg);
+
         return;
       }
 
@@ -81,23 +84,29 @@ var App = React.createClass({
 
   　　 // 获取含重力的加速度
     　　
-    this.setState({
-    x:eventData.accelerationIncludingGravity.x,
-    y:eventData.accelerationIncludingGravity.y,
-    z:eventData.accelerationIncludingGravity.z,
-    });　　　　　　　　　　　　 // TODO:在此处可以实现摇一摇之后所要进行的数据逻辑操作
+  
+    var x = eventData.accelerationIncludingGravity.x;
+    var y = eventData.accelerationIncludingGravity.y;
+    var z = eventData.accelerationIncludingGravity.z;
+    　　　　　　　　　　　　 // TODO:在此处可以实现摇一摇之后所要进行的数据逻辑操作
 
     //修复iphone的bug
     if (this.state.test == true) {
 
       this.setState({
-      last_y : eventData.accelerationIncludingGravity.y,
+      last_x : x,
+      last_y : y,
+      last_z : z,
       test : false,
       });
     }
 
-    if ((this.state.y != this.state.last_y && this.state.y > 18 ) || this.state.x > 18 || this.state.z > 18) {
-
+    if ((x != this.state.last_x && x > 18 ) || (y != this.state.last_y && y > 18 )  || (z != this.state.last_z && z > 18 ) ) {
+      this.setState({
+        last_x : x,
+        last_y : y,
+        last_z : z,
+      });
       window.removeEventListener('devicemotion', this.deviceMotionHandler, false);
       this.yaoYiYao();
 
@@ -112,6 +121,13 @@ var App = React.createClass({
       yaoYiYaoDisplay: true,
       yaoYiYaoTextDisplay: true,
     })
+  },
+  WinListClock:function(){
+    this.setState({
+      tentDisplay: false,
+      WinListDisplay:false,
+    });
+    this.init();
   },
 
   yaoYiYao: function() {
@@ -146,7 +162,9 @@ var App = React.createClass({
         this.refs.music2.getDOMNode().play();
 
         if (data.code != 0) {
-          var errorTitle = data.msg;
+          this.setState({
+            errorNum:data.code
+          });
         } else {
           var luckyDraw=this.state.luckyDraw;
           for (var i = 0; i != luckyDraw.commodity.length; ++i)
@@ -161,19 +179,18 @@ var App = React.createClass({
           loadingDisplay: false,
         });
 
-        if (typeof errorTitle == 'string') {
-          this.setState({yaoYiYaoPrizeText:errorTitle});
-          // $('.yaoYiYaoPrizeText').text(errorTitle);
-        } else {
-          this.setState({yaoYiYaoPrizeText:'恭喜你，你获得的是：' + this.state.rotateFinishTip});
-          // $('.yaoYiYaoPrizeText').text('恭喜你，你获得的是：' + rotateFinishTip);
-        }
+        // if (typeof errorTitle == 'string') {
+        //   this.setState({yaoYiYaoPrizeText:errorTitle});
+        //   // $('.yaoYiYaoPrizeText').text(errorTitle);
+        // } else {
+        //   this.setState({yaoYiYaoPrizeText:'恭喜你，你获得的是：' + this.state.rotateFinishTip});
+        //   // $('.yaoYiYaoPrizeText').text('恭喜你，你获得的是：' + rotateFinishTip);
+        // }
 
         this.setState({
-          yaoYiYaoPrizeDisplay: true,
+          WinListDisplay:true, //显示中奖名单
         });
 
-        $('.txtMarquee-left').show(); //显示中奖名单
       }.bind(this));
     }.bind(this), 1000);
 
@@ -201,6 +218,7 @@ var App = React.createClass({
     var yaoYiYaoPrizeStyle = {
       display:this.state.yaoYiYaoPrizeDisplay ? 'block' : 'none',
     }
+
 
     return (
     <div>
@@ -237,21 +255,16 @@ var App = React.createClass({
           <p>大力摇呀！</p>
           <p>大奖正朝你的怀抱全力冲刺呢！</p>
         </div>
-        <div style={yaoYiYaoPrizeStyle} className='yaoYiYaoPrize'>
-          <a href='luckylist.html'>
-            <p className='yaoYiYaoPrizeText'>{this.state.yaoYiYaoPrizeText}</p>
-            <p>点击打开</p>
-          </a>
-        </div>
+
         <div style={loadingStyle} className='loading'><img src= {__inline('./loading.gif')} />
         </div>
 
-    <WinList luckyDrawId={this.state.luckyDrawId} />
+    <WinList WinListDisplay={this.state.WinListDisplay} WinListClock={this.WinListClock} luckyDrawId={this.state.luckyDrawId} errorNum={this.state.errorNum} rotateFinishTip={this.state.rotateFinishTip}/>
 
 
         <audio ref='music1' src='common/shake/1.mp3'></audio>
         <audio ref='music2' src='common/shake/2.mp3'></audio>
-
+        <div className="bg"></div>
 
     </div>
     )

@@ -1,6 +1,6 @@
 var React = require('/fishstrap/react/react-debug.js');
 var $ = require('/mobile/common/core/core.js');
-var WinList = require('./WinList.jsx');
+var IScroll = require('/fishstrap/module/iscroll.js');
 
 module.exports = React.createClass({
 
@@ -24,10 +24,9 @@ module.exports = React.createClass({
 
       this.setState({winList: data.data});
       this.listData();
-
-
-      
+      window.myscroll = new IScroll(React.findDOMNode(this.refs.winContent));
     }.bind(this));
+
    },
 
    listData:function(){
@@ -37,31 +36,51 @@ module.exports = React.createClass({
     if(!Array.isArray(winList)) throw new Error ('中奖名单winsList必须是数组');
 
     var list = winList.map(function(listArray){
-      return <li key={_.uniqueId()} >{listArray.nickName}<span>[{listArray.title}]</span></li>
+      return <li key={_.uniqueId()} >{listArray.nickName}一一[{listArray.title}]</li>
     });
 
      this.setState({list: list});
 
-    return list;
+   },
 
+   winningResults:function(){
+    if(this.props.errorNum == 0){
+      return <div><p>您已获得:</p><p className="prizeText">{this.props.rotateFinishTip}</p></div>
+    }else{
+      return <div><p>您已参与本次抽奖活动</p><p>只限一次哦!</p></div>
+    }
    },
 
   render:function(){
 
+    var ListStyle = {
+      zIndex:this.props.WinListDisplay ? '5' : '-5',
+    }
 
     return (
 
-              <div className='txtMarquee-left'>
-          <div className='hd'>
-            <p>中奖名单</p>
-          </div>
-          <div className='bd'>
-            <ul className='infoList'>
-          {this.state.list}
-             </ul>
-          </div>
+  <div style={ListStyle} className='txtMarquee-left'>
 
+    <div className='bd'>
+    <div className='clock' onClick={this.props.WinListClock}><p>╳</p></div>
+    <div className='row'>
+      <div ref='winContent' id='wrapper'>
+          <ul id='scroll'>
+
+          {this.state.list}
+
+          <li>………</li>
+          </ul>
         </div>
+    </div>
+      <div className='prize'>
+
+        {this.winningResults()}
+
+        <a href='luckylist.html'><div className='zzzx'>查看奖品</div></a>
+      </div>
+  </div>  
+  </div>
 
     )
   },
