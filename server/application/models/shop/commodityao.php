@@ -164,10 +164,11 @@ class CommodityAo extends CI_Model
         return $map;
     }
 
-    public function getOnStoreByClassify($userId,$shopCommodityClassifyId){
+    public function getOnStoreByClassify($userId,$shopCommodityClassifyId,$type=''){
         return $this->search($userId,array(
             'shopCommodityClassifyId'=>$shopCommodityClassifyId,
-            'state'=>$this->commodityStateEnum->ON_STORAGE
+            'state'=>$this->commodityStateEnum->ON_STORAGE,
+            'type' => $type,
             ),
             array()
         )['data'];
@@ -341,5 +342,12 @@ class CommodityAo extends CI_Model
 
     public function getHeaderInfo($userId){
         return $this->commodityDb->getHeaderInfo($userId);
+    }
+
+    public function mobileGet($userId,$type,$classifyId){
+        $data = $this->commodityDb->mobileGet($userId,$type,$classifyId);
+        foreach($data as $key=>$value)
+            $data[$key] = $this->findOriginCommodity($value);
+        return $data;
     }
 }

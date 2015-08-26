@@ -133,6 +133,7 @@ class User extends CI_Controller {
 			array('mchSslCert','require'),
 			array('mchSslKey','require'),
 			array('remark','require'),
+			array('customService','option'),
 		));
 		//检查权限
 		$userId = $this->loginAo->checkMustLogin();

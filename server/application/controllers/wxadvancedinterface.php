@@ -257,4 +257,50 @@ class Wxadvancedinterface extends CI_Controller {
 	
 	}
 
+	   /**
+	     * @view json
+	     * 关闭页面，发送客服消息。
+	     */
+	    public function autoCustomResponse(){
+	        $this->load->model('client/clientAo','clientAo');
+	        $this->load->model('user/userAppAo','userAppAo');
+	        $this->load->library('argv','argv');
+	        $this->load->library('http');
+	        $data = $this->argv->checkGet(array(
+	                        array('userId','require'),
+	                ));
+	        $userId = $data['userId'];
+		    $clientId = $this->session->userdata('clientId');
+		    $clientInfo = $this->clientAo->get($userId,$clientId);
+		    $userInfo   = $this->userAppAo->get($userId);
+		    $this->load->model('user/userAppAo','userAppAo');
+		    
+		    $userSet = $this->userAo->get($userId);
+			$userFollowLink = $userSet['followLink'];
+
+		    //如果没有关注该公众号
+		     if(!$clientInfo['subscribe']){
+
+		    	throw new CI_MyException(1,$userFollowLink );
+		    	// return $userFollowLink;
+		     }
+
+		    $content= $userInfo['customService'];
+		    $url = 'https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token='.$userInfo['appAccessToken'];
+		    $arr['touser'] = $clientInfo['openId'];
+		    $arr['msgtype']= 'text';
+		    $arr['text']['content'] = urlencode($content);
+		    $httpResponse = $this->http->ajax(array(
+		                    'url'=>$url,
+		                    'type'=>'post',
+		                    'data'=>urldecode(json_encode($arr)),
+		                    'dataType'=>'plain',
+		                    'responseType'=>'json'
+		            ));
+
+	        // var_dump($httpResponse);
+	        return $httpResponse['body']['errcode'];
+	}
+
+
 }

@@ -109,11 +109,12 @@ class Commodity extends CI_Controller
         //检查输入参数
         $data = $this->argv->checkGet(array(
             array('shopCommodityClassifyId', 'require'),
-            array('userId', 'require')
+            array('userId', 'require'),
         ));
 
         $shopCommodityClassifyId = $data['shopCommodityClassifyId'];
         $userId = $data['userId'];
+        $type   = $this->input->get('type') ? $this->input->get('type') : '';
 
         //检查权限
         $client = $this->clientLoginAo->checkMustLogin($userId);
@@ -322,6 +323,23 @@ class Commodity extends CI_Controller
         ));
         $userId = $data['userId'];
         return $this->commodityAo->getHeaderInfo($userId);
+    }
+
+    /**
+     * @view json
+     *
+     */
+    public function mobileGet(){
+        if($this->input->is_ajax_request()){
+            //检查输入参数
+            $data = $this->argv->checkPost(array(
+                array('userId','require'),
+            ));
+            $userId = $data['userId'];
+            $type   = $this->input->get('type') ? $this->input->get('type') : 'default';
+            $classifyId = $this->input->get('classifyId') ? $this->input->get('classifyId') : '';
+            return $this->commodityAo->mobileGet($userId,$type,$classifyId);
+        }
     }
 
 }

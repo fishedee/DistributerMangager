@@ -1,5 +1,5 @@
 <link rel="import" href="../common/header.html?__inline">
-	<div class="alert alert-danger" role="alert">注意！上传商城背景图规格，640px * 170px 。</div>
+	<div class="alert alert-danger" role="alert">注意！上传商城北京图时，请选择宽度至少为640像素的图片。</div>
 	<div id="container">
 	</div>
 	<div><img class="img-polaroid" src="/data/upload/sample/appKey.png"/></div>
@@ -34,7 +34,7 @@
 					{id:'logincallback',type:'read',name:'OAuth2.0授权回调页面域名'},
 					{id:'paycallback',type:'read',name:'微信支付授权目录'},
 					{id:'appBg',type:'image',name:'商城背景图',option:{url:'/upload/image',width:640}},
-					{id:'appLogo',type:'image',name:'商城logo',option:{url:'/upload/image',width:80}},				
+					{id:'appLogo',type:'image',name:'商城logo',option:{url:'/upload/image',width:80}},
 					{id:'appName',type:'text',name:'商城名称'},
 					{id:'weixinNum',type:'text',name:'微信原始ID'},
 					{id:'appId',type:'text',name:'appId'},
@@ -43,7 +43,8 @@
 					{id:'mchKey',type:'text',name:'mchKey'},
 					{id:'mchSslCert',type:'file',name:'mchSslCert',option:{url:'/upload/cert',type:'pem',maxSize:1024*1024}},
 					{id:'mchSslKey',type:'file',name:'mchSslKey',option:{url:'/upload/cert',type:'pem',maxSize:1024*1024}},
-					{id:'remark',type:'text',name:'备注'}
+					{id:'remark',type:'text',name:'备注'},
+					{id:'customService',type:'text',name:'客服消息'},
 				],
 				value:appInfo,
 				submit:function(data){

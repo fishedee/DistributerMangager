@@ -34,7 +34,7 @@ class CommodityDb extends CI_Model
             else if($key == 'shopCommodityId')
                 $this->db->where_in($key, $value);
         }
-        $this->db->order_by('sort', 'asc');  
+        $this->db->order_by('sort', 'asc');
 
         if(isset($limit['pageIndex']) && isset($limit['pageSize']))
             $this->db->limit($limit['pageSize'], $limit['pageIndex']);
@@ -117,5 +117,21 @@ class CommodityDb extends CI_Model
             'num'=>$num,
             'new'=>count($arr)
             );
+    }
+
+    public function mobileGet($userId,$type,$classifyId){
+        $this->db->where('state','1');
+        $this->db->where('userId',$userId);
+        if($classifyId){
+            $this->db->where('shopCommodityClassifyId',$classifyId);
+        }
+        if($type == 'price'){
+            $this->db->order_by('price','asc');
+        }elseif($type == 'newest'){
+            $this->db->order_by('createTime','asc');
+        }else{
+            $this->db->order_by('sort','asc');
+        }
+        return $this->db->get($this->tableName)->result_array();
     }
 }

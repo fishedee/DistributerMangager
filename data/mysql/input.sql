@@ -53,6 +53,7 @@ create table t_user_app(
 	cardTicket varchar(128) not null,
 	cardTicketExpire timestamp not null default '0000-00-00 00:00:00',
 	remark varchar(128) not null,
+	customService varchar(255) ,
 	createTime timestamp not null default CURRENT_TIMESTAMP,
 	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
 	primary key( userAppId )
