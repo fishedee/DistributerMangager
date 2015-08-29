@@ -345,6 +345,7 @@ create table t_distribution_order(
     downUserId integer not null,
     shopOrderId varchar(32) not null,
     price integer not null,
+    phone int(11) not null,
     state integer not null,
     createTime timestamp not null default CURRENT_TIMESTAMP,
     modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
