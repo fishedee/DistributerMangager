@@ -250,6 +250,8 @@ class CommodityAo extends CI_Model
         );
         
         $this->commodityDb->add($data); 
+
+        $this->recursiveRefreshCommodity();
     }
 
     public function modLink($userId, $shopCommodityId, $shopLinkCommodityId,
