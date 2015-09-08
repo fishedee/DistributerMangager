@@ -1,0 +1,68 @@
+<link rel="import" href="../common/header.html?__inline">
+<!-- <script type="text/javascript" src='jquery.js'></script> -->
+<body>
+
+	<div id="container"></div>
+	<script type="text/javascript">
+		// $("input[type='checkbox']").live('click', function() {
+		// 	power();
+		// });
+		// $('#container').on('click', 'input[type=checkbox]', function() {
+		// 	power();
+		// });
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		var subPage = require('/fishstrap/page/subPage.js');
+		var companyTemplateId = $.location.getQueryArgv('companyTemplateId');
+		// var $ = null;
+		function go(){
+			query.simpleQuery({
+				id:'container',
+				url:'/templatepower/getAll?companyTemplateId=' + companyTemplateId,
+				column:[
+					{id:'check',type:'text',name:"<input type='checkbox' name='all'/>"},
+					{id:'name',type:'text',name:'用户名'},
+				],
+				queryColumn:['name'],
+				operate:[],
+				button:[
+				]
+			});
+			$('#container').on('click', "input[name='power[]'][type=checkbox]", function() {
+				var userId = $(this).attr('userId');
+				var status = 0;
+				if($(this).is(':checked')){
+					status = 1;
+				}else{
+					status = 0;
+				}
+				$.ajax({
+					url: '/templatepower/changePower',
+					type: 'POST',
+					dataType: 'JSON',
+					data: {
+						userId: userId,
+						companyTemplateId: companyTemplateId,
+						status  : status
+					},
+					success:function(data){
+						data = $.JSON.parse(data);
+						if(data.code != 0){
+							alert(data.msg);
+							return false;
+						}
+						alert('更新成功');
+					},
+					error:function(XMLResponse){
+						alert(XMLResponse.responseText);
+					}
+				})
+			});
+		}
+		
+		go();
+
+	</script>
+</body>
+<link rel="import" href="../common/footer.html?__inline">

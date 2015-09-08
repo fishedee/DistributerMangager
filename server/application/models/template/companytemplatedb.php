@@ -61,4 +61,41 @@ class CompanyTemplateDb extends CI_Model
 		$this->db->update($this->tableName,$data);
 	}
 
+	public function choose($where,$limit,$userId){
+		foreach( $where as $key=>$value ){
+			if( $key == "title" || $key == "remark")
+				$this->db->like($key,$value);
+			else if( $key == "type" )
+				$this->db->where($key,$value);
+		}
+		
+		$count = $this->db->count_all_results($this->tableName);
+		
+		foreach( $where as $key=>$value ){
+			if( $key == "title" || $key == "remark")
+				$this->db->like($key,$value);
+			else if( $key == "type")
+				$this->db->where($key,$value);
+		}
+			
+		$this->db->order_by('createTime','desc');
+		
+		if( isset($limit["pageIndex"]) && isset($limit["pageSize"]))
+			$this->db->limit($limit["pageSize"],$limit["pageIndex"]);
+
+		$this->db->where('defaultTemplate',1);
+		$query = $this->db->get($this->tableName)->result_array();
+		return array(
+			"count"=>count($query),
+			"data"=>$query
+		);
+	}
+
+	//设定默认模板
+	public function defaultTemplate($companyTemplateId){
+		$this->db->where('companyTemplateId',$companyTemplateId);
+		$this->db->update($this->tableName,array('defaultTemplate'=>1));
+		return $this->db->affected_rows();
+	}
+
 }

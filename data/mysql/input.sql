@@ -698,6 +698,26 @@ create table t_qrcode(
 )engine=innodb default charset=utf8mb4 auto_increment = 10001;
 alter table t_qrcode add index qrcodeUserId(userId);
 
+create table `t_company_template_power` (
+  `powerId` int(11) NOT NULL AUTO_INCREMENT,
+  `companyTemplateId` int(11) NOT NULL,
+  `userId` int(11) NOT NULL,
+  PRIMARY KEY (`powerId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8mb4;
+
+create table `t_company_template` (
+  `companyTemplateId` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(128) NOT NULL,
+  `url` varchar(256) NOT NULL,
+  `remark` varchar(256) NOT NULL,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifyTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `type` int(11) NOT NULL,
+  `defaultTemplate` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`companyTemplateId`)
+);
+alter table t_company_template add defaultTemplate tinyint(1) not null default '0';
+
 #建立初始数据
 insert into t_user(userId,name,password,company,phone,type,downDistributionNum) values
 (10001,"fish","$2y$10$xKsYkwOJFQo2Ack68DqZuebTX99IgHL0lYBKmpwQpkxqzhJbKYgMG",'烘焙帮信息科技有限公司','15018749403',1,0),

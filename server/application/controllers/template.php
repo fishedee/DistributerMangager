@@ -166,6 +166,46 @@ class Template extends CI_Controller {
 		//执行业务逻辑
 		$this->companyTemplateAo->modByUserIdAndType($userId,$type,$companyTemplateId);
 	}
+
+	/**
+	 * @view json
+	 * 设定未默认模板
+	 */
+	public function defaultTemplate(){
+		if($this->input->is_ajax_request()){
+			//检查权限
+			$user = $this->loginAo->checkMustLogin();
+			$defaultTemp = $this->input->post('defaultTemp');
+			$companyTemplateId = $this->input->post('companyTemplateId');
+			return $this->companyTemplateAo->defaultTemplate($companyTemplateId,$defaultTemp);
+		}
+	}
+
+	/**
+	 * @view json
+	 * 选择模板
+	 */
+	public function choose(){
+		if($this->input->is_ajax_request()){
+			//检查输入参数		
+			$dataWhere = $this->argv->checkGet(array(
+				array('title','option'),
+				array('remark','option'),
+				array('type','option')
+			));
+			
+			$dataLimit = $this->argv->checkGet(array(
+				array('pageIndex','option'),
+				array('pageSize','option'),
+			));
+			
+			//检查权限
+			$user = $this->loginAo->checkMustLogin();
+			$userId = $user['userId'];
+			//执行业务逻辑
+			return $this->companyTemplateAo->choose($dataWhere,$dataLimit,$userId);
+		}
+	}
 }
 
 /* End of file welcome.php */

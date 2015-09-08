@@ -1,0 +1,117 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		var isCheck = ($.location.getQueryArgv('check') != null);
+		var companyTemplateType = {};
+		var tableOperation = {};
+		function getAllType(next){
+			$.get('/template/getAllType',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				companyTemplateType = data.data;
+				next();
+			});
+		}
+		function whenWindowClose(mode,operation){
+			if( mode == 'confirm' )
+				operation.close( tableOperation.getCheckData() );
+			else
+				operation.close( []);
+		}
+		function go(){
+			var operate = [];
+			var button = [];
+			if( isCheck == false ){
+				operate = [
+					{
+						name:'修改',
+						click:function(data){
+							location.href = 'view.html?companyTemplateId='+data.companyTemplateId;
+						}
+					},
+					{
+						name:'权限',
+						click:function(data){
+							location.href = 'power.html?companyTemplateId='+data.companyTemplateId;
+						}
+					},
+					{
+						name:'默认',
+						click:function(data){
+							$.ajax({
+								url: '/template/defaultTemplate',
+								type: 'POST',
+								dataType: 'JSON',
+								data: {
+									companyTemplateId: data.companyTemplateId,
+									defaultTemp: data.defaultTemplate
+								},
+								success:function(data){
+									data = $.JSON.parse(data);
+									if(data.code != 0){
+										alert(data.msg);
+										return false;
+									}
+									alert('设定默认模板成功');
+									location.href = 'index.html';
+								},
+								error:function(){
+
+								}
+							})
+						}
+					},
+					{
+						name:'删除',
+						click:function(data){
+							dialog.confirm('确认删除该公司模板，所有使用该模板的客户都会失效，不可回退操作？!',function(){
+								$.post('/template/del',{companyTemplateId:data.companyTemplateId},function(data){
+									data = $.JSON.parse(data);
+									if( data.code != 0 ){
+										dialog.message(data.msg);
+										return;
+									}
+									location.href = 'index.html';
+								});
+							});
+						}
+					}];
+				button = [
+				{
+					name:'添加模板',
+					click:function(){
+						location.href = 'view.html';
+					}
+				}
+				];
+			}
+				
+			tableOperation = query.simpleQuery({
+				id:'container',
+				url:'/template/choose',
+				checkAll:isCheck,
+				column:[
+					{id:'companyTemplateId',type:'text',name:'模板ID'},
+					{id:'title',type:'text',name:'名字'},
+					{id:'url',type:'text',name:'位置'},
+					{id:'type',type:'enum',name:'类型',map:companyTemplateType},
+					{id:'remark',type:'text',name:'备注'},
+					{id:'defaultTemplate',type:'text',name:'默认',map:{0:'非默认模板',1:'默认模板'}},
+					{id:'createTime',type:'text',name:'创建时间'},
+					{id:'modifyTime',type:'text',name:'修改时间'}
+				],
+				queryColumn:['title','remark','type'],
+				operate:operate,
+				button:button,
+			});
+		}
+		getAllType(go);
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

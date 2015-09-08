@@ -6,6 +6,7 @@ class CompanyTemplateAo extends CI_Model {
 		parent::__construct();
 		$this->load->model('template/companyTemplateDb','companyTemplateDb');
 		$this->load->model('template/userCompanyTemplateDb','userCompanyTemplateDb');
+		$this->load->model('template/CompanyTemplatePowerAo','CompanyTemplatePowerAo');
 	}
 	
 	public function search($dataWhere,$dataLimit){
@@ -37,6 +38,7 @@ class CompanyTemplateAo extends CI_Model {
 	public function del($companyTemplateId){
 		$this->companyTemplateDb->del($companyTemplateId);
 		$this->userCompanyTemplateDb->delByCompanyTemplateId($companyTemplateId);
+		$this->CompanyTemplatePowerAo->del($companyTemplateId);
 	}
 	
 	public function add($data){
@@ -45,5 +47,26 @@ class CompanyTemplateAo extends CI_Model {
 	
 	public function mod($companyTemplateId,$data){
 		$this->companyTemplateDb->mod($companyTemplateId , $data);
+	}
+
+	//选择模板
+	public function choose($dataWhere,$dataLimit,$userId){
+		$data = $this->companyTemplateDb->choose($dataWhere,$dataLimit,$userId);
+		$templateInfo = $this->CompanyTemplatePowerAo->getTemplate($userId);
+		if($templateInfo){
+			foreach ($templateInfo as $key => $value) {
+				$info = $this->get($value['companyTemplateId']);
+				$data['data'][] = $info;
+			}
+		}
+		return $data;
+	}
+
+	//设定默认模板
+	public function defaultTemplate($companyTemplateId,$defaultTemp){
+		if($defaultTemp == 1){
+			throw new CI_MyException(1,'该模板本来是默认模板,不用重复设置');
+		}
+		return $this->companyTemplateDb->defaultTemplate($companyTemplateId);
 	}
 }

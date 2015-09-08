@@ -37,6 +37,38 @@
 						}
 					},
 					{
+						name:'权限',
+						click:function(data){
+							location.href = 'power.html?companyTemplateId='+data.companyTemplateId;
+						}
+					},
+					{
+						name:'默认',
+						click:function(data){
+							$.ajax({
+								url: '/template/defaultTemplate',
+								type: 'POST',
+								dataType: 'JSON',
+								data: {
+									companyTemplateId: data.companyTemplateId,
+									defaultTemp: data.defaultTemplate
+								},
+								success:function(data){
+									data = $.JSON.parse(data);
+									if(data.code != 0){
+										alert(data.msg);
+										return false;
+									}
+									alert('设定默认模板成功');
+									location.href = 'index.html';
+								},
+								error:function(){
+
+								}
+							})
+						}
+					},
+					{
 						name:'删除',
 						click:function(data){
 							dialog.confirm('确认删除该公司模板，所有使用该模板的客户都会失效，不可回退操作？!',function(){
@@ -71,6 +103,7 @@
 					{id:'url',type:'text',name:'位置'},
 					{id:'type',type:'enum',name:'类型',map:companyTemplateType},
 					{id:'remark',type:'text',name:'备注'},
+					{id:'defaultTemplate',type:'text',name:'默认',map:{0:'非默认模板',1:'默认模板'}},
 					{id:'createTime',type:'text',name:'创建时间'},
 					{id:'modifyTime',type:'text',name:'修改时间'}
 				],

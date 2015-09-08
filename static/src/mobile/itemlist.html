@@ -57,11 +57,24 @@
 			$.page.setGrey();
 			$.page.start(pageHtml);
 		}
+function setTitle(){
+		var $body = $('body');
+        document.title = commodity[0].appName;
+        // hack在微信等webview中无法修改document.title的情况
+        var $iframe = $('<iframe src="back.png"></iframe>');
+        $iframe.on('load',function() {
+            setTimeout(function() {
+                $iframe.off('load').remove();
+            }, 0);
+        }).appendTo($body);
+	}
+
 		$.checkMustLogin(function(){
 			getCommodityClassify(function(){
 				getCommodity(go);
 			});
 		});
+setTimeout(setTitle,500);
 	</script>
 </body>
 <link rel="import" href="footer.html?__inline">
