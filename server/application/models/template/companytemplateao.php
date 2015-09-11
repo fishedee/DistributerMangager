@@ -52,11 +52,18 @@ class CompanyTemplateAo extends CI_Model {
 	//选择模板
 	public function choose($dataWhere,$dataLimit,$userId){
 		$data = $this->companyTemplateDb->choose($dataWhere,$dataLimit,$userId);
+		if($data['data']){
+			$type = $data['data'][0]['type'];
+		}
 		$templateInfo = $this->CompanyTemplatePowerAo->getTemplate($userId);
 		if($templateInfo){
 			foreach ($templateInfo as $key => $value) {
 				$info = $this->get($value['companyTemplateId']);
-				$data['data'][] = $info;
+				if(isset($type)){
+					if($info['type'] == $type){
+						$data['data'][] = $info;
+					}
+				}
 			}
 		}
 		return $data;

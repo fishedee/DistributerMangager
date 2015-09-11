@@ -194,6 +194,21 @@ class User extends CI_Controller {
 		//执行业务逻辑
 		return $this->userAo->get($userId);
 	}
+
+	/**
+	* @view json
+	*/
+	public function getCompanyName()
+	{
+		//检查输入参数
+		$data = $this->argv->checkGet(array(
+			array('userId','require'),
+		));
+		$userId = $data['userId'];
+		
+		//执行业务逻辑
+		return $this->userAo->get($userId)['company'];
+	}
 	
 	/**
 	* @view json
