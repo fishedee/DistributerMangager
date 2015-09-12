@@ -1,0 +1,169 @@
+<link rel="import" href="header.html?__inline">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>分销商加盟</title>
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+        }
+        .top{
+            height: 50px;
+            background-image: url('/data/upload/image/distributionlogin/6.png');
+        }
+        .top img{
+            width: 150px;
+            height: 40px;
+            display: block;
+            margin: 0 auto;
+            padding-top: 5px;
+        }
+        .login{
+            height: 200px;
+            width: 75%;
+            margin: 20% auto;
+            background-image: url('/data/upload/image/distributionlogin/5.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            position: relative;
+            border-radius: 5px;
+        }
+        .login .login_head{
+            height: 50px;
+            position: relative;
+        }
+        .login .login_head img{
+            height: 25px;
+            margin-top: 12.5px;
+            margin-left: 10%;
+        }
+        .login .login_head img.close{
+            position: absolute;
+            right: 10%;
+        }
+        .login .loginInfo{
+            margin-top: 20px;
+            height: 80px;
+            width: 80%;
+            margin-left: 14.5%;
+        }
+        .login .loginInfo .username{
+            width: 100%;
+            background: url('/data/upload/image/distributionlogin/login1.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            height: 35px;
+            position: relative;
+        }
+        .login .loginInfo .password{
+            width: 100%;
+            background: url('/data/upload/image/distributionlogin/login2.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            height: 35px;
+            position: relative;
+            margin-top: 10px;
+        }
+        .login .loginInfo .user{
+            position: absolute;
+            height: 35px;
+            left: 25%;
+            border: none;
+        }
+        .loginButton{
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            height: 30px;
+        }
+        .loginButton a{
+            text-decoration: none;
+            color: white;
+            font-family: '微软雅黑';
+            font-size: 12px;
+            margin-left: 10%;
+            display: inline-block;
+        }
+        .loginButton a.forget{
+            margin-left: 0%;
+        }
+        .loginButton span{
+            display: inline-block;
+            height: 30px;
+            width: 35%;
+            border-radius: 5px;
+            color: white;
+            text-align: center;
+            line-height: 30px;
+            background: url('/data/upload/image/distributionlogin/loginbg.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+        .remark{
+            margin-left: 1%;
+            font-size: 12px;
+line-height:18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="top">
+        <img src="/data/upload/image/distributionlogin/logo.png" alt="">
+    </div>
+    <div class="login">
+        <div class="login_head">
+            <img src="/data/upload/image/distributionlogin/logo.png" alt="">
+            <img src="/data/upload/image/distributionlogin/close.png" alt="" class='close'>
+        </div>
+        <div class="loginInfo">
+            <div class="username">
+                <input type="text" class='user' name='username'>
+            </div>
+            <div class="password">
+                <input type="password" class='user' name='password'>
+            </div>
+        </div>
+        <div class="loginButton">
+            <a href="javascript:;">忘记密码</a>
+            <span class='submit'>申请</span>
+            <a href="./distributionRegister.html" class='forget'>注册账号</a>
+        </div>
+    </div>
+    <div class="remark">
+<h3>如何赚取佣金:</h3><br>
+        1.点击注册，填写相关资料成为我们的分销商。<br>
+        2.注册成功后，留下正确联系方式，客服会以电话方式致电告知其相关细节以及佣金比例。<br>
+        3.成功成为分销商后，系统自动分销商地址及ID号，转发分销商地址进行分销，赚取佣金。
+    </div>
+</body>
+<script type="text/javascript">
+    var $ = require('common/core/core.js');
+     $.checkMustLogin(function(){
+        $('.submit').click(function () {
+            var username = $('[name=username]').val();
+            var password = $('[name=password]').val();
+            $.ajax({
+                url: '/distribution/ask',
+                type: 'POST',
+                dataType: 'JSON',
+                data: {
+                    zhanghao: username,
+                    mima    : password
+                },
+                success:function(data){
+                    // data = $.JSON.parse(data);
+                    if(data.code != 0){
+                        alert(data.msg);
+                        return false;
+                    }
+                    alert('申请已经提交,工作人员很快处理');
+                    location.reload();
+                },
+                error:function(){
+
+                }
+            })
+        });
+     });
+</script>
+<link rel="import" href="footer.html?__inline">

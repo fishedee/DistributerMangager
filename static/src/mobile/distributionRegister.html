@@ -1,0 +1,157 @@
+<link rel="import" href="header.html?__inline">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>手机注册</title>
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+        }
+        .top{
+            height: 50px;
+            background-image: url('/data/upload/image/distributionlogin/6.png');
+        }
+        .top img{
+            width: 150px;
+            height: 40px;
+            display: block;
+            margin: 0 auto;
+            padding-top: 5px;
+        }
+        .register{
+            background: #F5FBFB;
+            width: 75%;
+            height: 200px;
+            margin: 15% auto;
+        }
+        .register .info{
+            width: 90%;
+            height: 100%;
+            margin: 0 auto;
+            padding-top: 20px;
+        }
+        .register .info p {
+            height: 25px;
+            line-height: 15px;
+            position: relative;
+            margin-top: 5px;
+        }
+        .register .info p img{
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+        }
+        .register .info p span{
+            position: absolute;
+            top: 3px;
+            left: 15%;
+        }
+        .register .info p input{
+            position: absolute;
+            left: 50%;
+            width: 50%;
+            height: 20px;
+            border: 1px solid;
+            border-radius: 5px;
+        }
+        .registerButton{
+            height: 50px;
+            background: url('/data/upload/image/distributionlogin/icon/7.png');
+            border-radius: 10px;
+            color: white;
+            line-height: 50px;
+            text-align: center;
+            font-size: 20px;
+            font-family: '微软雅黑';
+            margin-top: -10px;
+        }
+        .remark{
+            font-size: 12px;
+            margin-top: 50px;
+            margin-left: 1%;
+        }
+    </style>
+</head>
+<body>
+    <div class="top">
+        <img src="/data/upload/image/distributionlogin/logo.png" alt="">
+    </div>
+    <div class="register">
+        <div class="info">
+            <p>
+                <img src="/data/upload/image/distributionlogin/icon/1.png" alt="">
+                <span>账&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号:</span>
+                <input type="text" name='username'>
+            </p>
+            <p>
+                <img src="/data/upload/image/distributionlogin/icon/2.png" alt="">
+                <span>密&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码:</span>
+                <input type="password" name='password'>
+            </p>
+            <p>
+                <img src="/data/upload/image/distributionlogin/icon/3.png" alt="">
+                <span>确认密码:</span>
+                <input type="password" name='password2'>
+            </p>
+            <p>
+                <img src="/data/upload/image/distributionlogin/icon/4.png" alt="">
+                <span>邮&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;箱:</span>
+                <input type="email" name='email'>
+            </p>
+            <p>
+                <img src="/data/upload/image/distributionlogin/icon/5.png" alt="">
+                <span>联系电话:</span>
+                <input type="tel" name='phone'>
+            </p>
+        </div>
+    </div>
+    <div class="registerButton">
+        立即注册
+    </div>
+    <div class="remark">
+        1.点击注册，填写相关资料成为我们的分销商。<br>
+        2.注册成功后，留下正确联系方式，客服会以电话方式致电告知其相关细节以及佣金比例。<br>
+        3.成功成为分销商后，系统自动分销商地址及ID号，转发分销商地址进行分销，赚取佣金。
+    </div>
+</body>
+<script type="text/javascript">
+    var $ = require('common/core/core.js');
+     $.checkMustLogin(function(){
+        $('.registerButton').click(function () {
+            var username = $('input[name=username]').val();
+            var password = $('input[name=password]').val();
+            var password2= $('input[name=password2]').val();
+            var phone    = $('input[name=phone]').val();
+            var email    = $('input[name=email]').val();
+            if(password != password2){
+                alert('两次密码不一致');
+                return false;
+            }
+            $.ajax({
+                url: '/distribution/askReg',
+                type: 'POST',
+                dataType: 'JSON',
+                data: {
+                    name: username,
+                    password: password,
+                    password2: password2,
+                    phone   : phone,
+                    email   : email
+                },
+                success:function(data){
+                    // data = $.JSON.parse(data);
+                    if(data.code != 0){
+                        alert(data.msg);
+                        return false;
+                    }
+                    alert('申请已经提交,工作人员很快处理');
+                    location.reload();
+                },
+                error:function(){
+
+                }
+            })
+        });
+     });
+</script>
+<link rel="import" href="footer.html?__inline">

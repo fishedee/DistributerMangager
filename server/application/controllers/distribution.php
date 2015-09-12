@@ -278,14 +278,24 @@ class Distribution extends CI_Controller
                 array('password','option','123456'),
                 array('type','option',$this->userTypeEnum->CLIENT),
                 array('phone','require'),
-                array('telephone','require'),
-                array('company','require'),
+                array('telephone','option'),
+                array('company','option'),
                 array('email','require'),
                 array('followLink','option|noxss'),
                 array('downDistributionNum','option',0),
                 array('permission','option',array()),
                 array('client','option',array()),
             ));
+
+$argv = $this->argv->check(array(
+                array('userId', 'require')
+            ));
+            $upUserId = $argv['userId'];
+            //检查权限
+            $this->load->model('client/clientLoginAo', 'clientLoginAo');
+            $client = $this->clientLoginAo->checkMustLogin($argv['userId']);
+            $data['company'] = $client['nickName'].'(手机申请)';
+            $data['telephone'] = '0000';
             //检查权限
             if($this->session->userdata('clientId')){
                 //非登录用户只能添加商城用户
@@ -297,11 +307,11 @@ class Distribution extends CI_Controller
             }else{
                 throw new CI_MyException(1, "请用手机端登陆");
             }
-            // var_dump($data);die;
-            $argv = $this->argv->check(array(
-                array('userId', 'require')
-            ));
-            $upUserId = $argv['userId'];
+            // $client = $this->clientLoginAo->checkMustLogin($userId);
+            // $clientId = $client['clientId'];
+            // $this->load->model('client/clientAo','clientAo');
+            // $clientInfo = $this->clientAo->get($clientId);
+
             return $this->distributionAo->askReg($upUserId,$data);
         }
     }

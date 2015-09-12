@@ -46,6 +46,8 @@ class DistributionDb extends CI_Model
     }
 
     public function search($where, $limit){
+	$this->db->where($where);
+	$result = $this->db->get($this->tableName)->result_array();
         if( isset($where['upUserId']) && count($where['upUserId']) == 0)
             return array(
                 'count'=>0,
@@ -68,7 +70,7 @@ class DistributionDb extends CI_Model
             $this->db->limit($limit['pageSize'], $limit['pageIndex']);
         $query = $this->db->get($this->tableName)->result_array();
         return array(
-            'count'=>count($query),
+            'count'=>count($result),
             'data'=>$query
         );
     }

@@ -150,7 +150,13 @@ class LuckyDrawAo extends CI_Model
 		//校验权限
 		$luckDraw = $this->get($userId,$luckyDrawId);
 
-		return $this->luckyDrawClientDb->getByLuckyDrawId($luckyDrawId);
+		$info = $this->luckyDrawClientDb->getByLuckyDrawId($luckyDrawId);
+		$this->load->model('client/clientAo','clientAo');
+		foreach ($info as $key => $value) {
+			$clientInfo = $this->clientAo->get($userId,$value['clientId']);
+			$info[$key]['openId'] = $clientInfo['openId'];
+		}
+		return $info;
 	}
 
 	public function getClientResult($userId,$clientId,$luckyDrawId){
