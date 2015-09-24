@@ -72,8 +72,10 @@ class CompanyTemplateAo extends CI_Model {
 	//设定默认模板
 	public function defaultTemplate($companyTemplateId,$defaultTemp){
 		if($defaultTemp == 1){
-			throw new CI_MyException(1,'该模板本来是默认模板,不用重复设置');
+			$data['defaultTemplate'] = 0;
+		}else{
+			$data['defaultTemplate'] = 1;
 		}
-		return $this->companyTemplateDb->defaultTemplate($companyTemplateId);
+		return $this->companyTemplateDb->changeDefaultTemplate($companyTemplateId,$data);
 	}
 }

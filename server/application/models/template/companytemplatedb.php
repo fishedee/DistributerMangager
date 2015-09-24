@@ -98,4 +98,11 @@ class CompanyTemplateDb extends CI_Model
 		return $this->db->affected_rows();
 	}
 
+	//取消默认模板
+	public function changeDefaultTemplate($companyTemplateId,$data){
+		$this->db->where('companyTemplateId',$companyTemplateId);
+		$this->db->update($this->tableName,$data);
+		return $this->db->affected_rows();
+	}
+
 }
