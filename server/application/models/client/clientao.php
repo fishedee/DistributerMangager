@@ -64,7 +64,8 @@ class ClientAo extends CI_Model {
 		));
 		$yonghu = $yonghu['body'];
     	if($yonghu['subscribe']){
-    		$nickname 	= $yonghu['nickname'];
+    		//$nickname 	= $yonghu['nickname'];
+		$nickname   = base64_encode($yonghu['nickname']);
     		$headimgurl = $yonghu['headimgurl'];
     	}else{
     		$nickname 	= '用户没关注';

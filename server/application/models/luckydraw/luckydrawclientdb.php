@@ -43,4 +43,20 @@ class LuckyDrawClientDb extends CI_Model
 		return $statusInfo[0]['status'];
 	}
 
+
+	//统计抽奖次数
+	public function drawCount($luckyDrawId){
+		$this->db->where('luckyDrawId',$luckyDrawId);
+		return $this->db->get($this->tableName)->num_rows();
+	}
+
+
+	//修改用户信息
+	public function modUserInfo($luckyDrawId,$data,$clientId){
+		$this->db->where("luckyDrawId",$luckyDrawId);
+		$this->db->where("clientId",$clientId);
+		$this->db->update($this->tableName,$data);
+		return $this->db->affected_rows();
+	}
+
 }

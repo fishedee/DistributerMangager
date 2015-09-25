@@ -249,4 +249,29 @@ class LuckyDrawAo extends CI_Model
 	public function judge($list_id){
 		return $this->luckyDrawClientDb->judge($list_id);
 	}
+	
+	//统计抽奖次数
+	public function drawCount($luckyDrawId){
+		return $this->luckyDrawClientDb->drawCount($luckyDrawId);
+	}
+
+	//修改用户信息
+	public function modUserInfo($name,$phone,$luckyDrawId,$clientId){
+		if(!$luckyDrawId){
+			throw new CI_MyException(1,'请输入抽奖id');
+		}
+		if(!$name){
+			throw new CI_MyException(1,'请填写姓名');
+		}
+		if(!$phone){
+			throw new CI_MyException(1,'请填写手机');
+		}
+		if(preg_match_all('/^\d{11}$/',$phone) == 0 ){
+			throw new CI_MyException(1,'请输入11位数字的电话号码以便获得抽奖奖品噢');
+		}
+		$data['name'] = $name;
+		$data['phone']= $phone;
+		return $this->luckyDrawClientDb->modUserInfo($luckyDrawId,$data,$clientId);
+	}
+
 }

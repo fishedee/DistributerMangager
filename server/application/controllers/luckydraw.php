@@ -289,6 +289,39 @@ class LuckyDraw extends CI_Controller {
 		return $this->luckyDrawMethodEnum->names;
 	}
 
+
+	/**
+	 * @view json
+	 * 统计抽奖次数
+	 */
+	public function drawCount(){
+		if($this->input->is_ajax_request()){
+			$luckyDrawId = $this->input->get('luckyDrawId');
+			return $this->luckyDrawAo->drawCount($luckyDrawId);
+		}
+	}
+
+	/**
+	 * @view json
+	 * 修改用户姓名 和 手机号码
+	 */
+	public function modUserInfo(){
+		//检查输入参数
+		$data = $this->argv->checkGet(array(
+			array('userId','require'),
+		));
+		
+		//检查权限
+		$clientId= $this->clientLoginAo->checkMustLogin($data['userId'])['clientId'];
+
+		if($this->input->is_ajax_request()){
+			$name = $this->input->post('name');
+			$phone = $this->input->post('phone');
+			$luckyDrawId = $this->input->post('luckyDrawId');
+			return $this->luckyDrawAo->modUserInfo($name,$phone,$luckyDrawId,$clientId);
+		}
+	}
+
 	/**
 	 * @view json
 	 * 给抽奖前端显示其他中奖用户
@@ -303,10 +336,17 @@ class LuckyDraw extends CI_Controller {
 		//检查权限
 		$client = $this->clientLoginAo->checkMustLogin($data['userId']);
 
-		$sql="select nickName,title from t_lucky_draw_client left join t_client on t_lucky_draw_client.clientId=t_client.clientId where luckyDrawId='".$data['luckyDrawId']."' and nickName not like '' and nickName not like '用户没关注' order by luckyDrawClientId desc limit 10;";
+		//$sql="select t_client.nickName,t_client.headImgUrl,title from t_lucky_draw_client left join t_client on t_lucky_draw_client.clientId=t_client.clientId where luckyDrawId='".$data['luckyDrawId']."' order by luckyDrawClientId desc limit 10;";
+		$sql="select t_client.nickName,t_client.headImgUrl,title from t_lucky_draw_client left join t_client on t_lucky_draw_client.clientId=t_client.clientId where luckyDrawId='".$data['luckyDrawId']."' and nickName not like '' and nickName not like '用户没关注' order by luckyDrawClientId desc limit 10;";
 		$data = $this->db->query($sql)->result_array();
+
+		foreach($data as $k=>$v ){
+			$data[$k]['nickName'] =  base64_decode($data[$k]['nickName'] );		
+		}
+
 		return $data;
 	 }
+
 }
 
 /* End of file welcome.php */
