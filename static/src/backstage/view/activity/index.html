@@ -1,0 +1,27 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		function go(){
+			tableOperation = query.simpleQuery({
+				id:'container',
+				url:'/activity/search',
+				column:[
+					{id:'activityId',type:'text',name:'报名ID'},
+					{id:'name',type:'text',name:'姓名'},
+					{id:'phone',type:'text',name:'联系方式'},
+					{id:'sex',type:'text',name:'性别'},
+					{id:'address',type:'text',name:'选购地区'},
+					{id:'createTime',type:'text',name:'报名时间'},
+				],
+				queryColumn:['name','phone','address'],
+				operate:[],
+
+			});
+		}
+		go();
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

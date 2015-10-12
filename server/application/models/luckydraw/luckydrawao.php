@@ -43,15 +43,15 @@ class LuckyDrawAo extends CI_Model
 	}
 
 	private function filterInputData($data){
-		$data['beginTime'] .= ' 00:00:00';
-		$data['endTime'] .= ' 23:59:59';
+//		$data['beginTime'] .= ' 00:00:00';
+//		$data['endTime'] .= ' 23:59:59';
 		return $data;
 	}
 
 	private function filterOutputData($data){
 		$data['link'] = 'http://'.$data['userId'].'.'.$_SERVER['HTTP_HOST'].'/'.$data['userId'].'/lucky.html?luckyDrawId='.$data['luckyDrawId'];
-		$data['beginTime'] = substr($data['beginTime'],0,10);
-		$data['endTime'] = substr($data['endTime'],0,10);
+		//$data['beginTime'] = substr($data['beginTime'],0,10);
+		//$data['endTime'] = substr($data['endTime'],0,10);
 		$data['totalQuantity'] = 0;
 		foreach( $data['commodity'] as $key=>$singleCommodity ){
 			$data['commodity'][$key]['typeName'] = $this->luckyDrawTypeEnum->names[$data['commodity'][$key]['type']];
@@ -167,6 +167,9 @@ class LuckyDrawAo extends CI_Model
 		$luckyDrawClient = $this->luckyDrawClientDb->getByLuckyDrawAndClientId($luckyDrawId,$clientId);
 		if( count($luckyDrawClient) != 0 )
 			$luckyDraw['client'] = $luckyDrawClient[0];
+
+		$luckyDraw['beginTime'] = date( 'n月d日G时i分' ,strtotime($luckyDraw['beginTime']));
+		$luckyDraw['modifyTime'] = date( 'n月d日G时i分' ,strtotime($luckyDraw['modifyTime'])); 
 
 		return $luckyDraw;
 	}

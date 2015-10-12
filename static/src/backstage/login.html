@@ -1,51 +1,268 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-	<meta charset="UTF-8">
-    <title>经销商管理系统</title>
-	<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+    <meta charset="UTF-8">
+    <title>微易点后台登陆</title>
+    <style>
+        a {
+            text-decoration: none;
+            color: aliceblue;
+        }
+        
+        body {
+            margin: 0;
+        }
+        
+        .head {
+            height: 100px;
+            background-image: url(/data/upload/image/login/head.jpg);
+        }
+        
+        .head .logo {
+            width: 1200px;
+            margin: 0 auto;
+            padding-top: 15px;
+        }
+        
+        .head .logo img {
+            display: block;
+        }
+        
+        .content {
+            width: 100%;
+            height: 600px;
+            background-color: #016aa9;
+            background-image: url(/data/upload/image/login/bg.png);
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 80%;
+        }
+        
+        .content .row {
+            margin: 0 auto;
+            width: 1200px;
+        }
+        
+        .content .left {
+            width: 750px;
+            height: 600px;
+            float: left;
+        }
+        
+        .content .right {
+            width: 400px;
+            height: 600px;
+            float: left;
+            position: relative;
+        }
+        
+        .content .right .big {
+            margin-top: 30px;
+            width: 350px;
+            border: 1px solid #fff;
+            background: rgba(123, 47, 47, 0.06);
+        }
+        
+        .content .right .text {
+            width: 100%;
+            text-align: center;
+            color: aliceblue;
+            font-weight: 600;
+            font-size: 23px;
+            text-shadow: #000000 1px 1px 2px;
+            margin-top: 80px;
+            margin-bottom: 35px;
+        }
+        
+        .content .right .user,
+        .content .right .possword {
+            width: 250px;
+            height: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.36);
+            margin-left: 50px;
+            background: rgba(2, 0, 46, 0.34);
+        }
+        
+        .content .right .tubiao {
+            width: 60px;
+            height: 50px;
+            border-right: 1px solid rgba(255, 255, 255, 0.36);
+            float: left;
+        }
+        
+        .content .right .user .tubiao img {
+            display: block;
+            padding: 10px 14px;
+        }
+        
+        .content .right .possword .tubiao img {
+            display: block;
+            padding: 9px 17px;
+        }
+        
+        .content .right .user .neirong,
+        .content .right .user .possword {
+            float: left;
+        }
+        
+        .content .right .user .neirong input,
+        .content .right .possword .neirong input {
+            border: 0px;
+            background: none;
+            margin-left: 10px;
+            margin-top: 5px;
+            height: 38px;
+            font-size: 25px;
+            width: 170px;
+            color: aliceblue;
+        }
+        
+        .content .right .possword {
+            margin-top: 25px;
+        }
+        
+        .content .right .signIn {
+            width: 250px;
+            height: 50px;
+            margin-top: 20px;
+            margin-left: 50px;
+            background: -webkit-linear-gradient(#ff7d01, #ff4106);
+            background: -o-linear-gradient(#ff7d01, #ff4106);
+            background: -moz-linear-gradient(#ff7d01, #ff4106);
+            background: linear-gradient(#ff7d01, #ff4106);
+            text-align: center;
+            color: aliceblue;
+            font-weight: 600;
+            line-height: 50px;
+            font-size: 21px;
+            cursor: pointer;
+        }
+        
+        .content .right .register {
+            text-align: center;
+            color: aliceblue;
+            font-size: 20px;
+            margin-top: 15px;
+            margin-bottom: 40px;
+        }
+        
+        .content .right .register a {
+            color: aliceblue;
+        }
+        
+        .content .right .bg {
+            position: absolute;
+            top: 75px;
+            right: 300px;
+        }
+        
+        .footer {
+            width: 100%;
+            height: 300px;
+            background: #18365a;
+        }
+        
+        .footer .row {
+            color: aliceblue;
+            width: 1200px;
+            margin:0 auto;
+            padding-top: 40px;
+        }
+        .footer .row .dizhi{
+            margin-left: 200px;
+            margin-top: 20px
+        }
+        .footer .xiantiao{
+            margin-top: 38px;
+            height: 11px;
+            width: 100%;
+            border-top: 7px solid #fff;
+            border-bottom: 7px solid #fff;
+        }
+    </style>
 </head>
+
 <body>
-	<script type="text/javascript">
-		var $ = require('/fishstrap/core/global.js');
-		var dialog = require('/fishstrap/ui/dialog.js');
-		var loginPage = require('/fishstrap/page/loginPage.js');
-		var subPage = require('/fishstrap/page/subPage.js');
-		loginPage.use({
-			title:'经销商管理系统',
-			init:function(){
-				$.get('/login/islogin?t='+Math.random(),{},function(data){
-					data = $.JSON.parse(data);
-					if( data.code == 0 ){
-						location.href = 'index.html';
-						return;
-					}
-				});
-			},
-			login:function(data){
-				$.post('/login/checkin?t='+Math.random(),data,function(data){
-					data = $.JSON.parse(data);
-					if( data.code != 0 ){
-						dialog.message(data.msg);
-						return;
-					}
-					location.href = 'index.html';
-				});
-			},
-			button:[
-				{
-					name:'注册',
-					click:function(){
-						subPage.open({
-							title:'注册商城用户',
-							url:'view/user/add.html',
-							close:function(){
-							}
-						});
-					}
-				}
-			],
-		});
-	</script>
+    <div class="head">
+        <div class="logo"><img src="/data/upload/image/login/logo.png" alt=""></div>
+    </div>
+    <div class="content">
+
+        <div class="row">
+            <div class="left"></div>
+            <div class="right">
+                <div class="big">
+                    <div class="text">经销商管理系统</div>
+                    <div class="user">
+                        <div class="tubiao"><img src="/data/upload/image/login/9.png" alt=""></div>
+                        <div class="neirong">
+                            <input class="name" type="text">
+                        </div>
+                    </div>
+                    <div class="possword">
+                        <div class="tubiao"><img src="/data/upload/image/login/10.png" alt=""></div>
+                        <div class="neirong">
+                            <input class="password" type="password">
+                        </div>
+                    </div>
+                    <div class="signIn">登录</div>
+                    <div class="register"><a href="./register.html">立刻注册</a></div>
+                </div>
+                <div class="bg"><img src="/data/upload/image/login/8.png" alt=""></div>
+            </div>
+        </div>
+
+    </div>
+    <div class="footer">
+        <div class="row">
+            <div class="dizhi">
+                <a href="">关于我们</a> | <a href="">产品介绍</a> | <a href="">渠道合作</a> | <a href="">渠道登录</a>
+            </div>
+            <div class="dizhi">地址：广东省佛山市顺德区容桂南区荔枝塘路22号永安综合楼201</div>
+        </div>
+        <div class="xiantiao"></div>
+    </div>
 </body>
+<script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+
+    <script>
+        $.get('/login/islogin?t='+Math.random(),{},function(data){
+            data = JSON.parse(data);
+            if( data.code == 0 ){
+                location.href = 'index.html';
+                return;
+            }
+        });
+
+        $('.password').keydown(function(event) {
+            if(event.keyCode == 13){
+                var name = $('.name')[0].value;
+                var password = $('.password')[0].value;
+                var Info = {name:name,password:password}
+                 $.post('/login/checkin?t='+Math.random(),Info,function(data){
+                    data = JSON.parse(data);
+                    if( data.code != 0 ){
+                        alert(data.msg);
+                        return;
+                    }
+                    location.href = 'index.html';
+                });
+            }
+        });
+
+        $('.signIn').click(function() {
+            var name = $('.name')[0].value;
+            var password = $('.password')[0].value;
+            var Info = {name:name,password:password}
+             $.post('/login/checkin?t='+Math.random(),Info,function(data){
+                data = JSON.parse(data);
+                if( data.code != 0 ){
+                    alert(data.msg);
+                    return;
+                }
+                location.href = 'index.html';
+            });
+        });
+    </script>
 </html>

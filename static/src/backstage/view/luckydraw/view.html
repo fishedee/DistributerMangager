@@ -57,8 +57,8 @@
 					{id:'method',type:'enum',name:'抽奖方式',map:allMethod},
 					{id:'summary',type:'area',name:'简介'},
 					{id:'totalQuantity',type:'read',name:'中奖基数'},
-					{id:'beginTime',type:'time',name:'开始时间'},
-					{id:'endTime',type:'time',name:'结束时间'},
+					{id:'beginTime',type:'text',name:'开始时间'},
+					{id:'endTime',type:'text',name:'结束时间'},
 					{id:'commodity',type:'table',name:'奖品',
 						option:{
 							column:[
@@ -177,6 +177,16 @@
 				$('div [name=link]').text(url);
 			}
 		});
+
+
+			//修改时间选择插件
+			$( "input[name='beginTime'],input[name='endTime']" ).datetimepicker({
+					lang:'ch',
+					timepicker:true,
+					format: 'Y-m-d h:m:s',
+					closeOnDateSelect:true
+			});
+			$( "input[name='beginTime'],input[name='endTime']" ).removeClass('input-small');
 
 		}
 
