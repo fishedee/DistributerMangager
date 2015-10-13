@@ -1,0 +1,288 @@
+<link rel="import" href="./../header.html?__inline">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=medium-dpi">
+    <title>个人资料</title>
+    <link rel="stylesheet" href="./../common/distributioncss/index.css">
+    <link rel="stylesheet" href="./../common/distributioncss/footer.css">
+    <style>
+        body {
+            margin: 0;
+            background: #f2f1f1;
+        }
+        
+        input {
+            border: 0px;
+        }
+        
+        table {
+            width: 100%;
+            background: #fff;
+            border-radius: 5px;
+        }
+        
+        table tr {
+            border-bottom: 1px solid #ececec;
+            display: block;
+        }
+        
+        table tr:last-child {
+            border-bottom: 0;
+        }
+        
+        table tr th {
+            height: 40px;
+            text-align: left;
+            width: 100px;
+            display: table-cell;
+            vertical-align: middle;
+        }
+        
+        .submit {
+            color: #fff;
+            background: #ff6464;
+            font-weight: 600;
+            border-radius: 5px;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .submit p {
+            height: 50px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            top: 15px;
+        }
+    </style>
+</head>
+
+<body>
+</body>
+<script type="text/javascript">
+    var $ = require('/fishstrap/core/global.js');
+    require('./../common/distribution/birthday.js');
+    require('./../common/distribution/distribution.js');
+    var userInfo = {};
+    var userId = 0;
+    var itemUrl = '';
+    var orderUrl= '';
+    var centerUrl = '';
+    //检测登陆
+    function checkMustLogin(next){
+        $.get('/clientlogin/islogin',{},function(data){
+            data = $.JSON.parse(data);
+            if( data.code != 0 ){
+                location.href = $.url.buildQueryUrl('/clientlogin/wxlogin',{callback:location.href});
+                return;
+            }
+            clientId = data.data;
+            next();
+        });
+    }
+
+    function checkClientId(next){
+        $.get('/user/checkClientId',{}, function(data) {
+            data = $.JSON.parse(data);
+            if(data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            data = data.data;
+            userId = data[0]['userId'];
+            itemUrl= 'http://'+location.host+'/'+userId+'/item.html';
+            orderUrl = 'http://'+location.host+'/'+userId+'/deal.html';
+            centerUrl= 'http://'+location.host+'/'+userId+'/distribution/index.html';
+            next();
+        });
+    }
+
+    //获取用户信息
+    function getUserInfo(next){
+        $.post('/user/getUserInfo',{},function(data){
+            data = $.JSON.parse(data);
+            if(data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            data = data.data;
+            userInfo = data;
+            next();
+        });
+    }
+
+    //渲染页面
+    function go(){
+
+        var sex = '';
+
+        if(userInfo['sex'] == 1){
+            sex = "<input name='sex' type='radio' value='0' checked='checked'>男\
+                   <input name='sex' type='radio' value='1'>女";
+        }else{
+            sex = "<input name='sex' type='radio' value='0'>男\
+                   <input name='sex' type='radio' value='1' checked='checked'>女";
+        }
+
+        var html = "<div class='top'>\
+                       <img src='/data/upload/image/distribution/images/icon/3.png' alt=''>\
+                        个人资料\
+                    </div>\
+                    <table>\
+                        <tr>\
+                            <th>电子邮件</th>\
+                            <td>\
+                                <input type='email' name='email' placeholder='输入电子邮箱' value='"+userInfo['email']+"'>\
+                            </td>\
+                        </tr>\
+                        <tr>\
+                            <th>手机号码</th>\
+                            <td>\
+                                <input type='tel' name='phone' placeholder='手机号码' value='"+userInfo['phone']+"'>\
+                            </td>\
+                        </tr>\
+                        <tr>\
+                            <th>性别</th>\
+                            <td>\
+                                "+sex+"\
+                            </td>\
+                        </tr>\
+                        <tr>\
+                            <th>生日</th>\
+                            <td>\
+                                <select id ='sel_year' name='year' rel='"+userInfo['year']+"'></select>\
+                                <select id='sel_month' name='month' rel='"+userInfo['month']+"'></select>\
+                                <select id='sel_day' name='day' rel='"+userInfo['day']+"'></select>\
+                            </td>\
+                        </tr>\
+                    </table>\
+                    <div class='submit' name='info'>\
+                        <p>确认修改</p>\
+                    </div>\
+                    <table>\
+                        <tr>\
+                            <th>原密码</th>\
+                            <td>\
+                                <input type='password' placeholder='原密码' name='oldPassword'>\
+                            </td>\
+                        </tr>\
+                        <tr>\
+                            <th>新密码</th>\
+                            <td>\
+                                <input type='password' placeholder='新密码' name='newPassword1'>\
+                            </td>\
+                        </tr>\
+                        <tr>\
+                            <th>确认密码</th>\
+                            <td>\
+                                <input type='password' placeholder='确认密码' name='newPassword2'>\
+                            </td>\
+                        </tr>\
+                    </table>\
+                    <div class='submit' name='password'>\
+                        <p>确认修改</p>\
+                    </div>\
+                    <div class='blank'></div>\
+                    <div class='footer'>\
+                        <div class='list'>\
+                            <div class='item'>\
+                                <div class='img sp'></div>\
+                                <a href='"+itemUrl+"'><p>商品</p></a>\
+                            </div>\
+                            <div class='item'>\
+                                <div class='img dd'></div>\
+                                <a href='"+orderUrl+"'><p>订单</p></a>\
+                            </div>\
+                            <div class='item'>\
+                                <div class='img hyzx active'></div>\
+                                <a href='"+centerUrl+"'><p>会员中心</p></a>\
+                            </div>\
+                        </div>\
+                    </div>";
+        $('body').append(html);
+        setTimeout(birth,100);
+    }
+
+    //个人资料的提交
+    $('body').on('touchstart', 'div[name=info][class=submit]', function() {
+        var email = $('input[name=email]').val();
+        var phone = $('input[name=phone]').val();
+        var sex   = $('input[name=sex]').val();
+        var year  = $('select[name=year]').val();
+        var month = $('select[name=month]').val();
+        var day   = $('select[name=day]').val();
+        $.ajax({
+            url: '/user/myInfo',
+            type: 'POST',
+            dataType: 'JSON',
+            data: {
+                email: email,
+                phone: phone,
+                sex  : sex,
+                year : year,
+                month: month,
+                day  : day
+            },
+            success:function(data){
+                data = $.JSON.parse(data);
+                if(data.code != 0){
+                    alert(data.msg);
+                    return;
+                }
+                alert('修改成功');
+                location.reload();
+            },
+            error:function(){
+
+            }
+        })
+    });
+
+    //修改密码
+    $('body').on('touchstart', 'div[name=password][class=submit]', function() {
+        var oldPassword = $('input[name=oldPassword]').val();
+        var newPassword1= $('input[name=newPassword1]').val();
+        var newPassword2= $('input[name=newPassword2]').val();
+        if(newPassword1 != newPassword2){
+            alert('两次密码不一致');
+            return;
+        }
+        $.ajax({
+            url: '/user/modMyPassword2',
+            type: 'POST',
+            dataType: 'JSON',
+            data: {
+                'myUserId'   : userId,
+                'oldPassword': oldPassword,
+                'newPassword': newPassword1
+            },
+            success:function(data){
+                data = $.JSON.parse(data);
+                if(data.code != 0){
+                    alert(data.msg);
+                    return;
+                }
+                alert('修改密码成功');
+                location.reload();
+            },
+            error:function(){
+
+            }
+        })        
+    });
+
+    function birth(){
+        $.ms_DatePicker({
+            YearSelector: ".sel_year",
+            MonthSelector: ".sel_month",
+            DaySelector: ".sel_day"
+        });
+        $.ms_DatePicker();
+    }
+
+    checkMustLogin(function(){
+        checkClientId(function(){
+            getUserInfo(go);
+        })
+    })
+</script>
+<link rel="import" href="./../footer.html?__inline">

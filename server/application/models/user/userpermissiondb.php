@@ -48,4 +48,17 @@ class UserPermissionDb extends CI_Model
 			$query = $this->db->insert_batch($this->tableName,$data);
 	}
 
+	public function checkPermissionId($userId,$permissionId){
+		$this->db->where('userId',$userId);
+		$this->db->where('permissionId',$permissionId);
+		$this->db->select('userPermissionId');
+		return $this->db->get($this->tableName)->result_array();
+	}
+
+	public function checkPermissionId2($userId,$condition){
+		$this->db->where('userId',$userId);
+		$this->db->where($condition);
+		return $this->db->get($this->tableName)->result_array();
+	}
+
 }

@@ -20,7 +20,7 @@ class OrderAo extends CI_Model
 		$this->load->model('distribution/distributionOrderWhen', 'distributionOrderWhen');
 	}
 
-	private function addMyOrder($userId,$clientId,$shopCommodity,$address){
+	private function addMyOrder($userId,$clientId,$shopCommodity,$address,$entranceUserId){
 		//计算出订单基本信息
 		$orderPrice = array_reduce($shopCommodity,function($sum,$single){
 			return $sum + $single['price']*$single['quantity'];
@@ -41,6 +41,7 @@ class OrderAo extends CI_Model
 			'shopOrderId'=>$shopOrderId,
 			'userId'=>$userId,
 			'clientId'=>$clientId,
+			'entranceUserId'=>$entranceUserId,
 			'image'=>$shopCommodity[0]['icon'],
 			'price'=>$orderPrice,
 			'num'=>$orderNum,
@@ -180,7 +181,7 @@ class OrderAo extends CI_Model
 		}
 
 		//下单
-		$orderInfo = $this->addMyOrder($userId,$clientId,$shopTroller,$address);
+		$orderInfo = $this->addMyOrder($userId,$clientId,$shopTroller,$address,$entranceUserId);
 
 		//微信统一下单
 		$this->addWxOrder($userId,$loginClientId,$orderInfo);
@@ -258,5 +259,10 @@ class OrderAo extends CI_Model
 		));
 
 		return $httpResponse['body']['data'];
+	}
+
+	//获取订单数量
+	public function getOrderNum($userId,$entranceUserId){
+		return $this->orderDb->getOrderNum($userId,$entranceUserId);
 	}
 }

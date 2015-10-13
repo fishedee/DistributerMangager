@@ -1,0 +1,123 @@
+<link rel="import" href="./../header.html?__inline">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>积分记录</title>
+    <link rel="stylesheet" href="./../common/distributioncss/index.css">
+    <link rel="stylesheet" href="./../common/distributioncss/footer.css">
+    <style>
+        .distribution{
+            margin-top: 5px;
+            background: none;
+        }
+        .distribution>li{
+            background: white;
+            border-radius: 5px;
+            margin-top: 10px;
+            margin-left: 0;
+        }
+        .distribution>li>p{
+            height: 30px;
+            line-height: 30px;
+        }
+        .distribution>li>p>span{
+            display: inline-block;
+            text-align: center;
+            font-size: 12px;
+        }
+        .distribution>li>p>span:nth-child(1){
+            width: 40%;
+        }
+        .distribution>li>p>span:nth-child(2){
+            width: 30%;
+        }
+        .distribution>li>p>span:nth-child(3){
+            width: 25%;
+        }
+        .distribution>li>p>span.score{
+            color: blue;
+        }
+    </style>
+</head>
+<body>
+</body>
+<script type="text/javascript">
+    var $ = require('/fishstrap/core/global.js');
+    require('./../common/distribution/distribution.js');
+    var scoreLog = {};
+    //检测登陆
+    function checkMustLogin(next){
+        $.get('/clientlogin/islogin',{},function(data){
+            data = $.JSON.parse(data);
+            if( data.code != 0 ){
+                location.href = $.url.buildQueryUrl('/clientlogin/wxlogin',{callback:location.href});
+                return;
+            }
+            clientId = data.data;
+            next();
+        });
+    }
+
+    //获取积分日志
+    function getLog(next){
+        $.post('/score/getLog',{},function(data){
+            data = $.JSON.parse(data);
+            if(data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            scoreLog = data.data;
+            next();
+        })
+    }
+
+
+    //渲染页面
+    function go(){
+
+        var log  = '';
+
+        $.each(scoreLog,function(index,val) {
+            log += "<li>\
+                        <p>\
+                            <span>变化时间</span>\
+                            <span>备注</span>\
+                            <span>商城消费积分</span>\
+                        </p>\
+                        <p>\
+                            <span>"+val['createTime']+"</span>\
+                            <span>"+val['remark']+"</span>\
+                            <span class='score'>"+val['dis']+val['score']+"</span>\
+                        </p>\
+                    </li>";
+        });
+
+        var html = "<div class='top'>\
+                       <img src='/data/upload/image/distribution/images/icon/3.png' alt=''>\
+                        积分记录\
+                    </div>\
+                    <ul class='distribution'>"+log+"\
+                    </ul>\
+                    <div class='blank'></div>\
+                    <div class='footer'>\
+                        <div class='list'>\
+                            <div class='item'>\
+                                <div class='img sp'></div>\
+                                <p>商品</p>\
+                            </div>\
+                            <div class='item'>\
+                                <div class='img dd'></div>\
+                                <p>订单</p>\
+                            </div>\
+                            <div class='item'>\
+                                <div class='img hyzx active'></div>\
+                                <p>会员中心</p>\
+                            </div>\
+                        </div>\
+                    </div>";
+        $('body').html(html);
+    }
+    checkMustLogin(function(){
+        getLog(go);
+    })
+</script>
+<link rel="import" href="./../footer.html?__inline">

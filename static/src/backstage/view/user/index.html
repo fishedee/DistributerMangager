@@ -38,8 +38,10 @@
 					{id:'type',type:'enum',name:'类型',map:userType},
 					{id:'company',type:'text',name:'公司'},
 					{id:'phone',type:'text',name:'电话号码'},
+					{id:'score',type:'text',name:'积分'},
 					{id:'createTime',type:'text',name:'创建时间'},
-					{id:'modifyTime',type:'text',name:'修改时间'}
+					{id:'modifyTime',type:'text',name:'修改时间'},
+					{id:'qrcode',type:'image',name:'二维码'}
 				],
 				queryColumn:['name','type'],
 				operate:[
@@ -82,7 +84,22 @@
 							});
 						});
 					}
-				}],
+				},
+				{
+					name:'充值积分',
+					click:function(data){
+						userId = data.userId;
+						$.get('/user/checkRecharge',{userId:data.userId},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							location.href = 'recharge.html?userId='+userId;
+						});
+					}
+				},
+				],
 				button:[
 				{
 					name:'添加用户',

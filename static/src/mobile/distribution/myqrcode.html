@@ -1,0 +1,87 @@
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>申请分销</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <meta name="Resource-type" content="Document" />
+
+</head>
+
+<body>
+
+
+
+
+  
+
+
+</body>
+<script>
+    
+        function splitInfo(str) {
+            var search = str.split('&');
+            var result = {};
+            for (var i = 0; i != search.length; ++i) {
+                var index = search[i].split('=');
+                if (index.length != 2)
+                    continue;
+                result[index[0]] = decodeURIComponent(index[1]);
+            }
+            return result;
+        };
+
+        function toInfo(url) {
+            //正则提取
+            url = decodeURI(url);
+            var regex = /^((?:https|http|file|ftp):)\/\/([a-zA-Z0-9.]*)(?::([0-9]+))?(\/[^?#]*)?(\?[^#]*)?(#.*)?$/;
+            var regexInfo = regex.exec(url);
+
+            //分析各部分数据
+            var info = {
+                protocol: regexInfo[1],
+                hostname: regexInfo[2],
+                port: regexInfo[3],
+                pathname: regexInfo[4],
+                search: regexInfo[5],
+                hash: regexInfo[6]
+            }
+
+            if (info.search) {
+                info.search = splitInfo(info.search.substr(1));
+            } else {
+                info.search = {};
+            }
+
+            if (info.hash) {
+                info.hash = splitInfo(info.hash.substr(1));
+            } else {
+                info.hash = {};
+            }
+
+            return info;
+        };
+
+        function getUrl() {
+            if (arguments.length >= 2)
+                var url = arguments[1];
+            else
+                var url = window.location.href;
+            return url;
+        };
+
+        function getQueryArgv(name) {
+            var url = getUrl();
+            var search = toInfo(url).search;
+            if (search[name])
+                return search[name];
+            else
+                return null;
+        };
+
+
+        var myUserId = getQueryArgv('myUserId');
+
+location.href = '/data/upload/image/distribution/images/poster/index.html?myUserId='+myUserId;
+
+</script>
+
+

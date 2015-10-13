@@ -19,7 +19,6 @@ class ClientLogin extends CI_Controller {
 		$data = $this->argv->checkGet(array(
 			array('userId','require')
 		));
-
 		return $this->clientLoginAo->checkMustLogin($data['userId'])['clientId'];
 	}
 

@@ -1,0 +1,69 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var productId = $.location.getQueryArgv('productId');
+		var product = {};
+
+		function getProductInfo(next){
+			$.post('/points/getProductInfo', {'productId': productId}, function(data) {
+				data = $.JSON.parse(data);
+				if(data.code != 0){
+					dialog,message(data.msg);
+					return;
+				}
+				product = data.data;
+				next();
+			});
+		}
+
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'productName',type:'text',name:'标题'},
+					{id:'productImg',type:'image',name:'图片',option:{url:'/upload/image',width:640}},
+					{id:'price',type:'text',name:'原始价格'},
+					{id:'points',type:'text',name:'兑换积分'},
+					{id:'num',type:'text',name:'库存'},
+				],
+				value:product,
+				submit:function(data){
+					if( productId != null ){
+						data = $.extend({productId:productId},data);
+						$.post('/points/mod',{'data':data,'productId':productId},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							history.back();
+						});
+					}else{
+						$.post('/points/add',{'data':data},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							history.back();
+						});
+					}
+				},
+				cancel:function(){
+					history.back();
+				}
+			});
+		}
+
+		if(productId){
+			getProductInfo(go);
+		}else{
+			go();
+		}
+
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

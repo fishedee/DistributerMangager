@@ -4,6 +4,9 @@
 	<meta name="viewport" content="width=320,initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=medium-dpi">
 	<link rel="stylesheet" href="./common/distribution/vote.css">
 	<style>
+        body{
+            display: none;
+        }
         .vote-entry {
             min-height: 30px;
         }
@@ -18,7 +21,7 @@
 	<div class="content">
         <div class="content-body">
             <div class="vote-title with-bs-bottom">
-                <h2 class="title ellipsis">分销商申请表</h2>
+                <h2 class="title ellipsis">请补全以下信息</h2>
             </div>
             <div class="vote-details" action="/v2/apps/vote/vote.json?alias=i777ov4i&amp;p=1">
 
@@ -31,12 +34,11 @@
                     </h4>
                     </div>
                     <div class="control_conts">
-                        <input name="name" class="w_txt" type="text" value="">
-
+                        <input name="name" class="w_txt" type="text" value="" readonly="readonly">
                     </div>
                 </div>
 
-                <div class="vote-entry" data-type="text" data-title="您的姓名" data-id="8176940" required="">
+                <!-- <div class="vote-entry" data-type="text" data-title="您的姓名" data-id="8176940" required="">
                     <div class="control_title">
                         <h3 class="title">
                             <em class="required">[必选]</em>
@@ -48,9 +50,9 @@
                         <input name="password" class="w_txt" type="password" value="">
 
                     </div>
-                </div>
+                </div> -->
 
-                <div class="vote-entry" data-type="text" data-title="您的姓名" data-id="8176940" required="">
+                <!-- <div class="vote-entry" data-type="text" data-title="您的姓名" data-id="8176940" required="">
                     <div class="control_title">
                         <h3 class="title">
                             <em class="required">[必选]</em>
@@ -62,7 +64,7 @@
                         <input name="password2" class="w_txt" type="password" value="">
 
                     </div>
-                </div>
+                </div> -->
 
                 <div class="vote-entry" data-type="text" data-title="您的姓名" data-id="8176940" required="">
                     <div class="control_title">
@@ -106,7 +108,7 @@
                     </div>
                 </div>
 
-                <div class="vote-entry" data-type="text" data-title="您的姓名" data-id="8176940" required="">
+                <!-- <div class="vote-entry" data-type="text" data-title="您的姓名" data-id="8176940" required="">
                     <div class="control_title">
                         <h3 class="title">
                             <em class="required">[必选]</em>
@@ -118,7 +120,7 @@
                         <input name="email" class="w_txt" type="text" value="">
 
                     </div>
-                </div>
+                </div> -->
 
                 <div class="vote-entry custom-richtext">
                     <p style="text-align: left;"><span style="text-align: center;">感谢您耐心填写，工作人员会在1-2个工作日内联系您</span>
@@ -135,56 +137,114 @@
                 <div class="paginations clearfix first">
                     <button class="submit">提交</button>
                 </div>
-
-
             </div>
-
 		</div>
-
     </div>
 </body>
 <script type="text/javascript">
 	var $ = require('common/core/core.js');
-	 $.checkMustLogin(function(){
-		$('.submit').click(function () {
-	        var username = $('input[name=name]').val();
-	        var password = $('input[name=password]').val();
-            var password2= $('input[name=password2]').val();
+    var userId = 0;
+    var userInfo = {};
+    var has = 0;
+    function checkClientId(next){
+        $.get('/user/checkClientId',{}, function(data) {
+            // data = $.JSON.parse(data);
+            if(data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            data = data.data;
+            userId = data[0]['userId'];
+            next();
+        });
+    }
+
+    function checkMyDegree(next){
+        $.get('/distribution/checkMyDegree',{'myUserId':userId},function(data) {
+            // data = $.JSON.parse(data);
+            if(data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            data = data.data;
+            if(data == 1){
+                has = 1;
+            }else{
+                has = 0;
+            }
+            next();
+        });
+    }
+
+    function getUserInfo(next){
+        $.post('/user/getInfo',{'myUserId':userId},function(data) {
+            // data = $.JSON.parse(data);
+            if(data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            data = data.data;
+            userInfo = data;
+            $('input[name=name]').val(userInfo['name']);
+            $('body').show();;
+            next();
+        });
+    }
+
+    function go(){
+        $('.submit').click(function () {
+            if(has == 0){
+                alert('您已经建立了分成关系');
+                return false;
+            }
+            var username = $('input[name=name]').val();
+            // var password = $('input[name=password]').val();
+            // var password2= $('input[name=password2]').val();
             var phone    = $('input[name=phone]').val();
             var company  = $('input[name=company]').val();
             var telephone= $('input[name=telephone]').val();
-            var email    = $('input[name=email]').val();
-            if(password != password2){
-                alert('两次密码不一致');
-                return false;
-            }
-	        $.ajax({
-	        	url: '/distribution/askReg',
-	        	type: 'POST',
-	        	dataType: 'JSON',
-	        	data: {
-	        		name: username,
-	        		password: password,
-                    password2: password2,
+            // var email    = $('input[name=email]').val();
+            // if(password != password2){
+            //     alert('两次密码不一致');
+            //     return false;
+            // }
+            $.ajax({
+                url: '/user/complete',
+                type: 'POST',
+                dataType: 'JSON',
+                data: {
+                    myUserId:userId,
+                    name: username,
+                    // password: password,
+                    // password2: password2,
                     phone   : phone,
                     company : company,
                     telephone: telephone,
-                    email   : email
-	        	},
-	        	success:function(data){
-	        		// data = $.JSON.parse(data);
-	        		if(data.code != 0){
-	        			alert(data.msg);
-	        			return false;
-	        		}
-	        		alert('申请已经提交,工作人员很快处理');
-	        		location.reload();
-	        	},
-	        	error:function(){
+                    // email   : email
+                },
+                success:function(data){
+                    // alert(data);
+                    // data = $.JSON.parse(data);
+                    if(data.code != 0){
+                        alert(data.msg);
+                        return;
+                    }
+                    // alert('申请已经提交,工作人员很快处理');
+                    location.reload();
+                },
+                error:function(){
 
-	        	}
-	        })
-	    });
+                }
+            })
+        });
+    }
+
+	 $.checkMustLogin(function(){
+        checkClientId(function(){
+            checkMyDegree(function(){
+                getUserInfo(go);
+            })
+        })
 	 });
 </script>
 <link rel="import" href="footer.html?__inline">

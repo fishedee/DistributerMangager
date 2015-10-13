@@ -9,6 +9,11 @@ class DistributionAo extends CI_Model
         $this->load->model('user/userAo','userAo');
         $this->load->model('client/clientAo','clientAo');
         $this->load->model('user/loginAo','loginAo');
+        $this->load->model('user/userPermissionDb','userPermissionDb');
+        $this->load->model('distribution/distributionQrCodeAo','distributionQrCodeAo');
+        $this->load->model('order/orderAo','orderAo');
+        $this->load->model('distribution/distributionOrderAo','distributionOrderAo');
+        $this->load->model('user/userAppAo','userAppAo');
     }
 
     public function getFixedPrice($price){
@@ -28,13 +33,28 @@ class DistributionAo extends CI_Model
     }
 
     public function search($where, $limit){
-        $data = $this->distributionDb->search($where, $limit);
-
-        foreach($data['data'] as $key=>$value){
-            $data['data'][$key] = $this->getOtherInfo($data['data'][$key]);
+        if(isset($where['userId'])){
+            $userId = $where['userId'];
+            unset($where['userId']);
+            //判断是否为厂家
+            $result = $this->userPermissionDb->checkPermissionId($userId,$this->userPermissionEnum->VENDER);
+            if($result){
+                $vender = 1;
+            }else{
+                $vender = 0;
+            }
+            $data = $this->distributionDb->search($where, $limit,$userId,$vender);
+        }else{
+            $data = $this->distributionDb->search($where,$limit);
+        }
+        if($data['data']){
+            foreach($data['data'] as $key=>$value){
+                $data['data'][$key] = $this->getOtherInfo($data['data'][$key]);
+            }
         }
         return $data;
     }
+
 
     public function getAcceptLinkNum($upUserId){
         return $this->search(
@@ -69,7 +89,8 @@ class DistributionAo extends CI_Model
             'downUserId'=>$downUserId,
             'state'=>$this->distributionStateEnum->ON_ACCEPT
         ),array());
-        if($data['count'] != 0 )
+        // if($data['count'] != 0 )
+        if($data['data'])
             throw new CI_MyException(1,'已经存在'.$upUserId.'->'.$downUserId.'之间的分成关系，请勿重复添加');
 
         if($agree == 0){
@@ -103,9 +124,10 @@ class DistributionAo extends CI_Model
 
     public function get($userId, $distributionId){
         $distribution = $this->distributionDb->get($distributionId);
-        if($distribution['upUserId'] != $userId && $distribution['downUserId'] != $userId)
-            throw new CI_MyException(1, "无权查询此非本用户的分成关系");
-         
+        if($userId != $distribution['vender']){
+            if($distribution['upUserId'] != $userId && $distribution['downUserId'] != $userId)
+                throw new CI_MyException(1, "无权查询此非本用户的分成关系");
+        }
         $distribution = $this->getOtherInfo($distribution);
         return $distribution;
     }
@@ -119,8 +141,10 @@ class DistributionAo extends CI_Model
             throw new CI_MyException(1,'不存在该分成关系');
 
         $distribution = $data['data'][0];
-        if($distribution['upUserId'] != $userId && $distribution['downUserId'] != $userId)
-            throw new CI_MyException(1, "无权查询此非本用户的分成关系");
+        if($userId != $distribution['vender']){
+            if($distribution['upUserId'] != $userId && $distribution['downUserId'] != $userId)
+                throw new CI_MyException(1, "无权查询此非本用户的分成关系");
+        }
         $distribution = $this->getOtherInfo($distribution);
         
         return $distribution;
@@ -137,13 +161,39 @@ class DistributionAo extends CI_Model
 
     public function request($upUserId, $downUserId){
         $this->check($upUserId, $downUserId);
+        //判断是否为厂家
+        $result = $this->userPermissionDb->checkPermissionId($upUserId,$this->userPermissionEnum->VENDER);
         $userInfo = $this->userAo->get($downUserId);
-        $this->distributionDb->add(array(
+        $data = array(
             'upUserId'=>$upUserId,
             'downUserId'=>$downUserId,
             'state'=>$this->distributionStateEnum->ON_REQUEST,
             'phone'=>$userInfo['phone'],
-        )); 
+        );
+        if($result){
+            //查找line
+            $line = $this->distributionDb->checkLine($upUserId);
+            $line = $line[0]["MAX(line)"];
+            //厂家
+            $data['remark'] = '1级代理商';
+            $data['scort']  = 1;
+            $data['distributionPercent'] = 800;
+            if($line){
+                $data['line'] = $line + 1;
+            }else{
+                $data['line'] = 1;
+            }
+            $data['vender']  = $upUserId;
+        }else{
+            //非厂家
+            // $upUserIdInfo = $this->distributionDb->getUpUserInfo($upUserId);
+        }
+        if(strstr($_SERVER['HTTP_HOST'], $upUserId)){
+            $data['shopUrl'] = 'http://'.$_SERVER['HTTP_HOST'].'/'.$downUserId.'/item.html';
+        }else{
+            $data['shopUrl'] = 'http://'.$upUserId.'.'.$_SERVER['HTTP_HOST'].'/'.$downUserId.'/item.html';
+        }
+        return $this->distributionDb->add($data); 
     }
 
     public function accept($userId,$distributionId){
@@ -154,21 +204,22 @@ class DistributionAo extends CI_Model
         if(preg_match('/^http:\/\/\d+\.[^\/]+\/\d+\/item\.html$/',$distribution['shopUrl']) == 0 )
             throw new CI_MyException(1, "请设置正确的商城URL");
 
+        $this->distributionQrCodeAo->createQrCode($userId,$distribution);
         $result = $this->distributionDb->mod($distributionId,array(
             'state'=>$this->distributionStateEnum->ON_ACCEPT
         ));
-        if($result){
-            //发送邮件
-            $downUserId = $distribution['downUserId'];
-            $userInfo   = $this->userAo->get($downUserId);
-            $arr['user'] = $userInfo['email'];
-            $arr['name'] = $userInfo['company'] ? $userInfo['company'] : '贵公司';
-            $address[] = $arr;
-            $title      = '分销商申请已经通过';
-            $content    = '已经通过您的分销商申请,系统信件不用回复';
-            $this->load->library('MyEmail','','email');
-            $this->email->send($address,$title,$content);
-        }
+        // if($result){
+        //     //发送邮件
+        //     $downUserId = $distribution['downUserId'];
+        //     $userInfo   = $this->userAo->get($downUserId);
+        //     $arr['user'] = $userInfo['email'];
+        //     $arr['name'] = $userInfo['company'] ? $userInfo['company'] : '贵公司';
+        //     $address[] = $arr;
+        //     $title      = '分销商申请已经通过';
+        //     $content    = '已经通过您的分销商申请,系统信件不用回复';
+        //     $this->load->library('MyEmail','','email');
+        //     $this->email->send($address,$title,$content);
+        // }
     }
 
     public function modPrecent($userId,$distributionId,$distributionPercentShow,$shopUrl){
@@ -237,7 +288,10 @@ class DistributionAo extends CI_Model
     }
 
     //绑定
-    public function bind($userId,$clientId,$username,$password){
+    public function bind($userId,$clientId,$username,$password,$code){
+        if($code != $this->session->userdata('phone_code')){
+            throw new CI_MyException(1,'验证码错误');
+        }
         $this->loginAo->login($username,$password);
         if($this->session->userdata('userId')){
             $userInfo   = $this->userAo->get($this->session->userdata('userId'));
@@ -249,6 +303,7 @@ class DistributionAo extends CI_Model
             //验证openId 是否存在
             $result     = $this->userAo->searchOpenId($openId);
             if($result == FALSE){
+                $this->session->unset_userdata('phone_code');
                 return $this->userAo->bind($this->session->userdata('userId'),$openId);
             }else{
                throw new CI_MyException(1, "该openId已经被绑定");
@@ -311,11 +366,39 @@ class DistributionAo extends CI_Model
         if($userId == $askUserId){
             throw new CI_MyException(1, "自己不用申请");
         }
-        return $this->request($userId, $askUserId);
+        $distributionId = $this->request($userId, $askUserId);
+        $distribution = $this->get($userId,$distributionId);
+        return $this->distributionQrCodeAo->createQrCode($userId,$distribution);
     }
 
     //手机端分销商申请 没有账号 进行注册
     public function askReg($upUserId,$data){
+        //判断有无账号
+        $clientId = $data['clientId'];
+        //先判断有无分配账号
+        $result = $this->userAo->checkUserClientId($clientId);
+        if($result){
+            //判断有无分成关系
+            $downUserId = $result[0]['userId'];
+            $result = $this->distributionDb->checkHasDistribution($upUserId,$downUserId);
+            if($result){
+                throw new CI_MyException(1,'您已经建立分成关系');
+            }else{
+                throw new CI_MyException(1,'您已经分配好账号密码');
+            }
+        }else{
+            $downUserId = $this->userAo->add($data);
+            if(!$downUserId){
+                throw new CI_MyException(1, "账号申请失败");
+            }
+            $userInfo['zhanghao'] = $data['name'];
+            $userInfo['mima']     = $data['password'];
+            return $this->ask($upUserId,$userInfo);
+        }
+    }
+
+    //扫描二维码
+    public function scanAskReg($upUserId,$data){
         $downUserId = $this->userAo->add($data);
         if(!$downUserId){
             throw new CI_MyException(1, "账号申请失败");
@@ -323,6 +406,453 @@ class DistributionAo extends CI_Model
         $userInfo['zhanghao'] = $data['name'];
         $userInfo['mima']     = $data['password'];
         return $this->ask($upUserId,$userInfo);
+    }
+
+    //判断有无上级
+    public function judgeUp($upUserId){
+        $result = $this->distributionDb->judgeUp($upUserId);
+        return $result;
+    }
+
+    /**
+     * 扫描自动成为分销商
+     * openId:申请的微信用户
+     * vender:厂家
+     * upUserId:上线用户
+     * line:所属分销队伍
+     */
+    public function qrCodeAsk($openId,$vender,$upUserId,$line){
+        $this->load->model('user/userTypeEnum','userTypeEnum');
+        //先根据openid查询clientId
+        $client['userId'] = $vender;
+        $client['type']   = 2;
+        $client['openId'] = $openId;
+        $clientId = $this->clientAo->addOnce($client);
+        //根据clientId 查询是否绑定用户
+        $result = $this->userAo->checkUserClientId($clientId);
+        if($result){
+            //有这个用户
+            $downUserId = $result[0]['userId'];
+        }else{
+            //没有 系统分配用户
+            $userInfo = $this->userAo->get($vender);
+            $username = 'weiyd'.$userInfo['name'].$userInfo['distributionNum'];
+            $password = '123456';
+            $data['name'] = $username;
+            $data['password'] = $password;
+            $data['password2']= $password;
+            $data['company']  = $client['nickName'].'(系统自动分配)';
+            $data['telephone'] = '0000';
+            $data['phone'] = '00000000000';
+            $data['type']  = $this->userTypeEnum->CLIENT;
+            $data['clientId'] = $clientId;
+            //非登录用户只能添加商城用户
+            unset($data['permission']);
+            //非登陆用户，注册账号有普通商城和普通分销权限
+            $data['permission']=array(2,3);
+            unset($data['client']);
+            $downUserId = $this->userAo->add($data);
+            if($downUserId){
+                //更新
+                $data = array();
+                $data['distributionNum'] = $userInfo['distributionNum'] + 1;
+                $this->userAo->mod($vender,$data);
+            }else{
+                $content = "系统分配账号密码失败";
+                return $content;die;
+            }
+        }
+        //判断这个用户有无上线
+        $result = $this->checkUp($vender,$downUserId);
+        if($result){
+            //有上线 不能再申请
+            $hasUpUserId = $result[0]['upUserId'];
+            $hasUpUserName = $this->userAo->getUserName($hasUpUserId);
+            $content = "您已经有上线:".$hasUpUserName.",不能继续申请";
+            return $content;die;
+        }else{
+            //没上线 申请 首先查询上线信息
+            $distribution = $this->getUp($vender,$upUserId);
+            if(!$distribution){
+                $content = "分成信息出错";
+                return $content;die;
+            }else{
+                $line = $distribution[0]['line'];
+                $scort= $distribution[0]['scort'] + 1;
+                $data = array(
+                    'upUserId'=>$upUserId,
+                    'downUserId'=>$downUserId,
+                    'state'=>$this->distributionStateEnum->ON_ACCEPT,
+                    'phone'=>'00000000000',
+                    'remark'=>$scort.'级分销商',
+                    'distributionPercent'=>1000,
+                    'line'=>$line,
+                    'scort'=>$scort,
+                    'vender'=>$vender,
+                    'parent_id'=>$distribution[0]['distributionId'],
+                    'shopUrl'=>'http://'.$upUserId.'.'.$_SERVER['HTTP_HOST'].'/'.$downUserId.'/item.html'
+                );
+                $result = $this->distributionDb->add($data);
+                if($result){
+                    //创建二维码
+                    $distribution = $this->getDistribution($result);
+                    if(!$distribution){
+                        $content = "获取分成关系失败";
+                        return $content;die;
+                    }
+                    $distribution = $distribution[0];
+                    $hasUpUserName = $this->userAo->getUserName($distribution['upUserId']);
+                    $this->distributionQrCodeAo->createQrCode($vender,$distribution);
+                    //为上级增加积分
+                    $upUserInfo = $this->userAo->get($upUserId);
+                    $upUserClientId = $upUserInfo['clientId'];
+                    $this->load->model('client/scoreAo','scoreAo');
+                    $this->scoreAo->askDistribution($vender,$upUserClientId);
+                    $content = "恭喜你成为".$hasUpUserName."的分销商.您的账号是:".$username.",密码:".$password;
+                    //推送客服消息
+                    $upClientInfo = $this->clientAo->get($vender,$upUserClientId);
+                    $upOpenId     = $upClientInfo['openId'];
+                    $this->load->model('weixin/wxSubscribeAo','wxSubscribeAo');
+                    $weixinSubscribe = $this->wxSubscribeAo->search($vender,array('remark'=>'新朋友'),'')['data'][0];
+                    $weixinSubscribeId = $weixinSubscribe['weixinSubscribeId'];
+                    $graphic=$this->wxSubscribeAo->graphicSearch($vender,$weixinSubscribeId);
+                    // var_dump($graphic);die;
+                    $this->load->model('user/userAppAo','userAppAo');
+                    $info   = $this->userAppAo->getTokenAndTicket($vender);
+                    $access_token = $info['appAccessToken'];
+                    $url = 'https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token='.$access_token;
+                    $arr['touser'] = $upOpenId;
+                    $arr['msgtype']= 'news';
+                    $data = array();
+                    $data['title'] = urlencode($graphic[0]['Title']);
+                    $data['description'] = urlencode($graphic[0]['Description']);
+                    $data['url']   = 'http://'.$vender.'.'.$_SERVER["HTTP_HOST"].'/'.$vender.'/distribution/center.html';
+                    $data['picurl']= 'http://'.$_SERVER["HTTP_HOST"].$graphic[0]['PicUrl'];
+                    $arr['news']['articles'][] = $data;
+                    $this->load->library('http');
+                    $httpResponse = $this->http->ajax(array(
+                        'url'=>$url,
+                        'type'=>'post',
+                        'data'=>urldecode(json_encode($arr)),
+                        'dataType'=>'plain',
+                        'responseType'=>'json'
+                    ));
+                    return $content;die;
+                }else{
+                    $content = "分成建立失败";
+                    return $content;die;
+                }
+            }
+        }
+    }
+
+    //判断openid有无账号
+    public function checkUserClientId2($vender,$openId){
+        $this->load->model('user/userTypeEnum','userTypeEnum');
+        //先根据openid查询clientId
+        $client['userId'] = $vender;
+        $client['type']   = 2;
+        $client['openId'] = $openId;
+        $clientId = $this->clientAo->addOnce($client);
+        //根据clientId 查询是否绑定用户
+        $result = $this->userAo->checkUserClientId($clientId);
+        if($result){
+            //有账号
+            $userId = $result[0]['userId'];
+        }else{
+            //无账号 分配
+            $userInfo = $this->userAo->get($vender);
+            $username = 'weiyd'.$userInfo['name'].$userInfo['distributionNum'];
+            $password = '123456';
+            $data['name'] = $username;
+            $data['password'] = $password;
+            $data['password2']= $password;
+            $data['company']  = $client['nickName'].'(系统自动分配)';
+            $data['telephone'] = '0000';
+            $data['phone'] = '00000000000';
+            $data['type']  = $this->userTypeEnum->CLIENT;
+            $data['clientId'] = $clientId;
+            //非登录用户只能添加商城用户
+            unset($data['permission']);
+            //非登陆用户，注册账号有普通商城和普通分销权限
+            $data['permission']=array(2,3);
+            unset($data['client']);
+            $downUserId = $this->userAo->add($data);
+            if($downUserId){
+                //更新
+                $data = array();
+                $data['distributionNum'] = $userInfo['distributionNum'] + 1;
+                $this->userAo->mod($vender,$data);
+                
+                $userAppInfo = $this->userAppAo->get($vender);
+                $content = "恭喜您成为".$userAppInfo['appName']."下的一名会员,您的账号是:".$username.',密码是:'.$password.'。您目前还没有开通分销中心,赶快申请成为一级代理商或者成为别人的分销吧';
+                return $content;die;
+            }else{
+                $content = "系统分配账号密码失败";
+                return $content;die;
+            }
+        }
+    }
+
+    //获取上线信息
+    public function getUp($vender,$upUserId){
+        return $this->distributionDb->getUp($vender,$upUserId);
+    }
+
+    //判断有无上线
+    public function checkUp($vender,$downUserId){
+        return $this->distributionDb->checkUp($vender,$downUserId);
+    }
+
+    //判断有无建立分成关系
+    public function checkHasDistribution($ToUserName,$openId){
+        //获取厂家id
+        $vender = $this->userAppAo->getUserId($ToUserName);
+        //获取clientId
+        $client['userId'] = $vender;
+        $client['type']   = 2;
+        $client['openId'] = $openId;
+        $clientId = $this->clientAo->addOnce($client);
+        //先判断有无分配账号
+        $result = $this->userAo->checkUserClientId($clientId);
+        if($result){
+            //判断有无分成关系
+            $downUserId = $result[0]['userId'];
+            $result = $this->distributionDb->checkHasDistribution($vender,$downUserId);
+            if($result){
+                return TRUE;
+            }else{
+                return FALSE;
+            }
+        }else{
+            return FALSE;
+        }
+    }
+
+    //获取分成关系
+    public function getDistribution($distributionId){
+        return $this->distributionDb->getDistribution($distributionId);
+    }
+
+    //我的盟友
+    public function myAllies($vender,$myUserId){
+        $result = $this->distributionDb->myAllies($vender,$myUserId);
+        $sum = $result['first'] + $result['second'];
+        return array($sum,$result['first'],$result['second']);
+    }
+
+    //获取我的盟友信息
+    public function getAllies($vender,$myUserId,$allies){
+        $info = $this->distributionDb->getAllies($vender,$myUserId,$allies);
+        $data = $info['data'];
+        foreach ($data as $key => $value) {
+            $clientId = $this->userAo->getClientIdFromUser($value['downUserId']);
+            $clientInfo = $this->clientAo->get($vender,$clientId);
+            $data[$key]['nickName'] = base64_decode($clientInfo['nickName']);
+            $data[$key]['headImgUrl'] = $clientInfo['headImgUrl'];
+
+            //计算销售数量
+            $data[$key]['num'] = $this->orderAo->getOrderNum($vender,$value['downUserId']);
+
+            //计算分成
+            $fall = $this->distributionOrderAo->getDistributionPrice($vender,$value['downUserId'])['fall'];
+            $data[$key]['fall'] = $fall;
+
+        }
+        $info['data'] = $data;
+        return $info;
+    }
+
+    //获得一级代理商
+    public function getTopAllies($vender,$allies){
+        $info = $this->distributionDb->getTopAllies($vender,$allies);
+        $data = $info['data'];
+        foreach ($data as $key => $value) {
+            $clientId = $this->userAo->getClientIdFromUser($value['downUserId']);
+            $clientInfo = $this->clientAo->get($vender,$clientId);
+            $data[$key]['nickName'] = base64_decode($clientInfo['nickName']);
+            $data[$key]['headImgUrl'] = $clientInfo['headImgUrl'];
+
+            //计算销售数量
+            $data[$key]['num'] = $this->orderAo->getOrderNum($vender,$value['downUserId']);
+
+            //计算分成
+            $fall = $this->distributionOrderAo->getDistributionPrice($vender,$value['downUserId'])['fall'];
+            $data[$key]['fall'] = $fall;
+
+        }
+        $info['data'] = $data;
+        return $info;
+    }
+
+    private $distributionLink = array();
+
+    private function dfs2($vender,$userId){
+        if($vender == $userId){
+            return true;
+        }
+        //获取id是第几级分销
+        $result = $this->distributionDb->getScort($vender,$userId);
+        if(!$result){
+            return false;
+        }
+        //获取一级代理商
+        $line = $result[0]['line'];
+        $oneInfo = $this->distributionDb->getOneScort($vender,$line);
+        $this->distributionLink[0]['distributionId'] = $oneInfo[0]['distributionId'];
+        $this->distributionLink[0]['upUserId']       = $oneInfo[0]['upUserId'];
+        $this->distributionLink[0]['downUserId']     = $oneInfo[0]['downUserId'];
+        $scort = $result[0]['scort'];
+        if($scort > 3){
+            //获取上一级信息
+            $twoInfo = $this->distributionDb->checkUp($vender,$result[0]['upUserId']);
+            if(!$twoInfo){
+                throw new CI_MyException(1,'无效二级以上分销');
+            }
+            //获取再上一级信息
+            $threeInfo = $this->distributionDb->checkUp($vender,$twoInfo[0]['upUserId']);
+            $this->distributionLink[1]['distributionId']   = $twoInfo[0]['distributionId'];
+            $this->distributionLink[1]['upUserId']         = $twoInfo[0]['upUserId'];
+            $this->distributionLink[1]['downUserId']       = $result[0]['upUserId'];
+            $this->distributionLink[2]['distributionId']   = $threeInfo[0]['distributionId'];
+            $this->distributionLink[2]['upUserId']         = $threeInfo[0]['upUserId'];
+            $this->distributionLink[2]['downUserId']       = $twoInfo[0]['upUserId'];
+            $this->distributionLink[3]['distributionId']   = $result[0]['distributionId'];
+            $this->distributionLink[3]['upUserId']         = $result[0]['upUserId'];
+            $this->distributionLink[3]['downUserId']       = $result[0]['downUserId'];
+        }elseif($scort == 3){
+            //获取上一级信息
+            $twoInfo = $this->distributionDb->checkUp($vender,$result[0]['upUserId']);
+            if(!$twoInfo){
+                throw new CI_MyException(1,'无效二级以上分销');
+            }
+            $this->distributionLink[1]['distributionId']   = $twoInfo[0]['distributionId'];
+            $this->distributionLink[1]['upUserId']         = $twoInfo[0]['upUserId'];
+            $this->distributionLink[1]['downUserId']       = $result[0]['upUserId'];
+            $this->distributionLink[2]['distributionId']   = $result[0]['distributionId'];
+            $this->distributionLink[2]['upUserId']         = $result[0]['upUserId'];
+            $this->distributionLink[2]['downUserId']       = $result[0]['downUserId'];
+        }elseif($scort == 2){
+            $this->distributionLink[1]['distributionId']   = $result[0]['distributionId'];
+            $this->distributionLink[1]['upUserId']         = $result[0]['upUserId'];
+            $this->distributionLink[1]['downUserId']       = $result[0]['downUserId'];
+        }
+        return true;
+    }
+
+    // 获取可获分成的user
+    public function getLinks($vender,$userId){
+        $this->dfs2($vender,$userId);
+        return $this->distributionLink;
+    }
+
+    //检测我的等级
+    public function checkMyDegree($vender,$myUserId){
+        $result = $this->distributionDb->checkMyDegree($vender,$myUserId);
+        if($result){
+            return 0;
+        }else{
+            return 1;
+        }
+    }
+
+    //升级总代理
+    public function upgrade($vender,$distributionId){
+        $distribution = $this->get($vender,$distributionId);
+        $line = $distribution['line'];
+        //获取最大跟最小
+        // $info = $this->distributionDb->getMaxAndMin($vender,$line);
+        // $max  = $info[0]['MAX[scort]'];
+        // $min  = $info[0]['MAX[scort]'];
+        if($distribution['scort'] == 1){
+            throw new CI_MyException(1,'已经是一级代理商');
+        }
+        $after = $this->distributionDb->getAfter($vender,$distribution['scort'],$line);
+        $line  = $this->distributionDb->checkLine($vender);
+        $line = $line[0]["MAX(line)"];
+        $scort = 1;
+        foreach ($after as $key => $value) {
+            if($key == 0){
+                $data['line'] = $line + 1;
+                $data['scort']= $scort;
+                $data['distributionPercent'] = 800;
+                $data['remark'] = $scort.'级代理商';
+            }else{
+                $data['line'] = $line + 1;
+                $data['scort']= $scort;
+                $data['distributionPercent'] = 1000;
+                $data['remark'] = $scort.'级代理商';
+            }
+            $this->distributionDb->mod($value['distributionId'],$data);
+            $scort++;
+        }
+        return 1;
+    }
+
+    //推荐总代
+    public function recommend($vender,$distributionId){
+        $distribution = $this->get($vender,$distributionId);
+        if($distribution['scort'] != 1){
+            throw new CI_MyException(1,'只能推荐总代');
+        }
+        if($distribution['recommend'] == 1){
+            $data['recommend'] = 0;
+        }else{
+            $data['recommend'] = 1;
+        }
+        return $this->distributionDb->mod($distributionId,$data);
+    }
+
+    //获取推荐信息
+    public function getRecommend($userId){
+        $info = $this->distributionDb->getRecommend($userId);
+        if($info){
+            $arr = array();
+            foreach ($info as $key => $value) {
+                $userInfo = $this->userAo->get($value['downUserId']);
+                $data = array();
+                $data['company'] = $userInfo['company'];
+                // $data['company'] = 1;
+                $clientInfo = $this->clientAo->get($userId,$userInfo['clientId']);
+                $data['img'] = $clientInfo['headImgUrl'];
+                $data['nickName'] = $clientInfo['nickName'];
+                $data['url'] = 'http://'.$userId.'.'.$_SERVER[HTTP_HOST].'/'.$userId.'/distribution/myqrcode.html?myUserId='.$value['downUserId'];
+                $arr[] = $data;
+            }
+            return $arr;
+        }else{
+            return 0;
+        }
+    }
+
+    //获取商家信息
+    public function getBusinessInfo($userId,$clientId){
+        $userInfo = $this->userAo->get($userId);
+        $clientInfo = $this->clientAo->get($userId,$clientId);
+        if($userInfo['openId'] != $clientInfo['openId']){
+            throw new CI_MyException(1,'非法登陆');
+        }
+        //获取应付佣金
+        $needPay  = $this->distributionOrderAo->getNeedPay($userId);
+        //获取下线各级人数
+        $maxScort = $this->distributionDb->getMaxScort($userId);
+        $maxScort = $maxScort[0]['MAX(scort)'];
+        $down = array();
+        $sumPeople = 0;
+        for ($i=1; $i < $maxScort+1; $i++) { 
+            $down[$i] = $this->distributionDb->getScortNum($userId,$i);
+            $sumPeople += $down[$i];
+        }
+        //获取有多少提现需要处理
+        $this->load->model('withdraw/withDrawAo','withDrawAo');
+        $withDrawNum = $this->withDrawAo->getNeedHandleNum($userId,0);
+        $arr['name'] = $userInfo['name'];
+        $arr['score']    = $userInfo['score'];
+        $arr['needPay']  = sprintf('%.2f',$needPay/100);
+        $arr['sumPeople']= $sumPeople;
+        $arr['down']     = $down;
+        $arr['withDrawNum'] = $withDrawNum;
+        return $arr;
     }
 }
 

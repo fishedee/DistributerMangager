@@ -1,2 +1,15 @@
-array (
-)
+'<xml>
+<ToUserName><![CDATA[oMhf-t5mF-9mr4yfCY2nW4hApaUI]]></ToUserName>
+<FromUserName><![CDATA[gh_9affaf27e789]]></FromUserName>
+<CreateTime>1444718477</CreateTime>
+<MsgType><![CDATA[news]]></MsgType>
+<ArticleCount>1</ArticleCount>
+<Articles>
+    <item>
+        <Title><![CDATA[我的二维码]]></Title>
+        <Description><![CDATA[扫描发展下线]]></Description>
+        <PicUrl><![CDATA[http://shop.liushisigua.comhttps://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=gQH67zoAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xLzJFeVgzcXJsUDNsR2FTZkpxMlQyAAIEIXMcVgMEAAAAAA==]]></PicUrl>
+        <Url><![CDATA[http://10007.shop.liushisigua.com/10094/distribution/myqrcode.html?myUserId=10094]]></Url>
+    </item>
+</Articles>
+</xml>'

@@ -76,7 +76,7 @@ class Wxreply extends CI_Model {
     }
     
     //找回复内容
-    public function content($postObj){
+    public function content($postObj,$EventKey=''){
     	//搜索userId
     	$weixinNum=$postObj->ToUserName;
     	$this->load->model('user/userAppDb','userAppDb');
@@ -88,17 +88,99 @@ class Wxreply extends CI_Model {
     	switch ($postObj->Event)
     	{
     		case "subscribe":
-    			$weixinSubscribe=$this->wxSubscribeAo->search($userId,array('isRelease'=>2),'')['data'][0];//'isRelease'=>2 已发布
-    			$weixinSubscribeId=$weixinSubscribe['weixinSubscribeId'];
+                //检测是否开通了高级分成功能
+                $this->load->model('user/userPermissionDb','userPermissionDb');
+                $condition['permissionId'] = 5;
+                $result = $this->userPermissionDb->checkPermissionId2($userId,$condition);
+                if($result){
+                    $this->load->model('distribution/distributionAo');
+                    $key = $postObj->EventKey;
+                    $openId = $postObj->FromUserName;
+                    if(strstr($key, 'qrscene')){
+                        $info = substr($key, strpos($key, '_')+1);
+                        $info = explode(',', $info);
+                        $vender = $info[0];
+                        $upUserId = $info[1];
+                        $line   = $info[2];
+                        //扫描成为分销商
+                        $content = $this->distributionAo->qrCodeAsk($openId,$vender,$upUserId,$line);
+                        return $this->transmitText($postObj,$content);
+                    }else{
+                        //判断openid是否分配了账号
+                        $result = $this->distributionAo->checkUserClientId2($userId,$openId);
+                        return $this->transmitText($postObj,$result);
+                    }
+                }else{
+                    $weixinSubscribe=$this->wxSubscribeAo->search($userId,array('isRelease'=>2),'')['data'][0];//'isRelease'=>2 已发布
+                    $weixinSubscribeId=$weixinSubscribe['weixinSubscribeId'];
+                }
     			break;
     		case "CLICK":
-    			$weixinSubscribe=$this->wxSubscribeAo->search($userId,array('weixinSubscribeId'=>$postObj->EventKey),'')['data'][0];
+                if($postObj->EventKey == 'distribution'){
+                    $weixinSubscribe = $this->wxSubscribeAo->search($userId,array('remark'=>'申请分销'),'')['data'][0];
+                    $weixinSubscribeId = $weixinSubscribe['weixinSubscribeId'];
+                }elseif($postObj->EventKey == 'qrcode'){
+                	//先判断有无分成关系 若无分成关系 则没有分配二维码
+                	$this->load->model('distribution/distributionAo');
+                	$ToUserName   = $postObj->ToUserName; //开发者微信号
+                	$openId = $postObj->FromUserName;
+                	$result = $this->distributionAo->checkHasDistribution($ToUserName,$openId);
+                	if($result){
+                		//发送图文信息 我的二维码
+	                    $this->load->model('user/userAo','userAo');
+	                    $info   = $this->userAo->myQrCode($userId,$openId);
+	                    return $this->transmitNews($postObj,$info,$postObj->EventKey);
+                	}else{
+                		//无建立分成关系
+                		return $this->transmitText($postObj,'您还没有建立分成关系,赶快申请成为一级代理商或者成为别人分销商吧!');
+                	}
+                }elseif($postObj->EventKey == 'checkin'){
+                    //签到
+                    $this->load->model('client/scoreAo','scoreAo');
+                    $openId = $postObj->FromUserName;
+                    $ToUserName = $postObj->ToUserName;
+                    $result = $this->scoreAo->checkIn($ToUserName,$openId);
+                    return $this->transmitText($postObj,$result);
+                }elseif($postObj->EventKey == 'recommend'){
+                    $this->load->model('distribution/distributionAo','distributionAo');
+                    $info = $this->distributionAo->getRecommend($userId);
+                    if($info == 0){
+                        return $this->transmitText($postObj,'该厂家没有设置推荐人');
+                    }else{
+                        return $this->transmitNews($postObj,$info,$postObj->EventKey);
+                        // return $this->transmitText($postObj,$info);
+                        // return $this->transmitText($postObj,implode($info, ','));
+                    }
+                }
     			break;
             case 'user_get_card':
                 $this->load->model('member/memberAo','memberAo');
                 $this->memberAo->testAdd();
                 break;
-    	
+            case 'SCAN':
+                if($postObj->EventKey == 'distribution'){
+                    $this->load->model('distribution/distributionQrCodeAo','distributionQrCodeAo');
+                    $openId = $postObj->FromUserName;
+                    $content = $this->distributionQrCodeAo->qrAsk2($userId,$openId);
+                    return $this->transmitText($postObj,$content);
+                    break;
+                }elseif(strstr($postObj->EventKey, 'board')){
+                    $weixinSubscribe = $this->wxSubscribeAo->search($userId,array('remark'=>'订餐入口'),'')['data'][0];
+                    $weixinSubscribeId = $weixinSubscribe['weixinSubscribeId'];
+                    break;
+                }else{
+                    $info = $postObj->EventKey;
+                    $openId = $postObj->FromUserName;
+                    $info = explode(',', $info);
+                    $vender = $info[0];
+                    $upUserId = $info[1];
+                    $line   = $info[2];
+                    //扫描成为分销商
+                    $this->load->model('distribution/distributionAo');
+                    $content = $this->distributionAo->qrCodeAsk($openId,$vender,$upUserId,$line);
+                    return $this->transmitText($postObj,$content);
+                }
+                break;
     	}
 
     	$weixinSubscribeId=$weixinSubscribe['weixinSubscribeId'];
@@ -117,7 +199,7 @@ class Wxreply extends CI_Model {
     			break;
     		//单图文
     		case 2:
-    			return $this->transmitNews($postObj,$graphic);
+    			return $this->transmitNews($postObj,$graphic,$EventKey);
     			break;
     		//单图文
     		case 3:
@@ -145,11 +227,23 @@ class Wxreply extends CI_Model {
                 $ToUserName   = $object->ToUserName; //开发者微信号
                 $UserCardCode = $object->UserCardCode;
                 $openid = $object->FromUserName;
-                // $CreateTime = $object->CreateTime;
                 $CardId = $object->CardId;
-                // $this->load->model('member/memberAo','memberAo');
                 $this->load->model('vip/vipAo','vipAo');
                 $this->vipAo->addMember($UserCardCode,$openid,$ToUserName,$CardId);
+                break;
+            case 'SCAN':
+                if($object->EventKey == 'distribution'){
+                    return $this->content($object);
+                }elseif(strstr($object->EventKey, 'board')){
+                    $this->load->model('client/clientAo','clientAo');
+                    $openId = $object->FromUserName;
+                    $EventKey = $object->EventKey;
+                    $ToUserName = $object->ToUserName;
+                    $this->clientAo->scanInfo($ToUserName,$openId);
+                    return $this->content($object);
+                }else{
+                    return $this->content($object);
+                }
                 break;
             
         }
@@ -316,12 +410,27 @@ $item_str
     }
 
     //回复图文消息
-    public function transmitNews($object, $graphic)
+    public function transmitNews($object, $graphic,$EventKey)
     {
     	$content = array();
-    	foreach ($graphic as $v){
-    		$content[] = array("Title"=>$v['Title'], "Description"=>$v['Description'], "PicUrl"=>'http://'.$_SERVER[HTTP_HOST].$v['PicUrl'], "Url" =>$v['Url']);
-    	}
+    	// foreach ($graphic as $v){
+     //        $content[] = array("Title"=>$v['Title'], "Description"=>$v['Description'], "PicUrl"=>'http://'.$_SERVER[HTTP_HOST].$v['PicUrl'], "Url" =>$v['Url']);
+    	// }
+
+        if(strstr($object->EventKey, 'board')){
+        	$EventKey = substr($object->EventKey, 5);
+            foreach ($graphic as $v) {
+                $content[] = array("Title"=>$v['Title'],"Description"=>"点击进入第".$EventKey."号桌","PicUrl"=>'http://'.$_SERVER[HTTP_HOST].$v['PicUrl'], "Url"=>$v['Url'].'?boardNum='.$EventKey);
+            }
+        }elseif($EventKey == 'recommend'){
+            foreach ($graphic as $key => $v) {
+                $content[] = array("Title"=>$v['company'],"Description"=>base64_decode($v['nickName']),"PicUrl"=>$v['img'], "Url"=>$v['url']);
+            }
+        }else{
+            foreach ($graphic as $v){
+                $content[] = array("Title"=>$v['Title'],"Description"=>$v['Description'], "PicUrl"=>'http://'.$_SERVER[HTTP_HOST].$v['PicUrl'], "Url" =>$v['Url']);
+            }
+        }
     	
     	
         if(!is_array($content)){

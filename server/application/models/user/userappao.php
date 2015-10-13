@@ -30,6 +30,16 @@ class UserAppAo extends CI_Model{
 		return $user;
 	}
 
+	public function checkToken($userId){
+		//获取userApp
+		$userApp = $this->get($userId);
+		if( trim($userApp['appAccessToken']) == '' || strtotime($userApp['appAccessTokenExpire']) - time() < 60 ){
+			return 0;
+		}else{
+			return 1;
+		}
+	}
+
 	public function getTokenAndTicket($userId){
 		//获取userApp
 		$userApp = $this->get($userId);
@@ -45,7 +55,7 @@ class UserAppAo extends CI_Model{
 
 		//刷新accessToken
 		if( trim($userApp['appAccessToken']) == '' 
-			|| strtotime($userApp['appAccessTokenExpire']) - time() < 60 ){
+			|| strtotime($userApp['appAccessTokenExpire']) - time() < 3600 ){
 			$accessToken = $this->wxSdk3->getAccessToken();
 
 			$this->userAppDb->modByUser($userId,array(
@@ -68,6 +78,15 @@ class UserAppAo extends CI_Model{
 
 			$userApp['appJsApiTicket'] = $jsApiTicket['ticket'];
 		}
+
+		// $accessToken = $this->wxSdk3->getAccessToken();
+
+		// $this->userAppDb->modByUser($userId,array(
+		// 	'appAccessToken'=>$accessToken['access_token'],
+		// 	'appAccessTokenExpire'=>date('Y-m-d H:i:s',$accessToken['expires_in'] + time())
+		// ));
+
+		// $userApp['appAccessToken'] = $accessToken['access_token'];
 
 		return $userApp;
 	}
@@ -181,5 +200,34 @@ class UserAppAo extends CI_Model{
 	//根据微信号获取userId
 	public function getUserId($ToUserName){
 		return $this->userAppDb->getUserId($ToUserName);
+	}
+
+	//修改店铺名
+	public function modAppName($myUserId,$appName){
+		if(!$myUserId){
+			throw new CI_MyException(1,'无效用户ID');
+		}
+		if(!$appName){
+			throw new CI_MyException(1,'店铺名不能为空');
+		}
+		$data['appName'] = $appName;
+		return $this->userAppDb->modByUser($myUserId,$data);
+	}
+
+	//获取店铺名
+	public function getAppName($myUserId){
+		$this->addOnce($myUserId);
+		$userAppInfo = $this->get($myUserId);
+		if($userAppInfo){
+			return $userAppInfo['appName'];
+		}else{
+			throw new CI_MyException(1,'无效用户ID');
+		}
+	}
+
+	//获取海报
+	public function getPoster($userId){
+		$userAppInfo = $this->get($userId);
+		return $userAppInfo['poster'];
 	}
 }

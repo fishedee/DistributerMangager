@@ -1,0 +1,273 @@
+<link rel="import" href="./../header.html?__inline">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>微易点</title>
+    <link rel="stylesheet" href="./../common/distributioncss/index.css">
+    <link rel="stylesheet" href="./../common/distributioncss/footer.css">
+</head>
+<body>
+</body>
+<script type="text/javascript">
+    var $ = require('/fishstrap/core/global.js');
+    require('./../common/distribution/distribution.js');
+    var clientInfo = {};
+    var userId = 0;
+    var username = '';
+    var telephone = '';
+    var itemUrl = '';
+    var orderUrl= '';
+    var centerUrl = '';
+    var has = 0;
+    var orderNum = 0;
+    function checkMustLogin(next){
+        $.get('/clientlogin/islogin',{},function(data){
+            data = $.JSON.parse(data);
+            if( data.code != 0 ){
+                location.href = $.url.buildQueryUrl('/clientlogin/wxlogin',{callback:location.href});
+                return;
+            }
+            clientId = data.data;
+            next();
+        });
+    }
+    //检测系统是否已经分配账号
+    function checkClientId(next){
+        $.get('/user/checkClientId',{}, function(data) {
+            data = $.JSON.parse(data);
+            if(data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            data = data.data;
+            if(data.length){
+                userId = data[0]['userId'];
+                itemUrl= 'http://'+location.host+'/'+userId+'/item.html';
+                orderUrl = 'http://'+location.host+'/'+userId+'/deal.html';
+                centerUrl= 'http://'+location.host+'/'+userId+'/distribution/index.html';
+            }else{
+                // alert('您还没有分配会员账号');
+                itemUrl = 'javascript:;';
+                orderUrl= 'javascript:;';
+                centerUrl = 'javascript:;';
+            }
+            next();
+        });
+    }
+
+    //获取微信用户信息
+    function getClientInfo(next){
+        $.get('/client/getClientInfo',{}, function(data) {
+            data = $.JSON.parse(data);
+            if(data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            clientInfo = data.data;
+            next();
+        });
+    }
+
+    //获取微易点用户信息
+    function getUserInfo(next){
+        $.get('/user/getUserName',{'userIds':userId},function(data){
+            data = $.JSON.parse(data);
+            if(data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            username = data.data;
+            next();
+        })
+    }
+
+    //获取公众号信息
+    function getUserAppInfo(next){
+        $.get('/user/get',{'distribution':1},function(data){
+            data = $.JSON.parse(data);
+            if(data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            data = data.data;
+            telephone = data;
+            next();
+        })
+    }
+
+    //检测我的分成是否建立
+    function checkMyDegree(next){
+        $.get('/distribution/checkMyDegree',{'myUserId':userId},function(data) {
+            data = $.JSON.parse(data);
+            if(data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            data = data.data;
+            if(data == 1){
+                has = 0;
+            }else{
+                has = 1;
+            }
+            next();
+        });
+    }
+
+    //获取订单数量
+    function getOrderNum(next){
+        $.get('/deal/getOrderNum',{'myUserId':userId}, function(data) {
+            data = $.JSON.parse(data);
+            if(data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            orderNum = data.data;
+            next();
+        });
+    }
+
+    //重置页面元素
+    function go(){
+        var distributionCenter = '';
+        if(has == 1){
+            distributionCenter = "<ul class='distribution'>\
+                                    <a href='./center.html'>\
+                                        <li name='center'>\
+                                            分销中心\
+                                            <img src='/data/upload/image/distribution/images/icon/8.png' alt='' class='right'>\
+                                        </li>\
+                                    </a>\
+                                </ul>";
+        }
+        var html = "<div class='top'>\
+                       <img src='/data/upload/image/distribution/images/icon/3.png' alt=''>\
+                        会员中心\
+                    </div>\
+                    <div class='userInfo'>\
+                        <div class='container'>\
+                            <div class='headInfo'>\
+                                <img src='"+clientInfo.headImgUrl+"' alt=''>\
+                            </div>\
+                            <div class='info'>\
+                                <p>会员Id："+username+"</p>\
+                                <p>微信昵称："+clientInfo.nickName+"</p>\
+                                <p>关注时间："+clientInfo.createTime+"</p>\
+                            </div>\
+                        </div>\
+                    </div>\
+                    <div class='menu'>\
+                        <div class='menu_icon'>\
+                            <div class='icon'>\
+                                <a href='./../deal.html'>\
+                                    <img src='/data/upload/image/distribution/images/icon/4.png' alt=''>\
+                                </a>\
+                            </div>\
+                            <span class='num'>"+orderNum+"</span>\
+                            <div class='icon_title'>\
+                                我的订单\
+                            </div>\
+                        </div>\
+                        <div class='menu_icon'>\
+                            <div class='icon'>\
+                                <a href='./score.html'>\
+                                    <img src='/data/upload/image/distribution/images/icon/5.png' alt=''>\
+                                </a>\
+                            </div>\
+                            <span class='num'>"+clientInfo.score+"</span>\
+                            <div class='icon_title'>\
+                                积分\
+                            </div>\
+                        </div>\
+                        <div class='menu_icon'>\
+                            <div class='icon'>\
+                                <img src='/data/upload/image/distribution/images/icon/15.png' alt=''>\
+                            </div>\
+                            <div class='icon_title'>\
+                                兑换奖品\
+                            </div>\
+                        </div>\
+                        <div class='menu_icon'>\
+                            <div class='icon'>\
+                                <a href='./moneylog.html'>\
+                                    <img src='/data/upload/image/distribution/images/icon/7.png' alt=''>\
+                                </a>\
+                            </div>\
+                            <span class='num price'>"+clientInfo.fall+"</span>\
+                            <div class='icon_title'>\
+                                余额\
+                            </div>\
+                        </div>\
+                    </div>\
+                    "+distributionCenter+"\
+                    <ul class='distribution'>\
+                        <a href='tel:"+telephone+"'>\
+                            <li class='selected' name='custom'>\
+                                呼叫客服\
+                                <img src='/data/upload/image/distribution/images/icon/8.png' alt='' class='right'>\
+                            </li>\
+                        </a>\
+                        <a href='./info.html'>\
+                            <li class='selected' name='user'>\
+                                用户信息\
+                                <img src='/data/upload/image/distribution/images/icon/8.png' alt='' class='right'>\
+                            </li>\
+                        </a>\
+                        <a href='./../deal.html'>\
+                            <li class='selected' name='order'>\
+                                我的订单\
+                                <img src='/data/upload/image/distribution/images/icon/8.png' alt='' class='right'>\
+                            </li>\
+                        </a>\
+                        <a href='./../address.html'>\
+                            <li class='selected' name='address'>\
+                                收货地址\
+                                <img src='/data/upload/image/distribution/images/icon/8.png' alt='' class='right'>\
+                            </li>\
+                        </a>\
+                        <li class='selected' name='shop'>\
+                            进入积分商城\
+                            <img src='/data/upload/image/distribution/images/icon/8.png' alt='' class='right'>\
+                        </li>\
+                    </ul>\
+                    <div class='blank'></div>\
+                    <div class='footer'>\
+                        <div class='list'>\
+                            <div class='item'>\
+                                <div class='img sp'></div>\
+                                <a href='"+itemUrl+"'><p>商品</p></a>\
+                            </div>\
+                            <div class='item'>\
+                                <div class='img dd'></div>\
+                                <a href='"+orderUrl+"'><p>订单</p></a>\
+                            </div>\
+                            <div class='item'>\
+                                <div class='img hyzx active'></div>\
+                                <a href='"+centerUrl+"'><p>会员中心</p></a>\
+                            </div>\
+                        </div>\
+                    </div>";
+        $('body').html(html);
+    }
+
+    $('.distribution li').click(function() {
+        if($(this).attr('name') == 'center'){
+            //分销中心
+            window.location.href = 'center.html';
+        }
+    });
+
+    checkMustLogin(function(){
+        checkClientId(function(){
+            getClientInfo(function(){
+                getUserInfo(function(){
+                    getUserAppInfo(function(){
+                        checkMyDegree(function(){
+                            getOrderNum(go);
+                        });
+                    });
+                });
+            });
+        })
+    });
+
+</script>
+<link rel="import" href="./../footer.html?__inline">

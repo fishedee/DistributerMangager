@@ -35,7 +35,7 @@ class DistributionOrderAo extends CI_Model
             $shopCommodityId = $value['shopCommodityId'];
             $distributionOrder['order']['commodity'][$key]['distributionPrice'] = $this->getFixedPrice(
                 $idToCommodity[$shopCommodityId]['price']
-            ); 
+            );
             if( $distributionOrder['order']['commodity'][$key]['distributionPrice'] != 0 ){
                 $distributionOrder['order']['commodity'] [$key]['distributionPrecent'] = $this->getFixedPrice(
                     $distributionOrder['order']['commodity'] [$key]['distributionPrice']/
@@ -48,25 +48,45 @@ class DistributionOrderAo extends CI_Model
         }
         $distributionOrder['shopOrderId'] = $distributionOrder['order']['shopOrderId'];
         $distributionOrder['shopOrderPrice'] = $distributionOrder['order']['priceShow'];
+        // var_dump($distributionOrder);die;
         return $distributionOrder;
     }
 
     public function search($where, $limit){
-        //拉出订单信息
-        $data = $this->distributionOrderDb->search($where, $limit);
+        if(isset($where['userId'])){
+            $userId = $where['userId'];
+            unset($where['userId']);
+            //判断是否为厂家
+            $result = $this->userPermissionDb->checkPermissionId($userId,$this->userPermissionEnum->VENDER);
+            if($result){
+                $vender = $userId;
+            }else{
+                $vender = 0;
+            }
+            //拉出订单信息
+            $data = $this->distributionOrderDb->search($where, $limit,$vender);
+        }else{
+            //拉出订单信息
+            $data = $this->distributionOrderDb->search($where, $limit);
+        }
         
         //拉出分成订单详细信息
-        foreach($data['data'] as $key=>$distributionOrder)
+        foreach($data['data'] as $key=>$distributionOrder){
             $data['data'][$key] = $this->getOrderDetailInfo($distributionOrder);
-
+            $distribution = $this->distributionAo->get($distributionOrder['vender'],$distributionOrder['distributionId']);
+            $data['data'][$key]['distributionPercent'] = $this->getFixedPrice($distributionOrder['price']/$data['data'][$key]['shopOrderPrice']);
+        }
+        // var_dump($data);die;
         return $data;
     }
 
     public function get($userId,$distributionOrderId){
         //拉出分成订单基础信息
         $distributionOrder = $this->distributionOrderDb->get($distributionOrderId);
-        if($distributionOrder['upUserId'] != $userId && $distributionOrder['downUserId'] != $userId )
-            throw new CI_MyException(1,'没有此权限查看此分成订单');
+        if($userId != $distributionOrder['vender']){
+            if($distributionOrder['upUserId'] != $userId && $distributionOrder['downUserId'] != $userId )
+                throw new CI_MyException(1,'没有此权限查看此分成订单');
+        }
 
         //拉出分成订单详细信息
         return $this->getOrderDetailInfo($distributionOrder);
@@ -77,8 +97,10 @@ class DistributionOrderAo extends CI_Model
         $order = $this->distributionOrderDb->get($distributionOrderId);
         if($order['state'] != $this->distributionOrderStateEnum->UN_PAY)
             throw new CI_MyException(1, '只有“未付款”订单才能设置“付款中”状态');
-        if($userId != $order['upUserId'])
-            throw new CI_MyException(1, '无权操作此分成订单');
+        if($userId != $order['vender']){
+            if($userId != $order['upUserId'])
+                throw new CI_MyException(1, '无权操作此分成订单');
+        }
 
         //修改分成订单的各个商品的分成金额
         $totalPrice = 0;
@@ -97,6 +119,35 @@ class DistributionOrderAo extends CI_Model
             'state'=>$this->distributionOrderStateEnum->IN_PAY,
             'price'=>$totalPrice
         ));
+
+        //更新用户信息下的用户余额
+        $downUserId = $order['downUserId'];
+        $info = $this->distributionOrderDb->getDistributionPrice($userId,$downUserId);
+        $sales= 0;
+        $fall = 0;
+        foreach ($info as $key => $value) {
+            $shopOrder = $this->orderAo->get($value['shopOrderId']);
+            $sales += $shopOrder['price'];
+            $fall  += $value['price'];
+        }
+        $downUserInfo = $this->userAo->get($downUserId);
+        $clientId     = $downUserInfo['clientId'];
+        $this->load->model('client/clientAo');
+        $data['sales'] = $sales;
+        $data['fall']  = $fall;
+        $this->clientAo->mod($userId,$clientId,$data);
+
+        //写入账户明细
+        $this->load->model('withdraw/moneyLogDb','moneyLogDb');
+        //写入账户明细
+        $data = array();
+        $data['vender'] = $userId;
+        $data['money']  = $totalPrice;
+        $data['dis']    = 1;
+        $data['clientId'] = $clientId;
+        $data['remark'] = '分销分成';
+        $data['createTime'] = date('Y-m-d H:i:s',time());
+        $this->moneyLogDb->add($data);
     }
 
     public function hasPayOrder($userId, $distributionOrderId){
@@ -125,5 +176,31 @@ class DistributionOrderAo extends CI_Model
         $this->distributionOrderDb->mod($distributionOrderId, array(
             'state'=>$this->distributionOrderStateEnum->HAS_CONFIRM
         ));
+    }
+
+    //获取分销分成
+    public function getDistributionPrice($vender,$myUserId){
+        $info = $this->distributionOrderDb->getDistributionPrice($vender,$myUserId);
+        $sales= 0;
+        $fall = 0;
+        foreach ($info as $key => $value) {
+            $shopOrder = $this->orderAo->get($value['shopOrderId']);
+            $sales += $shopOrder['price'];
+            $fall  += $value['price'];
+        }
+        return array(
+            'sales'=>sprintf('%.2f',($sales/100)),
+            'fall' =>sprintf('%.2f',($fall/100))
+            );
+    }
+
+    //获取应付佣金
+    public function getNeedPay($vender){
+        $info = $this->distributionOrderDb->getNeedPay($vender);
+        $sum  = 0;
+        foreach ($info as $key => $value) {
+            $sum += $value['price'];
+        }
+        return $sum;
     }
 }

@@ -1,0 +1,291 @@
+<link rel="import" href="./../header.html?__inline">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>分销中心 触屏版</title>
+    <link rel="stylesheet" href="./../common/distributioncss/index.css">
+    <link rel="stylesheet" href="./../common/distributioncss/footer.css">
+    <style>
+        .acount_info{
+            height: 60px;
+            background: #FFDFB6;
+            width: 100%;
+            text-align: center;
+        }
+        .acount_info p{
+            height: 28px;
+            line-height: 28px;
+        }
+        .center{
+            width: 100%;
+            height: auto;
+        }
+        .center .distribution>li{
+            border-bottom: 1px solid #E6E6E6;
+        }
+        .center .distribution li img.left{
+            width: 18px;
+            height: 18px;
+            display: inline-block;
+            position: relative;
+            top: 3px;
+        }
+        .center .distribution li span{
+            position: relative;
+/*            top: -3px;*/
+            font-size: 14px;
+        }
+        .center .distribution li span.ally{
+            background: red;
+            text-align: center;
+            line-height: 25px;
+            color: white;
+            border-radius: 5px;
+            position: absolute;
+            display: inline-block;
+            width: 50px;
+            height: 25px;
+            top: 5px;
+            right: 2%;
+        }
+        .center .distribution li span.ally_count{
+            position: absolute;
+            right: 11%;
+            color: red;
+        }
+        .center .distribution>li>ul{
+            margin-left: 1%;
+        }
+        .center .distribution>li>ul>li{
+            border-bottom: 1px dashed #DFDFDF;
+            position: relative;
+        }
+        .center .distribution>li>ul>li:last-child{
+            margin-bottom: 10px;
+        }
+        .center .distribution a{
+            text-decoration: none;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+</body>
+<script type="text/javascript">
+    var $ = require('/fishstrap/core/global.js');
+    require('./../common/distribution/distribution.js');
+    var clientInfo = {};
+    var userId = 0;
+    var username = '';
+    var Allies = {};
+    var sales  = 0;
+    var fall   = 0;
+    var itemUrl = '';
+    var orderUrl= '';
+    var centerUrl = '';
+    var userInfo = '';
+    function checkMustLogin(next){
+        $.get('/clientlogin/islogin',{},function(data){
+            data = $.JSON.parse(data);
+            if( data.code != 0 ){
+                location.href = $.url.buildQueryUrl('/clientlogin/wxlogin',{callback:location.href});
+                return;
+            }
+            clientId = data.data;
+            next();
+        });
+    }
+
+    //检测系统是否已经分配账号
+    function checkClientId(next){
+        $.get('/user/checkClientId',{}, function(data) {
+            data = $.JSON.parse(data);
+            if(data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            data = data.data;
+            userId = data[0]['userId'];
+            itemUrl= 'http://'+location.host+'/'+userId+'/item.html';
+            orderUrl = 'http://'+location.host+'/'+userId+'/deal.html';
+            centerUrl= 'http://'+location.host+'/'+userId+'/distribution/index.html';
+            next();
+        });
+    }
+
+    //获取微信用户信息
+    function getClientInfo(next){
+        $.get('/client/getClientInfo',{}, function(data) {
+            data = $.JSON.parse(data);
+            if(data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            clientInfo = data.data;
+            next();
+        });
+    }
+
+    //获取微易点用户信息
+    function getUserInfo(next){
+        $.get('/user/getUserName',{'userIds':userId},function(data){
+            data = $.JSON.parse(data);
+            if(data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            username = data.data;
+            next();
+        })
+    }
+
+    //获取我的盟友
+    function myAllies(next){
+        $.get('/distribution/myAllies',{'clientId':clientInfo.clientId,'userIds':userId},function(data){
+            data = $.JSON.parse(data);
+            if(data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            data = data.data;
+            Allies = data;
+            next();
+        })
+    }
+
+    //获取分销分成
+    function getDistributionPrice(next){
+        $.get('/distributionorder/getDistributionPrice',{'myUserId':userId}, function(data) {
+            data = $.JSON.parse(data);
+            if(data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            data = data.data;
+            sales= data.sales;
+            fall = data.fall;
+            next();
+        });
+    }
+
+    //获取商家信息
+    function getBusinessInfo(next){
+        $.post('/distribution/getBusinessInfo', {}, function(data) {
+            data = $.JSON.parse(data);
+            if(data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            userInfo = data.data;
+            next();
+        });
+    }
+
+    //重置页面元素
+    function go(){
+
+        var down = "";
+        $.each(userInfo['down'],function(index,val) {
+            if(index == 1){
+                down += "<a href='./topmember.html?myUserId="+userId+"&allies=1'>\
+                            <li>\
+                                <img src='/data/upload/image/distribution/images/icon/10.png' alt='' class='left'>\
+                                <span>高级会员</span>\
+                                <span class='ally_count'>"+val+"人</span>\
+                                <img src='/data/upload/image/distribution/images/icon/8.png' alt='' class='right'>\
+                            </li>\
+                        </a>";
+            }else{
+                down += "<li>\
+                            <img src='/data/upload/image/distribution/images/icon/10.png' alt='' class='left'>\
+                            <span>"+index+"级会员</span>\
+                            <span class='ally_count'>"+val+"人</span>\
+                        </li>";
+            }
+        });
+
+        var html = "<div class='top'>\
+                       <img src='/data/upload/image/distribution/images/icon/3.png' alt=''>\
+                        商家中心\
+                    </div>\
+                    <div class='userInfo'>\
+                        <div class='container'>\
+                            <div class='headInfo'>\
+                                <img src='"+clientInfo.headImgUrl+"' alt=''>\
+                            </div>\
+                            <div class='info'>\
+                                <p>账号："+userInfo['name']+"</p>\
+                                <p>微信昵称："+clientInfo.nickName+"</p>\
+                            </div>\
+                        </div>\
+                    </div>\
+                    <div class='acount_info'>\
+                        <p>应付佣金：￥"+userInfo['needPay']+"</p>\
+                        <p>积分剩余："+userInfo['score']+"</p>\
+                    </div>\
+                    <div class='center'>\
+                        <ul class='distribution'>\
+                            <li>\
+                                <img src='/data/upload/image/distribution/images/icon/9.png' alt='' class='left'>\
+                                <span>会员中心</span>\
+                                <span class='ally'>"+userInfo['sumPeople']+"人</span>\
+                                <ul>\
+                                "+down+"\
+                                </ul>\
+                            </li>\
+                            <li>\
+                                <img src='/data/upload/image/distribution/images/icon/9.png' alt='' class='left'>\
+                                <span>提现申请</span>\
+                                <span class='ally'>"+userInfo['withDrawNum']+"</span>\
+                                <ul>\
+                                    <li>\
+                                        <img src='/data/upload/image/distribution/images/icon/10.png' alt='' class='left'>\
+                                        <span>提现申请列表</span>\
+                                        <img src='/data/upload/image/distribution/images/icon/8.png' alt='' class='right'>\
+                                    </li>\
+                                </ul>\
+                            </li>\
+                        </ul>\
+                    </div>\
+                    <div class='blank'></div>\
+                    <div class='footer'>\
+                        <div class='list'>\
+                            <div class='item'>\
+                                <div class='img sp'></div>\
+                                <a href='"+itemUrl+"'><p>商品</p></a>\
+                            </div>\
+                            <div class='item'>\
+                                <div class='img dd'></div>\
+                                <a href='"+orderUrl+"'><p>订单</p></a>\
+                            </div>\
+                            <div class='item'>\
+                                <div class='img hyzx active'></div>\
+                                <a href='"+centerUrl+"'><p>会员中心</p></a>\
+                            </div>\
+                        </div>\
+                    </div>";
+        $('body').html(html);
+    }
+
+    $('.distribution li').click(function() {
+        if($(this).attr('name') == 'center'){
+            //分销中心
+            window.location.href = 'center.html';
+        }
+    });
+
+    checkMustLogin(function(){
+        checkClientId(function(){
+            getClientInfo(function(){
+                getUserInfo(function(){
+                    myAllies(function(){
+                        getDistributionPrice(function(){
+                            getBusinessInfo(go);
+                        });
+                    });
+                });
+            });
+        })
+    });
+
+</script>
+<link rel="import" href="./../footer.html?__inline">

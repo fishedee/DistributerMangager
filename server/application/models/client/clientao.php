@@ -29,7 +29,7 @@ class ClientAo extends CI_Model {
 		if( $client['userId'] != $userId )
 			throw new CI_MyException(1,'非本商城用户无权限操作');
 
-		$this->clientDb->mod($clientId,$data);
+		return $this->clientDb->mod($clientId,$data);
 	}
 	
 	public function addOnce($data){
@@ -62,9 +62,13 @@ class ClientAo extends CI_Model {
 			'dataType'=>'plain',
 			'responseType'=>'json'
 		));
+		if(isset($yonghu['body']['errcode'])){
+			throw new CI_MyException(1,$yonghu['body']['errmsg']);
+		}
 		$yonghu = $yonghu['body'];
     	if($yonghu['subscribe']){
-    		$nickname 	= $yonghu['nickname'];
+    		// $nickname 	= $yonghu['nickname'];
+    		$nickname   = base64_encode($yonghu['nickname']);
     		$headimgurl = $yonghu['headimgurl'];
     	}else{
     		$nickname 	= '用户没关注';
@@ -80,6 +84,11 @@ class ClientAo extends CI_Model {
 		return $this->clientDb->getClientId($openId);
 	}
 
+	public function getClientAndAdd($userId,$openId){
+		$this->load->model('client/clientWxLoginAo','clientWxLoginAo');
+		return $this->clientDb->getClientId($openId);
+	}
+
 	//判断有无关注
 	public function judgeSub($userId,$clientId){
 		$clientInfo = $this->get($userId,$clientId);
@@ -92,7 +101,25 @@ class ClientAo extends CI_Model {
 
 	//获取用户信息
 	public function getUserInfo($dataWhere,$dataLimit){
-		return $this->clientDb->getUserInfo($dataWhere,$dataLimit);
+		$result = $this->clientDb->getUserInfo($dataWhere,$dataLimit);
+		foreach ($result['data'] as $key => $value) {
+			$nickName = $value['nickName'];
+			$result['data'][$key]['nickName'] = base64_decode($nickName);
+		}
+		return $result;
 	}
 
+
+	public function scan($userId,$clientId,$boardNum){
+		return $this->clientDb->scan($userId,$clientId,$boardNum);
+	}
+
+	public function scanInfo($ToUserName,$openId){
+        $userId = $this->userAppAo->getUserId($ToUserName);
+        $data['openId'] = $openId;
+        $data['userId'] = $userId;
+        $data['type']   = 2;
+        $clientId = $this->addOnce($data);
+        return $this->clientDb->scanInfo($clientId);
+	}
 }

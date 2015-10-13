@@ -9,6 +9,7 @@ class Client extends CI_Controller {
 		$this->load->model('client/clientTypeEnum','clientTypeEnum');
 		$this->load->model('user/loginAo','loginAo');
 		$this->load->library('argv','argv');
+		$this->load->model('client/clientLoginAo','clientLoginAo');
     }
 	
 	/**
@@ -83,6 +84,31 @@ class Client extends CI_Controller {
 		$dataWhere['userId'] = $this->session->userdata('userId');
 		$result = $this->clientAo->getUserInfo($dataWhere,$dataLimit);
 		return $result;
+	}
+
+	/**
+	 * @view json
+	 * 获取用户信息
+	 */
+	public function getClientInfo(){
+		if($this->input->is_ajax_request()){
+			//检查输入参数
+			$data = $this->argv->checkPost(array(
+				array('userId','require'),
+			));
+			$userId = $data['userId'];
+
+			//检查权限
+			$client = $this->clientLoginAo->checkMustLogin($userId);
+			$clientId = $client['clientId'];
+
+			$result = $this->clientAo->get($userId,$clientId);
+			$result['nickName'] = base64_decode($result['nickName']);
+			$result['createTime'] = date('Y-m-d',strtotime($result['createTime']));
+			$result['fall'] = sprintf('%.2f',$result['fall']/100);
+			$result['sales'] = sprintf('%.2f',$result['sales']/100);
+			return $result;
+		}
 	}
 	
 }

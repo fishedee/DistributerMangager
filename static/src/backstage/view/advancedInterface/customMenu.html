@@ -3,6 +3,7 @@
 1、自定义菜单最多包括3个一级菜单，每个一级菜单最多包含5个二级菜单。</br>
 2、一级菜单最多4个汉字，二级菜单最多7个汉字，多出来的部分将会以“...”代替。</br>
 3、创建自定义菜单后，由于微信客户端缓存，需要24小时微信客户端才会展现出来。测试时可以尝试取消关注公众账号后再次关注，则可以看到创建后的效果。
+4、key值为选填项，若key为空，则默认采用view跳转网页方式;若有key值，则采用CLICK点击相应方式。
 </div>
 <div id="container">
 </div>
@@ -34,6 +35,7 @@
 							column:[
 								{id:'name',type:'text',name:'子菜单标题'},
 								{id:'url',type:'text',name:'子菜单链接'},
+								{id:'key',type:'text',name:'key值'}
 							],
 							operate:[
 							{
@@ -86,6 +88,7 @@
 							}]
 						}
 					},
+					{id:'key1',type:'text',name:'key值(选填)'},
 					{id:'name2',type:'text',name:'第二栏主菜单标题'},
 					{id:'url2',type:'text',name:'第二栏主菜单链接(如果该子菜单有内容，该项不用填写)'},
 					{id:'sub_button2',type:'table',name:'第二栏子菜单内容',
@@ -93,6 +96,7 @@
 							column:[
 								{id:'name',type:'text',name:'子菜单标题'},
 								{id:'url',type:'text',name:'子菜单链接'},
+								{id:'key',type:'text',name:'key值'}
 							],
 							operate:[
 							{
@@ -145,6 +149,7 @@
 							}]
 						}
 					},
+					{id:'key2',type:'text',name:'key值(选填)'},
 					{id:'name3',type:'text',name:'第三栏主菜单标题'},
 					{id:'url3',type:'text',name:'第三栏主菜单链接(如果该子菜单有内容，该项不用填写)'},
 					{id:'sub_button3',type:'table',name:'第三栏子菜单内容',
@@ -152,6 +157,7 @@
 							column:[
 								{id:'name',type:'text',name:'子菜单标题'},
 								{id:'url',type:'text',name:'子菜单链接'},
+								{id:'key',type:'text',name:'key值'}
 							],
 							operate:[
 							{
@@ -204,6 +210,7 @@
 							}]
 						}
 					},
+					{id:'key3',type:'text',name:'key值(选填)'},
 				],
 				value:Menu,
 				submit:function(data){

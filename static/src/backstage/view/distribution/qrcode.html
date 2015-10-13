@@ -1,0 +1,45 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		var subPage = require('/fishstrap/page/subPage.js');
+		var clientType = {};
+		function go(){
+			query.simpleQuery({
+				id:'container',
+				url:'/distribution/qrCode',
+				column:[
+					{id:'userId',type:'text',name:'用户ID'},
+					{id:'qrcode',type:'image',name:'我的二维码'}
+				],
+				operate:[],
+				button:[
+				{
+					name:'生成二维码',
+					click:function(){
+						$.ajax({
+							url: '/distribution/createQrCode',
+							type: 'GET',
+							dataType: 'JSON',
+							success:function(data){
+								data = $.JSON.parse(data);
+								if(data.code != 0){
+									dialog(data.msg);
+									return;
+								}
+								history.go(0);
+							},
+							error:function(){
+
+							}
+						})
+					}
+				}]
+			});
+		}
+		go();
+	</script>
+<link rel="import" href="../common/footer.html?__inline">
