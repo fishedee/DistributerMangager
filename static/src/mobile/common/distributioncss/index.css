@@ -1,0 +1,170 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+a{
+    text-decoration: none;
+    color: black;
+}
+html,body{
+    background: #EBECEE;
+    height: 100%;
+}
+.top{
+    position: relative;
+    width: 100%;
+    height: 40px;
+    color: white;
+    background: #EB5151;
+    text-align: center;
+    line-height: 40px;
+}
+.top img{
+    position: absolute;
+    width: 12px;
+    height: 20px;
+    left: 4%;
+    top: 9px;
+}
+.userInfo{
+    width: 100%;
+    height: 80px;
+    background: url('/data/upload/image/distribution/images/1.jpg');
+    background-size: contain;
+}
+.userInfo .container .headInfo{
+    float: left;
+    margin-left: 5%;
+    margin-top: 3%;
+}
+.userInfo .container .headInfo img{
+    width: 60px;
+    height: 60px;
+    border: 2px solid white;
+    border-radius: 50%;
+}
+.userInfo .container .info{
+    color: white;
+    font-size: 12px;
+    width: 50%;
+    float: left;
+    margin-left: 5%;
+    margin-top: 3%;
+}
+.userInfo .container .info p{
+    margin-top: 5px;
+}
+.menu{
+    background: #BFBEBC;
+    width: 100%;
+    height: 70px;
+    padding-top: 15px;
+}
+.menu .menu_icon{
+    float: left;
+    width: 15%;
+    height: 50px;
+    margin-left: 8%;
+    position: relative;
+}
+.menu .menu_icon span.num{
+    position: absolute;
+    top: -10px;
+    right: -5px;
+    display: inline-block;
+    border-radius: 50%;
+    background: #EB5151;
+    font-size: 12px;
+    width: auto;
+    min-width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+    color: white;
+}
+.menu .menu_icon span.price{
+    right: -15px;
+    height: 20px;
+    width: 40px;
+    line-height: 20px;
+    border-radius: 10px;
+}
+.menu .menu_icon .icon{
+    width: 100%;
+    height: 40px;
+}
+.menu .menu_icon .icon img{
+    margin-left: 12%;
+    width: 75%;
+    height: 90%;
+}
+.menu .menu_icon .icon_title{
+    font-size: 11px;
+    text-align: center;
+    line-height: 20px;
+}
+.distribution{
+    margin-top: 15px;
+    width: 100%;
+    height: auto;
+    background: white;
+    border-radius: 15px;
+    line-height: 40px;
+}
+.distribution li{
+    margin-left:4%;
+    list-style: none;
+    position: relative;
+}
+.distribution li img.right{
+    position: absolute;
+    right: 10px;
+    height: 15px;
+    top: 12px;
+}
+.distribution li.selected{
+    border-bottom: 1px solid #F5F5F5;
+    line-height: 35px;
+}
+.distribution a{
+    text-decoration: none;
+    color: black;
+}
+@media screen and (max-width: 640px){
+    .menu .menu_icon{
+        height: 60px;
+        width: 14%;
+    }
+    .menu .menu_icon img{
+        width: 35%;
+    }
+}
+@media screen and (max-width:320px) {
+    .menu{
+        background: #BFBEBC;
+        width: 100%;
+        height: 70px;
+        padding-top: 15px;
+    }
+    .menu .menu_icon{
+        float: left;
+        width: 15%;
+        height: 50px;
+        margin-left: 8%;
+        border: none;
+    }
+    .menu .menu_icon .icon{
+        width: 100%;
+        height: 40px;
+    }
+    .menu .menu_icon .icon img{
+        margin-left: 12%;
+        width: 75%;
+        height: 90%;
+    }
+    .menu .menu_icon .icon_title{
+        font-size: 11px;
+        text-align: center;
+        line-height: 20px;
+    }
+}

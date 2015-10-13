@@ -1,0 +1,33 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript" src="/fishstrap/js/fishstrap.js" charset="utf-8"></script>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var userId = $.location.getQueryArgv('userId');
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'score',type:'text',name:'充值积分'},
+				],
+				submit:function(data){
+					$.post('/user/recharge',{'data':data,'userId':userId},function(data){
+						data = $.JSON.parse(data);
+						if( data.code != 0 ){
+							dialog.message(data.msg);
+							return;
+						}
+						history.back();
+					});
+				},
+				cancel:function(){
+					history.back();
+				}
+			});
+		}
+		go();
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

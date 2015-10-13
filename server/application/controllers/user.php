@@ -125,6 +125,7 @@ class User extends CI_Controller {
 			array('appName','require'),
 			array('appBg','option'),
 			array('appLogo','option'),
+			array('poster','option'),
 			array('weixinNum','require'),
 			array('appId','require'),
 			array('appKey','require'),
@@ -164,6 +165,8 @@ class User extends CI_Controller {
 			array('phone','option'),
 			array('permissionId','option'),
 		));
+
+		// var_dump($dataWhere);die;
 		
 		$dataLimit = $this->argv->checkGet(array(
 			array('pageIndex','require'),
@@ -192,22 +195,12 @@ class User extends CI_Controller {
 		$this->loginAo->checkMustLogin();
 		
 		//执行业务逻辑
-		return $this->userAo->get($userId);
-	}
-
-	/**
-	* @view json
-	*/
-	public function getCompanyName()
-	{
-		//检查输入参数
-		$data = $this->argv->checkGet(array(
-			array('userId','require'),
-		));
-		$userId = $data['userId'];
-		
-		//执行业务逻辑
-		return $this->userAo->get($userId)['company'];
+		$result = $this->userAo->get($userId);
+		if($this->input->get('distribution') == 1){
+			return $result['telephone'];
+		}else{
+			return $result;
+		}
 	}
 	
 	/**
@@ -354,6 +347,20 @@ class User extends CI_Controller {
 			$data['newPassword']
 		);
 	}
+
+	/**
+	 * @view json
+	 * 修改密码
+	 */
+	public function modMyPassword2(){
+		//检查输入参数
+		$data = $this->argv->checkPost(array(
+			array('oldPassword','require'),
+			array('newPassword','require')
+		));
+		$myUserId = $this->input->post('myUserId');
+		return $this->userAo->modPasswordByOld($myUserId,$data['oldPassword'],$data['newPassword']);
+	}
 	
 	/**
 	 * @view json
@@ -363,7 +370,7 @@ class User extends CI_Controller {
 	{
 		//检查输入参数
 		$data = $this->argv->checkPost(array(
-				array('userId','require'),
+			array('userId','require'),
 		));
 		$userId = $data['userId'];
 	
@@ -376,6 +383,188 @@ class User extends CI_Controller {
 		$this->session->unset_userdata('userId');
 		$this->session->set_userdata('userId',$userId);
 	}
+
+	/**
+	 * @view json
+	 * 检测系统是否分配账号密码
+	 */
+	public function checkClientId(){
+		if($this->input->is_ajax_request()){
+			//检查输入参数
+			$data = $this->argv->checkPost(array(
+				array('userId','require'),
+			));
+			$userId = $data['userId'];
+
+			//检查权限
+			$client = $this->clientLoginAo->checkMustLogin($userId);
+			$clientId = $client['clientId'];
+			return $this->userAo->checkClientId($userId,$clientId);
+		}
+	}
+
+	/**
+	 * @view json
+	 * 获取用户账号
+	 */
+	public function getUserName(){
+		if($this->input->is_ajax_request()){
+			$userId = $this->input->get('userIds');
+			return $this->userAo->getUserName($userId);
+		}
+	}
+
+	/**
+	 * @view json
+	 * 获取我的二维码
+	 */
+	public function getMyQrCode(){
+		if($this->input->is_ajax_request()){
+			$myUserId = $this->input->get('myUserId');
+			return $this->userAo->getMyQrCode($myUserId);
+		}
+	}
+
+	/**
+	 * @view json
+	 * 获取用户信息
+	 */
+	public function getUserInfo(){
+		if($this->input->is_ajax_request()){
+			//检查输入参数
+			$data = $this->argv->checkPost(array(
+				array('userId','require'),
+			));
+			$userId = $data['userId'];
+			//检查权限
+			$client = $this->clientLoginAo->checkMustLogin($userId);
+			$clientId = $client['clientId'];
+			return $this->userAo->getUserInfo($clientId);
+		}
+	}
+
+	/**
+	 * @view json
+	 * 修改信息
+	 */
+	public function myInfo(){
+		if($this->input->is_ajax_request()){
+			//检查输入参数
+			$data = $this->argv->checkPost(array(
+				array('userId','require'),
+			));
+			$userId = $data['userId'];
+			//检查权限
+			$client = $this->clientLoginAo->checkMustLogin($userId);
+			$clientId = $client['clientId'];
+			$data = $this->input->post();
+			return $this->userAo->myInfo($clientId,$data);
+		}
+	}
+
+	/**
+	 * @view json
+	 * 修改店铺名
+	 */
+	public function modAppName(){
+		if($this->input->is_ajax_request()){
+			$myUserId = $this->input->post('myUserId');
+			$appName  = $this->input->post('appName');
+			return $this->userAppAo->modAppName($myUserId,$appName);
+		}
+	}
+
+	/**
+	 * @view json
+	 * 获取店铺名
+	 */
+	public function getAppName(){
+		if($this->input->is_ajax_request()){
+			$myUserId = $this->input->get('myUserId');
+			return $this->userAppAo->getAppName($myUserId);
+		}
+	}
+
+	/**
+	 * @view json
+	 * 获取部分信息 
+	 */
+	public function getInfo(){
+		if($this->input->is_ajax_request()){
+			$myUserId = $this->input->post('myUserId');
+			return $this->userAo->getInfo($myUserId);
+		}
+	}
+
+	/**
+	 * @view json
+	 * 补全信息
+	 */
+	public function complete(){
+		if($this->input->is_ajax_request()){
+			//检查输入参数
+			$data = $this->argv->checkPost(array(
+				array('userId','require'),
+			));
+			$upUserId = $data['userId'];
+			$data = $this->input->post();
+			// var_dump($data);die;
+			return $this->userAo->complete($upUserId,$data);
+		}
+	}
+
+	/**
+	 * @view json
+	 * 获取海报
+	 */
+	public function getPoster(){
+		if($this->input->is_ajax_request()){
+			//检查输入参数
+			$data = $this->argv->checkPost(array(
+				array('userId','require'),
+			));
+			$userId = $data['userId'];
+			return $this->userAppAo->getPoster($userId);
+		}
+	}
+
+	/**
+	 * @view json
+	 * 检测充值积分
+	 */
+	public function checkRecharge(){
+		if($this->input->is_ajax_request()){
+			//检查权限
+			$this->loginAo->checkMustAdmin();
+			$userId = $this->input->get('userId');
+			return $this->userAo->checkRecharge($userId);
+		}
+	}
+
+	/**
+	 * @view json
+	 * 充值
+	 */
+	public function recharge(){
+		if($this->input->is_ajax_request()){
+			//检查权限
+			$this->loginAo->checkMustAdmin();
+			$data = $this->input->post('data');
+			$userId = $this->input->post('userId');
+			return $this->userAo->recharge($userId,$data['score']);
+		}
+	}
+
+	/**
+	 * @view json
+	 * 获取手机验证码
+	 */
+	public function getPhoneCode(){
+        if($this->input->is_ajax_request()){
+            $phone = $this->input->get('phone');
+            return $this->userAo->getPhoneCode($phone);
+        }
+    }
 }
 
 /* End of file welcome.php */

@@ -53,6 +53,7 @@ class ClientDb extends CI_Model
 	public function mod( $clientId , $data ){
 		$this->db->where("clientId",$clientId);
 		$this->db->update($this->tableName,$data);
+		return $this->db->affected_rows();
 	}
 
 	public function clientInfo($userId){
@@ -119,6 +120,34 @@ class ClientDb extends CI_Model
 	//根据openid获取clientid
 	public function getClientId($openId){
 		$openIdInfo = $this->db->select('clientId')->from($this->tableName)->where('openId',$openId)->get()->result_array();
-		return $openIdInfo[0]['clientId'];
+		if($openIdInfo){
+			return $openIdInfo[0]['clientId'];
+		}else{
+			return false;
+		}
+	}
+
+	public function scanInfo($clientId){
+
+		//扫面时效性写入缓存
+		$this->load->driver('cache', array('adapter' => 'apc', 'backup' => 'file'));
+		$scan = 1;
+		$this->cache->save($clientId, $scan, 3600);
+	}
+
+	public function scan($userId,$clientId,$boardNum){
+		$this->db->where('clientId',$clientId);
+		$clientInfo = $this->get($clientId);
+		if($clientInfo['scan'] == 1){
+			//判断时间是否过期
+			if(strtotime($clientInfo['scanTime']) + 3600 > time()){
+				$this->db->update($this->tableName,array('scanTime'=>date('Y-m-d H:i:s',time())));
+			}
+		}else{
+			$this->db->update($this->tableName,array('scan'=>1,'scanTime'=>date('Y-m-d H:i:s',time())));
+		}
+		$url = 'http://'.$_SERVER['HTTP_HOST'].'/'.$userId.'/boarda.html?boardNum='.$boardNum . '&userId=' . $userId;
+
+		header('Location:'.$url);
 	}
 }

@@ -12,6 +12,7 @@
 		var indexPage = require('/fishstrap/page/indexPage.js');
 		var menu = {};
 		var user = {};
+		var hook = {};
 		function setMenu(next){
 			$.get('/login/islogin?t='+Math.random(),{},function(data){
 				data = $.JSON.parse(data);
@@ -34,6 +35,11 @@
 								{name:'模板管理',url:'view/template/index.html'},
 							]
 						},
+						'插件管理':{
+							'插件管理':[
+								{name:'插件管理',url:'view/hook/index.html'}
+							]
+						}
 					}
 				}else if( user.type == 2 ){
 					//代理商
@@ -43,6 +49,42 @@
 								{name:'帐号管理',url:'view/user/viewByAgent.html?userId='+user.userId},
 								{name:'密码管理',url:'view/password/index.html'}
 							]
+						},
+					}
+				}else if( user.type == 4){
+					//订餐客户
+					menu = {
+						'系统管理':{
+							'系统管理':[
+								{name:'帐号管理',url:'view/user/viewByClient.html?userId='+user.userId},
+								{name:'密码管理',url:'view/password/index.html'}
+							],
+							'微信设置':[
+								{name:'微信设置',url:'view/commodityapp/index.html'},
+							],
+							'回复设置':[
+								{name:'素材中心',url:'view/auto-response/index.html?userId='+user.userId},
+								{name:'被关注自动回复',url:'view/auto-response/subscribe.html?userId='+user.userId},
+							],
+							'高级功能':[
+								{name:'自定义菜单',url:'view/advancedInterface/customMenu.html'},
+								{name:'多客服设置',url:'view/advancedInterface/customerService.html'},
+							],
+						},
+						'订餐系统':{
+							'订餐系统':[
+								{name:'分类管理',url:'view/dish/type.html?userId='+user.userId},
+								{name:'查看菜品',url:'view/dish/index.html'},
+								{name:'订单管理',url:'view/dish/order.html'},
+							],
+							'餐桌管理':[
+								{name:'餐桌类型',url:'view/board/type.html?userId='+user.userId},
+								{name:'餐桌管理',url:'view/board/index.html?userId='+user.userId},
+								{name:'订餐时间',url:'view/board/date.html?userId='+user.userId}
+							],
+							'餐厅管理':[
+								{name:'餐厅信息',url:'view/room/main.html?userId='+user.userId},
+							],
 						},
 					}
 				}else{
@@ -68,6 +110,9 @@
 								{name:'创建卡券',url:'view/coupons/add.html'},
 								{name:'查看卡券',url:'view/coupons/check.html'},
 								{name:'核销卡券',url:'view/coupons/cancel.html'}
+							],
+							'插件管理':[
+								{name:'勾选插件',url:'view/hook/index.html'}
 							],
 						},
 						'公司介绍':{
@@ -111,9 +156,19 @@
 								{name:'分销商',url:'view/distribution/downUserIndex.html'},
 								{name:'分销分成',url:'view/distribution/downOrderIndex.html'},
 							],
-                                                        '招商加盟':[
-                                                                {name:'已提交信息',url:'view/cooperation/index.html'},
-                                                        ],
+							// '分成二维码':[
+							// 	{name:'我的二维码',url:'view/distribution/qrcode.html'},
+							// ],
+	                        '招商加盟':[
+                                {name:'已提交信息',url:'view/cooperation/index.html'},
+	                        ],
+	                        '提现申请':[
+	                        	{name:'提现申请',url:'view/withdraw/index.html'},
+	                        ],
+	                        '积分管理':[
+	                        	{name:'商品管理',url:'view/points/index.html'},
+	                        	{name:'兑换地址',url:'view/points/url.html'},
+	                        ],
 						},
 						'众筹管理':{
 							'众筹管理':[
@@ -138,7 +193,37 @@
 				next();
 			});
 		}
+
+		function getHook(next){
+			$.ajax({
+				url: '/hook/getUserHook',
+				type: 'GET',
+				dataType: 'JSON',
+				success:function(data){
+					data = $.JSON.parse(data);
+					if(data.code != 0){
+						alert(data.msg);
+						return;
+					}
+					data = data.data;
+					hook = data;
+					alert(hook);
+					console.info(hook);
+					if(hook){
+						$.each(hook,function(index,val) {
+							menu['系统管理']['插件管理'].push({name:val['hookName'],url:val['hookUrl']});
+						});
+					}
+					next();
+				},
+				error:function(){
+
+				}
+			})	
+		}
+
 		function go(){
+			// console.info(menu['系统管理']['插件管理'].push({name:'插件管理2',url:'xxx.com'}));
 			indexPage.use({
 				title:'经销商管理系统('+user.name+')',
 				init:function(){
@@ -157,7 +242,9 @@
 				menu:menu
 			});
 		}
-		setMenu(go);
+		setMenu(function(){
+			go();
+		});
 	</script>
  </body>
 </html>

@@ -141,4 +141,58 @@ class UserDb extends CI_Model
 		return $userInfo;
 	}
 
+	//检测userId 跟 clientId 的绑定
+	public function checkClientId($userId,$clientId){
+		$this->db->where('clientId',$clientId);
+		$this->db->select('userId');
+		return $this->db->get($this->tableName)->result_array();
+	}
+
+	//获取用户名
+	public function getUserName($userId){
+		$this->db->where('userId',$userId);
+		$this->db->select('name');
+		return $this->db->get($this->tableName)->result_array();
+	}
+
+	public function modInfo($userId,$data){
+		$this->db->where('userId',$userId);
+		$this->db->update($this->tableName,$data);
+		return $this->db->affected_rows();
+	}
+
+	//我的二维码
+	public function myQrCode($clientId){
+		$condition['clientId'] = $clientId;
+		$result = $this->db->select('userId,qrcode')->from($this->tableName)->where($condition)->get()->row_array();
+		return $result;
+	}
+
+	//获取我的二维码
+	public function getMyQrCode($userId){
+		$this->db->select('qrcode');
+		$this->db->where('userId',$userId);
+		return $this->db->get($this->tableName)->result_array();
+	}
+
+	//根据clientId查询userId
+	public function checkUserClientId($clientId){
+		$this->db->where('clientId',$clientId);
+		$this->db->select('userId');
+		return $this->db->get($this->tableName)->result_array();
+	}
+
+	//获取clientId
+	public function getClientIdFromUser($userId){
+		$this->db->where('userId',$userId);
+		$this->db->select('clientId');
+		return $this->db->get($this->tableName)->result_array();
+	}
+
+	//补全用户信息
+	public function complete($userId,$data){
+		$this->db->where('userId',$userId);
+		$this->db->update($this->tableName,$data);
+		return $this->db->affected_rows();
+	}
 }

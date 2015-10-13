@@ -48,7 +48,7 @@ class DistributionOrder extends CI_Controller
         else
             throw new CI_MyException(1, "无效的direction参数");
         unset($dataWhere['direction']);
-
+        $dataWhere['userId'] = $userId;
         //业务逻辑
         return $this->distributionOrderAo->search($dataWhere, $dataLimit);
     }
@@ -125,6 +125,22 @@ class DistributionOrder extends CI_Controller
 
         //业务逻辑
         $this->distributionOrderAo->confirm($user['userId'], $data['distributionOrderId']);
+    }
+
+    /**
+     * @view json
+     * 获取分销分成
+     */
+    public function getDistributionPrice(){
+        if($this->input->is_ajax_request()){
+            //检查权限
+            $user = $this->loginAo->checkMustClient(
+                $this->userPermissionEnum->COMPANY_DISTRIBUTION
+            );
+            $vender = $user['userId'];
+            $myUserId = $this->input->get('myUserId');
+            return $this->distributionOrderAo->getDistributionPrice($vender,$myUserId);
+        }
     }
 }
 

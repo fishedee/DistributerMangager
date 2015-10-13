@@ -70,4 +70,11 @@ class OrderDb extends CI_Model
 		$argv = array($clientId);
 		return $this->db->query($sql,$argv)->result_array();
 	}
+
+	//获取订单数量
+	public function getOrderNum($userId,$entranceUserId){
+		$this->db->where('entranceUserId',$entranceUserId);
+		$this->db->where('userId',$userId);
+		return $this->db->get($this->tableName)->num_rows();
+	}
 }

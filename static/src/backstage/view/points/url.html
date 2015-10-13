@@ -1,0 +1,37 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		function go(){
+			tableOperation = query.simpleQuery({
+				id:'container',
+				url:'/producturl/search',
+				column:[
+					{id:'urlId',type:'text',name:'商品地址id'},
+					{id:'qrcode',type:'image',name:'二维码'},
+					{id:'url',type:'text',name:'兑换地址'},
+				],
+				operate:[
+				{
+					name:'编辑',
+					click:function(data){
+						location.href = 'urlView.html?urlId='+data.urlId;
+					}
+				},
+				],
+				button:[
+				{
+					name:'添加地址',
+					click:function(data){
+						location.href = 'urlView.html';
+					}
+				},
+				],
+			});
+		}
+		go();
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

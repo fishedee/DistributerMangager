@@ -1,0 +1,283 @@
+<link rel="import" href="./../header.html?__inline">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<title>兑换奖品</title>
+<link rel="stylesheet" href="./../common/distributioncss/index.css">
+<script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+    }
+
+    .integral {
+        height: 60px;
+        background-image: url('/data/upload/image/distribution/images/5.jpg');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+    }
+
+    .integral .wodezhifen,
+    .integral .fenshu {
+        display: inline-block;
+    }
+
+    .integral .wodezhifen {
+        position: relative;
+        top: 10px;
+        left: 10%;
+        font-weight: 600;
+        color: #8e8e8e;
+    }
+
+    .integral .fenshu {
+        font-size: 2em;
+        font-weight: 900;
+        position: relative;
+        top: 10px;
+        left: 24%;
+        color: #de5164;
+    }
+
+    .item {
+        height: 164px;
+        display: -webkit-box;
+        display: box;
+        border-top: 1px solid #c7b9b9;
+        border-bottom: 1px solid #c7b9b9;
+        margin-top: 5px;
+    }
+    .item .left{
+        display: -webkit-box;
+        display: box;
+        -webkit-box-align: center;
+        box-align: center;
+        -webkit-box-orient: horizontal;
+        box-orient: horizontal;
+        width: 33%;
+        padding-left: 1%;
+        padding-right: 4%;
+    }
+    .item  .left .tupian img{
+        width: 100%;
+        max-height: 150px;
+        display: block
+    }
+    .item .right{
+        -webkit-box-flex: 1;
+        box-flex: 1;
+        margin-top: 15px;
+    }
+    .item .right .tou .biaoti{
+        overflow : hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        font-weight: 600;
+        font-size: 20px;
+    }
+    .item .right .tou .xianliang{
+        color: #b7b7b7;
+        margin-top: 3px;
+    }
+
+    .item .right .wei{
+        height: 50px;
+        display: -webkit-box;
+        display: box;            
+        -webkit-box-align: end;
+        box-align: end;
+        -webkit-box-orient: horizontal;
+        box-orient: horizontal;
+
+    }
+
+    .item .right .jifen{
+        font-size: 1.5em;
+        font-weight: 600;
+        color: #de5164;
+    }
+    .item .right .yuanjia{
+        font-size: 0.8em;
+        text-decoration:line-through;
+        color: #a9a9a9;
+    }
+
+    .box{
+        -webkit-box-flex: 1;
+        box-flex: 1;
+        display: -webkit-box;
+        display: box;            
+        -webkit-box-align: end;
+        box-align: end;
+        -webkit-box-orient: vertical;
+        box-orient: vertical;
+    }
+    .woyaodui{
+        border: 1px solid #de5164;
+        border-radius: 3px;
+        padding: 5px 12px;
+        color: #de5164;
+        margin-right: 0%;            
+    }
+    .myProduct{
+    	margin-top: -5%;
+    }
+    .woyaodui .text{
+        position: relative;
+        top: 1px;
+    }
+</style>
+</head>
+<body>
+</body>
+<script type="text/javascript">
+    var $ = require('/fishstrap/core/global.js');
+    require('./../common/distribution/distribution.js');
+    var clientInfo = {};
+    var userId = 0;
+    var username = '';
+    var telephone = '';
+    var itemUrl = '';
+    var orderUrl= '';
+    var centerUrl = '';
+    var has = 0;
+    var productInfo = {};
+    function checkMustLogin(next){
+        $.get('/clientlogin/islogin',{},function(data){
+            data = $.JSON.parse(data);
+            if( data.code != 0 ){
+                location.href = $.url.buildQueryUrl('/clientlogin/wxlogin',{callback:location.href});
+                return;
+            }
+            clientId = data.data;
+            next();
+        });
+    }
+    //检测系统是否已经分配账号
+    function checkClientId(next){
+        $.get('/user/checkClientId',{}, function(data) {
+            data = $.JSON.parse(data);
+            if(data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            data = data.data;
+            if(data.length){
+                userId = data[0]['userId'];
+                itemUrl= 'http://'+location.host+'/'+userId+'/item.html';
+                orderUrl = 'http://'+location.host+'/'+userId+'/deal.html';
+                centerUrl= 'http://'+location.host+'/'+userId+'/distribution/index.html';
+            }else{
+                alert('您还没有分配会员账号');
+                itemUrl = 'javascript:;';
+                orderUrl= 'javascript:;';
+                centerUrl = 'javascript:;';
+            }
+            next();
+        });
+    }
+
+    //获取微信用户信息
+    function getClientInfo(next){
+        $.get('/client/getClientInfo',{}, function(data) {
+            data = $.JSON.parse(data);
+            if(data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            clientInfo = data.data;
+            next();
+        });
+    }
+
+    //获取商品信息
+    function getProductInfo(next){
+        $.post('/points/fontGetProductInfo', {}, function(data) {
+            data = $.JSON.parse(data);
+            if(data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            productInfo = data.data;
+            console.info(productInfo);
+            next();
+        });
+    }
+
+    //渲染页面
+    function go(){
+
+        var product = "";
+
+        $.each(productInfo,function(index,val) {
+            product += "<div class='row'>\
+                            <div class='item'>\
+                                <div class='left'>\
+                                    <div class='tupian'><img src='"+val['productImg']+"' alt=''></div>\
+                                </div>\
+                                <div class='right'>\
+                                    <div class='tou'>\
+                                        <div class='biaoti'>"+val['productName']+"</div>\
+                                        <div class='xianliang'>限量"+val['num']+"款</div>\
+                                    </div>\
+                                    <div class='wei'>\
+                                        <div class='jifen'>"+val['points']+"积分</div>\
+                                        <div class='yuanjia'>￥"+val['price']+"</div>\
+                                        <div class='box'>\
+                                            <div class='woyaodui' name='exchange' productId='"+val['productId']+"' points='"+val['points']+"'><div class='text' name='change'>我要兑</div></div>\
+                                        </div>\
+                                    </div>\
+                                </div>\
+                            </div>\
+                        </div>";
+        });
+
+        var html = "<div class='top'>\
+                       <img src='/data/upload/image/distribution/images/icon/3.png' alt=''>\
+                        兑换奖品\
+                    </div>\
+                    <div class='integral'>\
+                        <div class='wodezhifen'>我的积分</div>\
+                        <div class='fenshu'>"+clientInfo['score']+"</div>\
+                        <div class='box'>\
+                            <div class='woyaodui myProduct' name='myProduct'><div class='text' name='change'>我的奖品</div></div>\
+                        </div>\
+                    </div>"+product;
+        $('body').html(html);
+    }
+
+
+    $('body').on('touchstart', 'div[name=exchange]', function(event) {
+        var productId = $(this).attr('productId');
+        var points    = $(this).attr('points');
+        var option    = confirm("确定使用"+points+"积分兑换次奖品吗?");
+        if(option == true){
+        	$.post('/pointsorder/exchange', {productId: productId}, function(data) {
+	            data = $.JSON.parse(data);
+	            if(data.code != 0){
+	                alert(data.msg);
+	                return;
+	            }
+	            alert('兑换成功');
+	            window.location.reload();
+	        });
+        }
+    });
+
+    $('body').on('touchstart', 'div[name=myProduct]', function(event) {
+    	window.location.href='./myproduct.html';
+    });
+
+    checkMustLogin(function(){
+        checkClientId(function(){
+            getClientInfo(function(){
+                getProductInfo(go);
+            });
+        })
+    })
+
+</script>
+<link rel="import" href="./../footer.html?__inline">

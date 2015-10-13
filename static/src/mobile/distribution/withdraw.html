@@ -1,0 +1,233 @@
+<link rel="import" href="./../header.html?__inline">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>会员余额</title>
+    <link rel="stylesheet" href="./../common/distributioncss/index.css">
+    <link rel="stylesheet" href="./../common/distributioncss/footer.css">
+    <style>
+        body {
+            margin: 0;
+            background: #f2f1f1;
+        }
+        
+        input {
+            border: 0px;
+        }
+        
+        table {
+            width: 100%;
+            margin-top: 20px;
+            background: #fff;
+            border-radius: 15px;
+        }
+        
+        table tr {
+            border-bottom: 1px solid #ececec;
+            display: block;
+        }
+        
+        table tr:last-child {
+            border-bottom: 0;
+        }
+        
+        table tr th {
+            height: 40px;
+            text-align: left;
+            width: 100px;
+            display: table-cell;
+            vertical-align: middle;
+        }
+        
+        .option{
+            position: relative;
+        }
+        
+        .submit {
+            color: #fff;
+/*            background: #ff6464;*/
+            font-weight: 600;
+            border-radius: 5px;
+            width: 35%;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            margin-top: 20px;
+            position: absolute;
+            left: 12%;
+            top: 10%;
+            color: black;
+        }
+        
+        .react{
+            background: #009865;
+            position: absolute;
+            left: 55%;
+        }
+        
+        .submit p {
+            height: 50px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+            top: 15px;
+        }
+        .headOption{
+            position: relative;
+            margin-top: 5px;
+        }
+        .headOption span{
+            display: inline-block;
+            width: 30%;
+            text-align: center;
+        }
+        .headOption span.first{
+            border-right: 1px solid;
+        }
+        .headOption span a{
+            color:#59ADD1;
+        }
+    </style>
+</head>
+<body>
+</body>
+<script type="text/javascript">
+    var $ = require('/fishstrap/core/global.js');
+    require('./../common/distribution/distribution.js');
+    var userInfo = {};
+    var userId = 0;
+    var itemUrl = '';
+    var orderUrl= '';
+    var centerUrl = '';
+
+    //检测登陆
+    function checkMustLogin(next){
+        $.get('/clientlogin/islogin',{},function(data){
+            data = $.JSON.parse(data);
+            if( data.code != 0 ){
+                location.href = $.url.buildQueryUrl('/clientlogin/wxlogin',{callback:location.href});
+                return;
+            }
+            clientId = data.data;
+            next();
+        });
+    }
+
+    function checkClientId(next){
+        $.get('/user/checkClientId',{}, function(data) {
+            data = $.JSON.parse(data);
+            if(data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            data = data.data;
+            userId = data[0]['userId'];
+            itemUrl= 'http://'+location.host+'/'+userId+'/item.html';
+            orderUrl = 'http://'+location.host+'/'+userId+'/deal.html';
+            centerUrl= 'http://'+location.host+'/'+userId+'/distribution/index.html';
+            next();
+        });
+    }
+
+    //渲染页面
+    function go(){
+        var html ="<div class='top'>\
+                       <img src='/data/upload/image/distribution/images/icon/3.png' alt=''>\
+                        会员余额\
+                    </div>\
+                    <div class='headOption'>\
+                        <span class='first'>\
+                            <a href='./moneylog.html'>账户明细</a>\
+                        </span>\
+                        <span>\
+                            <a href='./withdrawlog.html'>提现记录</a>\
+                        </span>\
+                    </div>\
+                    <table>\
+                        <tr>\
+                            <th>提现金额</th>\
+                            <td>\
+                                <input type='text' placeholder='提现金额' name='money'>\
+                            </td>\
+                        </tr>\
+                        <tr>\
+                            <th>真是姓名</th>\
+                            <td>\
+                                <input type='text' placeholder='如：张三' name='name'>\
+                            </td>\
+                        </tr>\
+                        <tr>\
+                            <th>开户行</th>\
+                            <td>\
+                                <input type='text' placeholder='输入提现的银行名称' name='bank'>\
+                            </td>\
+                        </tr>\
+                        <tr>\
+                            <th>银行账号</th>\
+                            <td>\
+                                <input type='text' placeholder='输入提现的银行账号' name='cardNo'>\
+                            </td>\
+                        </tr>\
+                        <tr>\
+                            <th>手机号</th>\
+                            <td>\
+                                <input type='text' placeholder='输入手机号码' name='mobile'>\
+                            </td>\
+                        </tr>\
+                        <tr>\
+                            <th>备注</th>\
+                            <td>\
+                                <input type='text' placeholder='会员备注' name='remark'>\
+                            </td>\
+                        </tr>\
+                    </table>\
+                    <div class='option'>\
+                        <span class='submit' name='submit'>提交申请</span>\
+                        <span class='submit react' name='react'>重置表单</span>\
+                    </div>\
+                    <div class='blank'></div>\
+                    <div class='footer'>\
+                        <div class='list'>\
+                            <div class='item'>\
+                                <div class='img sp'></div>\
+                                <a href='"+itemUrl+"'><p>商品</p></a>\
+                            </div>\
+                            <div class='item'>\
+                                <div class='img dd'></div>\
+                                <a href='"+orderUrl+"'><p>订单</p></a>\
+                            </div>\
+                            <div class='item'>\
+                                <div class='img hyzx active'></div>\
+                                <a href='"+centerUrl+"'><p>会员中心</p></a>\
+                            </div>\
+                        </div>\
+                    </div>";
+        $('body').html(html);
+    }
+
+    $('body').on('touchstart', 'span[name=submit]', function() {
+        var money = $('input[name=money]').val();
+        var name  = $('input[name=name]').val();
+        var bank  = $('input[name=bank]').val();
+        var cardNo= $('input[name=cardNo]').val();
+        var mobile= $('input[name=mobile]').val();
+        var remark= $('input[name=remark]').val();
+        $.post('/withdraw/draw', {'money': money,'name':name,'bank':bank,'cardNo':cardNo,'mobile':mobile,'remark':remark}, function(data) {
+            data = $.JSON.parse(data);
+            if(data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            alert('提现申请提交成功');
+            window.location.reload();
+        });
+    });
+
+    $('body').on('touchstart', 'span[name=react]', function(event) {
+        $('input').val(null);
+    });
+
+    checkMustLogin(function(){
+        checkClientId(go);
+    })
+</script>
+<link rel="import" href="./../footer.html?__inline">

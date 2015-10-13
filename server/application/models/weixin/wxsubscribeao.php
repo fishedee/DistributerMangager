@@ -102,11 +102,12 @@ class WxSubscribeAo extends CI_Model {
 		//拉取素材资料，获取已发布信息。
 		$data['userId']=$userId;
 		$data['isRelease']=2;//已发布
-	    $data2=$this->wxSubscribeDb->search($data,array())['data'][0];
-        if($data2 == null){
-                 return '';
+	    $data2=$this->wxSubscribeDb->search($data,array());
+	    // var_dump($data2);die;
+        if(!$data2['data']){
+            return '';
         }else {
-                return $data2;
+            return $data2['data'][0];
         }
 		
 	}

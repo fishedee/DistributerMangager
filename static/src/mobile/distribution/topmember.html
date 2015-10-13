@@ -1,0 +1,146 @@
+<link rel="import" href="./../header.html?__inline">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>分销中心 触屏版</title>
+    <link rel="stylesheet" href="./../common/distributioncss/index.css">
+    <link rel="stylesheet" href="./../common/distributioncss/footer.css">
+    <style>
+        .allies{
+            background: white;
+            height: 80px;
+            width: 100%;
+            padding-top: 15px;
+            margin-top: 5px;
+        }
+        .allies:nth-child(0){
+            margin-top: 0;
+        }
+        .allies .head{
+            border: 1px solid;
+            width: 55px;
+            height: 55px;
+            border-radius: 10px;
+            margin-left: 3%;
+            background-size: contain;
+            float: left;
+        }
+        .allies .info{
+            font-size: 12px;
+            margin-left: 4%;
+            float: left;
+        }
+        .allies .info p{
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+</body>
+<script type="text/javascript">
+    var $ = require('/fishstrap/core/global.js');
+    require('./../common/distribution/distribution.js');
+    var myUserId = $.location.getQueryArgv('myUserId');
+    var allies   = $.location.getQueryArgv('allies');
+    var degree   = '';
+    var info     = {};
+    var count    = 0;
+    var itemUrl = '';
+    var orderUrl= '';
+    var centerUrl = '';
+    if(allies == 1){
+        degree = '一';
+    }else if(allies == 2){
+        degree = '二';
+    }
+
+    function checkMustLogin(next){
+        $.get('/clientlogin/islogin',{},function(data){
+            data = $.JSON.parse(data);
+            if( data.code != 0 ){
+                location.href = $.url.buildQueryUrl('/clientlogin/wxlogin',{callback:location.href});
+                return;
+            }
+            clientId = data.data;
+            next();
+        });
+    }
+
+    //获取盟友信息
+    function getAllies(next){
+        $.get('/distribution/getTopAllies',{'myUserId':myUserId,'allies':allies}, function(data) {
+            data = $.JSON.parse(data);
+            if( data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            count = data.data.count;
+            info  = data.data.data;
+            next();
+        });
+    }
+
+    //检测系统是否已经分配账号
+    function checkClientId(next){
+        $.get('/user/checkClientId',{}, function(data) {
+            data = $.JSON.parse(data);
+            if(data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            data = data.data;
+            userId = data[0]['userId'];
+            itemUrl= 'http://'+location.host+'/'+userId+'/item.html';
+            orderUrl = 'http://'+location.host+'/'+userId+'/deal.html';
+            centerUrl= 'http://'+location.host+'/'+userId+'/distribution/index.html';
+            next();
+        });
+    }
+
+    //渲染页面
+    function go(){
+
+        var mid  = '';
+        $.each(info,function(index,val) {
+            mid += "<div class='allies'>\
+                        <div class='head' style='background:url("+val.headImgUrl+");background-size: contain;'>\
+                        </div>\
+                        <div class='info'>\
+                            <p>会员名："+val['nickName']+"</p>\
+                            <p>订单数量："+val['num']+"</p>\
+                            <p>提成金额："+val['fall']+"</p>\
+                        </div>\
+                    </div>";
+        });
+
+        var html = "<div class='top'>\
+                       <img src='/data/upload/image/distribution/images/icon/3.png' alt=''>\
+                        我的"+degree+"级会员"+count+"人\
+                    </div>"+mid+"\
+                    <div class='blank'></div>\
+                    <div class='footer'>\
+                        <div class='list'>\
+                            <div class='item'>\
+                                <div class='img sp'></div>\
+                                <a href='"+itemUrl+"'><p>商品</p></a>\
+                            </div>\
+                            <div class='item'>\
+                                <div class='img dd'></div>\
+                                <a href='"+orderUrl+"'><p>订单</p></a>\
+                            </div>\
+                            <div class='item'>\
+                                <div class='img hyzx active'></div>\
+                                <a href='"+centerUrl+"'><p>会员中心</p></a>\
+                            </div>\
+                        </div>\
+                    </div>";
+        $('body').html(html);
+    }
+
+    checkMustLogin(function(){
+        getAllies(function(){
+            checkClientId(go);
+        });
+    })
+
+</script>
+<link rel="import" href="./../footer.html?__inline">

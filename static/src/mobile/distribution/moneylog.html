@@ -1,0 +1,188 @@
+<link rel="import" href="./../header.html?__inline">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>提现记录</title>
+    <link rel="stylesheet" href="./../common/distributioncss/index.css">
+    <link rel="stylesheet" href="./../common/distributioncss/footer.css">
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        body{
+            background: #EBECEE;
+        }
+        a{
+            text-decoration: none;
+        }
+        .headOption{
+            position: relative;
+            margin-top: 5px;
+        }
+        .headOption span{
+            display: inline-block;
+            width: 30%;
+            text-align: center;
+        }
+        .headOption span.first{
+            border-right: 1px solid;
+        }
+        .headOption span a{
+            color:#59ADD1;
+        }
+        table{
+            background: white;
+            width: 100%;
+            font-size: 12px;
+            text-align: center;
+        }
+        .myAbuser{
+            position: relative;
+        }
+        .myAbuser span{
+            position: absolute;
+            right: 2%;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+</body>
+<script type="text/javascript">
+    var $ = require('/fishstrap/core/global.js');
+    require('./../common/distribution/distribution.js');
+    var userInfo = {};
+    var userId = 0;
+    var itemUrl = '';
+    var orderUrl= '';
+    var centerUrl = '';
+    var drawLog = {};
+    //检测登陆
+    function checkMustLogin(next){
+        $.get('/clientlogin/islogin',{},function(data){
+            data = $.JSON.parse(data);
+            if( data.code != 0 ){
+                location.href = $.url.buildQueryUrl('/clientlogin/wxlogin',{callback:location.href});
+                return;
+            }
+            clientId = data.data;
+            next();
+        });
+    }
+
+    function checkClientId(next){
+        $.get('/user/checkClientId',{}, function(data) {
+            data = $.JSON.parse(data);
+            if(data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            data = data.data;
+            userId = data[0]['userId'];
+            itemUrl= 'http://'+location.host+'/'+userId+'/item.html';
+            orderUrl = 'http://'+location.host+'/'+userId+'/deal.html';
+            centerUrl= 'http://'+location.host+'/'+userId+'/distribution/index.html';
+            next();
+        });
+    }
+
+    //获取提现日志
+    function getLog(next){
+        $.post('/withdraw/getMoneyLog', {}, function(data) {
+            data = $.JSON.parse(data);
+            if(data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            data = data.data;
+            drawLog = data;
+            console.info(drawLog);
+            next();
+        });
+    }
+
+    //获取微信用户信息
+    function getClientInfo(next){
+        $.get('/client/getClientInfo',{}, function(data) {
+            data = $.JSON.parse(data);
+            if(data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            clientInfo = data.data;
+            next();
+        });
+    }
+
+    //渲染页面
+    function go(){
+        var log = '';
+        $.each(drawLog,function(index,val) {
+            if(val['state'] == 2){
+                log += "<tr>\
+                        <td>"+val['createTime']+"</td>\
+                        <td>提现</td>\
+                        <td>"+val['money']+"</td>\
+                        <td>"+val['remark']+"</td>\
+                        <td>"+val['showState']+"</td>\
+                        <td><a href='javascript:;'>删除</a></td>\
+                    </tr>";
+            }else{
+                log += "<tr>\
+                        <td>"+val['type']+"</td>\
+                        <td>"+val['showMoney']+"</td>\
+                        <td>"+val['remark']+"</td>\
+                        <td>"+val['createTime']+"</td>\
+                    </tr>";
+            }
+        });
+        var html = "<div class='top'>\
+                       <img src='/data/upload/image/distribution/images/icon/3.png' alt=''>\
+                        会员余额\
+                    </div>\
+                    <div class='headOption'>\
+                        <span class='first'>\
+                            <a href='javascript:;'>账户明细</a>\
+                        </span>\
+                        <span>\
+                            <a href='./withdrawlog.html'>提现记录</a>\
+                        </span>\
+                    </div>\
+                    <table>\
+                        <tr>\
+                            <td>类型</td>\
+                            <td>金额</td>\
+                            <td>备注</td>\
+                            <td>时间</td>\
+                        </tr>\
+                        "+log+"\
+                    </table>\
+                    <div class='blank'></div>\
+                    <div class='footer'>\
+                        <div class='list'>\
+                            <div class='item'>\
+                                <div class='img sp'></div>\
+                                <a href='"+itemUrl+"'><p>商品</p></a>\
+                            </div>\
+                            <div class='item'>\
+                                <div class='img dd'></div>\
+                                <a href='"+orderUrl+"'><p>订单</p></a>\
+                            </div>\
+                            <div class='item'>\
+                                <div class='img hyzx active'></div>\
+                                <a href='"+centerUrl+"'><p>会员中心</p></a>\
+                            </div>\
+                        </div>\
+                    </div>\
+                    <div class='myAbuser'><span>您的可余额为￥"+clientInfo.fall+"</span></div>";
+        $('body').html(html);
+    }
+    checkMustLogin(function(){
+        checkClientId(function(){
+            getLog(function(){
+                getClientInfo(go);
+            });
+        });
+    })
+</script>
+<link rel="import" href="./../footer.html?__inline">

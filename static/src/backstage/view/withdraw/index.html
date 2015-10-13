@@ -1,0 +1,57 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		function go(){
+			tableOperation = query.simpleQuery({
+				id:'container',
+				url:'/withdraw/search',
+				column:[
+					{id:'withDrawId',type:'text',name:'提现申请id'},
+					{id:'money',type:'text',name:'金额'},
+					{id:'name',type:'text',name:'真实姓名'},
+					{id:'bank',type:'text',name:'开户行'},
+					{id:'cardNo',type:'text',name:'银行卡号'},
+					{id:'mobile',type:'text',name:'手机号码'},
+					{id:'state',type:'enum',name:'状态',map:{0:'未受理',1:'已受理',2:'已拒绝'}},
+					{id:'createTime',type:'text',name:'创建时间'},
+					{id:'modifyTime',type:'text',name:'修改时间'}
+				],
+				queryColumn:['state'],
+				operate:[
+				{
+					name:'受理',
+					click:function(data){
+						$.get('/withdraw/accept',{withDrawId:data.withDrawId},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							location.href = 'index.html';
+						});
+					}
+				},
+				{
+					name:'拒绝',
+					click:function(data){
+						$.get('/withdraw/forbid',{withDrawId:data.withDrawId},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							location.href = 'index.html';
+						});
+					}
+				},
+				],
+				button:[],
+			});
+		}
+		go();
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

@@ -42,16 +42,24 @@ class ClientWxLoginAo extends CI_Model {
 
 		//调用QQ接口获取登录信息
 		$callback = urldecode($_GET['callback']);
+		$result = $this->userAppAo->checkToken($userId);
 
 		$accessToken = $this->wxSdk->getAccessTokenAndOpenId();
-		
+		// var_dump($accessToken);die;
+
+		// if($this->userAppAo->checkToken($userId) == 0){
+		// 	$accessToken = $this->wxSdk->getAccessTokenAndOpenId();
+		// }else{
+		// 	$userInfo = $this->userAppAo->getTokenAndTicket($userId);
+		// 	$accessToken = $userInfo['appAccessToken'];
+		// }
+
 		//第一次登录更新用户信息
 		$clientId = $this->clientAo->addOnce(array(
 			'userId'=>$userId,
 			'openId'=>$accessToken['openid'],
 			'type'=>$this->clientTypeEnum->WX,
 		));
-		
 		//设置登录态
 		$this->clientLoginAo->login($userId,$clientId);
 		

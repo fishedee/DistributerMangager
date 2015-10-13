@@ -27,10 +27,16 @@
 			$.get('/distribution/getByLink',{upUserId:upUserId,downUserId:downUserId},function(data){
 				data = $.JSON.parse(data);
 				if( data.code != 0 ){
+					alert(data.msg);
 					defaultDistributionPrecent = 0;
 					return;
 				}else{
 					defaultDistributionPrecent = $.format.floatval(data.data['distributionPercentShow'])/100;
+					if(distributionOrder.vender == distributionOrder.upUserId){
+						defaultDistributionPrecent = defaultDistributionPrecent;
+					}else if(distributionOrder.downUserId != distributionOrder.entranceUserId){
+						defaultDistributionPrecent = defaultDistributionPrecent/2;
+					}
 				}
 				next();
 			});

@@ -7,6 +7,7 @@ class UserAppDb extends CI_Model
 		'userId'=>0,
 		'appBg' => '',
 		'appLogo'=> '',
+		'poster'=>'',
 		'appName'=>'',
 		'weixinNum'=>'',
 		'appId'=>'',

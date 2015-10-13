@@ -39,7 +39,6 @@ class WxMenuAo extends CI_Model
 		
 		//搜索素材模型
 		$this->load->model('weixin/wxSubscribeAo','wxSubscribeAo');
-
 		foreach ($data as $k=>$v){
 			foreach ($v as $mainKey=>$mainValue){
 				if($mainKey =='name' && empty($mainValue)){
@@ -80,6 +79,9 @@ class WxMenuAo extends CI_Model
 								unset($data[$k]['sub_button'][$sunKey]['url']);
 							}
 							
+						}elseif($sunValue['key'] != 'undefined'){
+							$data[$k]['sub_button'][$sunKey]['type']='click';
+							$data[$k]['sub_button'][$sunKey]['key'] = $sunValue['key'];
 						}else {
 							$data[$k]['sub_button'][$sunKey]['type']='view';
 						}
@@ -90,9 +92,7 @@ class WxMenuAo extends CI_Model
 				}
 			}
 		}
-
 		if(!empty($data))$data=array('button'=>$data);
-
 		//获取access_token
 		$this->load->model('user/userAppAo','userAppAo');
  		$appAccessToken = $this->userAppAo->getTokenAndTicket($userId)['appAccessToken'];

@@ -1,0 +1,269 @@
+<link rel="import" href="./../header.html?__inline">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>微易点</title>
+    <link rel="stylesheet" href="./../common/distributioncss/index.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            background: #eeeeee;
+            display: none;
+        }
+        
+        .row {
+            margin-top: 50px;
+            background: #fff;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+        }
+        .row .item{
+            height: 60px;
+            border-bottom: 1px solid #eee;
+            display: -webkit-box;
+            display: box;
+            -webkit-box-align: center;
+            box-align: center;
+        }
+        .row .item .icon{
+            width: 20%;
+            border-right: 1px solid #adadad;
+
+        }
+        .row .item .icon .toubu{
+            width: 100%;
+            display: -webkit-box;
+            display: box;
+            -webkit-box-align: baseline;
+            box-align: baseline;
+            -webkit-box-orient: vertical;
+            box-orient: vertical;
+        }
+        
+        .row .item .icon img{
+            height: 25px;
+            display: block;
+            -webkit-box-align: center;
+            box-align: center;
+        }
+        
+        .row .item input{
+            font-size: 20px;
+            background: none;
+            border: none;
+            padding-left: 10%;
+        }
+        .row .verify .content{
+            width: 50%;
+        }        
+        .row .verify input{
+            width: 90%;
+        }
+        .row .verify .hqyzm{
+            color: #a43943;
+            border: 1px solid #a43943;
+            border-radius: 5px;
+            padding: 8px 12px;
+            font-size: 13px;
+        }
+        .row .verify .hqyzm .text{
+            position: relative;
+            top: 1px;
+        }        
+        .row .verify .reciprocal{
+            display: none;
+            color: #a43943;
+            border: 1px solid #898282;
+            border-radius: 5px;
+            padding: 8px 12px;
+            font-size: 13px;
+        }
+        .row .verify .reciprocal .text{
+            position: relative;
+            top: 1px;
+            color: #898282;
+        }
+        .submit{
+            background: #b40709;
+            color: #fff;
+            width: 80%;
+            height: 50px;
+            display: -webkit-box;
+            display: box;
+            -webkit-box-align: center;
+            box-align: center;
+            border-radius:3px;
+            margin-left: 10%;
+            margin-top: 20px;
+            font-size: 25px;
+            font-weight: 600;
+        }
+        .submit .text{
+            width: 100%;
+            display: -webkit-box;
+            display: box;
+            -webkit-box-align: baseline;
+            box-align: baseline;
+            -webkit-box-orient: vertical;
+            box-orient: vertical;
+            position: relative;
+            top: 1px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class='top'>
+       <img src='/data/upload/image/distribution/images/icon/3.png' alt=''>
+        商家登陆
+    </div>
+    <div class="row">
+        <div class="item user">
+            <div class="icon">
+                <div class="toubu">
+                    <img src="/data/upload/image/distribution/images/login/1.png" alt="">
+                </div>
+            </div>
+            <div class="content"><input type="text" placeholder="请输入账号" name='username'></div>
+        </div>
+        <div class="item password">
+            <div class="icon">
+                <div class="toubu">
+                    <img src="/data/upload/image/distribution/images/login/2.png" alt="">
+                </div>
+            </div>
+            <div class="content"><input type="password" placeholder="请输入密码" name='password'></div>
+        </div>
+        <div class="item phone">
+            <div class="icon">
+                <div class="toubu">
+                    <img src="/data/upload/image/distribution/images/login/3.png" alt="">
+                </div>
+            </div>
+            <div class="content"><input type="tel" placeholder="请输入手机号码" name='phone'></div>
+        </div>
+        <div class="item verify">
+            <div class="icon">
+                <div class="toubu">
+                    <img src="/data/upload/image/distribution/images/login/4.png" alt="">
+                </div>
+            </div>
+            <div class="content"><input type="text" placeholder="请输入验证码" name='code'></div>
+            <div class="reciprocal"><div class="text">59秒重新获取</div></div>
+            <div class="hqyzm"><div class="text">获得验证码</div></div>
+        </div>
+    </div>
+    <div class="submit">
+        <div class="text" name='login'>登 录</div>
+    </div>
+</body>
+<script type="text/javascript">
+    var $ = require('/fishstrap/core/global.js');
+    require('./../common/distribution/distribution.js');
+
+    //微信授权
+    function checkMustLogin(next){
+        $.get('/clientlogin/islogin',{},function(data){
+            data = $.JSON.parse(data);
+            if( data.code != 0 ){
+                location.href = $.url.buildQueryUrl('/clientlogin/wxlogin',{callback:location.href});
+                return;
+            }
+            clientId = data.data;
+            next();
+        });
+    }
+
+    //判断有无绑定
+    function judgeBind(){
+        $.ajax({
+            url: '/distribution/judgeBind',
+            type: 'POST',
+            dataType: 'JSON',
+            success:function(data){
+                data = $.JSON.parse(data);
+                if(data.code != 0){
+                    alert(data.msg);
+                    return;
+                }
+                if(data.data == false){
+                    $('body').show();
+                }else{
+                    window.location.href = './business_center.html';
+                }
+            },
+            error:function(){
+
+            }
+        })
+    }
+
+    //提交绑定
+    $('div[name=login]').click(function() {
+        var username = $('input[name=username]').val();
+        var password = $('input[name=password]').val();
+        var phone    = $('input[name=phone]').val();
+        var code     = $('input[name=code]').val();
+        if(username == '' || password == '' || code == '' || phone == ''){
+            alert('参数均不能为空');
+            return;
+        }
+        $.post('/distribution/bind', {username: username,password:password,code:code}, function(data) {
+            data = $.JSON.parse(data);
+            if(data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            location.reload();
+        });
+    });
+
+
+    //获取验证码
+    $('.hqyzm').click(function(){
+
+        var phone = $('input[name=phone]').val();
+        var reg = /^0?1[3|4|5|8][0-9]\d{8}$/;
+        if (!reg.test(phone)) {
+            alert("号码有误~");
+            return;
+        }
+
+        //获取验证码
+        $.get('/user/getPhoneCode',{'phone':phone},function(data) {
+            data = $.JSON.parse(data);
+            if(data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            alert('验证码已经发送,请注意查收');
+        });
+
+        $('.hqyzm').hide();
+        $('.reciprocal').show();
+        //倒数
+        var seconds = 60;
+        $('.reciprocal .text').text( seconds + '秒重新获取');
+        
+        function reciprocal(){
+            seconds -= 1;  
+          $('.reciprocal .text').text( seconds + '秒重新获取');
+          
+            //倒计时完毕
+            if(seconds == 0){
+            $('.hqyzm').show();
+            $('.reciprocal').hide();
+              clearInterval(timer);
+            }
+        }
+        //循环倒时
+        timer = setInterval(reciprocal,1000);
+    });
+    
+    checkMustLogin(judgeBind);
+    
+    </script>
+<link rel="import" href="./../footer.html?__inline">

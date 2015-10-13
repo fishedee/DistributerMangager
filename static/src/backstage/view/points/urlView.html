@@ -1,0 +1,50 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript" src="/fishstrap/js/fishstrap.js" charset="utf-8"></script>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var urlId = $.location.getQueryArgv('urlId');
+		var urlInfo = {};
+		function getUrlInfo(next){
+			$.get('/producturl/getUrlInfo',{urlId:urlId},function(data) {
+				data = $.JSON.parse(data);
+				if(data.code!=0){
+					alert(data.msg);
+					return;
+				}
+				urlInfo = data.data;
+				next();
+			});
+		}
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'url',type:'text',name:'商城地址'},
+				],
+				value:urlInfo,
+				submit:function(data){
+					$.post('/producturl/addOnce',{'data':data},function(data){
+						data = $.JSON.parse(data);
+						if( data.code != 0 ){
+							dialog.message(data.msg);
+							return;
+						}
+						history.back();
+					});
+				},
+				cancel:function(){
+					history.back();
+				}
+			});
+		}
+		if(urlId){
+			getUrlInfo(go);
+		}else{
+			go();
+		}
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

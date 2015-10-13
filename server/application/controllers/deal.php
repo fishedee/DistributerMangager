@@ -272,6 +272,19 @@ class Deal extends CI_Controller {
 		$this->load->model('order/orderDb','orderDb');
 		$this->orderDb->mod($shopOrderId,$data);
 	}
+
+	/**
+	 * @view json
+	 * 获取订单数量
+	 */
+	public function getOrderNum(){
+		if($this->input->is_ajax_request()){
+			$userId   = $this->input->get('userId');
+			$myUserId = $this->input->get('myUserId');
+			$this->load->model('order/orderDb','orderDb');
+			return $this->orderDb->getOrderNum($userId,$myUserId);
+		}
+	}
 }
 
 /* End of file welcome.php */
