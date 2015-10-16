@@ -426,6 +426,10 @@ $item_str
             foreach ($graphic as $key => $v) {
                 $content[] = array("Title"=>$v['company'],"Description"=>base64_decode($v['nickName']),"PicUrl"=>$v['img'], "Url"=>$v['url']);
             }
+        }elseif($EventKey == 'qrcode'){
+            foreach ($graphic as $key => $v) {
+                $content[] = array("Title"=>$v['Title'],"Description"=>$v['Description'],"PicUrl"=>$v['PicUrl'], "Url"=>$v['Url']);
+            }
         }else{
             foreach ($graphic as $v){
                 $content[] = array("Title"=>$v['Title'],"Description"=>$v['Description'], "PicUrl"=>'http://'.$_SERVER[HTTP_HOST].$v['PicUrl'], "Url" =>$v['Url']);

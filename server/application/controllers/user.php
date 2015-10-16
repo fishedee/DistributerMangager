@@ -197,7 +197,11 @@ class User extends CI_Controller {
 		//执行业务逻辑
 		$result = $this->userAo->get($userId);
 		if($this->input->get('distribution') == 1){
-			return $result['telephone'];
+			$appName = $this->userAppAo->getAppName($userId);
+			return array(
+				'telephone'=>$result['telephone'],
+				'appName'  =>$appName
+				);
 		}else{
 			return $result;
 		}

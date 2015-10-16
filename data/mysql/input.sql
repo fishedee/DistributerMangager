@@ -1,711 +1,174 @@
-#创建数据库
-drop database if exists DistributerManager;
-create database DistributerManager;
-use DistributerManager;
+SET FOREIGN_KEY_CHECKS = 0;
 
 #创建ci的session表
-create table ci_sessions (
-    `id` varchar(40) NOT NULL,
-    `ip_address` varchar(45) NOT NULL,
-    `timestamp` int(10) unsigned DEFAULT 0 NOT NULL,
-    `data` blob NOT NULL,
-    primary key (id),
-    KEY `ci_sessions_timestamp` (`timestamp`)
-);
+DROP TABLE IF EXISTS  `ci_sessions`;
+CREATE TABLE `ci_sessions` (
+  `id` varchar(40) NOT NULL,
+  `ip_address` varchar(45) NOT NULL,
+  `timestamp` int(10) unsigned NOT NULL DEFAULT '0',
+  `data` blob NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ci_sessions_timestamp` (`timestamp`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-#创建用户表
-create table t_user(
-	userId integer not null auto_increment,
-	name varchar(32) not null,
-	password char(60) not null,
-	company varchar(128) not null,
-	phone varchar(11) not null,
-	email varchar(50) not null,
-    telephone varchar(11) not null,
-    followLink varchar(256) not null,
-	type integer not null,
-    downDistributionNum integer not null,
-	createTime timestamp not null default CURRENT_TIMESTAMP,
-	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
-	primary key( userId )
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+#创建活动管理表
+DROP TABLE IF EXISTS  `t_activity`;
+CREATE TABLE `t_activity` (
+  `activityId` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `clientId` int(11) DEFAULT NULL,
+  `name` varchar(32) NOT NULL,
+  `phone` varchar(32) NOT NULL,
+  `sex` varchar(4) NOT NULL,
+  `address` varchar(128) NOT NULL,
+  `createTime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`activityId`)
+) ENGINE=InnoDB AUTO_INCREMENT=67 DEFAULT CHARSET=utf8;
 
-alter table t_user add index nameIndex(name,password);
+#创建收货人地址表
+DROP TABLE IF EXISTS  `t_address`;
+CREATE TABLE `t_address` (
+  `addressId` int(11) NOT NULL AUTO_INCREMENT,
+  `clientId` int(11) NOT NULL,
+  `name` varchar(32) NOT NULL,
+  `province` varchar(32) NOT NULL,
+  `city` varchar(32) NOT NULL,
+  `address` varchar(128) NOT NULL,
+  `phone` varchar(11) NOT NULL,
+  `payment` int(11) NOT NULL,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifyTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`addressId`),
+  KEY `clientIdIndex` (`clientId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10540 DEFAULT CHARSET=utf8mb4;
 
-#创建用户AppId与AppKey入口
-create table t_user_app(
-	userAppId integer not null auto_increment,
-	userId integer not null,
-	appBg varchar(128) not null,
-	appLogo varchar(128) not null,
-	appName varchar(128) not null,
-	weixinNum varchar(128),
-	appId varchar(128) not null,
-	appKey varchar(128) not null,
-	mchId varchar(128) not null,
-	mchKey varchar(128) not null,
-	mchSslCert varchar(128) not null,
-	mchSslKey varchar(128) not null,
-	appAccessToken varchar(128) not null,
-	appAccessTokenExpire timestamp not null,
-	appJsApiTicket varchar(128) not null,
-	appJsApiTicketExpire timestamp not null,
-	cardTicket varchar(128) not null,
-	cardTicketExpire timestamp not null default '0000-00-00 00:00:00',
-	remark varchar(128) not null,
-	customService varchar(255) ,
-	createTime timestamp not null default CURRENT_TIMESTAMP,
-	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
-	primary key( userAppId )
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+#创建众筹商品表
+DROP TABLE IF EXISTS  `t_chips`;
+CREATE TABLE `t_chips` (
+  `chips_id` int(10) NOT NULL AUTO_INCREMENT,
+  `product_title` varchar(50) NOT NULL,
+  `oldprice` double NOT NULL,
+  `newprice` double NOT NULL,
+  `base` double NOT NULL,
+  `num` int(10) NOT NULL,
+  `icon` varchar(255) NOT NULL,
+  `create_time` varchar(100) NOT NULL,
+  `start_time` varchar(100) NOT NULL,
+  `end_time` varchar(100) NOT NULL,
+  `percent` double NOT NULL,
+  `down_num` int(10) NOT NULL,
+  `down_price` double NOT NULL,
+  `status` tinyint(1) DEFAULT '1',
+  `detail` text NOT NULL,
+  `remark` varchar(255) NOT NULL,
+  `is_delete` tinyint(1) DEFAULT '0',
+  `stock` int(10) NOT NULL,
+  `userId` int(10) NOT NULL,
+  `start` int(1) NOT NULL,
+  `password` varchar(32) NOT NULL,
+  PRIMARY KEY (`chips_id`),
+  KEY `chipsIdIndex` (`chips_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10004 DEFAULT CHARSET=utf8mb4;
 
-alter table t_user_app add index userIdIndex(userId);
-
-#创建客户表
-create table t_client(
-	clientId integer not null auto_increment,
-	userId integer not null,
-	openId varchar(128) not null,
-	headImgUrl varchar(255) not null,
-	nickName varchar(255) not null,
-	subscribe int(1) not null,
-	type integer not null,
-	createTime timestamp not null default CURRENT_TIMESTAMP,
-	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
-	primary key( clientId )
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-
-alter table t_client add index openIdIndex(openId);
-alter table t_client add index userIdIndex(userId);
-
-#创建地址表
-create table t_address(
-    addressId integer not null auto_increment,
-    clientId integer not null,
-    name varchar(32) not null,
-    province varchar(32) not null,
-    city varchar(32) not null,
-    address varchar(128) not null,
-    phone varchar(11) not null,
-    payment integer not null,
-    createTime timestamp not null default CURRENT_TIMESTAMP,
-    modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-    primary key(addressId)
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-
-alter table t_address add index clientIdIndex(clientId);
-
-#创建用户权限表
-create table t_user_permission(
-	userPermissionId integer not null auto_increment,
-	userId integer not null,
-	permissionId integer not null,
-	createTime timestamp not null default CURRENT_TIMESTAMP,
-	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
-	primary key( userPermissionId )
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-
-alter table t_user_permission add index userIdIndex(userId);
-
-#创建代理商的客户表
-create table t_user_client(
-	userClientId integer not null auto_increment,
-	userId integer not null,
-	clientUserId integer not null,
-	createTime timestamp not null default CURRENT_TIMESTAMP,
-	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
-	primary key( userClientId )
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-
-alter table t_user_client add index userIdIndex(userId);
-
-#创建公司文章模板表
-create table t_company_template(
-	companyTemplateId integer not null auto_increment,
-	title varchar(128) not null,
-	url varchar(256) not null,
-    type integer not null,
-	remark varchar(256) not null,
-	createTime timestamp not null default CURRENT_TIMESTAMP,
-	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
-	primary key( companyTemplateId )
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-
-#创建用户公司模板表
-create table t_user_company_template(
-	userCompanyTemplateId integer not null auto_increment,
-	userId integer not null,
-    type integer not null,
-	companyTemplateId integer not null,
-	createTime timestamp not null default CURRENT_TIMESTAMP,
-	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
-	primary key( userCompanyTemplateId )
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-
-alter table t_user_company_template add index userIdIndex(userId);
-
-
-#创建用户公司文章分类表
-create table t_user_company_classify(
-	userCompanyClassifyId integer not null auto_increment,
-	userId integer not null,
-	title varchar(128) not null,
-	icon varchar(128) not null,
-	sort integer not null,
-    link varchar(128) not null,
-	remark varchar(128) not null,
-	createTime timestamp not null default CURRENT_TIMESTAMP,
-	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
-	primary key( userCompanyClassifyId )
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-
-alter table t_user_company_classify add index userIdIndex(userId);
-
-#创建用户公司文章表
-create table t_user_company_article(
-	userCompanyArticleId integer not null auto_increment,
-	userId integer not null,
-	cover varchar(128) not null,
-	title varchar(128) not null,
-	remark varchar(256) not null,
-	summary varchar(256) not null,
-	content text not null,
-	userCompanyClassifyId integer not null,
-    sort integer not null,
-	createTime timestamp not null default CURRENT_TIMESTAMP,
-	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
-	primary key( userCompanyArticleId )
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-
-alter table t_user_company_article add index userIdIndex(userId);
-
-#创建用户公司广告表
-create table t_user_company_banner(
-	userCompanyBannerId integer not null auto_increment,
-	userId integer not null,
-	title varchar(256) not null,
-	image varchar(256) not null,
-	url varchar(256) not null,
-	sort integer not null,
-	createTime timestamp not null default CURRENT_TIMESTAMP,
-	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
-	primary key( userCompanyBannerId )
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-
-alter table t_user_company_banner add index userIdIndex(userId);
-
-#创建商城轮播图片列表
-create table t_shop_banner(
-	userShopBannerId integer not null auto_increment,
-	userId integer not null,
-	icon varchar(256) not null,
-	title varchar(256) not null,
-	sort integer not null,
-	createTime timestamp not null default CURRENT_TIMESTAMP,
-	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
-	primary key( userShopBannerId )
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-alter table t_shop_banner add index userIdIndex(userId);
-
-#创建用户商城商品分类表
-create table t_shop_commodity_classify(
-    shopCommodityClassifyId integer not null auto_increment,
-    userId integer not null,
-    title varchar(128) not null,
-    icon varchar(128) not null,
-    parent integer not null,
-    sort integer not null,
-    link varchar(128) not null,
-    remark varchar(128) not null,
-    createTime timestamp not null default CURRENT_TIMESTAMP,
-    modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-    primary key( shopCommodityClassifyId )
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-
-alter table t_shop_commodity_classify add index userIdIndex(userId);
-
-#创建用户商城商品表
-create table t_shop_commodity(
-    shopCommodityId integer not null auto_increment,
-    userId integer not null,
-    isLink integer not null,
-    shopLinkCommodityId integer not null,#直接上级商品ID
-    shopCommodityClassifyId integer not null,
-    title varchar(128) not null,
-    icon varchar(128) not null,
-    introduction varchar(128) not null,
-    detail text not null,
-    price integer not null,
-    oldPrice integer not null,
-    inventory integer not null,
-    state integer not null,
-    sort integer not null,
-    remark varchar(128) not null,
-    createTime timestamp not null default CURRENT_TIMESTAMP,
-    modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-    primary key(shopCommodityId)
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-
-alter table t_shop_commodity add index userIdIndex(userId);
-alter table t_shop_commodity add index shopCommodityClassifyIdIndex(shopCommodityClassifyId);
-
-#创建用户购物车表
-create table t_shop_troller(
-    shopTrollerId integer not null auto_increment,
-    clientId integer not null,
-    shopCommodityId integer not null,
-    title varchar(128) not null,
-    icon varchar(128) not null,
-    introduction varchar(128) not null,
-    price integer not null,
-    oldPrice integer not null,
-    quantity integer not null,
-    createTime timestamp not null default CURRENT_TIMESTAMP,
-	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
-    primary key(shopTrollerId)
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-
-alter table t_shop_troller add index clientIdIndex(clientId);
-
-#创建用户订单表
-create table t_shop_order(
-	shopOrderId varchar(32) not null,
-    userId integer not null,
-    clientId integer not null,
-    image varchar(128) not null,
-    description varchar(128) not null,
-   	price integer not null,
-    num integer not null,
-    name varchar(32) not null,
-    wxPrePayId varchar(128) not null,
-    state integer not null,
-    remark varchar(128) not null,
-    expressageName varchar(20) not null ,
-    expressageNum varchar(30) not null ,
-    createTime timestamp not null default CURRENT_TIMESTAMP,
-	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
-    primary key(shopOrderId)
-)engine=innodb default charset=utf8mb4;
-
-alter table t_shop_order add index matchIndex(userId, clientId);
-
-#创建用户订单商品表
-create table t_shop_order_commodity(
-	shopOrderCommodityId integer not null auto_increment,
-	shopOrderId varchar(32) not null,
-	shopCommodityId integer not null,
-    title varchar(128) not null,
-    icon varchar(128) not null,
-    introduction varchar(128) not null,
-    price integer not null,
-    oldPrice integer not null,
-    quantity integer not null,
-    createTime timestamp not null default CURRENT_TIMESTAMP,
-	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
-    primary key(shopOrderCommodityId)
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-
-alter table t_shop_order_commodity add index shopOrderIdIndex(shopOrderId);
-
-#创建用户订单地址表
-create table t_shop_order_address(
-	shopOrderAddressId integer not null auto_increment,
-	shopOrderId varchar(32) not null,
-	name varchar(32) not null,
-    province varchar(32) not null,
-    city varchar(32) not null,
-    address varchar(128) not null,
-    phone varchar(11) not null,
-    payment integer not null,
-    createTime timestamp not null default CURRENT_TIMESTAMP,
-	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP, 
-    primary key(shopOrderAddressId)
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-
-alter table t_shop_order_address add index shopOrderIdIndex(shopOrderId);
-
-
-#创建分成关系表
-create table t_distribution(
-    distributionId integer not null auto_increment,
-    upUserId integer not null,
-    downUserId integer not null,
-    shopUrl varchar(256) not null,
-    distributionPercent integer not null,
-    state integer not null,
-    createTime timestamp not null default CURRENT_TIMESTAMP,
-    modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-    primary key(distributionId)
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-
-#创建分成订单表
-create table t_distribution_order(
-    distributionOrderId integer not null auto_increment,
-    upUserId integer not null,
-    downUserId integer not null,
-    shopOrderId varchar(32) not null,
-    price integer not null,
-    phone int(11) not null,
-    state integer not null,
-    createTime timestamp not null default CURRENT_TIMESTAMP,
-    modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-    primary key(distributionOrderId)
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-
-#创建分成订单商品表
-create table t_distribution_commodity(
-    distributionCommodityId  integer not null auto_increment,
-    distributionOrderId integer not null,
-    shopOrderId varchar(32) not null,
-    shopCommodityId integer not null,
-    price integer not null,
-    createTime timestamp not null default CURRENT_TIMESTAMP,
-    modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-    primary key(distributionCommodityId)
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-
-#创建抽奖表
-create table t_lucky_draw(
-    luckyDrawId integer not null auto_increment,
-    userId integer not null,
-    title varchar(128) not null,
-    summary varchar(2056) not null,
-    state integer not null,
-    method int(1) not null,
-    beginTime timestamp not null,
-    endTime timestamp not null,
-    createTime timestamp not null default CURRENT_TIMESTAMP,
-    modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-    primary key(luckyDrawId)
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-
-alter table t_lucky_draw add index useIdIndex(userId);
-
-#创建抽奖商品列表
-create table t_lucky_draw_commodity(
-    luckyDrawCommodityId integer not null auto_increment,
-    luckyDrawId integer not null,
-    title varchar(128) not null,
-    image varchar(128) not null,
-    type integer not null,
-    quantity integer not null,
-    coupon_id integer not null default '0',
-    card_id varchar(125),
-    sort integer not null,
-    createTime timestamp not null default CURRENT_TIMESTAMP,
-    modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-    primary key(luckyDrawCommodityId)
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-
-alter table t_lucky_draw_commodity add index luckyDrawIdIndex(luckyDrawId);
-
-#创建抽奖的用户列表
-create table t_lucky_draw_client(
-    luckyDrawClientId integer not null auto_increment,
-    luckyDrawId integer not null,
-    clientId integer not null,
-    title varchar(128) not null,
-    image varchar(128) not null,
-    type integer not null,
-    name varchar(128),
-    phone varchar(11),
-    card_id varchar(125),
-    status tinyint(1) not null default '1',
-    createTime timestamp not null default CURRENT_TIMESTAMP,
-    modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-    primary key(luckyDrawClientId)
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-
-alter table t_lucky_draw_client add index luckyDrawIdIndex(luckyDrawId);
-alter table t_lucky_draw_client add index clientIdIndex(clientId);
-
-#创建VIP设置
-create table t_vip(
-    vipId integer not null auto_increment,
-    userId integer not null,
-    cardImage varchar(128) not null,
-    createTime timestamp not null default CURRENT_TIMESTAMP,
-    modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-    primary key(vipId)
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-
-alter table t_vip add index userIdIndex(userId);
-
-#创建VIP用户设置
-create table t_vip_client(
-    vipClientId integer not null auto_increment,
-    userId integer not null,
-    clientId integer not null,
-    name varchar(128) not null,
-    phone varchar(11) not null, 
-    score integer not null,
-    createTime timestamp not null default CURRENT_TIMESTAMP,
-    modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-    userCardCode varchar(125) not null,
-    card_id varchar(125) not null,
-    active tinyint(1) not null default '0',
-    primary key(vipClientId)
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-
-alter table t_vip_client add index userIdIndex(userId);
-alter table t_vip_client add index clientIdIndex(clientId);
-
-#创建微信红包
-create table t_red_pack(
-    redPackId integer not null auto_increment,
-    userId integer not null,
-    maxPackNum integer not null,
-    nickName varchar(128) not null,#商户名称
-    minMoney integer not null,#最小红包金额
-    maxMoney integer not null,#最大红包金额
-    wishing varchar(128) not null,#祝福语
-    actName varchar(128) not null,#活动名称
-    remark varchar(128) not null,#备注
-    redPackRuleImage varchar(128) not null,
-    redPackNoneTip varchar(128) not null,#没有红包时的提示
-    state integer not null,
-    createTime timestamp not null default CURRENT_TIMESTAMP,
-    modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-    primary key(redPackId)
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-
-alter table t_red_pack add index userIdIndex(userId);
-
-#创建微信红包列表
-create table t_red_pack_client(
-    redPackClientId integer not null auto_increment,
-    redPackId integer not null,
-    clientId integer not null,
-    money integer not null,
-    createTime timestamp not null default CURRENT_TIMESTAMP,
-    modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-    primary key(redPackClientId)
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-
-alter table t_red_pack_client add index clientIdIndex(clientId);
-
-#微信被关注回复列表
-create table t_weixin_subscribe(
-	weixinSubscribeId int not null auto_increment,
-	userId int,
-	materialClassifyId integer not null,
-	title varchar(128),
-	remark varchar(128),
-	isRelease integer,
-	createTime timestamp not null default CURRENT_TIMESTAMP,
-	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-	primary key(weixinSubscribeId)
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-alter table t_weixin_subscribe add index userIdIndex(userId);
-
-#微信自动回复素材列表
-create table t_weixin_material(
-	materialId integer not null auto_increment,
-	weixinSubscribeId int not null,
-	Title varchar(128),
-	Description varchar(128),
-	Url varchar(256),
-	PicUrl varchar(128),
-	sort int not null,
-	createTime timestamp not null default CURRENT_TIMESTAMP,
-	modifyTime timestamp not null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
-	primary key(materialId)
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-alter table t_weixin_material add index weixinSubscribeIdIndex(weixinSubscribeId);
-
-#微信自定义菜单
-create table t_weixin_menu(
-	menuId integer not null auto_increment,
-	userId int,
-	content text,
-	primary key(menuId)
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-alter table t_weixin_menu add index weixinmenuIndex(userId);
-
-#创建招商加盟表
-create table t_cooperation(
-    cooperationId int(11) not null auto_increment primary key,
-    userId int(11) not null,
-    type varchar(50) not null,
-    business_name varchar(50) not null,
-    user_name varchar(50) not null,
-    contract varchar(50) not null,
-    province varchar(50) not null,
-    city varchar(50) not null,
-    newlocation varchar(50) not null,
-    will text not null
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;;
-alter table t_cooperation add index cooperationUserIdIndex(userId);
-
-#微信多客服列表
-create table t_weixin_kf(
-	kfId integer not null auto_increment,
-	userId int,
-	kf_id int,
-	kf_nick varchar(50),
-	kf_account varchar(50),
-	kf_headimgurl varchar(128),
-	primary key(kfId)
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-alter table t_weixin_kf add index weixinKfIndex(userId);
-
-#创建众筹商品列表
-create table t_chips(
-    chips_id int(10) not null auto_increment primary key,
-    product_title varchar(50) not null ,oldprice double not null,
-    newprice double not null ,base double not null,
-    num int(10) not null ,icon varchar(255) not null ,
-    create_time varchar(100) not null ,start_time varchar(100) not null ,
-    end_time varchar(100) not null ,
-    percent double not null,down_num int(10) not null ,
-    down_price double not null ,
-    status tinyint(1) default '1',
-    detail text not null ,
-    remark varchar(255) not null ,
-    is_delete tinyint(1) default '0',
-    stock int(10) not null ,
-    userId int(10) not null ,
-    start int(1) not null ,
-    password varchar(32) not null
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-alter table t_chips add index chipsIdIndex(chips_id);
-
-#创建众筹订单表
-create table t_chips_order(
-    chips_order_id int(11) not null auto_increment primary key,
-    orderNo varchar(32) not null unique,
-    userId int(11) not null ,
-    clientId int(11) not null ,
-    chips_id int(11) not null ,
-    num int(11) not null ,
-    percent double not null ,
-    firstpay double not null ,
-    unit_price double not null ,
-    time int(10) not null ,
-    status int(1) not null default '1',
-    addressId int(11) not null ,
-    wxPrePayId varchar(128) not null ,
-    wxPrePayId2 varchar(128) not null ,
-    name varchar(32) not null ,
-    province varchar(32) not null ,
-    city varchar(32) not null,
-    address varchar(128) not null ,
-    phone int(11) not null ,
-    end_free double not null ,
-    end_unit_price double not null ,
-    down_time varchar(128) not null ,
-    pay_first_time varchar(128) not null ,
-    pay_all_time varchar(128) not null
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-alter table t_chips_order add index chipsOrderIdIndex(chips_order_id);
-
-#创建众筹记录表
-create table t_chips_record(
-    chips_record_id int(11) not null auto_increment primary key,
-    clientId int(11) not null ,
-    chips_id int(11) not null ,
-    newprice double not null,
-    num int(11) not null
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-alter table t_chips_record add index chipsRecordIdIndex(chips_record_id);
-
-#创建众筹权限表
-create table t_chips_power(
-    powerId int(11) not null auto_increment primary key,
-    clientId int(11) not null ,
-    chips_id int(11) not null
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-alter table t_chips_record add index chipsPowerClientId(clientId);
-
-#创建众筹banner图表
-create table t_chips_banner(
-    chips_banner_id int(11) not null auto_increment primary key,
-    userId int(11) not null ,
-    img varchar(255) not null,
-    url varchar(128) not null ,
-    title varchar(128) not null ,
-    status tinyint(1) not null default '1'
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
+#创建众筹轮播图表
+DROP TABLE IF EXISTS  `t_chips_banner`;
+CREATE TABLE `t_chips_banner` (
+  `chips_banner_id` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `img` varchar(255) NOT NULL,
+  `url` varchar(128) NOT NULL,
+  `title` varchar(128) NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`chips_banner_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10002 DEFAULT CHARSET=utf8mb4;
 
 #创建众筹联系方式表
-create table t_chips_contract(
-    chips_contract_id int(11) not null auto_increment primary key ,
-    userId int(11) not null unique,
-    phone varchar(32) not null
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-
-#创建模板信息列表
-create table t_weixin_template(
-	userId integer not null,
-	openState int(1) not null default'0',
-	TM00015 varchar(80),
-	TM00505 varchar(80),
-	primary key( userId )
-)engine=innodb default charset=utf8mb4;
-alter table t_weixin_template add index userIdIndex(userId);
-
-#创建卡券列表
-create table t_coupons(
-    couponsId int(11) not null auto_increment primary key,
-    card_id varchar(255) not null,
-    userId int(11) not null,
-    title varchar(128) not null
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-alter table t_coupons add index couponsUserId(userId);
-
-#创建会员卡表
-create table t_member_card(
-    memberCardId int(11) not null auto_increment primary key,
-    card_id varchar(125) not null,
-    userId int(11) not null,
-    title varchar(128) not null,
-    status varchar(100) not null default 'CARD_STATUS_NOT_VERIFY',
-    num int(11) not null,
-    defaultCard tinyint(1) not null default '0'
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-alter table t_member_card add index memberCardUserId(userId);
-
-#公司联系我们
-create table t_user_company_contact(
-	contactId integer not null auto_increment,
-	userId int,
-	content text,
-    	latitude varchar(30),
-    	longitude varchar(30),
-    	name varchar(128),        
-    	address varchar(128),
-    	scale int(2),      
-    	infoUrl varchar(128),
-	primary key(contactId)
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-alter table t_user_company_contact add index contactIndex(userId);
-
-#创建电子名片
-create table t_qrcode(
-	qrcodeId int(11) not null auto_increment primary key,
-	userId int(11) not null,
-	username varchar(100) not null,
-	phone varchar(32) not null,
-	workPhone varchar(32) not null,
-	email varchar(100) not null,
-	company varchar(128) not null,
-	company_url varchar(255) not null,
-	company_address varchar(255) not null,
-	qr text not null,
-	logo text not null,
-	qrX double not null,
-	qrY double not null
-)engine=innodb default charset=utf8mb4 auto_increment = 10001;
-alter table t_qrcode add index qrcodeUserId(userId);
-
-create table `t_company_template_power` (
-  `powerId` int(11) NOT NULL AUTO_INCREMENT,
-  `companyTemplateId` int(11) NOT NULL,
+DROP TABLE IF EXISTS  `t_chips_contract`;
+CREATE TABLE `t_chips_contract` (
+  `chips_contract_id` int(11) NOT NULL AUTO_INCREMENT,
   `userId` int(11) NOT NULL,
-  PRIMARY KEY (`powerId`)
+  `phone` varchar(32) NOT NULL,
+  PRIMARY KEY (`chips_contract_id`),
+  UNIQUE KEY `userId` (`userId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8mb4;
 
-create table `t_company_template` (
+#创建众筹订单表
+DROP TABLE IF EXISTS  `t_chips_order`;
+CREATE TABLE `t_chips_order` (
+  `chips_order_id` int(11) NOT NULL AUTO_INCREMENT,
+  `orderNo` varchar(32) NOT NULL,
+  `userId` int(11) NOT NULL,
+  `clientId` int(11) NOT NULL,
+  `chips_id` int(11) NOT NULL,
+  `num` int(11) NOT NULL,
+  `percent` double NOT NULL,
+  `firstpay` double NOT NULL,
+  `unit_price` double NOT NULL,
+  `time` int(10) NOT NULL,
+  `status` int(1) NOT NULL DEFAULT '1',
+  `addressId` int(11) NOT NULL,
+  `wxPrePayId` varchar(128) NOT NULL,
+  `wxPrePayId2` varchar(128) NOT NULL,
+  `name` varchar(32) NOT NULL,
+  `province` varchar(32) NOT NULL,
+  `city` varchar(32) NOT NULL,
+  `address` varchar(128) NOT NULL,
+  `phone` int(11) NOT NULL,
+  `end_free` double NOT NULL,
+  `end_unit_price` double NOT NULL,
+  `down_time` varchar(128) NOT NULL,
+  `pay_first_time` varchar(128) NOT NULL,
+  `pay_all_time` varchar(128) NOT NULL,
+  PRIMARY KEY (`chips_order_id`),
+  UNIQUE KEY `orderNo` (`orderNo`),
+  KEY `chipsOrderIdIndex` (`chips_order_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10006 DEFAULT CHARSET=utf8mb4;
+
+#创建众筹权限表
+DROP TABLE IF EXISTS  `t_chips_power`;
+CREATE TABLE `t_chips_power` (
+  `powerId` int(11) NOT NULL AUTO_INCREMENT,
+  `clientId` int(11) NOT NULL,
+  `chips_id` int(11) NOT NULL,
+  PRIMARY KEY (`powerId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10010 DEFAULT CHARSET=utf8mb4;
+
+#创建众筹记录表
+DROP TABLE IF EXISTS  `t_chips_record`;
+CREATE TABLE `t_chips_record` (
+  `chips_record_id` int(11) NOT NULL AUTO_INCREMENT,
+  `clientId` int(11) NOT NULL,
+  `chips_id` int(11) NOT NULL,
+  `newprice` double NOT NULL,
+  `num` int(11) NOT NULL,
+  PRIMARY KEY (`chips_record_id`),
+  KEY `chipsRecordIdIndex` (`chips_record_id`),
+  KEY `chipsPowerClientId` (`clientId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10004 DEFAULT CHARSET=utf8mb4;
+
+#创建微信用户表
+DROP TABLE IF EXISTS  `t_client`;
+CREATE TABLE `t_client` (
+  `clientId` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `openId` varchar(128) NOT NULL,
+  `headImgUrl` varchar(255) NOT NULL,
+  `nickName` varchar(255) NOT NULL,
+  `type` int(11) NOT NULL,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifyTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `subscribe` int(1) NOT NULL,
+  `score` int(11) NOT NULL DEFAULT '0',
+  `sales` int(11) NOT NULL DEFAULT '0',
+  `fall` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`clientId`),
+  KEY `openIdIndex` (`openId`),
+  KEY `userIdIndex` (`userId`)
+) ENGINE=InnoDB AUTO_INCREMENT=12111 DEFAULT CHARSET=utf8mb4;
+
+#常见公司模板表
+DROP TABLE IF EXISTS  `t_company_template`;
+CREATE TABLE `t_company_template` (
   `companyTemplateId` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(128) NOT NULL,
   `url` varchar(256) NOT NULL,
@@ -715,8 +178,708 @@ create table `t_company_template` (
   `type` int(11) NOT NULL,
   `defaultTemplate` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`companyTemplateId`)
-);
-alter table t_company_template add defaultTemplate tinyint(1) not null default '0';
+) ENGINE=InnoDB AUTO_INCREMENT=10026 DEFAULT CHARSET=utf8mb4;
+
+#创建模板权限表
+DROP TABLE IF EXISTS  `t_company_template_power`;
+CREATE TABLE `t_company_template_power` (
+  `powerId` int(11) NOT NULL AUTO_INCREMENT,
+  `companyTemplateId` int(11) NOT NULL,
+  `userId` int(11) NOT NULL,
+  PRIMARY KEY (`powerId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10019 DEFAULT CHARSET=utf8mb4;
+
+#创建招商加盟表
+DROP TABLE IF EXISTS  `t_cooperation`;
+CREATE TABLE `t_cooperation` (
+  `cooperationId` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `type` varchar(50) NOT NULL,
+  `business_name` varchar(50) NOT NULL,
+  `user_name` varchar(50) NOT NULL,
+  `contract` varchar(50) NOT NULL,
+  `province` varchar(50) NOT NULL,
+  `city` varchar(50) NOT NULL,
+  `newlocation` varchar(50) NOT NULL,
+  `will` text NOT NULL,
+  PRIMARY KEY (`cooperationId`),
+  KEY `cooperationUserIdIndex` (`userId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10011 DEFAULT CHARSET=utf8mb4;
+
+#创建卡券表
+DROP TABLE IF EXISTS  `t_coupons`;
+CREATE TABLE `t_coupons` (
+  `couponsId` int(11) NOT NULL AUTO_INCREMENT,
+  `card_id` varchar(255) NOT NULL,
+  `userId` int(11) NOT NULL,
+  `title` varchar(128) NOT NULL,
+  PRIMARY KEY (`couponsId`),
+  KEY `couponsUserId` (`userId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8mb4;
+
+#创建分成关系表
+DROP TABLE IF EXISTS  `t_distribution`;
+CREATE TABLE `t_distribution` (
+  `distributionId` int(11) NOT NULL AUTO_INCREMENT,
+  `upUserId` int(11) NOT NULL,
+  `downUserId` int(11) NOT NULL,
+  `shopUrl` varchar(256) NOT NULL,
+  `distributionPercent` int(11) NOT NULL,
+  `phone` varchar(11) NOT NULL,
+  `state` int(11) NOT NULL,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifyTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `remark` varchar(255) NOT NULL,
+  `scort` int(11) NOT NULL,
+  `line` int(11) NOT NULL DEFAULT '1',
+  `vender` int(11) NOT NULL,
+  `parent_id` int(11) NOT NULL DEFAULT '0',
+  `recommend` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`distributionId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10049 DEFAULT CHARSET=utf8mb4;
+
+#创建分成订单订单商品表
+DROP TABLE IF EXISTS  `t_distribution_commodity`;
+CREATE TABLE `t_distribution_commodity` (
+  `distributionCommodityId` int(11) NOT NULL AUTO_INCREMENT,
+  `distributionOrderId` int(11) NOT NULL,
+  `shopOrderId` varchar(32) NOT NULL,
+  `shopCommodityId` int(11) NOT NULL,
+  `price` int(11) NOT NULL,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifyTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`distributionCommodityId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10025 DEFAULT CHARSET=utf8mb4;
+
+#创建分成订单表
+DROP TABLE IF EXISTS  `t_distribution_order`;
+CREATE TABLE `t_distribution_order` (
+  `distributionOrderId` int(11) NOT NULL AUTO_INCREMENT,
+  `upUserId` int(11) NOT NULL,
+  `downUserId` int(11) NOT NULL,
+  `shopOrderId` varchar(32) NOT NULL,
+  `price` int(11) NOT NULL,
+  `state` int(11) NOT NULL,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifyTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `distributionId` int(11) NOT NULL,
+  `vender` int(11) NOT NULL,
+  `entranceUserId` int(11) NOT NULL,
+  PRIMARY KEY (`distributionOrderId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10023 DEFAULT CHARSET=utf8mb4;
+
+#创建抽奖表
+DROP TABLE IF EXISTS  `t_lucky_draw`;
+CREATE TABLE `t_lucky_draw` (
+  `luckyDrawId` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `title` varchar(128) NOT NULL,
+  `method` int(1) NOT NULL DEFAULT '1',
+  `summary` varchar(2056) NOT NULL,
+  `state` int(11) NOT NULL,
+  `beginTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `endTime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifyTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`luckyDrawId`),
+  KEY `useIdIndex` (`userId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10023 DEFAULT CHARSET=utf8mb4;
+
+#创建抽奖的用户列表
+DROP TABLE IF EXISTS  `t_lucky_draw_client`;
+CREATE TABLE `t_lucky_draw_client` (
+  `luckyDrawClientId` int(11) NOT NULL AUTO_INCREMENT,
+  `luckyDrawId` int(11) NOT NULL,
+  `clientId` int(11) NOT NULL,
+  `title` varchar(128) NOT NULL,
+  `image` varchar(128) NOT NULL,
+  `type` int(11) NOT NULL,
+  `name` varchar(128) DEFAULT NULL,
+  `phone` varchar(11) DEFAULT NULL,
+  `card_id` varchar(125) DEFAULT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '1',
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifyTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`luckyDrawClientId`),
+  KEY `luckyDrawIdIndex` (`luckyDrawId`),
+  KEY `clientIdIndex` (`clientId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10401 DEFAULT CHARSET=utf8mb4;
+
+#创建抽奖商品列表
+DROP TABLE IF EXISTS  `t_lucky_draw_commodity`;
+CREATE TABLE `t_lucky_draw_commodity` (
+  `luckyDrawCommodityId` int(11) NOT NULL AUTO_INCREMENT,
+  `luckyDrawId` int(11) NOT NULL,
+  `title` varchar(128) NOT NULL,
+  `image` varchar(128) NOT NULL,
+  `type` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `coupon_id` int(11) DEFAULT '0',
+  `card_id` varchar(125) DEFAULT NULL,
+  `precent` int(11) NOT NULL,
+  `sort` int(11) NOT NULL,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifyTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`luckyDrawCommodityId`),
+  KEY `luckyDrawIdIndex` (`luckyDrawId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10496 DEFAULT CHARSET=utf8mb4;
+
+#创建会员卡表
+DROP TABLE IF EXISTS  `t_member_card`;
+CREATE TABLE `t_member_card` (
+  `memberCardId` int(11) NOT NULL AUTO_INCREMENT,
+  `card_id` varchar(125) NOT NULL,
+  `userId` int(11) NOT NULL,
+  `title` varchar(128) NOT NULL,
+  `status` varchar(100) NOT NULL DEFAULT 'CARD_STATUS_NOT_VERIFY',
+  `num` int(11) NOT NULL,
+  `defaultCard` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`memberCardId`),
+  KEY `memberCardUserId` (`userId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10002 DEFAULT CHARSET=utf8mb4;
+
+#创建账户明细表
+DROP TABLE IF EXISTS  `t_money_log`;
+CREATE TABLE `t_money_log` (
+  `moneyLogId` int(11) NOT NULL AUTO_INCREMENT,
+  `vender` int(11) NOT NULL,
+  `clientId` int(11) NOT NULL,
+  `money` int(11) NOT NULL,
+  `dis` tinyint(1) NOT NULL DEFAULT '1',
+  `remark` varchar(32) NOT NULL,
+  `createTime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`moneyLogId`),
+  KEY `moneyLogIdIndex` (`moneyLogId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8mb4;
+
+#创建已兑换商品表
+DROP TABLE IF EXISTS  `t_points_order`;
+CREATE TABLE `t_points_order` (
+  `orderId` int(11) NOT NULL AUTO_INCREMENT,
+  `productName` varchar(255) NOT NULL,
+  `productImg` varchar(255) DEFAULT NULL,
+  `num` int(11) NOT NULL DEFAULT '1',
+  `createTime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `clientId` int(11) NOT NULL,
+  `vender` int(11) NOT NULL,
+  `points` int(11) NOT NULL,
+  PRIMARY KEY (`orderId`),
+  KEY `orderIdIndex` (`orderId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4;
+
+#创建商品表
+DROP TABLE IF EXISTS  `t_points_product`;
+CREATE TABLE `t_points_product` (
+  `productId` int(11) NOT NULL AUTO_INCREMENT,
+  `vender` int(11) NOT NULL,
+  `productName` varchar(255) NOT NULL,
+  `productImg` varchar(255) NOT NULL,
+  `num` int(11) NOT NULL,
+  `price` int(11) NOT NULL,
+  `points` int(11) NOT NULL,
+  `exchange` int(11) NOT NULL DEFAULT '0',
+  `state` tinyint(1) NOT NULL DEFAULT '1',
+  PRIMARY KEY (`productId`),
+  KEY `productIdIndex` (`productId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8mb4;
+
+#创建兑换商品地址表
+DROP TABLE IF EXISTS  `t_points_product_url`;
+CREATE TABLE `t_points_product_url` (
+  `urlId` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `url` varchar(255) NOT NULL,
+  `qrcode` varchar(255) NOT NULL,
+  PRIMARY KEY (`urlId`),
+  KEY `urlIdIndex` (`urlId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8mb4;
+
+#创建二维码名片表
+DROP TABLE IF EXISTS  `t_qrcode`;
+CREATE TABLE `t_qrcode` (
+  `qrcodeId` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `username` varchar(100) NOT NULL,
+  `phone` varchar(32) NOT NULL,
+  `workPhone` varchar(32) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `company` varchar(128) NOT NULL,
+  `company_url` varchar(255) NOT NULL,
+  `company_address` varchar(255) NOT NULL,
+  `qr` text NOT NULL,
+  `logo` text NOT NULL,
+  `qrX` double NOT NULL,
+  `qrY` double NOT NULL,
+  PRIMARY KEY (`qrcodeId`),
+  KEY `qrcodeUserId` (`userId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10060 DEFAULT CHARSET=utf8mb4;
+
+#创建微信红包
+DROP TABLE IF EXISTS  `t_red_pack`;
+CREATE TABLE `t_red_pack` (
+  `redPackId` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `nickName` varchar(128) NOT NULL,
+  `minMoney` int(11) NOT NULL,
+  `maxMoney` int(11) NOT NULL,
+  `wishing` varchar(128) NOT NULL,
+  `actName` varchar(128) NOT NULL,
+  `remark` varchar(128) NOT NULL,
+  `state` int(11) NOT NULL,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifyTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `maxPackNum` int(11) NOT NULL,
+  `redPackRuleImage` varchar(128) NOT NULL,
+  `redPackNoneTip` varchar(128) NOT NULL,
+  PRIMARY KEY (`redPackId`),
+  KEY `userIdIndex` (`userId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10018 DEFAULT CHARSET=utf8mb4;
+
+#创建微信红包列表
+DROP TABLE IF EXISTS  `t_red_pack_client`;
+CREATE TABLE `t_red_pack_client` (
+  `redPackClientId` int(11) NOT NULL AUTO_INCREMENT,
+  `redPackId` int(11) NOT NULL,
+  `clientId` int(11) NOT NULL,
+  `money` int(11) NOT NULL,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifyTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`redPackClientId`),
+  KEY `clientIdIndex` (`clientId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10294 DEFAULT CHARSET=utf8mb4;
+
+#创建积分低于某个阶段提醒表
+DROP TABLE IF EXISTS  `t_remind`;
+CREATE TABLE `t_remind` (
+  `remindId` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  PRIMARY KEY (`remindId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8mb4;
+
+#创建积分明细表
+DROP TABLE IF EXISTS  `t_score_log`;
+CREATE TABLE `t_score_log` (
+  `scoreId` int(11) NOT NULL AUTO_INCREMENT,
+  `clientId` int(11) NOT NULL,
+  `score` int(11) NOT NULL DEFAULT '0',
+  `dis` tinyint(1) NOT NULL DEFAULT '1',
+  `remark` varchar(125) NOT NULL,
+  `enjoyUrl` varchar(255) DEFAULT NULL,
+  `event` int(11) NOT NULL DEFAULT '1',
+  `createTime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`scoreId`),
+  KEY `scoreIdIndex` (`scoreId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8mb4;
+
+#创建商城轮播图表
+DROP TABLE IF EXISTS  `t_shop_banner`;
+CREATE TABLE `t_shop_banner` (
+  `userShopBannerId` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `icon` varchar(256) NOT NULL,
+  `title` varchar(256) NOT NULL,
+  `sort` int(11) NOT NULL,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifyTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`userShopBannerId`),
+  KEY `userIdIndex` (`userId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10016 DEFAULT CHARSET=utf8mb4;
+
+#创建用户商城商品表
+DROP TABLE IF EXISTS  `t_shop_commodity`;
+CREATE TABLE `t_shop_commodity` (
+  `shopCommodityId` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `isLink` int(11) NOT NULL,
+  `shopLinkCommodityId` int(11) NOT NULL,
+  `shopCommodityClassifyId` int(11) NOT NULL,
+  `title` varchar(128) NOT NULL,
+  `icon` varchar(128) NOT NULL,
+  `introduction` varchar(128) NOT NULL,
+  `detail` text NOT NULL,
+  `price` int(11) NOT NULL,
+  `oldPrice` int(11) NOT NULL,
+  `inventory` int(11) NOT NULL,
+  `state` int(11) NOT NULL,
+  `remark` varchar(128) NOT NULL,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifyTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `sort` int(11) NOT NULL,
+  PRIMARY KEY (`shopCommodityId`),
+  KEY `userIdIndex` (`userId`),
+  KEY `shopCommodityClassifyIdIndex` (`shopCommodityClassifyId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10274 DEFAULT CHARSET=utf8mb4;
+
+#创建用户商城商品分类表
+DROP TABLE IF EXISTS  `t_shop_commodity_classify`;
+CREATE TABLE `t_shop_commodity_classify` (
+  `shopCommodityClassifyId` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `title` varchar(128) NOT NULL,
+  `icon` varchar(128) NOT NULL,
+  `parent` int(11) NOT NULL,
+  `sort` int(11) NOT NULL,
+  `remark` varchar(128) NOT NULL,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifyTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `link` varchar(128) NOT NULL,
+  PRIMARY KEY (`shopCommodityClassifyId`),
+  KEY `userIdIndex` (`userId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10069 DEFAULT CHARSET=utf8mb4;
+
+#创建商城订单表
+DROP TABLE IF EXISTS  `t_shop_order`;
+CREATE TABLE `t_shop_order` (
+  `shopOrderId` varchar(32) NOT NULL,
+  `userId` int(11) NOT NULL,
+  `clientId` int(11) NOT NULL,
+  `entranceUserId` int(11) NOT NULL,
+  `image` varchar(128) NOT NULL,
+  `description` varchar(128) NOT NULL,
+  `price` int(11) NOT NULL,
+  `num` int(11) NOT NULL,
+  `name` varchar(32) NOT NULL,
+  `wxPrePayId` varchar(128) NOT NULL,
+  `state` int(11) NOT NULL,
+  `remark` varchar(128) NOT NULL,
+  `expressageName` varchar(20) NOT NULL DEFAULT '0',
+  `expressageNum` varchar(30) NOT NULL,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifyTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`shopOrderId`),
+  KEY `matchIndex` (`userId`,`clientId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+#创建用户订单地址表
+DROP TABLE IF EXISTS  `t_shop_order_address`;
+CREATE TABLE `t_shop_order_address` (
+  `shopOrderAddressId` int(11) NOT NULL AUTO_INCREMENT,
+  `shopOrderId` varchar(32) NOT NULL,
+  `name` varchar(32) NOT NULL,
+  `province` varchar(32) NOT NULL,
+  `city` varchar(32) NOT NULL,
+  `address` varchar(128) NOT NULL,
+  `phone` varchar(11) NOT NULL,
+  `payment` int(11) NOT NULL,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifyTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`shopOrderAddressId`),
+  KEY `shopOrderIdIndex` (`shopOrderId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10129 DEFAULT CHARSET=utf8mb4;
+
+#创建用户订单商品表
+DROP TABLE IF EXISTS  `t_shop_order_commodity`;
+CREATE TABLE `t_shop_order_commodity` (
+  `shopOrderCommodityId` int(11) NOT NULL AUTO_INCREMENT,
+  `shopOrderId` varchar(32) NOT NULL,
+  `shopCommodityId` int(11) NOT NULL,
+  `title` varchar(128) NOT NULL,
+  `icon` varchar(128) NOT NULL,
+  `introduction` varchar(128) NOT NULL,
+  `price` int(11) NOT NULL,
+  `oldPrice` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifyTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`shopOrderCommodityId`),
+  KEY `shopOrderIdIndex` (`shopOrderId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10139 DEFAULT CHARSET=utf8mb4;
+
+#创建用户购物车表
+DROP TABLE IF EXISTS  `t_shop_troller`;
+CREATE TABLE `t_shop_troller` (
+  `shopTrollerId` int(11) NOT NULL AUTO_INCREMENT,
+  `clientId` int(11) NOT NULL,
+  `shopCommodityId` int(11) NOT NULL,
+  `title` varchar(128) NOT NULL,
+  `icon` varchar(128) NOT NULL,
+  `introduction` varchar(128) NOT NULL,
+  `price` int(11) NOT NULL,
+  `oldPrice` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifyTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`shopTrollerId`),
+  KEY `clientIdIndex` (`clientId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10226 DEFAULT CHARSET=utf8mb4;
+
+#创建用户表
+DROP TABLE IF EXISTS  `t_user`;
+CREATE TABLE `t_user` (
+  `userId` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(32) NOT NULL,
+  `password` char(60) NOT NULL,
+  `company` varchar(128) NOT NULL,
+  `phone` varchar(11) NOT NULL,
+  `email` varchar(50) NOT NULL,
+  `type` int(11) NOT NULL,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifyTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `downDistributionNum` int(11) NOT NULL,
+  `telephone` varchar(11) NOT NULL,
+  `followLink` varchar(256) DEFAULT NULL,
+  `sex` tinyint(1) NOT NULL DEFAULT '1',
+  `birthday` date DEFAULT NULL,
+  `openId` varchar(255) DEFAULT NULL,
+  `openIdInfo` text,
+  `distributionNum` int(11) NOT NULL DEFAULT '1',
+  `clientId` int(11) DEFAULT NULL,
+  `qrcode` varchar(255) DEFAULT NULL,
+  `qrcodeCreateTime` int(11) DEFAULT NULL,
+  `ticket` varchar(255) DEFAULT NULL,
+  `score` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`userId`),
+  KEY `nameIndex` (`name`,`password`)
+) ENGINE=InnoDB AUTO_INCREMENT=10109 DEFAULT CHARSET=utf8mb4;
+
+#创建用户AppId与AppKey入口
+DROP TABLE IF EXISTS  `t_user_app`;
+CREATE TABLE `t_user_app` (
+  `userAppId` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `appLogo` varchar(128) NOT NULL,
+  `poster` varchar(128) DEFAULT NULL,
+  `appBg` varchar(128) NOT NULL,
+  `appName` varchar(128) NOT NULL,
+  `weixinNum` varchar(128) DEFAULT NULL,
+  `appId` varchar(128) NOT NULL,
+  `appKey` varchar(128) NOT NULL,
+  `mchId` varchar(128) NOT NULL,
+  `mchKey` varchar(128) NOT NULL,
+  `mchSslCert` varchar(128) NOT NULL,
+  `mchSslKey` varchar(128) NOT NULL,
+  `remark` varchar(128) NOT NULL,
+  `customService` varchar(255) DEFAULT NULL,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifyTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `appAccessToken` varchar(128) NOT NULL,
+  `appAccessTokenExpire` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `appJsApiTicket` varchar(128) NOT NULL,
+  `appJsApiTicketExpire` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `cardTicket` varchar(128) NOT NULL,
+  `cardTicketExpire` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`userAppId`),
+  KEY `userIdIndex` (`userId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10052 DEFAULT CHARSET=utf8mb4;
+
+#创建代理商的客户表
+DROP TABLE IF EXISTS  `t_user_client`;
+CREATE TABLE `t_user_client` (
+  `userClientId` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `clientUserId` int(11) NOT NULL,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifyTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`userClientId`),
+  KEY `userIdIndex` (`userId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8mb4;
+
+#创建用户公司文章表
+DROP TABLE IF EXISTS  `t_user_company_article`;
+CREATE TABLE `t_user_company_article` (
+  `userCompanyArticleId` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `cover` varchar(128) NOT NULL,
+  `title` varchar(128) NOT NULL,
+  `remark` varchar(256) NOT NULL,
+  `summary` varchar(256) NOT NULL,
+  `content` text NOT NULL,
+  `userCompanyClassifyId` int(11) NOT NULL,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifyTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `sort` int(11) NOT NULL,
+  PRIMARY KEY (`userCompanyArticleId`),
+  KEY `userIdIndex` (`userId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10116 DEFAULT CHARSET=utf8mb4;
+
+#创建用户公司广告表
+DROP TABLE IF EXISTS  `t_user_company_banner`;
+CREATE TABLE `t_user_company_banner` (
+  `userCompanyBannerId` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `title` varchar(256) NOT NULL,
+  `image` varchar(256) NOT NULL,
+  `url` varchar(256) NOT NULL,
+  `sort` int(11) NOT NULL,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifyTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`userCompanyBannerId`),
+  KEY `userIdIndex` (`userId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10040 DEFAULT CHARSET=utf8mb4;
+
+#创建用户公司文章分类表
+DROP TABLE IF EXISTS  `t_user_company_classify`;
+CREATE TABLE `t_user_company_classify` (
+  `userCompanyClassifyId` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `title` varchar(128) NOT NULL,
+  `icon` varchar(128) NOT NULL,
+  `sort` int(11) NOT NULL,
+  `remark` varchar(128) NOT NULL,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifyTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `link` varchar(128) NOT NULL,
+  PRIMARY KEY (`userCompanyClassifyId`),
+  KEY `userIdIndex` (`userId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10107 DEFAULT CHARSET=utf8mb4;
+
+#公司联系我们
+DROP TABLE IF EXISTS  `t_user_company_contact`;
+CREATE TABLE `t_user_company_contact` (
+  `contactId` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) DEFAULT NULL,
+  `latitude` varchar(30) DEFAULT NULL,
+  `longitude` varchar(30) DEFAULT NULL,
+  `name` varchar(128) DEFAULT NULL,
+  `address` varchar(128) DEFAULT NULL,
+  `scale` int(2) DEFAULT NULL,
+  `infoUrl` varchar(128) DEFAULT NULL,
+  `content` text,
+  PRIMARY KEY (`contactId`),
+  KEY `contactIndex` (`userId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10006 DEFAULT CHARSET=utf8mb4;
+
+#创建用户公司模板表
+DROP TABLE IF EXISTS  `t_user_company_template`;
+CREATE TABLE `t_user_company_template` (
+  `userCompanyTemplateId` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `companyTemplateId` int(11) NOT NULL,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifyTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `type` int(11) NOT NULL,
+  PRIMARY KEY (`userCompanyTemplateId`),
+  KEY `userIdIndex` (`userId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10217 DEFAULT CHARSET=utf8mb4;
+
+#创建用户权限表
+DROP TABLE IF EXISTS  `t_user_permission`;
+CREATE TABLE `t_user_permission` (
+  `userPermissionId` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `permissionId` int(11) NOT NULL,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifyTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`userPermissionId`),
+  KEY `userIdIndex` (`userId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10419 DEFAULT CHARSET=utf8mb4;
+
+#创建VIP设置
+DROP TABLE IF EXISTS  `t_vip`;
+CREATE TABLE `t_vip` (
+  `vipId` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `cardImage` varchar(128) NOT NULL,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifyTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`vipId`),
+  KEY `userIdIndex` (`userId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10016 DEFAULT CHARSET=utf8mb4;
+
+#创建VIP用户设置
+DROP TABLE IF EXISTS  `t_vip_client`;
+CREATE TABLE `t_vip_client` (
+  `vipClientId` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `clientId` int(11) NOT NULL,
+  `name` varchar(128) NOT NULL,
+  `phone` varchar(11) NOT NULL,
+  `score` int(11) NOT NULL,
+  `userCardCode` varchar(125) NOT NULL,
+  `card_id` varchar(125) NOT NULL,
+  `active` tinyint(1) NOT NULL,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifyTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`vipClientId`),
+  KEY `userIdIndex` (`userId`),
+  KEY `clientIdIndex` (`clientId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10024 DEFAULT CHARSET=utf8mb4;
+
+#微信多客服列表
+DROP TABLE IF EXISTS  `t_weixin_kf`;
+CREATE TABLE `t_weixin_kf` (
+  `kfId` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) DEFAULT NULL,
+  `kf_id` int(11) DEFAULT NULL,
+  `kf_nick` varchar(50) DEFAULT NULL,
+  `kf_account` varchar(50) DEFAULT NULL,
+  `kf_headimgurl` varchar(128) DEFAULT NULL,
+  PRIMARY KEY (`kfId`),
+  KEY `weixinKfIndex` (`userId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10019 DEFAULT CHARSET=utf8mb4;
+
+#微信自动回复素材列表
+DROP TABLE IF EXISTS  `t_weixin_material`;
+CREATE TABLE `t_weixin_material` (
+  `materialId` int(11) NOT NULL AUTO_INCREMENT,
+  `weixinSubscribeId` int(11) NOT NULL,
+  `Title` varchar(128) DEFAULT NULL,
+  `Description` varchar(128) DEFAULT NULL,
+  `Url` varchar(256) DEFAULT NULL,
+  `PicUrl` varchar(128) DEFAULT NULL,
+  `sort` int(11) NOT NULL,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifyTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`materialId`),
+  KEY `weixinSubscribeIdIndex` (`weixinSubscribeId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10031 DEFAULT CHARSET=utf8mb4;
+
+#微信自定义菜单
+DROP TABLE IF EXISTS  `t_weixin_menu`;
+CREATE TABLE `t_weixin_menu` (
+  `menuId` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) DEFAULT NULL,
+  `content` text,
+  PRIMARY KEY (`menuId`),
+  KEY `weixinmenuIndex` (`userId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10012 DEFAULT CHARSET=utf8mb4;
+
+#微信被关注回复列表
+DROP TABLE IF EXISTS  `t_weixin_subscribe`;
+CREATE TABLE `t_weixin_subscribe` (
+  `weixinSubscribeId` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) DEFAULT NULL,
+  `materialClassifyId` int(11) NOT NULL,
+  `title` varchar(128) DEFAULT NULL,
+  `remark` varchar(128) DEFAULT NULL,
+  `isRelease` int(11) DEFAULT NULL,
+  `createTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modifyTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`weixinSubscribeId`),
+  KEY `userIdIndex` (`userId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10007 DEFAULT CHARSET=utf8mb4;
+
+#创建模板信息列表
+DROP TABLE IF EXISTS  `t_weixin_template`;
+CREATE TABLE `t_weixin_template` (
+  `userId` int(11) NOT NULL,
+  `openState` int(1) NOT NULL DEFAULT '0',
+  `TM00015` varchar(80) DEFAULT NULL,
+  `TM00505` varchar(80) DEFAULT NULL,
+  PRIMARY KEY (`userId`),
+  KEY `userIdIndex` (`userId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+#提现申请表
+DROP TABLE IF EXISTS  `t_withdraw`;
+CREATE TABLE `t_withdraw` (
+  `withDrawId` int(11) NOT NULL AUTO_INCREMENT,
+  `vender` int(11) NOT NULL,
+  `clientId` int(11) NOT NULL,
+  `money` int(11) NOT NULL,
+  `name` varchar(32) NOT NULL,
+  `bank` varchar(32) NOT NULL,
+  `cardNo` varchar(128) NOT NULL,
+  `mobile` varchar(32) NOT NULL,
+  `remark` varchar(32) DEFAULT NULL,
+  `state` int(1) NOT NULL DEFAULT '0',
+  `createTime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `modifyTime` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`withDrawId`),
+  KEY `withDrawIdIndex` (`withDrawId`)
+) ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8mb4;
+
+SET FOREIGN_KEY_CHECKS = 1;
 
 #建立初始数据
 insert into t_user(userId,name,password,company,phone,type,downDistributionNum) values

@@ -302,9 +302,17 @@ class UserAo extends CI_Model {
 		$userInfo = $this->userDb->myQrCode($clientId);
 		$myUserId = $userInfo['userId'];
 		$qrcode = $userInfo['qrcode'];
-		$content['Title'] = '我的二维码';
-		$content['Description'] = '扫描发展下线';
-		$content['PicUrl'] = $qrcode;
+
+		$this->load->model('weixin/wxSubscribeAo','wxSubscribeAo');
+        $weixinSubscribe = $this->wxSubscribeAo->search($userId,array('remark'=>'我的二维码'),'')['data'][0];
+        $weixinSubscribeId = $weixinSubscribe['weixinSubscribeId'];
+        $graphic=$this->wxSubscribeAo->graphicSearch($userId,$weixinSubscribeId);
+		// $content['Title'] = '我的二维码';
+		$content['Title'] = $graphic[0]['Title'];
+		$content['Description'] = $graphic[0]['Description'];
+		// $content['Description'] = '扫描发展下线';
+		// $content['PicUrl'] = $qrcode;
+		$content['PicUrl'] = 'http://'.$_SERVER["HTTP_HOST"].$graphic[0]['PicUrl'];
 		$content['Url'] = 'http://'.$userId.'.'.$_SERVER[HTTP_HOST].'/'.$myUserId.'/distribution/myqrcode.html?myUserId='.$myUserId;
 		$arr[] = $content;
 		return $arr;
