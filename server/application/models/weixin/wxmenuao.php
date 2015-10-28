@@ -91,7 +91,12 @@ class WxMenuAo extends CI_Model
 					}
 				}
 			}
+			if(!$v['url']){
+				$data[$k]['type'] = 'click';
+				$data[$k]['key']  = $v['key'];
+			}
 		}
+		// var_dump($data);die;
 		if(!empty($data))$data=array('button'=>$data);
 		//获取access_token
 		$this->load->model('user/userAppAo','userAppAo');

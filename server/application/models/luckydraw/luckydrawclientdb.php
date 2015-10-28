@@ -8,9 +8,15 @@ class LuckyDrawClientDb extends CI_Model
 		parent::__construct();
 	}
 
-	public function getByLuckyDrawId($luckyDrawId){
+	public function getByLuckyDrawId($luckyDrawId,$limit){
 		$this->db->where("luckyDrawId",$luckyDrawId);
-		return $this->db->get($this->tableName)->result_array();
+		if( isset($limit["pageIndex"]) && isset($limit["pageSize"]))
+			$this->db->limit($limit["pageSize"],$limit["pageIndex"]);
+		$query = $this->db->get($this->tableName)->result_array();
+		return array(
+			'count'=>count($query),
+			'data' =>$query
+			);
 	}
 
 	public function getByLuckyDrawAndClientId($luckyDrawId,$clientId){

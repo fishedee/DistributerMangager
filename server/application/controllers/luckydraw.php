@@ -166,6 +166,11 @@ class LuckyDraw extends CI_Controller {
 			array('luckyDrawId','require'),
 		));
 		$luckyDrawId = $data['luckyDrawId'];
+
+		$dataLimit = $this->argv->checkGet(array(
+			array('pageIndex','require'),
+			array('pageSize','require'),
+		));
 		
 		//检查权限
 		$user = $this->loginAo->checkMustClient(
@@ -174,7 +179,7 @@ class LuckyDraw extends CI_Controller {
         $userId = $user['userId'];
 		
 		//执行业务逻辑
-		return $this->luckyDrawAo->getResult($userId,$luckyDrawId);
+		return $this->luckyDrawAo->getResult($userId,$luckyDrawId,$dataLimit);
 	}
 	
 	/**
@@ -337,7 +342,7 @@ class LuckyDraw extends CI_Controller {
 		$client = $this->clientLoginAo->checkMustLogin($data['userId']);
 
 		//$sql="select t_client.nickName,t_client.headImgUrl,title from t_lucky_draw_client left join t_client on t_lucky_draw_client.clientId=t_client.clientId where luckyDrawId='".$data['luckyDrawId']."' order by luckyDrawClientId desc limit 10;";
-		$sql="select t_client.nickName,t_client.headImgUrl,title from t_lucky_draw_client left join t_client on t_lucky_draw_client.clientId=t_client.clientId where luckyDrawId='".$data['luckyDrawId']."' and nickName not like '' and nickName not like '用户没关注' order by luckyDrawClientId desc limit 10;";
+		$sql="select t_client.nickName,t_client.headImgUrl,title from t_lucky_draw_client left join t_client on t_lucky_draw_client.clientId=t_client.clientId where luckyDrawId='".$data['luckyDrawId']."' and nickName not like ''  and title!='谢谢参与' order by luckyDrawClientId desc limit 10;";
 		$data = $this->db->query($sql)->result_array();
 
 		foreach($data as $k=>$v ){
@@ -345,6 +350,25 @@ class LuckyDraw extends CI_Controller {
 		}
 
 		return $data;
+	 }
+
+	 /**
+	  * @view json
+	  * 判断活动是否结束
+	  */
+	 public function judgeEnd(){
+	 	//检查输入参数
+		$data = $this->argv->checkGet(array(
+			array('userId','require'),
+			array('luckyDrawId','require'),
+		));
+		//检查权限
+		$client = $this->clientLoginAo->checkMustLogin($data['userId']);
+
+		$userId = $data['userId'];
+		$luckyDrawId = $data['luckyDrawId'];
+		$clientId = $client['clientId'];
+		return $this->luckyDrawAo->judgeEnd($userId,$clientId,$luckyDrawId);
 	 }
 
 }

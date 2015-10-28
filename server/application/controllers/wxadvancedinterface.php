@@ -38,10 +38,13 @@ class Wxadvancedinterface extends CI_Controller {
 		//检查输入参数
 		if (!empty($_POST['name1'])){$data[0]['name']=$this->input->post('name1');}
 		if (!empty($_POST['url1'])){$data[0]['url']=$this->input->post('url1');}
+		if (!empty($_POST['key1'])){$data[0]['key']=$this->input->post('key1');}
 		if (!empty($_POST['name2'])){$data[1]['name']=$this->input->post('name2');}
 		if (!empty($_POST['url2'])){$data[1]['url']=$this->input->post('url2');}
+		if (!empty($_POST['key2'])){$data[1]['key']=$this->input->post('key2');}
 		if (!empty($_POST['name3'])){$data[2]['name']=$this->input->post('name3');}
 		if (!empty($_POST['url3'])){$data[2]['url']=$this->input->post('url3');}
+		if (!empty($_POST['key3'])){$data[2]['key']=$this->input->post('key3');}
 		if (!empty($_POST['sub_button1'])){$data[0]['sub_button'] = $this->input->post('sub_button1');}
  		if (!empty($_POST['sub_button2'])){$data[1]['sub_button'] = $this->input->post('sub_button2');}
  		if (!empty($_POST['sub_button3'])){$data[2]['sub_button'] = $this->input->post('sub_button3');}

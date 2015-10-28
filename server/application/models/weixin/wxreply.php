@@ -151,6 +151,8 @@ class Wxreply extends CI_Model {
                         // return $this->transmitText($postObj,$info);
                         // return $this->transmitText($postObj,implode($info, ','));
                     }
+                }elseif($postObj->EventKey == 'product' || $postObj->EventKey == 'after'){
+                    return $this->transmitText($postObj,'功能内测，稍后开放！');
                 }
     			break;
             case 'user_get_card':

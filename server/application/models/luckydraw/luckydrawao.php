@@ -146,17 +146,26 @@ class LuckyDrawAo extends CI_Model
 		$this->luckyDrawCommodityDb->delByLuckyDrawId($luckyDrawId);
 	}
 
-	public function getResult($userId,$luckyDrawId){
+	public function getResult($userId,$luckyDrawId,$limit){
 		//校验权限
 		$luckDraw = $this->get($userId,$luckyDrawId);
 
-		$info = $this->luckyDrawClientDb->getByLuckyDrawId($luckyDrawId);
+		$data = $this->luckyDrawClientDb->getByLuckyDrawId($luckyDrawId,$limit);
+		$info = $data['data'];
 		$this->load->model('client/clientAo','clientAo');
 		foreach ($info as $key => $value) {
 			$clientInfo = $this->clientAo->get($userId,$value['clientId']);
 			$info[$key]['openId'] = $clientInfo['openId'];
+			if($clientInfo['subscribe'] == 1){
+				$info[$key]['nickName'] = base64_decode($clientInfo['nickName']);
+				$info[$key]['headImgUrl'] = $clientInfo['headImgUrl'];
+			}else{
+				$info[$key]['nickName'] = '用户没有关注';
+				$info[$key]['headImgUrl'] = '';
+			}
 		}
-		return $info;
+		$data['data'] = $info;
+		return $data;
 	}
 
 	public function getClientResult($userId,$clientId,$luckyDrawId){
@@ -168,9 +177,10 @@ class LuckyDrawAo extends CI_Model
 		if( count($luckyDrawClient) != 0 )
 			$luckyDraw['client'] = $luckyDrawClient[0];
 
-		$luckyDraw['beginTime'] = date( 'n月d日G时i分' ,strtotime($luckyDraw['beginTime']));
-		$luckyDraw['modifyTime'] = date( 'n月d日G时i分' ,strtotime($luckyDraw['modifyTime'])); 
-
+		$luckyDraw['startTime']  = strtotime($luckyDraw['beginTime']);
+		$luckyDraw['end']        = strtotime($luckyDraw['endTime']);
+		$luckyDraw['beginTime']  = date( 'n月d日G时i分' ,strtotime($luckyDraw['beginTime']));
+		$luckyDraw['endTime'] = date( 'n月d日G时i分' ,strtotime($luckyDraw['endTime'])); 
 		return $luckyDraw;
 	}
 
@@ -180,9 +190,9 @@ class LuckyDrawAo extends CI_Model
 		if( $luckyDraw['state'] != $this->luckyDrawStateEnum->ON_STORAGE )
 			throw new CI_MyException(1,'抽奖活动还未上架噢');
 		$now = time();
-		if( strtotime($luckyDraw['beginTime']) > $now )
+		if( $luckyDraw['startTime'] > $now )
 			throw new CI_MyException(1,'抽奖活动还没开始呢');
-		if( strtotime($luckyDraw['endTime']) < $now )
+		if( $now > $luckyDraw['end'] )
 			throw new CI_MyException(1,'抽奖活动已经结束啦');
 		if( isset($luckyDraw['client']) )
 			throw new CI_MyException(1,'你已经参与过这次抽奖活动，不能重复参与了');
@@ -237,6 +247,16 @@ class LuckyDrawAo extends CI_Model
 			$this->conponAo->sendToCoupon($userId,$clientId,$luckyDrawClientId,$currentCommodity['coupon_id']);
 		
 		return $currentCommodity['luckyDrawCommodityId'];
+	}
+
+	//判断活动是否已经结束
+	public function judgeEnd($userId,$clientId,$luckyDrawId){
+		//校验权限
+		$luckyDraw = $this->getClientResult($userId,$clientId,$luckyDrawId);
+		$now = time();
+		if( $now > $luckyDraw['end'] )
+			throw new CI_MyException(1,'抽奖活动已经结束啦');
+		return 1;
 	}
 
 	public function getClientAllResult($userId,$clientId){

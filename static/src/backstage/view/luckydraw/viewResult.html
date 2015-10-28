@@ -7,6 +7,7 @@
 		var table = require('fishstrap/ui/table.js');
 		var chart = require('fishstrap/ui/chart.js');
 		var input = require('fishstrap/ui/input.js');
+		var query = require('/fishstrap/ui/query.js');
 		var luckyDrawId = $.location.getQueryArgv('luckyDrawId');
 		var luckyDraw = [];
 		function getData(nextStep ){
@@ -20,22 +21,44 @@
 				nextStep();
 			});
 		}
+		// function go(){
+		// 	table.staticSimpleTable({
+		// 		id:'container',
+		// 		data:luckyDraw,
+		// 		column:[
+		// 			{id:'name',type:'text',name:'名字'},
+		// 			{id:'clientId',type:'text',name:'clientId'},
+		// 			{id:'openId',type:'text',name:'openId'},
+		// 			{id:'phone',type:'text',name:'电话号码'},
+		// 			{id:'title',type:'text',name:'奖品名称'},
+		// 			{id:'image',type:'image',name:'奖品图片'},
+		// 			{id:'createTime',type:'text',name:'中奖时间'},
+		// 		],
+		// 		operate:[]
+		// 	});
+		// }
+
 		function go(){
-			table.staticSimpleTable({
+			query.simpleQuery({
 				id:'container',
-				data:luckyDraw,
+				url:'/luckydraw/getResult',
 				column:[
 					{id:'name',type:'text',name:'名字'},
 					{id:'clientId',type:'text',name:'clientId'},
 					{id:'openId',type:'text',name:'openId'},
+					{id:'nickName',type:'text',name:'微信昵称'},
+					{id:'headImgUrl',type:'image',name:'微信头像'},
 					{id:'phone',type:'text',name:'电话号码'},
 					{id:'title',type:'text',name:'奖品名称'},
 					{id:'image',type:'image',name:'奖品图片'},
 					{id:'createTime',type:'text',name:'中奖时间'},
 				],
-				operate:[]
+				queryColumn:[],
+				operate:[],
+				button:[],
 			});
 		}
-		getData(go);
+		// getData(go);
+		go();
 	</script>
 <link rel="import" href="../common/footer.html?__inline">
