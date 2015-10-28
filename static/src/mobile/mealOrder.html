@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+        <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+        <script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+        <title>我的订单</title>
+
+        <style>
+            * {
+                padding: 0;
+                margin: 0;
+                font-family: '微软雅黑';
+            }
+            a {color:#000000;text-decoration:none;} 
+            html,
+            body {
+                background: #eaede6;
+            }
+            
+            hr {
+                height: 1px;
+                border: none;
+                border-top: 1px solid #d8d8d8;
+            }
+            
+            .qingHuang {
+                background: #fff;
+                height: 40px;
+                width: 100%;
+            }
+            
+            .qingHuang .xuanZhong {
+                border-bottom: #2ebb6d solid 3px;
+            }
+            
+            .qingHuang .jingXingZhong,
+            .qingHuang .yiJieDan {
+                width: 49%;
+                display: inline-block;
+                font-size: 0.9em;
+                text-align: center;
+                line-height: 2.4em;
+                position: relative;
+                top: 4px;
+            }
+            
+            .item {
+                background: #fff;
+                margin-top: 10px;
+                padding: 15px 20px 13px 20px;
+                position: relative;
+            }
+            
+            .item .dingDang {
+                margin-bottom: 10px;
+                font-size: 0.75em;
+                color: dimgrey;
+            }
+            .item .dingDang span:nth-child(1){
+                margin-right: 20px;
+            }
+            .item .didian{
+                margin-top: 10px;
+                font-size: 0.9em;
+            }
+            .item .weizhi{
+                margin-top: 5px;
+                font-size: 0.9em;
+                color: dimgray;
+                margin-bottom: 10px;
+            }
+            .item .zongJia{
+                margin-top: 8px;
+                font-size: 0.8em;
+            }
+            .item .zongJia .qian{
+                font-size: 1.2em;
+                position: relative;
+                left: -10px;
+                color: crimson;
+                font-weight: 600;
+            }
+            .item .zhuangTai{
+                position: absolute;
+                right: 20px;
+                bottom: 10px;
+                font-size: 0.8em;
+                background: #fd7345;
+                padding:  5px 8px 3px 10px;
+                color: #ffffff;
+                border-radius: 3px;    
+            }
+            .item .zhuangTai2{
+                position: absolute;
+                right: 20px;
+                bottom: 10px;
+                font-size: 0.8em;
+                background: #ADADAD;
+                padding:  5px 8px 3px 10px;
+                color: #ffffff;
+                border-radius: 3px;
+            }
+   
+        
+        /*空位位置*/
+        footer{
+            height:51px;
+        }
+            
+        </style>
+</head>
+        <body></body>
+
+        <script type="text/javascript">
+            var $ = require('/mobile/common/core/core.js');
+            var dialog = require('/mobile/common/dialog/dialog.js');
+            require('/mobile/common/meal/mealOrder.jsx');
+        </script>
+</html>

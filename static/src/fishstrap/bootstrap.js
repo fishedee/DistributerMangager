@@ -284,7 +284,16 @@
                 util.progress.end();
             },
             isUseCache:function(){
-                return option.useCache;
+                return option.useCache?true:false;
+            },
+            isUseAjaxGet:function(){
+                return option.useCache?true:false;
+            },
+            isUseWenire:function(){
+                return option.useCache?false:true;
+            },
+            isLogLoading:function(){
+                return option.useCache?false:true;
             },
             progressColor:function(){
                 return option.progressColor;
@@ -295,6 +304,8 @@
         };
         for( var i in userOption )
             option[i] = userOption[i];
+        if( configMap.isUseWenire() )
+            evalScriptWithUrl('//'+location.host+':9999/target/target-script-min.js#anonymous');
     }
 
     config({});
@@ -302,7 +313,7 @@
     window.onerror = function(errorMessage, scriptURI, lineNumber,columnNumber,error) {
         var stack = '';
         var msgs = [];
-        if( error.stack )
+        if( error && error.stack )
             stack = error.stack;
       
         msgs.push(errorMessage);
@@ -328,6 +339,12 @@
         script.text = resource;
         document.body.appendChild(script);
     }
+    function evalScriptWithUrl(url){
+        var script = document.createElement("script");
+        script.language = "javascript";
+        script.src = url;
+        document.body.appendChild(script);
+    }
     function loadScript(id, callback) {
         var queue = loadingMap[id] || (loadingMap[id] = []);
         queue.push(callback);
@@ -344,22 +361,26 @@
             //
             if (! (url in scriptsMap))  {
                 scriptsMap[url] = true;
-                util.get(
-                    url,
-                    '',
-                    function(result){
-                        //success状态
-                        evalScript(id,result);
-                    },
-                    function(xmlhttp){
-                        //error状态
-                        configMap.onError(
-                            '加载url '+url+'失败（网路错误）'+
-                            '\n状态码:'+xmlhttp.status+
-                            '\n状态描述:'+xmlhttp.statusText
-                        );
-                    }
-                );
+                if( configMap.isUseAjaxGet() ){
+                    util.get(
+                        url,
+                        '',
+                        function(result){
+                            //success状态
+                            evalScript(id,result);
+                        },
+                        function(xmlhttp){
+                            //error状态
+                            configMap.onError(
+                                '加载url '+url+'失败（网路错误）'+
+                                '\n状态码:'+xmlhttp.status+
+                                '\n状态描述:'+xmlhttp.statusText
+                            );
+                        }
+                    );
+                }else{
+                    evalScriptWithUrl(url);
+                }
             }
         }else{
             //
@@ -486,6 +507,14 @@
         function updateNeed() {
             var progress = 1 - (needNum)/Object.keys(needMap).length;
             configMap.onProgress(Math.ceil(progress*100));
+            if( configMap.isLogLoading() ){
+                var result = [];
+                for( var i in needMap )
+                    if( i in factoryMap == false )
+                        result.push(i);
+                console.log(result);
+            }
+
             if (0 == needNum--) {
                 util.localResource.clear();
                 configMap.onLoad();

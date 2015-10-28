@@ -40,6 +40,9 @@
 				}
 				user = data.data;
 				user.typeName = userType[user.type];
+				if(user.typeName == '订餐客户'){
+					user.url = "http://"+user.userId+'.'+location.host+'/'+user.userId+'/meal.html';
+				}
 				next();
 			});
 		}

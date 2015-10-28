@@ -1,0 +1,76 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div class="alert alert-danger" role="alert">
+		星期几为针对该天具体的预约时间,若不填或者填写0则默认预约时间每天都有,若填写请填写1~7.<br/>
+		时间格式填写如: '17:00'
+	</div>
+	<div id="container">
+	</div>
+	<script type="text/javascript" src="/fishstrap/js/fishstrap.js" charset="utf-8"></script>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var dateId = $.location.getQueryArgv('dateId');
+		var dishType = {};
+
+		function getTypeInfo(next){
+			$.get('/boarddate/getDate',{dateId:dateId},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				dishType = data.data;
+				console.info(dishType);
+				next();
+			});
+		}
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'day',type:'enum',name:'星期几',map:{'0':'通用','1':'星期一','2':'星期二','3':'星期三','4':'星期四','5':'星期五','6':'星期六','7':'星期天'}},
+					{id:'time',type:'text',name:'时间'}
+				],
+				value:dishType,
+				submit:function(data){
+					if( dateId != null ){
+						$.post('/boarddate/mod',{dateId:dateId,data:data},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							history.back();
+						});
+					}else{
+						$.post('/boarddate/add',{data:data},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							history.back();
+						});
+					}
+				},
+				cancel:function(){
+					history.back();
+				}
+			});
+
+			//修改时间选择插件
+			$( "input[name='time']" ).datetimepicker({
+				datepicker:false,
+				format:'H:i'
+			});
+			$( "input[name='time']" ).removeClass('input-small');
+		}
+		if(dateId){
+			getTypeInfo(go);
+		}else{
+			go();
+		}
+		// go();
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

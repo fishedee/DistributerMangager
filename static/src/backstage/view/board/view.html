@@ -1,0 +1,80 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript" src="/fishstrap/js/fishstrap.js" charset="utf-8"></script>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var boardId = $.location.getQueryArgv('boardId');
+		var boardType = {};
+		var board = {};
+		function getBoard(next){
+			$.post('/board/getBoard', {boardId: boardId}, function(data) {
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				board = data.data;
+				console.info(board);
+				next();
+			});
+		}
+
+		function getTypeInfo(next){
+			$.post('/boardtype/getAllType',{boardId:boardId},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				boardType = data.data;
+				console.info(boardType);
+				next();
+			});
+		}
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'boardNum',type:'text',name:'餐桌号'},
+					{id:'boardTypeId',type:'enum',name:'餐桌类型',map:boardType}
+				],
+				value:board,
+				submit:function(data){
+					if( boardId != null ){
+						$.post('/board/mod',{boardId:boardId,data:data},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							history.back();
+						});
+					}else{
+						$.post('/board/add',{data:data},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							history.back();
+						});
+					}
+				},
+				cancel:function(){
+					history.back();
+				}
+			});
+		}
+		if(boardId){
+			getBoard(function(){
+				getTypeInfo(go);
+			})
+		}else{
+			getTypeInfo(go);
+		}
+		// go();
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

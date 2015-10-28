@@ -73,6 +73,21 @@ class LoginAo extends CI_Model {
 		return $user;
 	}
 
+	public function checkOrder($permission){
+		$user = $this->checkMustLogin();
+
+		if($user['type'] != $this->userTypeEnum->ORDER){
+			throw new CI_MyException(1,'非订餐用户无法执行此操作');
+		}
+		if($permission == $this->userPermissionEnum->ORDER_DINNER){
+			// echo 1;die;
+			if(in_array($this->userPermissionEnum->ORDER_DINNER, $user['permission']) == false){
+				throw new CI_MyException(1,'需要有订餐的权限');
+			}
+		}
+		return $user;
+	}
+
 	public function hasCompanyShopPro($user){
 		return in_array($this->userPermissionEnum->COMPANY_SHOP_PRO,$user['permission']);
 	}

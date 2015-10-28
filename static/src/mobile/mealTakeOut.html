@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+    <title>外卖</title> 
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            font-family: '微软雅黑';
+        }
+        
+        a {
+            text-decoration: none;
+        }
+        
+        html,
+        body {
+            background: #ECECEC;
+            height: 100%;
+        }
+        
+        ul li {
+            list-style: none;
+        }
+        
+        .row {
+            background: #fff;
+            margin-top: 10px;
+            border-top: 1px solid #d8d8d8;
+            border-bottom: 1px solid #d8d8d8;
+            padding: 0px 6%;
+        }
+        
+        .item {
+            display: block;
+            padding: 15px 0px;
+            background: #fff;
+            border-bottom: 1px solid #efefef;
+            font-weight: 900;
+        }
+        
+        .item:last-child {
+            border-bottom: none;
+        }
+        
+        .row .item .tubiao {
+            width: 5%;
+            display: inline-block;
+            float: right;
+        }
+        
+        .row .item .tubiao img {
+            margin-top: 2%;
+            height: 25px;
+            display: block;
+            float: right;
+            position: relative;
+            top: -2px;
+        }
+        
+        .row .item .tubiao {
+            width: 5%;
+            display: inline-block;
+            float: right;
+        }
+        
+        .row .item .tubiao img {
+            margin-top: 2%;
+            height: 25px;
+            display: block;
+            float: right;
+            position: relative;
+            top: -2px;
+        }
+        
+        .row .item .time {
+            display: inline-block;
+            float: right;
+            margin-right: 2%;
+            color: #ff683b;
+        }
+        
+        .row .item .tou {
+            display: inline-block;
+            position: relative;
+            top: 4px;
+            margin-right: 8px;
+        }
+        
+        .row .item .tou img {
+            height: 20px;
+        }
+        
+        .row .item .text {
+            display: inline-block;
+            float: right;
+            margin-right: 8px;
+            font-size: 0.9em;
+            color: #8c8c8c;
+            position: relative;
+            top: 3px;
+            width: 50%;
+            text-align: right;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .tiao {
+            width: 100%;
+            height: 3px;
+            background-image: url(images/tiao.jpg);
+            background-size: 30px auto;
+            position: relative;
+            top: -1px;
+        }
+        
+        .noSupport {
+            color: #d0d0d0!important;
+        }
+        
+        .row .single {
+            margin-top: 4px;
+        }
+        
+        .row .single:last-child {
+            margin-bottom: 4px;
+        }
+        
+        .row .single .goods,
+        .row .single .num,
+        .row .single .money {
+            display: inline-block;
+        }
+        
+        .row .single .goods {
+            width: 70%;
+        }
+        
+        .row .single .num {
+            width: 10%;
+        }
+        
+        .row .single .money {
+            width: 17%;
+            float: right;
+        }
+        
+        .tent {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: rgba(0, 0, 0, 0.17);
+/*            display: none;*/
+        }
+        
+
+        .windons {
+            display: none;
+            position: fixed;
+            top: 40%;;
+            left: 10%;
+            width: 100%;
+            height: 100%;
+        }
+        /*备注*/
+        
+        .xiaoBeiZhu {
+/*            display: none;*/
+            position: fixed;
+            left: 10%;
+            top: 30%;
+            width: 80%;
+            background: #fff;
+            border-radius: 5px;
+            z-index: 3;
+            display: block;
+        }
+        
+        .xiaoBeiZhu .tiMu {
+            text-align: center;
+            margin-top: 22px;
+            margin-bottom: 12px;
+            padding: 0 50px;
+        }
+        
+        .xiaoBeiZhu .neiRong input {
+            width: 87%;
+            margin: 5px 3% 15px 3%;
+            resize: none;
+            padding: 5px 3%;
+            background-color: #ffffff;
+            font-size: 1em;
+            border: 1px solid #dedede;
+            border-radius: 5px
+        }
+        
+        .xiaoBeiZhu .anNiu {
+            border-top: #d3d3d3 solid 1px;
+        }
+        
+        .xiaoBeiZhu .anNiu .fanhui {
+            border-right: #d3d3d3 solid 1px;
+        }
+        
+        .xiaoBeiZhu .anNiu .fanhui,
+        .xiaoBeiZhu .anNiu .queding {
+            width: 48%;
+            height: 50px;
+            display: inline-block;
+            text-align: center;
+            color: dodgerblue;
+            line-height: 50px
+        }
+        /*用户手机验证*/
+        .verify{
+            display: none;
+            position: fixed;
+            top: 22%;;
+            left:6.5%;
+            
+            width: 100%;
+            height: 100%;
+        }
+        .verify .content {
+/*            display: none;*/
+            background-color: #eeeeee;
+            width: 88%;
+            height: 320px;
+            z-index: 10;
+            border-radius: 3px;
+            position: relative;
+            top:1%;
+        }
+        
+        .verify .content .title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-left: 7%;
+            padding-top: 10px;
+            padding-bottom: 3px
+        }
+        
+        .verifyInput {
+            width: 35%!important;
+        }
+        
+        .verify .yanzhen {
+            width: 90%;
+            margin: auto;
+            margin-top: 10px;
+            border-radius: 3px;
+            background-color: #fbfbfb;
+        }
+        
+        .verify .yanzhen .item {
+            margin-left: 5%;
+            margin-right: 5%;
+            background-color: #fbfbfb;
+        }
+        
+        .item .name {
+            width: 20%;
+            display: inline-block;
+        }
+        
+        .item input {
+            width: 70%;
+            font-size: 1em;
+            background: none;
+            border: 0px;
+            padding-left: 3%;
+            display: inline-block;
+        }
+        
+        .verify .yanzhengma {
+            display: inline-block;
+            background-color: #368bcc;
+            width: 38%;
+            height: 30px;
+            color: #fff;
+            border-radius: 3px;
+            text-align: center;
+            line-height: 30px;
+        }
+        .verify .invalid {
+            background-color: #c7c7c7!important;
+        }
+        
+        .verify .submitVerify {
+            width: 90%;
+            height: 40px;
+            font-weight: 600;
+            background-color: #52b55b;
+            margin: 15px auto;
+            border-radius: 3px;
+            color: #fff;
+            display: -webkit-box;
+            display: -moz-box;
+            display: -o-box;
+            display: -ms-box;
+            display: box;
+            -webkit-box-align: center;
+            -moz-box-align: center;
+            -o-box-align: center;
+            -ms-box-align: center;
+            box-align: center;
+            -webkit-box-orient: horizontal;
+            -moz-box-orient: horizontal;
+            -o-box-orient: horizontal;
+            -ms-box-orient: horizontal;
+            box-orient: horizontal;
+        }
+        
+        .verify .submitVerify .juzhong {
+            width: 100%;
+            -webkit-box-align: center;
+            -moz-box-align: center;
+            -o-box-align: center;
+            -ms-box-align: center;
+            box-align: center;
+            -webkit-box-orient: vertical;
+            -moz-box-orient: vertical;
+            -o-box-orient: vertical;
+            -ms-box-orient: vertical;
+            box-orient: vertical;
+            display: -webkit-box;
+            display: -moz-box;
+            display: -o-box;
+            display: -ms-box;
+            display: box;
+        }
+        
+        .verify .verifyTips {
+            font-size: 0.9em;
+            text-align: center;
+        }
+
+        
+        /*空位位置*/
+        footer{
+            height:51px;
+        }
+        
+    </style>
+</head>
+
+<body>
+  
+    
+</body>
+<script>
+    var $ = require('common/core/core.js');
+    var dialog = require('common/dialog/dialog.js');
+    require('./common/meal/mealTakeOut.jsx');
+</script>
+</html>

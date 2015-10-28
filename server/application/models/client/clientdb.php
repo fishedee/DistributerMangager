@@ -132,7 +132,7 @@ class ClientDb extends CI_Model
 		//扫面时效性写入缓存
 		$this->load->driver('cache', array('adapter' => 'apc', 'backup' => 'file'));
 		$scan = 1;
-		$this->cache->save($clientId, $scan, 3600);
+		$this->cache->save($clientId, $scan, 30);
 	}
 
 	public function scan($userId,$clientId,$boardNum){
@@ -140,7 +140,7 @@ class ClientDb extends CI_Model
 		$clientInfo = $this->get($clientId);
 		if($clientInfo['scan'] == 1){
 			//判断时间是否过期
-			if(strtotime($clientInfo['scanTime']) + 3600 > time()){
+			if(strtotime($clientInfo['scanTime']) + 30 > time()){
 				$this->db->update($this->tableName,array('scanTime'=>date('Y-m-d H:i:s',time())));
 			}
 		}else{

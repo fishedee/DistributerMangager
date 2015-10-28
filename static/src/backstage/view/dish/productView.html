@@ -1,0 +1,116 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+		<!-- <button name='add'>添加选项</button> -->
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var dishId = $.location.getQueryArgv('dishId');
+		var typeInfo = {};
+		var dish = {};
+
+		function getDish(next){
+			$.get('/dish/getDish',{dishId:dishId},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				dish = data.data;
+				console.info(dish);
+				next();
+			});
+		}
+
+		function getTypeInfo(next){
+			$.post('/dishtype/getTypeInfo',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				typeInfo = data.data;
+				console.info(typeInfo);
+				next();
+			});
+		}
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'dishName',type:'text',name:'菜品名字'},
+					{id:'icon',type:'image',name:'图片',option:{url:'/upload/image',width:640}},
+					{id:'dishPrice',type:'text',name:'价格'},
+					{id:'dishTypeId',type:'enum',name:'分类',map:typeInfo},
+					{id:'state',type:'enum',name:'状态',map:{1:'上架',0:'下架'}},
+					//{id:'dishOption',type:'text',name:'选项'},
+					{id:'detail',type:'fullEditor',name:'内容',option:{url:'/upload/ueditor'}},
+				],
+				value:dish,
+				submit:function(data){
+					var option = $("input[name='dishOption']").parent('td').find('input');
+					var select = new Array();
+					option.each(function() {
+						select.push($(this).val());
+					});
+					data.dishOption = select;
+
+					if( dishId != null ){
+						$.post('/dish/mod',{dishId:dishId,data:data},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							history.back();
+						});
+					}else{
+						$.post('/dish/add',{data:data},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							history.back();
+						});
+					}
+				},
+				cancel:function(){
+					history.back();
+				}
+			});
+
+			$('select[name=state]').val(1);
+
+			//编辑状态
+			if(dishId){
+				if(dish['dishOption'].length > 1){
+					for (var i = dish['dishOption'].length - 1; i >= 0; i--) {
+						if(i == 1){
+							$('input[name=dishOption]').val(dish['dishOption'][i]);
+						}else{
+							var html = "<br/><input type='text' value='"+dish['dishOption'][i]+"'>";
+							$("input[name='dishOption']").parent('td').append(html);
+						}
+					};
+				}
+			}
+
+		}
+
+		//添加选项
+//		$('button[name=add]').click(function() {
+	//		var html = "<br/><input type='text'>";
+	//		$("input[name='dishOption']").parent('td').append(html);
+	//	});
+
+		if(dishId){
+			getTypeInfo(function(){
+				getDish(go);
+			})
+		}else{
+			getTypeInfo(go);
+		}
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

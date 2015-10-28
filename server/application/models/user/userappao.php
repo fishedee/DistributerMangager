@@ -102,14 +102,14 @@ class UserAppAo extends CI_Model{
 			throw new CI_MyException(1,'后台未设置appId，微信商城将不能正常使用');
 		if($userApp['appKey'] == '')
 			throw new CI_MyException(1,'后台未设置appKey，微信商城将不能正常使用');
-		if($userApp['mchId'] == '')
-			throw new CI_MyException(1,'后台未设置mchId，微信支付将不能正常使用');
-		if($userApp['mchKey'] == '')
-			throw new CI_MyException(1,'后台未设置mchKey，微信支付将不能正常使用');
 	}
 
 	public function checkAll($userApp){
 		$this->check($userApp);
+                if($userApp['mchId'] == '')
+                        throw new CI_MyException(1,'后台未设置mchId，微信支付将不能正常使用');
+                if($userApp['mchKey'] == '')
+                        throw new CI_MyException(1,'后台未设置mchKey，微信支付将不能正常使用');	
 		if($userApp['mchSslCert'] == '')
 			throw new CI_MyException(1,'后台未设置mchSslCert，微信红包将不能正常使用');
 		if($userApp['mchSslKey'] == '')

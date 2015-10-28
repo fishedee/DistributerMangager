@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+    <title>购物车</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            font-family: '微软雅黑';
+        }
+        
+        html,
+        body {
+            background: #f3f3f3;
+        }
+        
+        .item {
+            display: block;
+            margin-top: 10px;
+            padding: 20px 20px;
+            background: #fff;
+            border-top: 1px solid #efefef;
+            border-bottom: 1px solid #efefef;
+            font-weight: 900;
+        }
+        
+        .item .zhangBuZhiFu .gou {
+            width: 20px;
+            display: inline-block;
+            position: relative;
+            right: 7px;
+            top: -22px;
+            float: right;
+        }
+        
+        .item .zhangBuZhiFu .gou img {
+            display: block;
+            width: 22px;
+        }
+        
+        
+        
+        .itemList  {
+            display: block;
+            margin-top: 10px;
+            padding: 20px 20px;
+            background: #fff;
+            border-top: 1px solid #efefef;
+            border-bottom: 1px solid #efefef;
+            position: relative;
+        }
+        
+        .itemList .list{
+            position: relative;
+            border-bottom: #eee solid 1px;
+        }
+        
+  
+        .itemList .list:nth-child(n+2) {
+            margin-top: 15px;
+        }
+        
+        .itemList .list .neiRong .BZ{
+            float: left;
+            height:60px;
+        }
+        
+        .itemList .list .neiRong .BZ .beiZhu {
+            font-size: 0.8em;
+            color: #818181;
+            border: #d5d5d5 solid 1px;
+            float: left;
+            padding: 7px 10px 5px 10px;
+            margin: 0px 20px 0px 10px;
+            position: relative;
+            top: 7px;
+        }
+        
+        .itemList .list .neiRong .Xinxi {
+            
+        }
+        
+        .itemList .list .neiRong .Xinxi .mingCheng {
+            width: 70%;
+            font-size: 0.8em;
+            
+        }
+        
+        .itemList .list .neiRong .Xinxi .jiaQian {
+            color: #00c92e;
+            display: block;
+            line-height: 38px;
+            position: relative;
+            left: -3px;
+        }
+        
+        .itemList .list .shuLiang {
+            width: 100px;
+            height: 30px;
+            border-radius: 100px;
+            overflow: hidden;
+            position: absolute;
+            top: 4px;
+            right: 0px;
+            border: #eee solid 1px;
+        }
+        
+        .itemList .list .shuLiang .jian,
+        .itemList .list .shuLiang .sl,
+        .itemList .list .shuLiang .jia {
+            float: left;            
+        }
+        
+        
+        .itemList .list .shuLiang .jian {
+            color: coral;
+            font-size: 1.5em;
+            width: 30px;
+            position: relative;
+            left: 14px;
+        }
+        
+        .itemList .list .shuLiang .jia {
+            color: coral;
+            font-size: 1.5em;
+            width: 0px;
+            position: relative;
+            left: 6px;
+            top: 1px;
+            
+        }
+        
+        .itemList .list .shuLiang .sl {
+            border: #eee solid 1px;
+            height: 30px;
+            width: 40px;
+            text-align: center;
+            line-height: 30px;
+            position: relative;
+            top: -1px;
+        }
+        
+        
+        
+        .itemList .list .Xinxi .beiZhu{
+            margin: 10px 10px 10px 75px;
+            font-size: 0.8em;
+            width: 80%;
+            color: dimgray;
+            position: relative;
+            top: -10px;
+        }
+        
+        .itemList .jieZhang {
+            text-align: right;
+            padding-top: 15px;
+            padding-bottom: 15px;
+            font-size: 0.85em;
+            border-bottom: #eee solid 1px;
+        }
+        .itemList .yaoQiu{
+            width: 93%;
+            height: 30px;
+            margin: 15px 2% 0px 2%;
+            resize: none;
+
+            padding-left: 1%;
+            background-color: #efefef;
+            font-size: 12px;
+            border: 1px solid #dedede;
+        }
+        
+        
+        /*空位位置*/
+        footer{
+            height:51px;
+        }
+        
+        /*浮动备注*/
+        .mu{
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            background: rgba(0, 0, 0, 0.17);
+            display: none;
+        }
+        
+        .xiaoBeiZhu{
+            position: fixed;
+            left: 10%;
+            top: 30%;
+            width: 80%;
+            background: #fff;
+            border-radius: 5px;
+            z-index: 3;
+            display: none;
+        }
+        .xiaoBeiZhu .tiMu{
+            text-align: center;
+            margin-top: 22px;
+            margin-bottom: 12px;
+            padding: 0 50px;
+        }
+        .xiaoBeiZhu .neiRong input{
+            width: 87%;
+            margin: 5px 3% 15px 3%;
+            resize: none;
+            padding: 5px 3%;
+            background-color: #ffffff;
+            font-size: 1em;
+            border: 1px solid #dedede;
+            border-radius: 5px
+        }
+        .xiaoBeiZhu .anNiu{
+             border-top:#d3d3d3 solid 1px;   
+        }
+        .xiaoBeiZhu .anNiu .fanhui{
+            border-right: #d3d3d3 solid 1px;  
+        }
+        .xiaoBeiZhu .anNiu .fanhui,.xiaoBeiZhu .anNiu .queding{
+            width: 48%;
+            height: 50px;
+            display: inline-block;
+            text-align: center;
+            color:dodgerblue;
+            line-height: 50px
+        }
+
+        /*修复备注bug*/
+        .BZ2{
+
+            width: 70px;
+            height:40px;
+            position: absolute;
+            z-index: 1;
+        }
+
+        
+        /*空位位置*/
+        footer{
+            height:51px;
+        }
+        
+    </style>
+</head>
+
+<body>
+  
+    
+</body>
+<script>
+    var $ = require('common/core/core.js');
+    var dialog = require('common/dialog/dialog.js');
+    require('./common/meal/mealCart.jsx');
+</script>
+</html>

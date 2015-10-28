@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+    <title>订单详情</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            font-family: '微软雅黑';
+        }
+        a {text-decoration:none;} 
+        
+        html,
+        body {
+            background: #f3f3f3;
+        }
+        
+        hr {
+            height: 1px;
+            border: none;
+            border-top: 1px solid #d8d8d8;
+        }
+        
+        .tips{
+            background: #fef9e6;
+            text-align: center;
+            height: 45px;
+            line-height: 43px;
+            color: #da5b26;
+            border-bottom: 1px solid #e6e0c0;
+            font-size: 13px;
+        }
+        
+        .dingDangXinXi {
+            margin-left: 20px;
+            margin-top: 20px;
+            color: dimgray;
+        }
+        
+        .xinXi {
+            background: #fff;
+            margin: 10px 20px;
+            border: #e6e6e6 solid 1px;
+            border-radius: 5px;
+        }
+        
+        .xinXi .item {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+        
+        .xinXi .item .tiMu {
+            margin-left: 20px;
+            margin-right: 20px;
+            color: dimgray;
+        }
+        .xinXi .item .tubiao  + .tiMu{
+            margin-left: 5px;
+            position: relative;
+            top: -3px;
+        }
+        
+        .xinXi .item:nth-of-type(4) .neiRong {
+            color: crimson;
+            font-weight: 600;
+        }
+        
+        .xinXi .zhuangTai {
+            position: absolute;
+            right: 20px;
+            top: 190px;
+            color: #ff7542;
+            border: #ff7542 solid 1px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: 600;
+            -moz-transform: rotate(18deg);
+            -webkit-transform: rotate(18deg);
+            -o-transform: rotate(18deg);
+            -ms-transform: rotate(18deg);
+            transform: rotate(18deg);
+        }
+        .xinXi .tubiao{
+            width: 20px;
+            display: inline-block;
+            margin-left:10px;
+            margin-right: 5px;
+            position: relative;
+            top: 2px;
+        }
+        .xinXi .tubiao img{
+            display: block;
+            width: 20px;
+        }
+        .xinXi .youtubiao{
+            display: inline-block;
+            float: right;
+            margin-right: 10px;
+        }
+        .xinXi .youtubiao img{
+            display: block;
+            width: 20px;
+        }
+        .xinXi .phone{
+            display:inline-block;
+            float: right;
+            border-left: 1px solid #cccccc;
+            padding-left: 20px;
+            margin-right: 20px;
+            
+        }
+        .xinXi .phone img{
+            display: block;
+            width: 20px;
+        }
+        
+         .caiPing {
+            background: #fff;
+            margin: 10px 20px;
+            border: #e6e6e6 solid 1px;
+            border-radius: 5px;
+        }
+        
+        .caiPing .item {
+            margin-left: 20px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            position: relative;
+            color: dimgray;
+        }
+        .caiPing .item .mingCheng{
+            margin-top: 10px;
+            margin-bottom: 10px;
+            width: 40%;
+            overflow: hidden; white-space: nowrap; -o-text-overflow: ellipsis; text-overflow: ellipsis;
+        }
+        .caiPing .item .beizhu{
+            margin-top: -5px;
+            margin-bottom: 5px;
+            width: 40%;
+            overflow: hidden; white-space: nowrap; -o-text-overflow: ellipsis; text-overflow: ellipsis;
+        }
+        .caiPing .item .shuLiang{
+            position: absolute;
+            left:45%;
+            top: 10px;
+            font-size: 1.5em;
+            color: limegreen;
+        }
+        
+        .caiPing .item .tubiao{
+            position:absolute;
+            right: 6%;
+            top: 0px;
+        }
+        .caiPing .item .tubiao .wenzi{
+            
+        }
+        .scdd {
+            background: #fff;
+            margin: 10px 20px;
+            border: #e6e6e6 solid 1px;
+            border-radius: 5px;
+            text-align: center;
+            padding: 0.7em
+        }
+        
+
+        
+        /*空位位置*/
+        footer{
+            height:51px;
+        }
+    </style>
+</head>
+
+<body></body>
+        <script type="text/javascript">
+            var $ = require('/mobile/common/core/core.js');
+            var dialog = require('/mobile/common/dialog/dialog.js');
+            require('/mobile/common/meal/mealOrderDetailed.jsx');
+        </script>
+</html>

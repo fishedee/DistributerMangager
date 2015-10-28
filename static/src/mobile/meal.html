@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=medium-dpi">
+	<script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+	<title>店铺首页</title>
+<style>
+    body {
+    margin: 0;
+    background: #DCDCDC;
+    margin: 0 auto;
+}
+
+* {
+    font-family: '微软雅黑';
+}
+
+.header {
+    width: 100%;
+    height: 150px;
+}
+
+.header .headerbg {
+/*    background: url("/data/upload/image/meal/bg.jpg") center no-repeat;*/
+    width: 100%;
+    height: 100px;
+    position: relative;
+    background-size: contain;
+}
+
+.header .headerbg .appName {
+    position: absolute;
+    bottom: 10px;
+    left: 100px;
+    font-size: 16px;
+    color: #FFFFFF;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.header .headerbg .logo {
+    position: absolute;
+    left: 10px;
+    bottom: -30px;
+    width: 80px;
+    height: 80px;
+}
+
+.header .headerbg .logo .img {
+    width: 80px;
+    height: 80px;
+    background-color: #E4E4E4;
+    border-radius: 3px;
+    box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.header .headermenu {
+    padding: 7px 0;
+    width: 100%;
+    height: 30px;
+    background: #F4F5FA;
+}
+
+.header .headermenu .lanmu {
+    margin-left: 120px;
+    margin-top: 6px;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -o-box;
+    display: -ms-box;
+    display: box;
+}
+
+.header .headermenu .lm {
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    -o-box-flex: 1;
+    -ms-box-flex: 1;
+    box-flex: 1;
+}
+
+.header .headermenu img {
+    display: block;
+    height: 17px;
+}
+
+.panel {
+    background: white;
+    margin-bottom: 5px;
+    padding: 2px 10px 6px 10px;
+    height: 80px;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -o-box;
+    display: -ms-box;
+    display: box;
+}
+
+.panel .selection {
+    height: 50px;
+    width: 40px;
+    /*            border: 1px solid;*/
+    padding-top: 10px;
+    /*            margin-left: 30px;*/
+    /*            float: left;*/
+    -webkit-box-flex: 1;
+    -moz-box-flex: 1;
+    -o-box-flex: 1;
+    -ms-box-flex: 1;
+    box-flex: 1;
+}
+
+.panel .selection .icon {
+    width: 100%;
+    height: 40px;
+}
+
+.panel .selection .icon img {
+    width: 45px;
+    display: block;
+    margin: auto;
+    /*            height: 100%;*/
+}
+
+.panel .selection .select_title {
+    font-size: 12px;
+    text-align: center;
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
+
+.pic {
+    width: 100%;
+}
+
+.pic img {
+    width: 100%;
+    height: 100%;
+}
+
+.address {
+    width: 100%;
+    background: white;
+    margin-top: 10px;
+    height: 50px;
+    line-height: 50px;
+    position: relative;
+    margin: 0 auto;
+}
+
+.address .location {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background: url('/data/upload/image/meal/address.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 30px 30px;
+    /*border: 1px solid;*/
+    margin-top: 10px;
+    margin-left: 10px;
+}
+
+.address .addressDetail {
+    position: relative;
+    font-size: 12px;
+    top: -10px;
+    margin-left: 5px;
+}
+
+.address .right {
+    display: inline-block;
+    background: url('/data/upload/image/meal/right.png');
+    background-size: 30px 30px;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    right: 5%;
+    /*border: 1px solid;*/
+}
+
+.time {
+    border-top: 1px solid;
+    height: 50px;
+    background: white;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.time .hitory {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background: url('/data/upload/image/meal/history.png');
+    background-size: 30px 30px;
+    background-repeat: no-repeat;
+    background-position: center;
+    /*border: 1px solid;*/
+    margin-top: 10px;
+    margin-left: 10px;
+}
+
+.time .workTime {
+    position: relative;
+    position: relative;
+    font-size: 12px;
+    top: -10px;
+    margin-left: 5px;
+}
+
+.info {
+    width: 100%;
+    background: white;
+}
+
+.explain {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.explain .explainDetail {
+    width: 100%;
+    margin: 0 auto;
+    font-size: 12px;
+}
+
+.explain .explainDetail .xdtz {
+    margin: 20px;
+}
+    </style>
+</head>
+
+<body>
+</body>
+
+<script>
+	var $ = require('common/core/core.js');
+	var dialog = require('common/dialog/dialog.js');
+	require('./common/meal/index.jsx');
+</script>
+
+</html>

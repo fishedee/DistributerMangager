@@ -1,0 +1,123 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		var typeInfo = {};
+		var allState = {};
+
+		function getTypeInfo(next){
+			$.post('/dishtype/getTypeInfo',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				typeInfo = data.data;
+				console.info(typeInfo);
+				next();
+			});
+		}
+		function go(){
+			query.simpleQuery({
+				id:'container',
+				url:'/dish/search',
+				column:[
+					{id:'dishId',type:'text',name:'菜品ID'},
+					{id:'dishName',type:'text',name:'菜品名称'},
+					{id:'icon',type:'image',name:'图片'},
+					{id:'dishPrice',type:'text',name:'价格'},
+					{id:'dishTypeId',type:'enum',name:'分类',map:typeInfo},
+					{id:'state',type:'enum',name:'状态',map:{0:'下架',1:'上架'}},
+					{id:'createTime',type:'text',name:'创建时间'},
+					{id:'modifyTime',type:'text',name:'修改时间'}
+				],
+				queryColumn:['dishName','dishTypeId'],
+				operate:[
+				{
+					name:'编辑',
+					click:function(data){
+						location.href = 'productView.html?dishId='+data.dishId;
+					}
+				},
+				{
+					name:'上下架',
+					click:function(data){
+						$.post('/dish/modState',{dishId:data.dishId},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							location.href = 'index.html';
+						});
+					}
+				},
+				{
+					name:'删除',
+					click:function(data){
+						dialog.confirm('确认删除该商品，不可回退操作？!',function(){
+							$.post('/dish/del',{dishId:data.dishId},function(data){
+								data = $.JSON.parse(data);
+								if( data.code != 0 ){
+									dialog.message(data.msg);
+									return;
+								}
+								location.href = 'index.html';
+							});
+						});
+					}
+				},
+				{
+					name:'查看评价',
+					click:function(data){
+						location.href = 'comment.html?dishId='+data.dishId;
+					}
+				}
+				],
+				button:[
+				{
+					name:'添加商品',
+					click:function(){
+						location.href = 'productView.html';
+					}
+				},
+				],
+			});
+
+			//上下架状态
+			setTimeout(changeState,500);
+		}
+
+		function changeState(){
+			$('.state').each(function() {
+				if($(this).text() == '上架'){
+					$(this).siblings('._oper').children('a').eq(1).text('下架');
+				}else{
+					$(this).siblings('._oper').children('a').eq(1).text('上架');
+				}
+			});
+		}
+
+		function getMenu(){
+			$.ajax({
+				url: '/dish/getMenu',
+				type: 'POST',
+				dataType: 'JSON',
+				success:function(data){
+					data = $.JSON.parse(data);
+					data = data.data;
+					console.info(data);
+				},
+				error:function(){
+
+				}
+			})
+		}
+
+		getTypeInfo(go);
+		// getMenu();
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

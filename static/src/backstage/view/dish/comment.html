@@ -1,0 +1,43 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		var dishId = $.location.getQueryArgv('dishId');
+
+		function go(){
+			query.simpleQuery({
+				id:'container',
+				url:'/dishcomment/search?dishId='+dishId,
+				column:[
+					{id:'commentId',type:'text',name:'评论ID'},
+					{id:'clientId',type:'text',name:'用户ID'},
+					{id:'content',type:'text',name:'评论内容'},
+					{id:'createTime',type:'text',name:'创建时间'},
+				],
+				queryColumn:['dishName','dishTypeId'],
+				operate:[
+				{
+					name:'编辑',
+					click:function(data){
+						location.href = 'productView.html?dishId='+data.dishId;
+					}
+				},
+				],
+				button:[
+				{
+					name:'添加商品',
+					click:function(){
+						location.href = 'productView.html';
+					}
+				},
+				],
+			});
+		}
+
+		go();
+		// getMenu();
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

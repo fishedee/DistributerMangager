@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+    <title>预订</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            font-family: '微软雅黑';
+        }
+        
+        html,
+        body {
+            background: #ECECEC;
+            /*height: 100%;*/
+        }
+        
+        ul li {
+            list-style: none;
+        }
+        
+        .row {
+            background: #fff;
+            margin-top: 10px;
+            border-top: 1px solid #d8d8d8;
+            border-bottom: 1px solid #d8d8d8;
+            padding: 0px 6%;
+        }
+        
+        .item {
+            display: block;
+            padding: 15px 0px;
+            background: #fff;
+            border-bottom: 1px solid #efefef;
+            font-weight: 900;
+        }
+        
+        .item:last-child {
+            border-bottom: none;
+        }
+        
+        .row .item .tubiao {
+            width: 5%;
+            display: inline-block;
+            float: right;
+        }
+        
+        .row .item .tubiao img {
+            margin-top: 2%;
+            height: 25px;
+            display: block;
+            float: right;
+            position: relative;
+            top:-2px;
+        }
+        
+        .row .item .time {
+            display: inline-block;
+            float: right;
+            margin-right: 2%;
+            color: #ff683b;
+        }
+        
+        .row .item .neirong {
+            display: inline-block;
+            float: right;
+            margin-right: 2%;
+            color: #000;
+        }
+        
+        .row .item .msg {
+            display: inline-block;
+            float: right;
+            margin-right: 2%;
+            color: #dbd5d3;
+        }
+        
+        .row input {
+            width: 95%;
+            border: 1px solid #ededed;
+            background: #efefef;
+            border-radius: 2px;
+            font-size: 15px;
+            padding: 2%;
+        }
+        .row select {
+            width: 100%;
+            background-color: #fff;
+            border: 0px;
+        }
+        
+        .row .big{
+            float: right;
+            display: inline-block;
+            width: 100%;
+        }
+        .row .big .text{
+            float: right;
+            width: 70px;;
+            display: inline-block;
+            font-size: 1em;
+            position: relative;
+            bottom: 20px;
+            left: 10px;
+        }
+        .row .big img{
+            display: block;
+            width: 20px;
+            float: left;
+        }
+        
+        .title {
+            margin-left: 20px;
+            margin-top: 20px;
+            color: dimgray;
+        }
+        .noBorder{
+            border: none;
+            padding:5px 5px;
+        }
+        
+        .tent{
+            position: fixed;
+            /*position: absolute;*/
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            background: rgba(0, 0, 0, 0.17);
+            /*display:none;*/
+        }
+        
+        .dateSelect{
+            /*display: none;*/
+            width: 100%;
+            height: 400px;
+/*            position: fixed;*/
+            position: absolute;
+            bottom: 0;
+            background: #fff;
+            z-index: 300;
+
+        }
+        
+        .dateSelect .dataText{
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.1em;
+            padding: 16px 0;
+            color: #646464;
+            border-bottom: 2px solid #efefef;
+            width: 100%;
+
+        }
+        .dateSelect .date{
+/*            background: #332cd9;*/
+            width: 30%;
+            height: 342px;
+            text-align: center;
+            background-color: #f5f5f5;
+            float: left;
+        }
+        .dateSelect .active{
+            border-left: 5px solid #33bc60;
+            border-right: 0px!important;
+            background-color: #fff;
+        }
+
+        .dateSelect .date .data-item{
+            height: 60px;
+            border-bottom: 1px solid #e6e6e6;
+            border-right:  1px solid #e6e6e6;
+        }
+        .dateSelect .date .data-item:last-child{
+            border-bottom: 0px !important;
+        }
+        .dateSelect .date .data-item .day,.dateSelect .date .data-item .week{
+            position: relative;
+            top: 10px;
+        }
+
+
+        .dateSelect .time{
+/*            background: #c61f1f;*/
+            width: 66%;
+            height: 330px;
+            padding-top: 10px;
+            padding-left: 4%;
+            float: left;
+        
+        }
+        .dateSelect .time .time-item{
+            padding: 10px;
+            border: 1px solid #b8b8b8;
+            border-radius: 5px;
+            margin: 10px;
+            float: left;
+            width: 50px;
+            text-align: center;
+            font-weight: 600;
+            
+        }
+        .dateSelect .time .active{
+            color: #fff;
+            background-color: #33bc60;
+        }
+               .verify{
+           
+position: fixed;
+top: 22%;
+left: 6.5%;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+/*             display: none;          */
+        }
+             /*用户手机验证*/
+        
+        .verify .content {
+            position: relative;
+            top: -1%;
+            background-color: #eeeeee;
+            width: 88%;
+            height: 320px;
+            z-index: 10;
+            border-radius: 3px;
+            
+        }
+        
+        .verify .content .title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-top: 17px;
+            margin-left: 8%;
+        }
+        
+        .verifyInput {
+            width: 35%!important;
+        }
+        
+        .verify .yanzhen {
+            width: 90%;
+            margin: auto;
+            margin-top: 10px;
+            border-radius: 3px;
+            background-color: #fbfbfb;
+        }
+        
+        .verify .yanzhen .item {
+            margin-left: 5%;
+            margin-right: 5%;
+            background-color: #fbfbfb;
+        }
+        
+        .item .name {
+            width: 20%;
+            display: inline-block;
+        }
+        
+        .item input {
+            width: 70%;
+            font-size: 1em;
+            background: none;
+            border: 0px;
+            padding-left: 3%;
+            display: inline-block;
+        }
+        
+        .verify .yanzhengma {
+            display: inline-block;
+            background-color: #368bcc;
+            width: 38%;
+            height: 30px;
+            color: #fff;
+            border-radius: 3px;
+            text-align: center;
+            line-height: 30px;
+        }
+
+        .verify .invalid {
+            background-color: #c7c7c7!important;
+        }
+        
+        .verify .submitVerify {
+            width: 90%;
+            height: 40px;
+            font-weight: 600;
+            background-color: #52b55b;
+            margin: 15px auto;
+            border-radius: 3px;
+            color: #fff;
+            /*
+            display: -webkit-flex;
+            display: flex;
+*/
+            /*
+            -webkit-justify-content: center;
+            justify-content: center;
+            -webkit-align-items: center;
+            align-items: center;
+*/
+            display: -webkit-box;
+            display: -moz-box;
+            display: -o-box;
+            display: -ms-box;
+            display: box;
+            -webkit-box-align: center;
+            -moz-box-align: center;
+            -o-box-align: center;
+            -ms-box-align: center;
+            box-align: center;
+            -webkit-box-orient: horizontal;
+            -moz-box-orient: horizontal;
+            -o-box-orient: horizontal;
+            -ms-box-orient: horizontal;
+            box-orient: horizontal;
+        }
+        
+        .verify .submitVerify .juzhong {
+            width: 100%;
+            -webkit-box-align: center;
+            -moz-box-align: center;
+            -o-box-align: center;
+            -ms-box-align: center;
+            box-align: center;
+            -webkit-box-orient: vertical;
+            -moz-box-orient: vertical;
+            -o-box-orient: vertical;
+            -ms-box-orient: vertical;
+            box-orient: vertical;
+            display: -webkit-box;
+            display: -moz-box;
+            display: -o-box;
+            display: -ms-box;
+            display: box;
+        }
+        
+        .verify .verifyTips {
+            font-size: 0.9em;
+            text-align: center;
+        }
+
+        /*空位位置*/
+        footer{
+            height:51px;
+        }
+        
+    </style>
+</head>
+
+<body>
+
+</body>
+<script>
+    var $ = require('common/core/core.js');
+    var dialog = require('common/dialog/dialog.js');
+    require('./common/meal/mealBook.jsx');
+</script>
+
+</html>

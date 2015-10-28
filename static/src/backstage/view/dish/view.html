@@ -1,0 +1,83 @@
+<link rel="import" href="../common/header.html?__inline">
+	<!-- <div class="alert alert-danger" role="alert">
+		注意！一级分类的图标需要使用长宽比为1:1图片，二级分类的图标需要使用长宽比为2:1图片，上传其它比例的图片会导致显示变形。<br/>
+		另外，一般情况下，外部链接请保持为空，如需点击分类后跳转到外部链接，请填写外部链接的地址。外部链接格式：http://www.baidu.com
+	</div> -->
+	<div id="container">
+	</div>
+	<script type="text/javascript" src="/fishstrap/js/fishstrap.js" charset="utf-8"></script>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var dishTypeId = $.location.getQueryArgv('dishTypeId');
+		var dishType = {};
+		var allType  = {};
+		function getAllType(next){
+			$.post('/dishtype/getAllType',{dishTypeId:dishTypeId},function(data){
+				data = $.JSON.parse(data);
+				if(data.code != 0){
+					dialog.message(data.msg);
+					return;
+				}
+				allType = data.data;
+				console.info(allType);
+				next();
+			});
+		}
+
+		function getTypeInfo(next){
+			$.post('/dishtype/getDetail',{dishTypeId:dishTypeId},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				dishType = data.data;
+				console.info(dishType);
+				next();
+			});
+		}
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'title',type:'text',name:'名字'},
+					{id:'parent_id',type:'enum',name:'上级分类',map:allType}
+				],
+				value:dishType,
+				submit:function(data){
+					if( dishTypeId != null ){
+						$.post('/dishtype/modType',{dishTypeId:dishTypeId,data:data},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							history.back();
+						});
+					}else{
+						$.post('/dishtype/addType',{data:data},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							history.back();
+						});
+					}
+				},
+				cancel:function(){
+					history.back();
+				}
+			});
+		}
+		if(dishTypeId){
+			getAllType(function(){
+				getTypeInfo(go);
+			})
+		}else{
+			getAllType(go);
+		}
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

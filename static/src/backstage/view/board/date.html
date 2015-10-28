@@ -1,0 +1,56 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container"></div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query  = require('/fishstrap/ui/query.js');
+		var allClassify = {};
+		var allState = {};
+		function go(){
+			query.simpleQuery({
+				id:'container',
+				url:'/boarddate/search',
+				column:[
+					{id:'dateId',type:'text',name:'订餐时间Id'},
+					{id:'day',type:'text',name:'星期几'},
+					{id:'time',type:'text',name:'时间'},
+				],
+				operate:[
+				{
+					name:'编辑',
+					click:function(data){
+						window.location.href = 'dateView.html?dateId=' + data.dateId;
+					}
+				},
+				{
+					name:'删除',
+					click:function(data){
+						dialog.confirm('确认删除该商品，不可回退操作？!',function(){
+							$.get('/boarddate/del',{dateId:data.dateId},function(data){
+								data = $.JSON.parse(data);
+								data = data.data;
+								if(data == 1){
+									alert('删除成功');
+									window.location.href = 'date.html';
+								}else if(data == 0){
+									alert('删除失败');
+								}else{
+									alert(data);
+								}
+							});
+						});
+					}
+				}],
+				button:[
+				{
+					name:'添加订餐时间',
+					click:function(){
+						location.href = 'dateView.html';
+					}
+				},
+				],
+			});
+		}
+		go();
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

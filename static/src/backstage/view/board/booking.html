@@ -1,0 +1,100 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container"></div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query  = require('/fishstrap/ui/query.js');
+		var allClassify = {};
+		var allState = {};
+		var boardType = {};
+		//获取类型
+		function getTypeInfo(next){
+			$.post('/boardtype/getAllType',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				boardType = data.data;
+				console.info(boardType);
+				next();
+			});
+		}
+
+		function go(){
+			query.simpleQuery({
+				id:'container',
+				url:'/dishbooking/search',
+				column:[
+					{id:'bookingId',type:'text',name:'预定id'},
+					{id:'name',type:'text',name:'姓名'},
+					{id:'phone',type:'text',name:'手机号码'},
+					{id:'boardTypeId',type:'enum',name:'预定类型',map:boardType},
+					{id:'people',type:'text',name:'预定人数'},
+					{id:'bookingTime',type:'text',name:'预定日期'},
+					{id:'remark',type:'text',name:'备注'},
+					{id:'state',type:'enum',name:'状态',map:{'0':'未受理','1':'已受理','2':'已拒绝'}},
+					{id:'createTime',type:'text',name:'创建时间'},
+					{id:'modifyTime',type:'text',name:'修改时间'}
+				],
+				queryColumn:['boardTypeId','state'],
+				operate:[
+				{
+					name:'受理',
+					click:function(data){
+						dialog.confirm('确定受理该预定吗，不可回退操作？!',function(){
+							$.get('/dishbooking/accept',{bookingId:data.bookingId},function(data){
+								data = $.JSON.parse(data);
+								if(data.code != 0){
+									dialog.message(data.msg);
+									return;
+								}
+								data = data.data;
+								window.location.reload();
+							});
+						});
+					}
+				},
+				{
+					name:'拒绝',
+					click:function(data){
+						var bookingId = data.bookingId;
+						$.get('/dishbooking/checkForbid',{bookingId:data.bookingId},function(data) {
+							data = $.JSON.parse(data);
+							if(data.code != 0){
+								dialog.message(data.msg);
+								return;
+							}
+							window.location.href = './reason.html?bookingId='+bookingId;
+						});
+					}
+				},
+				{
+					name:'删除',
+					click:function(data){
+						dialog.confirm('确认删除该预定吗，不可回退操作？!',function(){
+							$.get('/dishbooking/del',{bookingId:data.bookingId},function(data){
+								data = $.JSON.parse(data);
+								if(data.code != 0){
+									dialog.message(data.msg);
+									return;
+								}
+								data = data.data;
+								if(data == 1){
+									dialog.message('删除成功');
+									window.location.reload();
+								}else if(data == 0){
+									dialog.message('删除失败');
+								}
+							});
+						});
+					}
+				},
+				],
+				button:[
+				],
+			});
+		}
+		getTypeInfo(go);
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

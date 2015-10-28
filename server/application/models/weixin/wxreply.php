@@ -22,14 +22,14 @@ class Wxreply extends CI_Model {
     //响应消息
     public function responseMsg($xmlTpl=null)
     {
-    	
+        
         if(empty($xmlTpl)){
-        	$postStr = $GLOBALS["HTTP_RAW_POST_DATA"];
+            $postStr = $GLOBALS["HTTP_RAW_POST_DATA"];
         }else {
-        	$postStr = $xmlTpl;
+            $postStr = $xmlTpl;
         }
-    	//$postStr = $GLOBALS["HTTP_RAW_POST_DATA"];
-    	//print_r($postStr);die();
+        //$postStr = $GLOBALS["HTTP_RAW_POST_DATA"];
+        //print_r($postStr);die();
        //file_put_contents(dirname(__FILE__).'/come.text',var_export($postStr,TRUE));
         if (!empty($postStr)){
             $postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
@@ -43,51 +43,51 @@ class Wxreply extends CI_Model {
 
     //消息类型分离
     public function fenlei($postObj){
-    	$RX_TYPE = trim($postObj->MsgType);
-    	switch ($RX_TYPE)
-    	{
-    		case "event":
-    			$result = $this->receiveEvent($postObj);
-    			break;
-    		case "text":
-    			$result = $this->receiveText($postObj);
-    			break;
-    		case "image":
-    			$result = $this->receiveImage($postObj);
-    			break;
-    		case "location":
-    			$result = $this->receiveLocation($postObj);
-    			break;
-    		case "voice":
-    			$result = $this->receiveVoice($postObj);
-    			break;
-    		case "video":
-    			$result = $this->receiveVideo($postObj);
-    			break;
-    		case "link":
-    			$result = $this->receiveLink($postObj);
-    			break;
-    		default:
-    			$result = "unknown msg type: ".$RX_TYPE;
-    			break;
-    	}
-    	file_put_contents(dirname(__FILE__).'/out.text', var_export($result,TRUE));
-    	echo $result;
+        $RX_TYPE = trim($postObj->MsgType);
+        switch ($RX_TYPE)
+        {
+            case "event":
+                $result = $this->receiveEvent($postObj);
+                break;
+            case "text":
+                $result = $this->receiveText($postObj);
+                break;
+            case "image":
+                $result = $this->receiveImage($postObj);
+                break;
+            case "location":
+                $result = $this->receiveLocation($postObj);
+                break;
+            case "voice":
+                $result = $this->receiveVoice($postObj);
+                break;
+            case "video":
+                $result = $this->receiveVideo($postObj);
+                break;
+            case "link":
+                $result = $this->receiveLink($postObj);
+                break;
+            default:
+                $result = "unknown msg type: ".$RX_TYPE;
+                break;
+        }
+        file_put_contents(dirname(__FILE__).'/out.text', var_export($result,TRUE));
+        echo $result;
     }
     
     //找回复内容
     public function content($postObj,$EventKey=''){
-    	//搜索userId
-    	$weixinNum=$postObj->ToUserName;
-    	$this->load->model('user/userAppDb','userAppDb');
-    	$userId = $this->userAppDb->search(array('weixinNum'=>$weixinNum),array())['data'][0]['userId'];
-    	if (count($userId) == 0)return $this->transmitText($postObj,'找不到该微信原始ID，请联系该公众号管理员修改。');
+        //搜索userId
+        $weixinNum=$postObj->ToUserName;
+        $this->load->model('user/userAppDb','userAppDb');
+        $userId = $this->userAppDb->search(array('weixinNum'=>$weixinNum),array())['data'][0]['userId'];
+        if (count($userId) == 0)return $this->transmitText($postObj,'找不到该微信原始ID，请联系该公众号管理员修改。');
     
-    	//搜索要回复的素材
-    	$this->load->model('weixin/wxSubscribeAo','wxSubscribeAo');
-    	switch ($postObj->Event)
-    	{
-    		case "subscribe":
+        //搜索要回复的素材
+        $this->load->model('weixin/wxSubscribeAo','wxSubscribeAo');
+        switch ($postObj->Event)
+        {
+            case "subscribe":
                 //检测是否开通了高级分成功能
                 $this->load->model('user/userPermissionDb','userPermissionDb');
                 $condition['permissionId'] = 5;
@@ -114,26 +114,26 @@ class Wxreply extends CI_Model {
                     $weixinSubscribe=$this->wxSubscribeAo->search($userId,array('isRelease'=>2),'')['data'][0];//'isRelease'=>2 已发布
                     $weixinSubscribeId=$weixinSubscribe['weixinSubscribeId'];
                 }
-    			break;
-    		case "CLICK":
+                break;
+            case "CLICK":
                 if($postObj->EventKey == 'distribution'){
                     $weixinSubscribe = $this->wxSubscribeAo->search($userId,array('remark'=>'申请分销'),'')['data'][0];
                     $weixinSubscribeId = $weixinSubscribe['weixinSubscribeId'];
                 }elseif($postObj->EventKey == 'qrcode'){
-                	//先判断有无分成关系 若无分成关系 则没有分配二维码
-                	$this->load->model('distribution/distributionAo');
-                	$ToUserName   = $postObj->ToUserName; //开发者微信号
-                	$openId = $postObj->FromUserName;
-                	$result = $this->distributionAo->checkHasDistribution($ToUserName,$openId);
-                	if($result){
-                		//发送图文信息 我的二维码
-	                    $this->load->model('user/userAo','userAo');
-	                    $info   = $this->userAo->myQrCode($userId,$openId);
-	                    return $this->transmitNews($postObj,$info,$postObj->EventKey);
-                	}else{
-                		//无建立分成关系
-                		return $this->transmitText($postObj,'您还没有建立分成关系,赶快申请成为一级代理商或者成为别人分销商吧!');
-                	}
+                    //先判断有无分成关系 若无分成关系 则没有分配二维码
+                    $this->load->model('distribution/distributionAo');
+                    $ToUserName   = $postObj->ToUserName; //开发者微信号
+                    $openId = $postObj->FromUserName;
+                    $result = $this->distributionAo->checkHasDistribution($ToUserName,$openId);
+                    if($result){
+                        //发送图文信息 我的二维码
+                        $this->load->model('user/userAo','userAo');
+                        $info   = $this->userAo->myQrCode($userId,$openId);
+                        return $this->transmitNews($postObj,$info,$postObj->EventKey);
+                    }else{
+                        //无建立分成关系
+                        return $this->transmitText($postObj,'您还没有建立分成关系,赶快申请成为一级代理商或者成为别人分销商吧!');
+                    }
                 }elseif($postObj->EventKey == 'checkin'){
                     //签到
                     $this->load->model('client/scoreAo','scoreAo');
@@ -145,14 +145,14 @@ class Wxreply extends CI_Model {
                     $this->load->model('distribution/distributionAo','distributionAo');
                     $info = $this->distributionAo->getRecommend($userId);
                     if($info == 0){
-                        return $this->transmitText($postObj,'该厂家没有设置推荐人');
+                        return $this->transmitText(1,'该厂家没有设置推荐人');
                     }else{
                         return $this->transmitNews($postObj,$info,$postObj->EventKey);
                         // return $this->transmitText($postObj,$info);
                         // return $this->transmitText($postObj,implode($info, ','));
                     }
                 }
-    			break;
+                break;
             case 'user_get_card':
                 $this->load->model('member/memberAo','memberAo');
                 $this->memberAo->testAdd();
@@ -165,8 +165,19 @@ class Wxreply extends CI_Model {
                     return $this->transmitText($postObj,$content);
                     break;
                 }elseif(strstr($postObj->EventKey, 'board')){
-                    $weixinSubscribe = $this->wxSubscribeAo->search($userId,array('remark'=>'订餐入口'),'')['data'][0];
-                    $weixinSubscribeId = $weixinSubscribe['weixinSubscribeId'];
+                    $this->load->model('client/clientAo','clientAo');
+                    $openId = $postObj->FromUserName;
+                    $EventKey = $postObj->EventKey;
+                    $ToUserName = $postObj->ToUserName;
+                    $result = $this->clientAo->checkCache($ToUserName,$openId);
+                    // return $this->transmitText($postObj,$result);die;
+                    if($result == 1){
+                        return $this->transmitText($postObj,'1');
+                    }else{
+                        $this->clientAo->scanInfo($ToUserName,$openId);
+                        $weixinSubscribe = $this->wxSubscribeAo->search($userId,array('remark'=>'订餐入口'),'')['data'][0];
+                        $weixinSubscribeId = $weixinSubscribe['weixinSubscribeId'];
+                    }
                     break;
                 }else{
                     $info = $postObj->EventKey;
@@ -181,33 +192,33 @@ class Wxreply extends CI_Model {
                     return $this->transmitText($postObj,$content);
                 }
                 break;
-    	}
+        }
 
-    	$weixinSubscribeId=$weixinSubscribe['weixinSubscribeId'];
-    	
-    	//materialClassifyId要回复的类型
-    	$materialClassifyId=$weixinSubscribe['materialClassifyId'];
-    	$graphic=$this->wxSubscribeAo->graphicSearch($userId,$weixinSubscribeId);
-    	
-    	//找不到回复内容，转到客服
-    	if (count($graphic) == 0)return $this->transmitService($postObj);
-    	
-    	switch ($materialClassifyId){
-    		//多图文
-    		case 1:
-    			return $this->transmitNews($postObj,$graphic);
-    			break;
-    		//单图文
-    		case 2:
-    			return $this->transmitNews($postObj,$graphic,$EventKey);
-    			break;
-    		//单图文
-    		case 3:
-    			return $this->transmitText($postObj,$graphic[0]['Description']);
-    			break;
-    				 
-    	}
-    	
+        $weixinSubscribeId=$weixinSubscribe['weixinSubscribeId'];
+        
+        //materialClassifyId要回复的类型
+        $materialClassifyId=$weixinSubscribe['materialClassifyId'];
+        $graphic=$this->wxSubscribeAo->graphicSearch($userId,$weixinSubscribeId);
+        
+        //找不到回复内容，转到客服
+        if (count($graphic) == 0)return $this->transmitService($postObj);
+        
+        switch ($materialClassifyId){
+            //多图文
+            case 1:
+                return $this->transmitNews($postObj,$graphic);
+                break;
+            //单图文
+            case 2:
+                return $this->transmitNews($postObj,$graphic,$EventKey);
+                break;
+            //单图文
+            case 3:
+                return $this->transmitText($postObj,$graphic[0]['Description']);
+                break;
+                     
+        }
+        
     }
     
     
@@ -217,10 +228,10 @@ class Wxreply extends CI_Model {
         switch ($object->Event)
         {
             case "subscribe":
-            	return $this->content($object);
+                return $this->content($object);
                 break;
             case "CLICK":
-            	return $this->content($object);
+                return $this->content($object);
                 break;
             case 'user_get_card':
                 //获取会员卡的code
@@ -235,11 +246,6 @@ class Wxreply extends CI_Model {
                 if($object->EventKey == 'distribution'){
                     return $this->content($object);
                 }elseif(strstr($object->EventKey, 'board')){
-                    $this->load->model('client/clientAo','clientAo');
-                    $openId = $object->FromUserName;
-                    $EventKey = $object->EventKey;
-                    $ToUserName = $object->ToUserName;
-                    $this->clientAo->scanInfo($ToUserName,$openId);
                     return $this->content($object);
                 }else{
                     return $this->content($object);
@@ -412,31 +418,32 @@ $item_str
     //回复图文消息
     public function transmitNews($object, $graphic,$EventKey)
     {
-    	$content = array();
-    	// foreach ($graphic as $v){
+        $content = array();
+        $weixinNum=$object->ToUserName;
+        $this->load->model('user/userAppDb','userAppDb');
+        $userId = $this->userAppDb->search(array('weixinNum'=>$weixinNum),array())['data'][0]['userId'];
+        // foreach ($graphic as $v){
      //        $content[] = array("Title"=>$v['Title'], "Description"=>$v['Description'], "PicUrl"=>'http://'.$_SERVER[HTTP_HOST].$v['PicUrl'], "Url" =>$v['Url']);
-    	// }
+        // }
 
         if(strstr($object->EventKey, 'board')){
-        	$EventKey = substr($object->EventKey, 5);
+            $EventKey = substr($object->EventKey, 5);
+            $this->load->model('board/boardAo','boardAo');
+            $boardId = $this->boardAo->getBoardId($userId,$EventKey);
             foreach ($graphic as $v) {
-                $content[] = array("Title"=>$v['Title'],"Description"=>"点击进入第".$EventKey."号桌","PicUrl"=>'http://'.$_SERVER[HTTP_HOST].$v['PicUrl'], "Url"=>$v['Url'].'?boardNum='.$EventKey);
+                $content[] = array("Title"=>$v['Title'],"Description"=>"点击进入第".$EventKey."号桌","PicUrl"=>'http://'.$_SERVER[HTTP_HOST].$v['PicUrl'], "Url"=>$v['Url'].'?boardId='.$boardId);
             }
         }elseif($EventKey == 'recommend'){
             foreach ($graphic as $key => $v) {
-                $content[] = array("Title"=>$v['company'],"Description"=>base64_decode($v['nickName']),"PicUrl"=>$v['img'], "Url"=>$v['url']);
-            }
-        }elseif($EventKey == 'qrcode'){
-            foreach ($graphic as $key => $v) {
-                $content[] = array("Title"=>$v['Title'],"Description"=>$v['Description'],"PicUrl"=>$v['PicUrl'], "Url"=>$v['Url']);
+                $content[] = array("Title"=>$v['company'],"Description"=>$v['nickName'],"PicUrl"=>$v['img'], "Url"=>$v['url']);
             }
         }else{
             foreach ($graphic as $v){
                 $content[] = array("Title"=>$v['Title'],"Description"=>$v['Description'], "PicUrl"=>'http://'.$_SERVER[HTTP_HOST].$v['PicUrl'], "Url" =>$v['Url']);
             }
         }
-    	
-    	
+        
+        
         if(!is_array($content)){
             return;
         }
