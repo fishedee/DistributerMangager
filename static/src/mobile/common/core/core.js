@@ -54,8 +54,9 @@ $.ajax = function(opt){
 	opt.success = function(data){
 		try{
 			data = $.JSON.parse(data);
-			$.log.debug(data);
+		//	$.log.debug(data);
 		}catch(e){
+			console.log('error.message:',e.message);
 			data = {
 				'code':1,
 				'msg':'JSON解析错误',

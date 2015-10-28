@@ -8,6 +8,9 @@ class Weixin extends CI_Controller {
 	}
 	
 	public function index(){
+
+
+
 	/**
 	 * 微信接入验证
 	 * 在入口进行验证而不是放到框架里验证，主要是解决验证URL超时的问题

@@ -1,0 +1,74 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container"></div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query  = require('/fishstrap/ui/query.js');
+		var allClassify = {};
+		var allState = {};
+		var boardType = {};
+		function getTypeInfo(next){
+			$.post('/boardtype/getAllType',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				boardType = data.data;
+				boardType[0] = '暂无分类';
+				console.info(boardType);
+				next();
+			});
+		}
+		function go(){
+			query.simpleQuery({
+				id:'container',
+				url:'/board/search',
+				column:[
+					{id:'boardId',type:'text',name:'餐桌ID'},
+					{id:'boardNum',type:'text',name:'餐桌号'},
+					//{id:'boardUrl',type:'text',name:'餐桌链接'},
+					{id:'boardTypeId',type:'enum',name:'餐桌类型',map:boardType},
+					{id:'showQr',type:'image',name:'餐桌二维码'},
+					{id:'start',type:'enum',name:'状态',map:{'0':'空闲','1':'就餐中'}},
+				],
+				queryColumn:['boardTypeId'],
+				operate:[
+				{
+					name:'消费状况',
+					click:function(data){
+						window.location.href = 'nowOrder.html?boardId=' + data.boardId;
+					}
+				},
+				{
+					name:'编辑',
+					click:function(data){
+						window.location.href = 'view.html?boardId=' + data.boardId;
+					}
+				},
+				{
+					name:'结账',
+					click:function(data){
+						$.get('/dishorder/closeAccounts',{boardId:data.boardId},function(data) {
+							data = $.JSON.parse(data);
+							if(data.code != 0){
+								dialog.message(data.msg);
+								return;
+							}
+						});
+					}
+				},
+				],
+				button:[
+				{
+					name:'添加餐桌',
+					click:function(){
+						location.href = 'view.html';
+					}
+				},
+				],
+			});
+		}
+		getTypeInfo(go);
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

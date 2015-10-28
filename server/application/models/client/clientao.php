@@ -122,4 +122,19 @@ class ClientAo extends CI_Model {
         $clientId = $this->addOnce($data);
         return $this->clientDb->scanInfo($clientId);
 	}
+
+	public function checkCache($ToUserName,$openId){
+		$userId = $this->userAppAo->getUserId($ToUserName);
+        $data['openId'] = $openId;
+        $data['userId'] = $userId;
+        $data['type']   = 2;
+        $clientId = $this->addOnce($data);
+        $this->load->driver('cache', array('adapter' => 'apc', 'backup' => 'file'));
+        // return $this->cache->get('s'.$cientId);
+        if($this->cache->get('s'.$cientId)){
+        	return 1;
+        }else{
+        	return 0;
+        }
+	}
 }

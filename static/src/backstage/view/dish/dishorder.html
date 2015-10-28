@@ -1,0 +1,248 @@
+<link rel="import" href="../common/header.html?__inline">
+<head>
+	<style>
+	.selecte{
+		background: #F8B8B8;
+	}
+	</style>
+</head>
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		var boardType = {};
+		//获取类型
+		function getTypeInfo(next){
+			$.post('/boardtype/getAllType',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				boardType = data.data;
+				console.info(boardType);
+				next();
+			});
+		}
+		function go(){
+			query.simpleQuery({
+				id:'container',
+				url:'/dishorder/searchOrder',
+				column:[
+					{id:'orderNo',type:'text',name:'订单编号'},
+					{id:'price',type:'text',name:'订单金额'},
+					{id:'boardId',type:'text',name:'餐桌号'},
+					{id:'state',type:'enum',name:'状态',map:{'0':'未受理','1':'已受理','2':'已关闭','3':'已取消','4':'已结账'}},
+					{id:'type',type:'enum',name:'方式',map:{'1':'点餐','2':'预约','3':'外卖'}},
+					{id:'pay',type:'enum',name:'支付',map:{'1':'在线支付','0':'到付'}},
+					{id:'createTime',type:'text',name:'创建时间'},
+					{id:'modifyTime',type:'text',name:'修改时间'}
+				],
+				queryColumn:['boardId','state'],
+				operate:[
+				{
+					name:'详情',
+					click:function(data){
+						location.href = 'orderView.html?orderNo='+data.orderNo;
+					}
+				},
+				{
+					name:'受理',
+					click:function(data){
+						$.ajax({
+							url: '/dishorder/accept',
+							type: 'POST',
+							dataType: 'JSON',
+							data: {orderNo: data.orderNo},
+							success:function(data){
+								data = $.JSON.parse(data);
+								if(data.code != 0){
+									dialog.message(data.msg);
+									return;
+								}
+								window.location.reload();
+							},
+							error:function(){
+
+							}
+						})
+					}
+				},
+				{
+					name:'取消',
+					click:function(data){
+						var orderNo = data.orderNo;
+						$.ajax({
+							url: '/dishorder/cancel',
+							type: 'GET',
+							dataType: 'JSON',
+							data: {orderNo: data.orderNo},
+							success:function(data){
+								data = $.JSON.parse(data);
+								console.info(data);
+								if(data.code != 0){
+									dialog.message(data.msg);
+									return;
+								}
+								if(data.data == 0){
+									dialog.confirm('该订单已经受理,是否真的取消?!',function(){
+										$.get('/dishorder/realyCancle',{orderNo:orderNo},function(data) {
+											data = $.JSON.parse(data);
+											if(data.code != 0){
+												dialog.message(data.msg);
+												return;
+											}
+											dialog.message('订单已经取消');
+											history.go(0);
+										});
+									});
+								}else if(data.data == 'reason'){
+									window.location.href = './reason.html?orderNo='+orderNo;
+								}else{
+									dialog.message('订单已经取消');
+									history.go(0);
+								}
+							},
+							error:function(){
+
+							}
+						})
+					}
+				}
+				],
+				button:[],
+			});
+		}
+		getTypeInfo(go);
+
+//websockit开始
+		function websockit(){
+			$.get('/dish/websockitPassword', function(data) {
+				var websockitData= JSON.parse(data).data;
+				
+
+				ws = new WebSocket("ws://"+ websockitData.ip +":9090");
+
+				ws.onopen = function() {
+
+				    ws.send(JSON.stringify(websockitData));
+				    $('body').prepend('<audio id="music" src="/data/upload/image/meal/dingdong.mp3"></audio>')
+				};
+
+				ws.onmessage = function(e) {
+					var webData = JSON.parse(e.data);
+					var typeData = '';
+					var payData = '';
+
+					//type:1点餐 2:堂食 3:外卖
+
+					switch(webData.type){
+						case '1':
+							typeData = '点餐';
+							break;
+						case '2':
+							typeData = '堂食';
+							break;
+						case '3':
+							typeData = '外卖';
+							break;
+					}
+
+					switch(webData.pay){
+						case '0':
+							payData = '到付';
+							break;
+						case '1':
+							payData = '在线支付';
+							break;
+					}
+
+					var insertData = '<tr class="selecte" id="'+webData.orderNo+'"><td class="orderNo">'+webData.orderNo+'</td><td class="price">'+webData.price+'</td><td class="boardId">'+webData.boardId+'</td><td class="state">未受理</td><td class="type">'+typeData+'</td><td class="pay">'+payData+'</td><td class="createTime">'+webData.createTime+'</td><td class="modifyTime">'+webData.modifyTime+'</td><td class="_oper"><a href="/backstage/view/dish/orderView.html?orderNo='+ webData.orderNo +'" class="">详情</a>&nbsp;<a href="#" onclick="accept(\''+webData.orderNo+'\')" class="">受理</a>&nbsp;<a onclick="cancel(\''+webData.orderNo+'\')" href="#" class="">取消</a>&nbsp;</td></tr>';
+
+					console.log(insertData); 
+
+					$('.mod_table tbody').prepend(insertData);
+					$('#music')[0].play();//铃声提醒
+				    //dialog.message("收到服务端的消息：" + e.data);
+				};
+
+
+
+			});
+		}
+		websockit();
+
+
+					function accept (data){
+						var orderNoId = "#"+data;
+						console.log(orderNoId);
+						$(orderNoId).removeClass("selecte");
+						$.ajax({
+							url: '/dishorder/accept',
+							type: 'POST',
+							dataType: 'JSON',
+							data: {orderNo: data},
+							success:function(data){
+								data = $.JSON.parse(data);
+								if(data.code != 0){
+									dialog.message(data.msg);
+									return;
+								}
+								$(orderNoId+'.state').text('受理');
+								// history.go(0);
+							},
+							error:function(){
+
+							}
+						})
+					}
+
+
+
+					function cancel(data){
+						var orderNoId = "#"+data;
+						console.log(orderNoId);
+						$(orderNoId).removeClass("selecte");
+						var orderNo = data;
+						$.ajax({
+							url: '/dishorder/cancel',
+							type: 'GET',
+							dataType: 'JSON',
+							data: {orderNo: orderNo},
+							success:function(data){
+								data = $.JSON.parse(data);
+								console.info(data);
+								if(data.code != 0){
+									dialog.message(data.msg);
+									return;
+								}
+								if(data.data == 0){
+									dialog.confirm('该订单已经受理,是否真的取消?!',function(){
+										$.get('/dishorder/realyCancle',{orderNo:orderNo},function(data) {
+											data = $.JSON.parse(data);
+											if(data.code != 0){
+												dialog.message(data.msg);
+												return;
+											}
+						 					$(orderNoId+'state').text('已取消');
+											dialog.message('订单已经取消');
+											// history.go(0);
+										});
+									});
+								}else{
+									dialog.message('订单已经取消');
+									history.go(0);
+								}
+							},
+							error:function(){
+
+							}
+						})
+					}
+//websockit结束
+
+		
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

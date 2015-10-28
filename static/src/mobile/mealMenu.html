@@ -1,0 +1,221 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+
+<head>
+    <!--	<meta name="viewport" content="width=480,user-scalable=no">-->
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>菜单目录</title>
+    <script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+    <style type="text/css">
+        * {
+            padding: 0;
+            margin: 0;
+            font-family: '微软雅黑';
+        }
+        
+        .clearfix {
+            /*清除浮动*/
+            visibility: hidden;
+            display: block;
+            font-size: 0;
+            content: " ";
+            clear: both;
+            height: 0;
+            zoom: 1;
+        }
+        
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
+        
+        #main {
+            width: 100%;
+            margin: 0 auto;
+            height: 100%
+        }
+        
+        #type {
+            width: 25%;
+            float: left;
+            height: 100%;
+            background: #F5F5F5;
+        }
+        
+        #type ul {
+            width: 100%;
+            height: 100%;
+        }
+        
+        #type ul li {
+            list-style: none;
+            border: 1px solid #F0F0F0;
+            border-right: none;
+            width: 100%;
+            background: #F5F5F5;
+            position: relative;
+            font-size: 12px;
+        }
+        
+        #type ul li.big {
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            color: #9D9D9D;
+            font-weight: 600;
+            background: #EDEDED;
+        }
+        
+        #type ul li.small {
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+        }
+
+        #type ul li.first{
+            line-height: 30px;
+            text-align: center;
+            color: #000;
+            background: #EDEDED; 
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+        }
+        
+        #type ul li.active {
+            background: white;
+        }
+        
+        #detail {
+            float: left;
+            width: 75%;
+        }
+        
+        #detail ul {
+            display: block;
+        }
+        
+        #detail ul a {          
+            color:#666666;
+            text-decoration:none;
+        }
+        
+        #detail ul li {
+            list-style: none;
+            width: 100%;
+            height: 50px;
+            border-bottom: 1px solid #F0F0F0;
+            position: relative;
+        }
+
+        
+        #detail ul li .select {
+            float: left;
+            border: 1px dashed;
+            width: 30px;
+            height: 30px;
+            margin-left: 5%;
+            margin-top: 0px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: block;
+        }
+        
+        /*修复bug*/
+        #detail ul li .select2 {
+            position: absolute;
+            width:16%;
+            height: 50px;
+            z-index: 1;
+            top: -5px;
+            left: 10px
+        }
+        
+        #detail ul li .select .active {
+            background: #AC0707;
+        }
+        
+        #detail ul li .menu_info {
+            width: 100px;
+            text-align: center;
+            margin-left: 16%;
+            margin-top: 20px;
+            position: relative;
+            top:-5px;
+        }
+        
+        #detail ul li .menu_title {
+            font-size: 14px;
+        }
+        
+        #detail ul li .menu_price {
+            margin-top: 10px;
+            color: #92C07F;
+            font-weight: 600;
+        }
+        
+        #detail ul li .menu_img{
+            display: block;
+        }
+
+        #detail ul li .menu_img img {
+            width: 90px;
+            height: 60px;
+            position: absolute;
+            right: 5%;
+            top: -15px;
+
+        }
+        
+
+        
+        
+        /*数量*/
+        .shuliang {
+            position: relative;
+            right: 13px;
+            bottom: 45px;
+            float: right;
+        }
+        
+        .shuliang .jian,
+        .shuliang .jia {
+            background: #ffffff;
+            border: #afafaf solid 1px;
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            text-align: center;
+            font-size: 25px;
+            float: left;
+            line-height: 28px;
+        }
+        
+        .shuliang .shumu {
+            padding: 0 8px;
+            color: #afafaf;
+            font-weight: 900;
+            font-size: 25px;
+            line-height: 29px;
+            display: block;
+            float: left;
+            width: 40px;
+            text-align: center;
+            padding-left: 0;
+            padding-right: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+</body>
+<script type="text/javascript">
+    var $ = require('common/core/core.js');
+    var dialog = require('common/dialog/dialog.js');
+    require('./common/meal/mealMenu.jsx');
+</script>
+
+</html>

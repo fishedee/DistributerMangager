@@ -1,0 +1,61 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var userId = $.location.getQueryArgv('userId');
+		var room = {};
+
+		function getRoomInfo(next){
+			$.ajax({
+				url: '/room/getRoomInfo',
+				type: 'POST',
+				dataType: 'JSON',
+				success:function(data){
+					data = $.JSON.parse(data);
+					if(data.code != 0){
+						alert(data.msg);
+						return;
+					}
+					room = data.data;
+					next();
+				},
+				error:function(){
+
+				}
+			})			
+		}
+
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'roomName',type:'text',name:'餐厅名称'},
+					{id:'roomPhone',type:'text',name:'餐厅电话'},
+					{id:'roomAddress',type:'text',name:'餐厅地址'},
+					{id:'roomWorkTime',type:'text',name:'餐厅工作时间'},
+					{id:'roomRemark',type:'text',name:'餐厅备注'},
+					{id:'roomIcon',type:'image',name:'餐厅主图',option:{url:'/upload/image',width:640}},
+					{id:'roomHeadBackground',type:'image',name:'头部背景图',option:{url:'/upload/image',width:640}},
+					{id:'roomHead',type:'image',name:'头部logo',option:{url:'/upload/image',width:80}},
+				],
+				value:room,
+				submit:function(data){
+					data = $.extend({userId:userId},data);
+					$.post('/room/amod',{data:data},function(data){
+						data = $.JSON.parse(data);
+						if( data.code != 0 ){
+							dialog.message(data.msg);
+							return;
+						}
+						location.reload();
+					});
+				},
+				cancel:undefined
+			});
+		}
+		getRoomInfo(go);
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

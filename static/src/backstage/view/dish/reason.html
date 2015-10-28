@@ -1,0 +1,33 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript" src="/fishstrap/js/fishstrap.js" charset="utf-8"></script>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var orderNo = $.location.getQueryArgv('orderNo');
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'reason',type:'text',name:'原因'},
+				],
+				submit:function(data){
+					$.post('/dishorder/forbid',{orderNo:orderNo,data:data},function(data){
+						data = $.JSON.parse(data);
+						if( data.code != 0 ){
+							dialog.message(data.msg);
+							return;
+						}
+						history.back();
+					});
+				},
+				cancel:function(){
+					history.back();
+				}
+			});
+		}
+		go();
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

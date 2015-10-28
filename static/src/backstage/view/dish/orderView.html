@@ -1,0 +1,65 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var subPage = require('/fishstrap/page/subPage.js');
+		var orderNo = $.location.getQueryArgv('orderNo');
+		var orderInfo = {};
+		function getOrder(next){
+			$.post('/dishorder/getOrderInfo',{orderNo:orderNo},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				orderInfo = data.data;
+				next();
+			});
+		}
+		function go(){
+			inputOperation = input.verticalInput({
+				id:'container',
+				field:[
+					{id:'orderNo',type:'read',name:'订单编号'},
+					{id:'price',type:'read',name:'订单金额'},
+					{id:'remark',type:'read',name:'订单备注'},
+					{id:'state',type:'enum',name:'状态',map:{'0':'未受理','1':'已受理','2':'已关闭','3':'已取消','4':'已结账'},disabled:true},
+					{id:'type',type:'enum',name:'方式',map:{'1':'点餐','2':'预约','3':'外卖'},disabled:true},
+					{id:'pay',type:'enum',name:'支付',map:{'1':'在线支付','0':'到付'},disabled:true},
+					{id:'orderDetailInfo',type:'table',name:'订单商品',
+						option:{
+							column:[
+								{name:'图片',type:'image',id:'icon'},
+								{name:'菜名',type:'text',id:'dishName'},
+								{name:'价格',type:'text',id:'dishPrice'},
+								{name:'数量',type:'text',id:'num'},
+								{name:'选项',type:'text',id:'dishOption'},
+								{name:'备注',type:'text',id:'remark'},
+							],
+							operate:[],
+							button:[]
+						}
+					},
+				],
+				value:orderInfo,
+				submit:function(data){
+					$.post('/dishorder/accept',{orderNo: data.orderNo},function(data){
+						data = $.JSON.parse(data);
+						if( data.code != 0 ){
+							dialog.message(data.msg);
+							return;
+						}
+						history.back();
+					});
+				},
+				cancel:function(){
+					history.back();
+				},
+			});
+		}
+		getOrder(go);
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

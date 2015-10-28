@@ -38,6 +38,7 @@ class WxMaterialDb extends CI_Model
 		$Material=$this->db->get($this->tableName)->result_array();
 		
 		//更新文件就启动，被触动方法有graphicMod
+		$newImg = array();
 		if (is_array($data)){
 		foreach ($data['graphic'] as $v){
 				$newImg[]=$v['PicUrl'];

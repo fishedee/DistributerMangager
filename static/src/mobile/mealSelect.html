@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>选择服务</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        
+        body {
+            background-color: #eaede6;
+        }
+        
+        .header {
+            height: 200px;
+            margin: auto;
+            background-image: url(/data/upload/image/meal/11.jpg);
+            background-position: center;
+            background-size: cover;
+        }
+        
+        .select{
+            position: relative;
+        }
+        .select img {
+            width: 100%;
+        }
+        
+        .dc,
+        .wm,
+        .yy {
+            /*background: #000;*/
+            height: 120px;
+            width: 120px;
+        }
+        
+        .dc{
+            position: absolute;
+            top: 10px;
+            left: 10%;
+        }        
+        .wm{
+            position: absolute;
+            top: 10px;
+            left: 62%;
+        }        
+        .yy{
+            position: absolute;
+            top: 150px;
+            left: 27%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header"></div>
+    <div class="select"><img src="/data/upload/image/meal/dianchang.jpg" alt="">
+        <div class="dc"></div>
+        <div class="wm"></div>
+        <div class="yy"></div>
+    </div>
+</body>
+<script>
+    $('.dc').css('top',document.body.clientWidth * 0.178 +'px');
+    $('.wm').css('top',document.body.clientWidth * 0.178 +'px');
+    $('.yy').css('top',document.body.clientWidth * 0.518 +'px');
+
+    $('.dc').click(function(event) {
+        sessionStorage.type = 'eatIn';
+        location.href = 'mealConfirm.html';
+    });
+
+    $('.wm').click(function(event) {
+        sessionStorage.type = 'bookEat';
+        location.href = 'mealTakeOut.html';
+    });
+
+    $('.yy').click(function(event) {
+        sessionStorage.type = 'takeOut';
+        location.href = 'mealBook.html';
+    });
+
+
+    </script>
+</html>

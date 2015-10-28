@@ -1,0 +1,64 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript" src="/fishstrap/js/fishstrap.js" charset="utf-8"></script>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var boardTypeId = $.location.getQueryArgv('boardTypeId');
+		var dishType = {};
+
+		function getTypeInfo(next){
+			$.post('/boardtype/getType',{boardTypeId:boardTypeId},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				dishType = data.data;
+				console.info(dishType);
+				next();
+			});
+		}
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'typeName',type:'text',name:'类型'},
+				],
+				value:dishType,
+				submit:function(data){
+					if( boardTypeId != null ){
+						$.post('/boardtype/mod',{boardTypeId:boardTypeId,data:data},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							history.back();
+						});
+					}else{
+						$.post('/boardtype/add',{data:data},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							history.back();
+						});
+					}
+				},
+				cancel:function(){
+					history.back();
+				}
+			});
+		}
+		if(boardTypeId){
+			getTypeInfo(go);
+		}else{
+			go();
+		}
+		// go();
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

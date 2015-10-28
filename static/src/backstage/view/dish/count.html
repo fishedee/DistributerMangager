@@ -1,0 +1,28 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		var allState = {};
+		function go(){
+			query.simpleQuery({
+				id:'container',
+				url:'/dish/count',
+				column:[
+					{id:'dishId',type:'text',name:'菜品Id'},
+					{id:'dishTitle',type:'text',name:'菜品名称'},
+					{id:'icon',type:'image',name:'菜品图片'},
+					{id:'count',type:'text',name:'销量'}
+				],
+				queryColumn:['boardId','state'],
+				operate:[
+				],
+				button:[],
+			});
+		}
+		go();
+		
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

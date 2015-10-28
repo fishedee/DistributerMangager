@@ -1,0 +1,129 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div class="pay">
+		<button>结账</button>
+	</div>
+	<div id="container">
+	</div>
+	<div class="sum" style="display:none;">
+		<p>第<span name="boardId"></span>号餐桌总消费：<span name="sum"></span>元</p>
+		<p>第<span name="boardId"></span>号餐桌当前页面消费：<span name="pageSum"></span>元</p>
+		<p>第<span name="boardId"></span>号餐桌目前消费：<span name="nowSum"></span>元</p>
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		var boardId = $.location.getQueryArgv('boardId');
+		function go(){
+			query.simpleQuery({
+				id:'container',
+				url:'/dishorder/searchNow',
+				column:[
+					{id:'orderNo',type:'text',name:'订单编号'},
+					{id:'price',type:'text',name:'订单金额'},
+					{id:'remark',type:'text',name:'订单备注'},
+					{id:'state',type:'enum',name:'状态',map:{'0':'未受理','1':'已受理','2':'已关闭','3':'已取消','4':'已结账'}},
+					{id:'type',type:'enum',name:'方式',map:{'1':'点餐','2':'堂食','3':'外卖'}},
+					{id:'pay',type:'enum',name:'支付',map:{'1':'在线支付','0':'到付'}},
+					{id:'states',type:'enum',name:'当前状态',map:{'0':'历史消费','1':'当前消费'}},
+					{id:'createTime',type:'text',name:'创建时间'},
+					{id:'modifyTime',type:'text',name:'修改时间'},
+				],
+				queryColumn:['states'],
+				operate:[
+				{
+					name:'详情',
+					click:function(data){
+						console.info(data.stateSelect);
+						location.href = 'orderView.html?orderNo='+data.orderNo;
+					}
+				},
+				{
+					name:'受理',
+					click:function(data){
+						$.ajax({
+							url: '/dishorder/accept',
+							type: 'POST',
+							dataType: 'JSON',
+							data: {orderNo: data.orderNo},
+							success:function(data){
+								// data = $.JSON.parse(data);
+								if(data.code != 0){
+									alert(data.msg);
+									return;
+								}
+								window.reload();
+							},
+							error:function(){
+
+							}
+						})
+					}
+				}],
+				button:[],
+			});
+			setTimeout(cal,500);
+		}
+
+		//计算总价
+		function cal(){
+			var states = $('select[name=states]').val() || 0;
+			var pageSize = $('.show').find('select').val();
+			var pageIndex= $.location.getQueryArgv('pageIndex');
+			$.ajax({
+				url: '/dishorder/cal',
+				type: 'GET',
+				dataType: 'JSON',
+				data: {
+					boardId: boardId,
+					states:  states,
+					pageSize: pageSize,
+					pageIndex: pageIndex
+				},
+				success:function(data){
+					data = $.JSON.parse(data);
+					if(data.code != 0){
+						alert(data.msg);
+						return;
+					}
+					data = data.data;
+					$('span[name=boardId]').text(boardId);
+					$('span[name=sum]').text(data.sum);
+					$('span[name=pageSum]').text(data.pageSum);
+					$('span[name=nowSum]').text(data.nowSum);
+					$('.sum').show();
+				},
+				error:function(){
+
+				}
+			})		
+		}
+
+		//结账
+		$('.pay').find('button').click(function() {
+			dialog.confirm("确定结账吗？目前"+boardId+"号桌共消费"+$('span[name=nowSum]').text()+"元。",function(){
+				$.ajax({
+					url: '/dishorder/closeAccounts',
+					type: 'GET',
+					dataType: 'JSON',
+					data: {boardId: boardId},
+					success:function(data){
+						data = $.JSON.parse(data);
+						if(data.code != 0){
+							dialog.message(data.msg);
+							return;
+						}
+						history.go(0);
+					},
+					error:function(){
+
+					}
+				})
+			});	
+		});
+
+		go();
+
+
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

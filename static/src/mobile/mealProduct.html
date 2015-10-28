@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+    <title>产品详细</title>
+    <style>
+        * {
+            font-family: '微软雅黑';
+        }
+        a {color:#000;text-decoration:none;} 
+        html, body {
+            background: #f3f3f3;
+            margin: 0;
+        }
+        
+        /*轮播*/
+        
+        .swipe {
+            overflow: hidden;
+/*            visibility: hidden;*/
+            position: relative;
+        }
+        
+        .swipe-wrap {
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .swipe-wrap > div {
+            float: left;
+            width: 100%;
+            position: relative;
+            max-height: 300px;
+        }
+        
+        .swipe-wrap img {
+            display: block;
+            max-height: 300px;
+            width: 100%;
+        }
+        /*产品*/
+        
+        .jiBenXinxi {
+            background: #ffffff;
+            padding-top: 10px;
+            border-top: 1px solid #efefef;
+            border-bottom: 1px solid #efefef;
+        }
+        
+        .jiBenXinxi .mingcheng {
+            margin-left: 20px;
+            font-size: 25px;
+            font-weight: 600;
+        }
+        
+        .jiBenXinxi .qian {
+            margin-top: 10px;
+            color: #be5800;
+            font-weight: 900;
+            font-size: 20px;
+            margin-left: 19px;
+            padding-bottom: 18px;
+        }
+        
+        .jiBenXinxi .qian .fuHao {
+            font-size: 13px;
+        }
+        
+        .jiBenXinxi .qian .jiaQian {
+            position: relative;
+            left: -5px;
+        }
+        
+        .jiBenXinxi .shuliang {
+            position: relative;
+            right: 20px;
+            bottom: 45px;
+            float: right;
+        }
+        
+        .jiBenXinxi .shuliang .jian,
+        .jiBenXinxi .shuliang .jia {
+            background: dodgerblue;
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            text-align: center;
+            font-size: 25px;
+            float: left;
+            line-height: 28px;
+        }
+        
+        .jiBenXinxi .shuliang .shumu {
+            padding: 0 8px;
+            color: #5c77d3;
+            font-weight: 900;
+            font-size: 25px;
+            line-height: 29px;
+            display: block;
+            float: left;
+            width: 40px;
+            text-align: center;
+            padding-left: 0;
+            padding-right: 0;
+        }
+        /*美食点评*/
+        
+        .meiShiDianPing {
+            background: #fff;
+            height: 50px;
+            margin-top: 10px;
+            border-top: 1px solid #efefef;
+            border-bottom: 1px solid #efefef;
+        }
+        
+        .meiShiDianPing .biaoTi {
+            font-size: 1.2em;
+            position: relative;
+            top: -5px;
+        }
+        
+        .meiShiDianPing .now {
+            margin: 18px;
+        }
+        
+        .meiShiDianPing .quanBuPingJia {
+            font-size: 15px;
+            position: absolute;
+            right: 20px;
+        }
+        
+        .pingJiaNeiRong {
+            height: auto;
+            background: #fff;
+            margin-top: 10px;
+            border-top: 1px solid #efefef;
+            border-bottom: 1px solid #efefef;
+        }
+        
+        .pingJiaNeiRong .ZhongTiPingJia {
+            margin: 18px;
+        }
+        
+        .pingJiaNeiRong .PingJiaXingXing img {
+            display: block;
+            width: 16px;
+            display: inline-block;
+            position: relative;
+            top: 1px;
+        }
+        
+        .pingJiaNeiRong .Now {
+            height: auto;
+            padding-top: 18px;
+            padding-bottom: 8px;
+            border-top: 1px solid #efefef;
+        }
+        .pingJiaNeiRong .Now  .ZhongTouBu{
+            margin-left: 18px;
+            margin-right: 18px;
+        }
+        .pingJiaNeiRong .Now .ZhongTouBu .TouBu{
+            float: left;
+            margin-right: 15px;
+        }
+        .pingJiaNeiRong .Now .ZhongTouBu .TouBu img{
+            width: 50px;
+            border-radius: 50%;
+        }
+        .pingJiaNeiRong .Now .ZhongTouBu  .mingZi{
+            position: relative;
+            top: 3px;
+            color: #d67f40;
+        }
+        .pingJiaNeiRong .Now .ZhongTouBu .PingJia{
+            margin-top: 10px;
+        }
+        .pingJiaNeiRong .Now .ZhongTouBu .ShiJian{
+            margin-left: 5px;
+            color: #818181;
+        }
+        .pingJiaNeiRong .Now .NeiRong{
+            margin: 15px 25px;
+            color: #818181;
+            font-size: 0.8em;
+        }
+        /*介绍*/
+        .jieXiao{
+            background: #fff;
+            margin-top: 10px;
+            border-top: 1px solid #efefef;
+            border-bottom: 1px solid #efefef;
+            padding: 20px;
+            font-size: 0.8em;
+        }
+        .jieXiao img{
+            display: block;
+            width: 100%
+        }
+        
+        
+        /*空位位置*/
+        footer{
+            height:51px;
+        }
+    </style>
+</head>
+
+<body>
+
+</body>
+<script>
+    var $ = require('common/core/core.js');
+    var dialog = require('common/dialog/dialog.js');
+    require('./common/meal/mealProduct.jsx');
+</script>
+
+</html>
