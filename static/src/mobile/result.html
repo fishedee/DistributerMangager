@@ -1,0 +1,460 @@
+<link rel="import" href="header.html?__inline">
+    <meta name="viewport" content="width=320,initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=medium-dpi">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>二维码名片</title>
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+        }
+        html,body{
+            height: 100%;
+        }
+        a{
+            text-decoration: none;
+            color: black;
+        }
+        a.telphone{
+            color: white;
+        }
+        ul li{
+            list-style: none;
+        }
+        body{
+            background: url('/data/upload/image/qrcode/bg1.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-color: #0175A4;
+        }
+        .info{
+            height: 100%;
+            position: relative;
+        }
+        .info span.name{
+            font-size: 24px;
+            font-weight: bolder;
+            position: absolute;
+            left: 5%;
+            top: 10%;
+        }
+        .info span.position{
+            position: absolute;
+            top: 11.8%;
+            left: 28%;
+        }
+        .info span.phone{
+            position: absolute;
+            top: 16%;
+            left: 5%;
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .info .people{
+            width: 150px;
+            height: 150px;
+            position: absolute;
+            right: 5%;
+            top: 8%;
+        }
+        .info .people img.qrcode{
+            height: 100%;
+        }
+        .info .people img.logo{
+            height: 26%;
+            width: 26%;
+            position: absolute;
+            right: 35%;
+            top: 39%;
+        }
+        .companyInfo{
+            position: absolute;
+            top: 29%;
+            width: 90%;
+            left: 5%;
+            color: white;
+        }
+        .companyInfo>li>span{
+        }
+        .companyInfo>li.first{
+            font-size: 20px;
+            text-align: left;
+            font-weight: bolder;
+            border-bottom: 1px solid white;
+            margin-bottom: 15px;
+        }
+        .companyInfo>li>span.title{
+            letter-spacing: 10px;
+        }
+        .companyInfo>li>span.email{
+            letter-spacing: 1.4px;
+        }
+        .companyInfo>li>span.detail{
+            position: absolute;
+            left: 22%;
+        }
+        .companyInfo>li>span.address{
+            display: inline-block;
+            height: 40px;
+        }
+        div.lines{
+            border-bottom: 1px dashed white;
+            position: absolute;
+            top: 54%;
+            width: 100%;
+        }
+        .people{
+            width: 140px;
+            height: 140px;
+            position: absolute;
+            top: 66%;
+            bottom: 10%;
+            left: 10%;
+        }
+        .people img.qrcode{
+            height: 100%;
+        }
+        .people img.logo{
+            height: 24%;
+            width: 24%;
+            position: absolute;
+            right: 35%;
+            top: 35%;
+        }
+        .null{
+            margin-top: 20%;
+            color: #0175A4;
+        }
+        .sub{
+            color: white;
+            border: 1px solid;
+            position: absolute;
+            right: 10%;
+            bottom: 10%;
+            width: 7%;
+            text-align: center;
+            font-size: 12px;
+            border-radius: 5px;
+            height: 180px;
+            top: 66%;
+        }
+        .footer{
+            height: 30px;
+            background-color: #F8F7F7;
+            position: fixed;
+            bottom: 0px;
+            width: 100%;
+        }
+        .footer img{
+            height: 80%;
+            margin-left: 12%;
+            padding-top: 4px;
+        }
+        .footer span{
+            font-size: 12px;
+            display: inline-block;
+            position: relative;
+            top: 5px;
+            left: 15%;
+            color: #9F9F9F;
+        }
+        .footer span.line{
+            font-size: 16px;
+        }
+        @media screen and (max-width: 640px){
+            .people{
+                width: 200px;
+                height: 200px;
+                position: absolute;
+                top: 60%;
+                bottom: 10%;
+                left: 10%;
+            }
+            .sub{
+                color: white;
+                border: 1px solid;
+                position: absolute;
+                right: 10%;
+                bottom: 10%;
+                width: 7%;
+                text-align: center;
+                font-size: 12px;
+                border-radius: 5px;
+                height: 200px;
+                top: 60%;
+            }
+            .footer span{
+                left: 15%;
+            }
+        }
+        @media screen and (max-width: 320px){
+            .footer span{
+                left: 12.5%;
+            }
+            .info span.phone{
+                position: absolute;
+                top: 16%;
+                left: 5%;
+                font-size: 18px;
+                font-weight: 600;
+                letter-spacing: 0.5px;
+            }
+            .people{
+                width: 150px;
+                height: 150px;
+                position: absolute;
+                top: 63%;
+                bottom: 10%;
+                left: 10%;
+            }
+            .info .people img.logo{
+                height: 19%;
+                width: 19%;
+                position: absolute;
+                right: 38%;
+                top: 39%;
+            }
+            div.lines{
+                border-bottom: 1px dashed white;
+                position: absolute;
+                top: 61%;
+                width: 100%;
+            }
+            .companyInfo>li.first{
+                font-size: 18px;
+                text-align: left;
+                font-weight: bolder;
+                border-bottom: 1px solid white;
+                margin-bottom: 15px;
+            }
+            .sub{
+                color: white;
+                border: 1px solid;
+                position: absolute;
+                right: 10%;
+                bottom: 10%;
+                width: 7%;
+                text-align: center;
+                font-size: 10px;
+                border-radius: 5px;
+                height: 165px;
+                top: 62%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- <div class="info">
+        <span class="name">莫子娟</span>
+        <span class="position">推广经理</span>
+        <span class="phone">135 5525 2223</span>
+        <div class="people">
+            <img src="/data/upload/image/qrcode/qrcode.jpg" alt="" class='qrcode'>
+            <img src="/data/upload/image/qrcode/logo.jpg" alt="" class="logo">
+        </div>
+        <ul class="companyInfo">
+            <li class='first'>深圳市宇讯无限信息科技有限公司</li>
+            <li>
+                <span class="title address">地址：</span>
+                <span class="detail">佛山市顺德区容桂上街市荔枝塘路22号永安综合楼201</span>
+            </li>
+            <li>
+                <span class="title">电话：</span>
+                <span class="detail"><a href="javascript:;" class='telphone'>0757-28096109</a></span>
+            </li>
+            <li>
+                <span class="title email">E-mail：</span>
+                <span class="detail">330448219@qq.com</span>
+            </li>
+            <li>
+                <span class="title">网址：</span>
+                <span class="detail">weiyd.cn</span>
+            </li>
+        </ul>
+    </div>
+    <div class="lines"></div>
+    <div class="sub">
+        免费创建我的二维码名片
+    </div>
+    <div class="footer">
+        <img src="/data/upload/image/qrcode/weiyd.png" alt="">
+        <span class='line'>|</span>
+        <span>定制·行业·专业·深度微营销</span>
+    </div> -->
+</body>
+<script type="text/javascript">
+    var $ = require('common/core/core.js');
+    require('common/js/html2canvas.js');
+    var qrcodeId = $.location.getQueryArgv('qrcodeId');
+    var wxSdk = require('/fishstrap/module/jweixin.js');
+    //注入js权限
+    function getJsConfig(next){
+        // var testurl = '10062.shop.tongyinyang.com/10062/qrsuccess.html';
+        // var testurl = location.href;
+        $.get('/redpack/getJsConfig',{url:location.href},function(data){
+            if( data.code != 0 ){
+                dialog.message(data.msg);
+                return;
+            }
+            jsConfig = data.data;
+            wxSdk.config($.extend(
+                jsConfig,
+                {
+                    debug:false,
+                    jsApiList:[
+                        'closeWindow',
+                        'onMenuShareTimeline',
+                        'onMenuShareAppMessage'
+                    ]
+                }
+            ));
+            wxSdk.error(function(){
+                alert('微信接口配置失败，请检查appId与appKey是否设置正确');
+            });
+            next();
+        });
+    }
+
+    //设置分享按钮
+    function share(next){
+        wxSdk.onMenuShareTimeline({
+            title: qrInfo['username']+'的电子名片', // 分享标题
+            link: location.href, // 分享链接
+            imgUrl: location.host+qrInfo['logo'], // 分享图标
+            success: function () { 
+                //分享成功 插入数据
+            },
+            cancel: function () { 
+            }
+        });
+        wxSdk.onMenuShareAppMessage({
+            title: qrInfo['username']+'的电子名片', // 分享标题
+            desc: qrInfo['company'], // 分享描述
+            link: location.href, // 分享链接
+            imgUrl: 'http://'+location.host+qrInfo['logo'], // 分享图标
+            type: '', // 分享类型,music、video或link，不填默认为link
+            dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+            success: function () { 
+                // 用户确认分享后执行的回调函数
+            },
+            cancel: function () { 
+                // 用户取消分享后执行的回调函数
+            }
+        });
+        // console.info(location.host+qrInfo['logo']);
+        next();
+    }
+
+    function getQrcodeInfo(next){
+        $.ajax({
+            url: '/qrcodecontroller/getQrcodeInfo',
+            type: 'POST',
+            dataType: 'JSON',
+            data: {qrcodeId:qrcodeId},
+            success:function(data){
+                if( data.code != 0 ){
+                    alert(data.msg);
+                    return;
+                }
+                qrInfo = data.data;
+                console.info(qrInfo);
+                next();
+            },
+            error:function(){
+
+            }
+        })          
+    }
+
+    //开始截图
+    function screenShot(){
+
+        var fe = $("#id1");
+
+        html2canvas(fe, {
+            allowTaint: true,
+            taintTest: false,
+            onrendered: function(canvas) {
+                canvas.id = "mycanvas";
+                //document.body.appendChild(canvas);
+                //生成base64图片数据
+                var dataUrl = canvas.toDataURL();
+                var newImg = document.createElement("img");
+                newImg.src =  dataUrl;
+                $('#id1').hide();
+                $('#id2').append(newImg);
+            }
+        });
+    }
+
+    //渲染页面
+    function go(){
+        var html = "<div class='info'>\
+                        <span class='name'>"+qrInfo['username']+"</span>\
+                        <span class='position'>"+qrInfo['position']+"</span>\
+                        <span class='phone'>"+qrInfo['phone']+"</span>\
+                        </div>\
+                        <ul class='companyInfo'>\
+                            <li class='first'>"+qrInfo['company']+"</li>\
+                            <li>\
+                                <span class='title address'>地址：</span>\
+                                <span class='detail'>"+qrInfo['company_address']+"</span>\
+                            </li>\
+                            <li>\
+                                <span class='title'>电话：</span>\
+                                <span class='detail'><a href='javascript:;' class='telphone'>"+qrInfo['workPhone']+"</a></span>\
+                            </li>\
+                            <li>\
+                                <span class='title email'>E-mail：</span>\
+                                <span class='detail'>"+qrInfo['email']+"</span>\
+                            </li>\
+                            <li>\
+                                <span class='title'>网址：</span>\
+                                <span class='detail'>"+qrInfo['company_url']+"</span>\
+                            </li>\
+                        </ul>\
+                    </div>\
+                    <div class='lines'></div>\
+                    <div id='id1' class='people'>\
+                        <img src='"+qrInfo['qr']+"' alt='' class='qrcode'>\
+                        <img src='"+qrInfo['logo']+"' alt='' class='logo'>\
+                    </div>\
+                    <div id='id2' class='people'></div>\
+                    <div class='null'>123</div>\
+                    <div class='sub'>\
+                        免<br>费<br>创<br>建<br>我<br>的<br>二<br>维<br>码<br>名<br>片\
+                    </div>\
+                    <div class='footer'>\
+                        <span>技术支持：微易点</span>\
+                        <span class='line'>|</span>\
+                        <span>定制·行业·专业·深度微营销</span>\
+                    </div>";
+        $('body').html(html);
+        setTimeout(screenShot,500);
+        setTimeout(setTitle(qrInfo['username']),500);
+    }
+
+    function setTitle(name){
+        var $body = $('body');
+        document.title = name+"的电子名片";
+        // hack在微信等webview中无法修改document.title的情况
+        var $iframe = $('<iframe src="back.png"></iframe>');
+        $iframe.on('load',function() {
+            setTimeout(function() {
+                $iframe.off('load').remove();
+            }, 0);
+        }).appendTo($body);
+    }
+
+    $('body').on('click', '.sub', function() {
+        window.location.href = './qrcode.html';
+        /* Act on the event */
+    });
+    getJsConfig(function(){
+        getQrcodeInfo(function(){
+            share(go);
+        })
+    })
+    // getQrcodeInfo(go);
+</script>
+<link rel="import" href="footer.html?__inline">

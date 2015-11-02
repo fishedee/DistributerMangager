@@ -304,10 +304,12 @@
 				    $data['logo'] = $qrlogo;
 				    $data['qrX'] = $QR_width;
 				    $data['qrY'] = $QR_height;
+				    $data['position'] = $title;
+				    $data['workPhone']= $workPhone;
 				    $result = $this->qrCodeAo->addOrMod($data,$mobileRequest);
 				    if($this->is_mobile_request()){
 				    	if($result){
-					    	$url = 'http://'.$_SERVER['HTTP_HOST'].'/'.$userId.'/qrsuccess.html?qrcodeId='.$result;
+					    	$url = 'http://'.$_SERVER['HTTP_HOST'].'/'.$userId.'/result.html?qrcodeId='.$result;
 					    	header('Location:'.$url);
 					    }
 				    }else{

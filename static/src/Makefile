@@ -22,9 +22,10 @@ copy_common:
 	done
 debug:copy_common
 	-rm $(OUT) -rf
-	fis release --md5 --domains --dest $(OUT)
+	fis release --domains --dest $(OUT)
 release:copy_common
-	-rm $(DIST_OUT) -rf
-	fis release --md5 --pack --domains --optimize --dest $(DiST_OUT)
+	-rm $(OUT) -rf
+	fis release --domains --dest $(OUT)
+	cp $(OUT) /data/oss/shopWeiydCn/ -rf
 watch:debug
 	fis release --md5 --domains --watch --dest $(OUT)
