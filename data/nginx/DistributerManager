@@ -1,23 +1,33 @@
 server {
-	listen   80; ## listen for ipv4; this line is default and implied
-	listen 	 8080;
+        listen   80; ## listen for ipv4; this line is default and implied
 
-	root /var/www/DistributerMangager/;
-	server_name shop.fishedee.com *.shop.fishedee.com;
+        root /data/lsy/DistributerMangager/;
+        server_name *.shop.weiyd.cn shop.weiyd.cn;
 
-	rewrite ^/data/upload/(.*) /data/upload/$1 last;
-	rewrite ^/backstage/(.*\.(html|css|js|map|jpg|jpeg|png|gif|mp3|midi|swf|ico)) /static/build/backstage/$1 last;
-	rewrite ^/fishstrap/(.*\.(html|css|js|map|jpg|jpeg|png|gif|mp3|midi|swf|ico)) /static/build/fishstrap/$1 last;
-	rewrite ^/mobile/(.*\.(html|css|js|map|jpg|jpeg|png|gif|mp3|midi|swf|ico)) /static/build/mobile/$1 last;
-	rewrite ^/(.*) /server/index.php last;
+        rewrite ^/data/upload/([0-9A-Za-z]+\.(jpg|pem)) http://weiydcn.oss-cn-hangzhou.aliyuncs.com/shopWeiydCn/$1 last;#upload目录下的旧文件
+        rewrite ^/data/upload/image/(.*) http://weiydcn.oss-cn-hangzhou.aliyuncs.com/shopWeiydCn/image/$1 last;
+        rewrite ^/data/upload/pem/(.*) http://weiydcn.oss-cn-hangzhou.aliyuncs.com/shopWeiydCn/pem/$1 last;
+        rewrite ^/data/upload/qrcode/(.*) http://weiydcn.oss-cn-hangzhou.aliyuncs.com/shopWeiydCn/qrcode/$1 last;
+        rewrite ^/data/upload/sample/(.*) http://weiydcn.oss-cn-hangzhou.aliyuncs.com/shopWeiydCn/sample/$1 last;
+        rewrite ^/data/upload/video/(.*) http://weiydcn.oss-cn-hangzhou.aliyuncs.com/shopWeiydCn/video/$1 last;
 
-	location ~ \.php {
-		fastcgi_pass fastcgi_backend;
+        rewrite ^/backstage/(.*\.(html|map|jpg|jpeg|png|gif|mp3|midi|swf|ico)) /static/build/backstage/$1 last;
+        rewrite ^/fishstrap/(.*\.(html|map|jpg|jpeg|png|gif|mp3|midi|swf|ico)) /static/build/fishstrap/$1 last;
+        rewrite ^/mobile/(.*\.(html|map|jpg|jpeg|png|gif|mp3|midi|swf|ico)) /static/build/mobile/$1 last;
+
+        rewrite ^/backstage/(.*\.(js|css)) http://weiydcn.oss-cn-hangzhou.aliyuncs.com/shopWeiydCn/build/backstage/$1 last;
+        rewrite ^/fishstrap/(.*\.(js|css)) http://weiydcn.oss-cn-hangzhou.aliyuncs.com/shopWeiydCn/build/fishstrap/$1 last;
+        rewrite ^/mobile/(.*\.(js|css)) http://weiydcn.oss-cn-hangzhou.aliyuncs.com/shopWeiydCn/build/mobile/$1 last;
+
+        rewrite ^/(.*) /server/index.php?/$1 last;
+
+        location ~ \.php {
+		fastcgi_pass unix:/var/run/php5-fpm.sock;                
 		include fastcgi_params;
-	}
+        }
 
-	location / {
-		try_files $uri =404;
-	}
+        location / {
+                try_files $uri =404;
+        }
 
 }

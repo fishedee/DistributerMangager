@@ -38,7 +38,17 @@ class Upload extends CI_Controller {
 	*/
 	public function image()
 	{
-		return $this->fileUpload->simpleImage('data');
+		//return $this->fileUpload->simpleImage('data');
+		$upload_path = $this->config->item('upload_path').'/image/'.date("Y").date("m").date('d');
+		$option = array(
+			'upload_path'=>$upload_path,
+			'max_size'=>$this->config->item('upload_max_size'),
+		);
+		$option['field'] = 'data';
+		//print_r(dirname($option['upload_path']));die;
+		if (!file_exists($option['upload_path']))exec('mkdir -p '.$option['upload_path']);
+		return $this->config->item('upload_url').'image/'.date("Y").date("m").date('d').'/'.$this->fileUpload->image($option)['file_name'];
+
 	}
 
 	/**
@@ -46,7 +56,20 @@ class Upload extends CI_Controller {
 	*/
 	public function cert()
 	{
-		return $this->fileUpload->simpleFile('data','pem');
+//		return $this->fileUpload->simpleFile('data','pem');
+
+		$userId = $this->session->userdata('userId');
+		$option = array(
+			'upload_path'=>$this->config->item('upload_path').'/pem/'.$userId.'/',
+			'max_size'=>$this->config->item('upload_max_size'),
+		);
+		$option['field'] = 'data';
+		$option['allowed_types'] = 'pem';
+		//print_r($option);die;
+		if (!file_exists($option['upload_path']))exec('mkdir -p '.dirname($option['upload_path']));
+		$result = $this->fileUpload->file($option);
+			
+		return $this->config->item('upload_url').'pem/'.$userId.'/'.$result['file_name'];
 	}
 	
 	/**
