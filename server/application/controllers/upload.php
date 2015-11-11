@@ -93,7 +93,8 @@ class Upload extends CI_Controller {
 	*/
 	public function ueditor()
 	{
-		return $this->uedit->control();
+		//return $this->uedit->control();
+		echo $this->uedit->control();
 	}	
 	
 	/**

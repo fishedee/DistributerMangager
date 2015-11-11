@@ -11,13 +11,9 @@ server {
         rewrite ^/data/upload/sample/(.*) http://weiydcn.oss-cn-hangzhou.aliyuncs.com/shopWeiydCn/sample/$1 last;
         rewrite ^/data/upload/video/(.*) http://weiydcn.oss-cn-hangzhou.aliyuncs.com/shopWeiydCn/video/$1 last;
 
-        rewrite ^/backstage/(.*\.(html|map|jpg|jpeg|png|gif|mp3|midi|swf|ico)) /static/build/backstage/$1 last;
-        rewrite ^/fishstrap/(.*\.(html|map|jpg|jpeg|png|gif|mp3|midi|swf|ico)) /static/build/fishstrap/$1 last;
-        rewrite ^/mobile/(.*\.(html|map|jpg|jpeg|png|gif|mp3|midi|swf|ico)) /static/build/mobile/$1 last;
-
-        rewrite ^/backstage/(.*\.(js|css)) http://weiydcn.oss-cn-hangzhou.aliyuncs.com/shopWeiydCn/build/backstage/$1 last;
-        rewrite ^/fishstrap/(.*\.(js|css)) http://weiydcn.oss-cn-hangzhou.aliyuncs.com/shopWeiydCn/build/fishstrap/$1 last;
-        rewrite ^/mobile/(.*\.(js|css)) http://weiydcn.oss-cn-hangzhou.aliyuncs.com/shopWeiydCn/build/mobile/$1 last;
+        rewrite ^/backstage/(.*\.(js|css|html|map|jpg|jpeg|png|gif|mp3|midi|swf|ico)) /static/build/backstage/$1 last;
+        rewrite ^/fishstrap/(.*\.(js|css|html|map|jpg|jpeg|png|gif|mp3|midi|swf|ico)) /static/build/fishstrap/$1 last;
+        rewrite ^/mobile/(.*\.(js|css|html|map|jpg|jpeg|png|gif|mp3|midi|swf|ico)) /static/build/mobile/$1 last;
 
         rewrite ^/(.*) /server/index.php?/$1 last;
 

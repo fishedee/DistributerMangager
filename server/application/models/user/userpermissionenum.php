@@ -9,6 +9,7 @@ class UserPermissionEnum extends CI_Model{
         array(5,'COMPANY_DISTRIBUTION_PRO', '高级分成管理'),
         array(6,'COMPANY_CHIPS','众筹管理'),
         array(7,'ORDER_DINNER','订餐系统'),
+	array(8,'VENDER','厂家'),
 	);
 	
 	public function __construct(){

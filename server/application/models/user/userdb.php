@@ -171,6 +171,7 @@ class UserDb extends CI_Model
 	//获取我的二维码
 	public function getMyQrCode($userId){
 		$this->db->select('qrcode');
+		$this->db->select('clientId');
 		$this->db->where('userId',$userId);
 		return $this->db->get($this->tableName)->result_array();
 	}

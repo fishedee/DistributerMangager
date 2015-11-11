@@ -88,6 +88,9 @@ class Wxreply extends CI_Model {
         switch ($postObj->Event)
         {
             case "subscribe":
+                //
+                $this->load->model('client/clientAo','clientAo');
+                $this->clientAo->ref($userId,$postObj->FromUserName);
                 //检测是否开通了高级分成功能
                 $this->load->model('user/userPermissionDb','userPermissionDb');
                 $condition['permissionId'] = 5;
@@ -128,11 +131,15 @@ class Wxreply extends CI_Model {
                     if($result){
                         //发送图文信息 我的二维码
                         $this->load->model('user/userAo','userAo');
-                        $info   = $this->userAo->myQrCode($userId,$openId);
-                        return $this->transmitNews($postObj,$info,$postObj->EventKey);
+                        // return $this->transmitText($postObj,$openId);
+                        // $info   = $this->userAo->myQrCode($userId,$openId);
+                        $media_id = $this->userAo->myPoster($userId,$openId);
+                        $arr['MediaId'] = $media_id;
+                        return $this->transmitImage($postObj,$arr);
+                        // return $this->transmitNews($postObj,$info,$postObj->EventKey);
                     }else{
                         //无建立分成关系
-                        return $this->transmitText($postObj,'您还没有建立分成关系,赶快申请成为一级代理商或者成为别人分销商吧!');
+                        return $this->transmitText($postObj,'您还没有建立分成关系,赶快申请成为一级代理商或者点击“代理商推荐”成为分销会员吧!');
                     }
                 }elseif($postObj->EventKey == 'checkin'){
                     //签到
@@ -437,7 +444,7 @@ $item_str
             }
         }elseif($EventKey == 'recommend'){
             foreach ($graphic as $key => $v) {
-                $content[] = array("Title"=>$v['company'],"Description"=>$v['nickName'],"PicUrl"=>$v['img'], "Url"=>$v['url']);
+                $content[] = array("Title"=>$v['company'],"Description"=>base64_decode($v['nickName']),"PicUrl"=>$v['img'], "Url"=>$v['url']);
             }
         }else{
             foreach ($graphic as $v){

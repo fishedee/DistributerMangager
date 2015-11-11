@@ -52,6 +52,7 @@ class DistributionAo extends CI_Model
                 $data['data'][$key] = $this->getOtherInfo($data['data'][$key]);
             }
         }
+        // var_dump($data);die;
         return $data;
     }
 
@@ -508,7 +509,7 @@ class DistributionAo extends CI_Model
                     $upUserClientId = $upUserInfo['clientId'];
                     $this->load->model('client/scoreAo','scoreAo');
                     $this->scoreAo->askDistribution($vender,$upUserClientId);
-                    $content = "恭喜你成为".$hasUpUserName."的分销商.您的账号是:".$username.",密码:".$password;
+                    $content = "恭喜你成为".$hasUpUserName."的分销商.您的账号是:".$username.",密码:".$password."请点击，‘免费领’-‘我的海报’生成自己的二维码海报，发给朋友或朋友圈，让朋友们帮你刷积分吧。活动详情请点击‘免费领’-‘活动说明’。";
                     //推送客服消息
                     $upClientInfo = $this->clientAo->get($vender,$upUserClientId);
                     $upOpenId     = $upClientInfo['openId'];
@@ -585,7 +586,7 @@ class DistributionAo extends CI_Model
                 $this->userAo->mod($vender,$data);
                 
                 $userAppInfo = $this->userAppAo->get($vender);
-                $content = "恭喜您成为".$userAppInfo['appName']."下的一名会员,您的账号是:".$username.',密码是:'.$password.'。您目前还没有开通分销中心,赶快申请成为一级代理商或者成为别人的分销吧';
+                $content = "恭喜您成为".$userAppInfo['appName']."下的一名会员,您的账号是:".$username.',密码是:'.$password.'。您目前还没有开通分销中心,赶快申请成为一级代理商或者点击"代理商推荐",扫描二维码海报成为分销会员吧';
                 return $content;die;
             }else{
                 $content = "系统分配账号密码失败";

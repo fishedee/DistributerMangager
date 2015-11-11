@@ -150,4 +150,19 @@ class ClientDb extends CI_Model
 
 		header('Location:'.$url);
 	}
+
+	//积分排行榜
+	public function rankingList($userId){
+		$this->db->where('userId',$userId);
+		$this->db->where('score>',0);
+		$this->db->where('subscribe',1);
+		$this->db->limit(50);
+		$this->db->order_by('score','desc');
+		return $this->db->get($this->tableName)->result_array();
+	}
+
+	public function ref($userId){
+		$this->db->where('userId',$userId);
+		return $this->db->get($this->tableName)->result_array();
+	}
 }

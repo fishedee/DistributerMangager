@@ -47,6 +47,11 @@ class DistributionOrderDb extends CI_Model
 
         if($vender){
             $this->db->where('vender',$vender);
+            foreach ($where as $key => $value) {
+                if($key == 'state'){
+                   $this->db->where($key, $value); 
+                }
+            }
         }else{
             foreach($where as $key=>$value){
                 if($key == 'upUserId' || $key == 'downUserId')
@@ -82,6 +87,30 @@ class DistributionOrderDb extends CI_Model
         $this->db->where('state','1');
         $this->db->select('price');
         return $this->db->get($this->tableName)->result_array();
+    }
+
+    public function getDistributionOrder($shopOrderId){
+        $this->db->where('shopOrderId',$shopOrderId);
+        return $this->db->get($this->tableName)->result_array();
+    }
+
+    public function mods($distributionOrderId,$data){
+        $this->db->where('distributionOrderId',$distributionOrderId);
+        $this->db->update($this->tableName,$data);
+        return $this->db->affected_rows();
+    }
+
+    public function getAllSales($vender){
+        // $sql = "SELECT price FROM t_distribution_order WHERE vender='{$vender}' AND state != 0";
+        $sql = "SELECT a.price AS distribution_price,b.price AS order_price FROM t_distribution_order AS a INNER JOIN t_shop_order as b ON a.shopOrderId=b.shopOrderId WHERE a.vender = '{$vender}' AND a.state != 0";
+        return $this->db->query($sql)->result_array();
+    }
+
+    public function getFall($downUserId){
+        // $this->db->where('downUserId',$downUserId);
+        // $this->db->select('price');
+        $sql = "SELECT price FROM t_distribution_order WHERE downUserId = '{$downUserId}' AND state != 0";
+        return $this->db->query($sql)->result_array();
     }
 }
 

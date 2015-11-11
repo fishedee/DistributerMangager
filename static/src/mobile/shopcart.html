@@ -102,16 +102,40 @@
 						shopTroller += '|';
 					shopTroller += checkedItemList[i].shopTrollerId;
 				}
-				location.href = $.url.buildQueryUrl(
-					'http://'+userId+'.'+$.getTopDomain()+'/'+userId+'/address.html',
-					{
-						shopTroller:shopTroller,
-						showwxpaytitle:1,
-						clientId:$.getClientId(),
-						entranceUserId:$.getEntranceUserId(),
-						userId:$.getUserId()
+
+				$.post('/deal/leading', {leadingUserId: userId}, function(data) {
+					if(data.code != 0){
+						dialog.message(data.msg);
+						return;
 					}
-				);
+					var tt = data.data;
+					if(tt == 0){
+						var url = 'http://'+userId+'.'+$.getTopDomain()+'/'+userId+'/address.html';
+					}else{
+						var url = 'http://'+userId+'.'+$.getTopDomain()+'/'+userId+'/address.html?tt='+tt;
+					}
+					location.href = $.url.buildQueryUrl(
+						url,
+						{
+							shopTroller:shopTroller,
+							showwxpaytitle:1,
+							clientId:$.getClientId(),
+							entranceUserId:$.getEntranceUserId(),
+							userId:$.getUserId()
+						}
+					);
+				});
+
+				// location.href = $.url.buildQueryUrl(
+				// 	'http://'+userId+'.'+$.getTopDomain()+'/'+userId+'/address.html',
+				// 	{
+				// 		shopTroller:shopTroller,
+				// 		showwxpaytitle:1,
+				// 		clientId:$.getClientId(),
+				// 		entranceUserId:$.getEntranceUserId(),
+				// 		userId:$.getUserId()
+				// 	}
+				// );
 			}
 			function whenItemListChange(){
 				refreshHeaderTitle();

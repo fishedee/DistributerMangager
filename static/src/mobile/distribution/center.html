@@ -14,6 +14,7 @@
         .acount_info p{
             height: 28px;
             line-height: 28px;
+            /*padding-right: 16%;*/
         }
         .center{
             width: 100%;
@@ -113,7 +114,7 @@
 
     //获取微信用户信息
     function getClientInfo(next){
-        $.get('/client/getClientInfo',{}, function(data) {
+        $.get('/client/getClientInfo',{'userIds':userId}, function(data) {
             data = $.JSON.parse(data);
             if(data.code != 0){
                 alert(data.msg);

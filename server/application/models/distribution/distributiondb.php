@@ -60,6 +60,8 @@ class DistributionDb extends CI_Model
             );
         if($vender && isset($where['upUserId'])){
             $this->db->where('vender',$userId);
+            $query = $this->db->get($this->tableName)->result_array();
+            $count = count($query);
             if(isset($limit['pageIndex']) && isset($limit['pageSize']))
                 $this->db->limit($limit['pageSize'], $limit['pageIndex']);
             $this->db->order_by('scort','asc');
@@ -68,7 +70,7 @@ class DistributionDb extends CI_Model
                 $query = $this->getMenuTree($query);
             }
             return array(
-                'count'=>count($query),
+                'count'=>$count,
                 'data'=>$query
             );
         }else{
@@ -291,6 +293,7 @@ class DistributionDb extends CI_Model
     public function getRecommend($userId){
         $this->db->where('vender',$userId);
         $this->db->where('recommend',1);
+        $this->db->order_by('distributionId','desc');
         return $this->db->get($this->tableName)->result_array();
     }
 

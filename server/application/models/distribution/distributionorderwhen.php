@@ -10,8 +10,12 @@ class DistributionOrderWhen extends CI_Model
         $this->load->model('distribution/distributionAo', 'distributionAo');
     }
 
-    public function whenGenerateOrder($entranceUserId, $shopOrder){
-        $userId = $shopOrder['userId'];
+    public function whenGenerateOrder($entranceUserId, $shopOrder,$tt){
+        if($tt){
+            $userId = $tt;
+        }else{
+            $userId = $shopOrder['userId'];
+        }
         $linkUsers = $this->distributionAo->getLink($userId, $entranceUserId);
         $links = $this->distributionAo->getLinks($userId,$entranceUserId);
         foreach ($links as $key => $value) {

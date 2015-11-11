@@ -1,0 +1,239 @@
+<link rel="import" href="./../header.html?__inline">
+    <meta charset="UTF-8">
+    <title>积分排行</title>
+    <meta name="viewport" content="width=320,initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=medium-dpi">
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+    
+    body {
+        background-image: url(./bg.png);
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-color: #fcc803;
+    }
+    
+    .head img {
+        display: block;
+        width: 100%;
+    }
+    
+    .row {
+        width: 95%;
+        margin-left: 2.5%;
+        background-color: #f61542;
+        position: absolute;
+/*        height: 100%;*/
+        
+    }
+    
+    .list {
+        background-color: #fff;
+        width: 95%;
+        height: 95%;
+        margin-left: 2.5%;
+        margin-top: 2.5%;
+/*        overflow: hidden;*/
+    }
+    
+    .title {
+        font-weight: 600;
+        font-size: 1.5em;
+        margin-left: 8%;
+        padding-top: 3%;
+    }
+    
+    .content {
+        width: 95%;
+        height: inherit;
+        margin: auto;
+    }
+    
+    .first {
+        display: -webkit-box;
+        display: -moz-box;
+        display: -o-box;
+        display: -ms-box;
+        display: box;
+        margin-top: 2%;
+        margin-left: 5%;
+        margin-right:5%;
+        margin-bottom: 5px;
+    }
+    
+    .first .mz {
+        -webkit-box-flex: 1;
+        -moz-box-flex: 1;
+        -o-box-flex: 1;
+        -ms-box-flex: 1;
+        box-flex: 1;
+        text-align: center;
+        font-weight: 600;
+        font-size: 1.2em;
+    }
+    
+    .zzmd {
+        background-color: #eeeeee;
+        border-radius: 3px;
+/*        height: 90%;*/
+    }
+    
+    .active{
+        background-color: #ed306a;
+        color: #fff!important;
+        border-radius: 3px;
+    }
+    .active .jf{
+        color: #fff!important;
+    }
+    
+    .tx img{
+        display: block;
+        width: 60px!important;
+    }
+    .item{
+       display: -webkit-box;
+        display: -moz-box;
+        display: -o-box;
+        display: -ms-box;
+        display: box;
+        border-bottom: 1px solid #c4aeae;
+        margin-left: 5%;
+        margin-right:5%;
+        padding-top: 10px;
+        padding-bottom: 5px;
+    }
+    .item .mz{
+        font-size: 0.9em;
+        position: relative;
+        top: 3px;
+    }
+    .jf{
+        color: #fe004b;
+    }
+    .jf,.mc{
+        font-size: 1.5em;
+        line-height: 60px;
+        font-weight: 600;
+    }
+    
+    .nc,.jf,.mc{
+        width: 33%;
+        -webkit-box-align: center;
+        -moz-box-align: center;
+        -o-box-align: center;
+        -ms-box-align: center;
+        box-align: center;
+
+        -webkit-box-orient: vertical;
+        -moz-box-orient: vertical;
+        -o-box-orient: vertical;
+        -ms-box-orient: vertical;
+        box-orient: vertical;
+        display: -webkit-box;
+        display: -moz-box;
+        display: -o-box;
+        display: -ms-box;
+        display: box;
+    }
+    .footer{
+        position:relative;
+        left: 0;
+        bottom: 0;
+        background-color: #fcc803;
+        width: 100%;
+        height: 20px;
+    }
+    .red{
+        background-color: #f61542;
+        width: 100%;
+        height: 10px;
+    }
+
+</style>
+
+</head>
+
+<body>
+    <div class="head"><img src="/data/upload/image/distribution/images/ranklist/head.png" alt=""></div>
+    <div class="row">
+        <div class="list">
+            <div class="title">积分排名榜</div>
+            <div class="content">
+                <div class="first">
+                    <div class="mz">昵称</div>
+                    <div class="mz">积分</div>
+                    <div class="mz">名次</div>
+                </div>
+                <div class="zzmd">
+                    <ul>
+                    </ul>
+                </div>
+            </div>
+        </div>
+	<div class="footer">
+            <div class="red"></div>
+        </div>
+    </div>
+</body>
+<script>
+
+    var $ = require('mobile/common/core/core.js');
+    var ranklist = {};
+    var clientId = 0;
+    function checkMustLogin(next){
+        $.get('/clientlogin/islogin',{},function(data){
+            if( data.code != 0 ){
+                location.href = $.url.buildQueryUrl('/clientlogin/wxlogin',{callback:location.href});
+                return;
+            }
+            clientId = data.data;
+            next();
+        });
+    }
+
+    function getRankList(next){
+        $.post('/client/rankingList', {}, function(data) {
+            if(data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            ranklist = data.data;
+            console.info(ranklist);
+            next();
+        });
+    }
+
+    //渲染页面
+    function go(){
+        var list = '';
+        $.each(ranklist,function(index,val) {
+            if(val['clientId'] == clientId){
+                var div = "<div class='item active'>";
+            }else{
+                var div = "<div class='item'>";
+            }
+            list += div+"<div class='nc'>\
+                            <div class='tx'>\
+                                <img src='"+val['headImgUrl']+"' alt=''>\
+                            </div>\
+                            <div class='mz'>"+val['nickName']+"</div>\
+                        </div>\
+                        <div class='jf'>"+val['score']+"</div>\
+                        <div class='mc'>No."+(index+1)+"</div>\
+                    </div>";
+        });
+        var br = '<br><br>';
+        var html = list + br;
+        $('ul').append(html);
+ 
+    }
+
+    checkMustLogin(function(){
+        getRankList(go);
+    });
+
+</script>
+<link rel="import" href="./../footer.html?__inline">

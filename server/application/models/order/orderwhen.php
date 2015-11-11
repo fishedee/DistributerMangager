@@ -19,6 +19,40 @@ class OrderWhen extends CI_Model
 			$shopOrderId,
 			array('state'=>$this->orderStateEnum->NO_SEND)
 		);
+
+		//触发分成
+		$this->load->model('distribution/distributionOrderAo','distributionOrderAo');
+		$this->load->model('distribution/distributionAo','distributionAo');
+		$this->load->model('user/userAo','userAo');
+		$this->load->model('distribution/distributionOrderDb','distributionOrderDb');
+		$this->load->model('client/clientAo');
+		$distributionOrder = $this->distributionOrderAo->getDistributionOrder($shopOrderId);
+		foreach ($distributionOrder as $key => $value) {
+			$info = $this->distributionAo->get($value['vender'],$value['distributionId']);
+			$distributionOrderId = $value['distributionOrderId'];
+			$data = array();
+			$data['state'] = 1;
+			$data['price'] = intval($shopOrder['price'] * 0.01 * $info['distributionPercent'] * 0.01);
+			$result = $this->distributionOrderAo->mods($distributionOrderId,$data);
+
+			//同步用户信息
+			$downUserId   = $info['downUserId'];
+			$downUserInfo = $this->userAo->get($downUserId);
+			$clientId     = $downUserInfo['clientId'];
+			$infos = $this->distributionOrderDb->getDistributionPrice($value['vender'],$downUserId);
+	        $sales= 0;
+	        $fall = 0;
+	        foreach ($infos as $k => $v) {
+	            $shopOrderInfo = $this->orderDb->get($v['shopOrderId']);
+	            $sales += $shopOrderInfo['price'];
+	            $fall  += $v['price'];
+	        }
+	        $data = array();
+	        $data['sales'] = $sales;
+	        $data['fall']  = $fall;
+	        $this->clientAo->mod($value['vender'],$clientId,$data);
+		}
+
 		
 		$this->load->model('shop/commodityAo','commodityAo');
 	 	$priceShow = $this->commodityAo->getFixedPrice($shopOrder['price']);

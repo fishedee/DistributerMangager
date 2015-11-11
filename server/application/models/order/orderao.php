@@ -149,7 +149,8 @@ class OrderAo extends CI_Model
 		return $shopOrder;
 	}
 
-	public function add($entranceUserId,$clientId,$loginClientId,$shopTrollerId,$address){
+	public function add($entranceUserId,$clientId,$loginClientId,$shopTrollerId,$address,$tt){
+		// var_dump($tt);die;
 		//获取购物车内的商品信息
 		$shopTroller = $this->trollerAo->getByIds($clientId,$shopTrollerId);
 
@@ -190,7 +191,7 @@ class OrderAo extends CI_Model
 		$this->trollerAo->delByIds($clientId,$shopTrollerId);
 
 		//触发分成订单
-		$this->distributionOrderWhen->whenGenerateOrder($entranceUserId,$this->get($orderInfo['shopOrderId']));
+		$this->distributionOrderWhen->whenGenerateOrder($entranceUserId,$this->get($orderInfo['shopOrderId']),$tt);
 
 		return $orderInfo['shopOrderId'];
 	}

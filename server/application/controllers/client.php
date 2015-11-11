@@ -98,17 +98,55 @@ class Client extends CI_Controller {
 			));
 			$userId = $data['userId'];
 
+			$myUserId = $this->input->get('userIds');
+
 			//检查权限
 			$client = $this->clientLoginAo->checkMustLogin($userId);
 			$clientId = $client['clientId'];
+
+			$this->load->model('distribution/distributionOrderAo','distributionOrderAo');
+			//获取累计销售
+			// $info = $this->distributionOrderAo->getAllSales($userId);
+			// $sales= 0;
+			// foreach ($info as $key => $value) {
+			// 	$sales += $value['order_price'];
+			// }
 
 			$result = $this->clientAo->get($userId,$clientId);
 			$result['nickName'] = base64_decode($result['nickName']);
 			$result['createTime'] = date('Y-m-d',strtotime($result['createTime']));
 			$result['fall'] = sprintf('%.2f',$result['fall']/100);
 			$result['sales'] = sprintf('%.2f',$result['sales']/100);
+			// $result['sales'] = sprintf('%.2f',$sales/100);
 			return $result;
 		}
+	}
+
+	/**
+	 * @view json
+	 * 积分排行榜
+	 */
+	public function rankingList(){
+		if($this->input->is_ajax_request()){
+			//检查输入参数
+			$data = $this->argv->checkPost(array(
+				array('userId','require'),
+			));
+			$userId = $data['userId'];
+			return $this->clientAo->rankingList($userId);
+		}
+	}
+
+	//刷新微信用户
+	public function ref(){
+		$userId = 10088;
+		$this->clientAo->ref($userId);
+	}
+
+	public function tt(){
+		$userId = 10088;
+		$openId = 'opj2Dv1R6pHWupmOXKULxAMrNGNs';
+		$this->clientAo->tt($userId,$openId);
 	}
 	
 }

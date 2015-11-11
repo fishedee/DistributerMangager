@@ -175,12 +175,14 @@ class Deal extends CI_Controller {
 			array('shopTroller', 'option',array()),
 			array('address', 'option',array()),
 			array('clientId', 'option',0),
+			array('tt','option'),
 		));
 		$userId = $data['userId'];
 		$entranceUserId = $data['entranceUserId'];
 		$shopTroller = $data['shopTroller'];
 		$address = $data['address'];
 		$clientId = $data['clientId'];
+		$tt = $data['tt'];
 
 		//检查权限
 		$client = $this->clientLoginAo->checkMustLogin($userId);
@@ -194,7 +196,8 @@ class Deal extends CI_Controller {
 			$clientId,
 			$loginClientId,
 			$shopTroller,
-			$address
+			$address,
+			$tt
 		);
 	}
 
@@ -283,6 +286,69 @@ class Deal extends CI_Controller {
 			$myUserId = $this->input->get('myUserId');
 			$this->load->model('order/orderDb','orderDb');
 			return $this->orderDb->getOrderNum($userId,$myUserId);
+		}
+	}
+
+	/**
+	 * @view json
+	 * 判断地址
+	 */
+	public function leading(){
+		if($this->input->is_ajax_request()){
+			$data = $this->argv->checkGet(array(
+				array('userId', 'require'),
+			));
+			$userId = $data['userId'];
+			//检查权限
+			$client = $this->clientLoginAo->checkMustLogin($userId);
+			$clientId = $client['clientId'];
+			$leadingUserId = $this->input->post('leadingUserId');
+			if($leadingUserId != $userId){
+				$this->session->set_userdata('leadingUserId',$userId);
+				$this->session->set_userdata('leadingClientId',$clientId);
+				return $userId;
+			}else{
+				return 0;
+			}
+		}
+	}
+
+	public function test(){
+		$shopOrderId = '201511051445391211141384';
+		$shopOrder = $this->orderDb->get($shopOrderId);
+		$this->load->model('distribution/distributionOrderAo','distributionOrderAo');
+		$this->load->model('distribution/distributionAo','distributionAo');
+		$this->load->model('user/userAo','userAo');
+		$this->load->model('distribution/distributionOrderDb','distributionOrderDb');
+		$this->load->model('order/orderAo','orderAo');
+		$this->load->model('client/clientAo');
+		$distributionOrder = $this->distributionOrderAo->getDistributionOrder($shopOrderId);
+		// var_dump($distributionOrder);die;
+		foreach ($distributionOrder as $key => $value) {
+			$info = $this->distributionAo->get($value['vender'],$value['distributionId']);
+			$distributionOrderId = $value['distributionOrderId'];
+			$data['state'] = 1;
+			$data['price'] = intval($shopOrder['price'] * $info['distributionPercent'] * 0.01);
+			// $result = $this->distributionOrderAo->mods($distributionOrderId,$data);
+
+			//同步用户信息
+			$downUserId   = $info['downUserId'];
+			$downUserInfo = $this->userAo->get($downUserId);
+			$clientId     = $downUserInfo['clientId'];
+			$infos = $this->distributionOrderDb->getDistributionPrice($value['vender'],$downUserId);
+	        $sales= 0;
+	        $fall = 0;
+	        var_dump($infos);die;
+	        foreach ($infos as $k => $v) {
+	            $shopOrderInfo = $this->orderDb->get($v['shopOrderId']);
+	            $sales += $shopOrderInfo['price'];
+	            $fall  += $v['price'];
+	        }
+	        $data = array();
+	        $data['sales'] = $sales;
+	        $data['fall']  = $fall;
+	        $this->clientAo->mod($value['vender'],$clientId,$data);
+
 		}
 	}
 }

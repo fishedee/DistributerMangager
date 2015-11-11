@@ -67,16 +67,16 @@ class ClientAo extends CI_Model {
 		}
 		$yonghu = $yonghu['body'];
     	if($yonghu['subscribe']){
-    		//$nickname 	= $yonghu['nickname'];
-		$nickname   = base64_encode($yonghu['nickname']);
-    		$headimgurl = $yonghu['headimgurl'];
+			$nickname   = base64_encode($yonghu['nickname']);
+			$headimgurl = $yonghu['headimgurl'];
+			$data['nickName'] = $nickname;
+	    	$data['headImgUrl'] = $headimgurl;
+	    	$data['subscribe']  = $yonghu['subscribe'];
     	}else{
     		$nickname 	= '用户没关注';
     		$headimgurl = 'null';
+    		$data['subscribe']  = $yonghu['subscribe'];
     	}
-    	$data['nickName'] = $nickname;
-    	$data['headImgUrl'] = $headimgurl;
-    	$data['subscribe']  = $yonghu['subscribe'];
     	$this->clientDb->refreshUserInfo($clientId,$data);
 	}
 
@@ -136,5 +136,55 @@ class ClientAo extends CI_Model {
         }else{
         	return 0;
         }
+	}
+
+	//积分排行榜
+	public function rankingList($userId){
+		$info = $this->clientDb->rankingList($userId);
+		foreach ($info as $key => $value) {
+			$info[$key]['nickName'] = base64_decode($value['nickName']);
+		}
+		return $info;
+	}
+
+	//刷新微信用户
+	public function ref($userId,$openId){
+		$this->load->library('http');
+		$userInfo   = $this->userAppAo->getTokenAndTicket($userId);
+		$access_token = $userInfo['appAccessToken'];
+		$data['userId'] = $userId;
+		$data['openId'] = $openId;
+		$data['type']   = 2;
+		$clientId = $this->addOnce($data);
+		$url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=".$access_token."&openid=".$openId."&lang=zh_CN";
+    	$yonghu = $this->http->ajax(array(
+			'url'=>$url,
+			'type'=>'post',
+			'data'=>array(),
+			'dataType'=>'plain',
+			'responseType'=>'json'
+		));
+		$yonghu = $yonghu['body'];
+		$nickName   = base64_encode($yonghu['nickname']);
+		$headImgUrl = $yonghu['headimgurl'];
+		$data = array();
+		$data['nickName'] = $nickName;
+		$data['headImgUrl'] = $headImgUrl;
+		$this->mod($userId,$clientId,$data);
+	}
+
+	public function tt($userId,$openId){
+		$this->load->library('http');
+		$userInfo   = $this->userAppAo->getTokenAndTicket($userId);
+		$access_token = $userInfo['appAccessToken'];
+		$url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=".$access_token."&openid=".$openId."&lang=zh_CN";
+    	$yonghu = $this->http->ajax(array(
+			'url'=>$url,
+			'type'=>'post',
+			'data'=>array(),
+			'dataType'=>'plain',
+			'responseType'=>'json'
+		));
+		var_dump($yonghu);die;
 	}
 }

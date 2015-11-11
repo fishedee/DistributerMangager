@@ -203,4 +203,24 @@ class DistributionOrderAo extends CI_Model
         }
         return $sum;
     }
+
+    //根据订单号 查询分成订单
+    public function getDistributionOrder($shopOrderId){
+        return $this->distributionOrderDb->getDistributionOrder($shopOrderId);
+    }
+
+    //更新
+    public function mods($distributionOrderId,$data){
+        return $this->distributionOrderDb->mods($distributionOrderId,$data);
+    }
+
+    //获取全部
+    public function getAllSales($vender){
+        $info = $this->distributionOrderDb->getAllSales($vender);
+        return $info;
+    }
+
+    public function getFall($downUserId){
+        return $this->distributionOrderDb->getFall($downUserId);
+    }
 }

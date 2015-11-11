@@ -424,8 +424,13 @@ class User extends CI_Controller {
 	 */
 	public function getMyQrCode(){
 		if($this->input->is_ajax_request()){
+			//检查输入参数
+			$data = $this->argv->checkGet(array(
+				array('userId','require'),
+			));
+			$userId = $data['userId'];
 			$myUserId = $this->input->get('myUserId');
-			return $this->userAo->getMyQrCode($myUserId);
+			return $this->userAo->getMyQrCode($userId,$myUserId);
 		}
 	}
 
@@ -568,6 +573,13 @@ class User extends CI_Controller {
             $phone = $this->input->get('phone');
             return $this->userAo->getPhoneCode($phone);
         }
+    }
+
+    public function poster(){
+    	$userId = 10007;
+    	$openId = 'oMhf-tzyuDPAjSi_orkDIy2WH0c0';
+    	$result = $this->userAo->myPoster($userId,$openId);
+    	var_dump($result);
     }
 }
 

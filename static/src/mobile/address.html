@@ -13,6 +13,7 @@
 		var myaddress = {};
 		var mapPaymentIdToName = {1:'微信支付',2:'货到付款'};
 		var mapPaymentNameToId = {'微信支付':1,'货到付款':2};
+		var tt = $.location.getQueryArgv('tt');
 		function orderPay(hopOrderId,next){
 			$.get('/deal/wxjspay',{shopOrderId:shopOrderId},function(data){
 				if(data.code!=0){
@@ -35,7 +36,7 @@
 			});
 		}
 		function order(clientId,entranceUserId,shopTroller,address,next){
-			$.post('/deal/order',{shopTroller:shopTroller,entranceUserId:entranceUserId,address:address,clientId:clientId},function(data){
+			$.post('/deal/order',{shopTroller:shopTroller,entranceUserId:entranceUserId,address:address,clientId:clientId,tt:tt},function(data){
 				if(data.code == 20001){
 					dialog.message(data.msg,function(){
 						location.href = 'shopcart.html';
