@@ -114,13 +114,12 @@ class Commodity extends CI_Controller
 
         $shopCommodityClassifyId = $data['shopCommodityClassifyId'];
         $userId = $data['userId'];
-        $type   = $this->input->get('type') ? $this->input->get('type') : '';
-
+        $rank   = $this->input->get('rank') ? $this->input->get('rank') : '';
         //检查权限
         $client = $this->clientLoginAo->checkMustLogin($userId);
 
         //业务逻辑
-        return $this->commodityAo->getOnStoreByClassify($userId,$shopCommodityClassifyId);
+        return $this->commodityAo->getOnStoreByClassify($userId,$shopCommodityClassifyId,$rank);
     }
 
 	/**

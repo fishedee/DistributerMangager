@@ -66,7 +66,7 @@ class Upload extends CI_Controller {
 		$option['field'] = 'data';
 		$option['allowed_types'] = 'pem';
 		//print_r($option);die;
-		if (!file_exists($option['upload_path']))exec('mkdir -p '.dirname($option['upload_path']));
+		if (!file_exists($option['upload_path']))exec('mkdir -p '.$option['upload_path']);
 		$result = $this->fileUpload->file($option);
 			
 		return $this->config->item('upload_url').'pem/'.$userId.'/'.$result['file_name'];

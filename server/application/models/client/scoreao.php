@@ -27,6 +27,19 @@ class ScoreAo extends CI_Model {
 		$this->load->model('user/userAo','userAo');
 		$this->load->model('distribution/distributionAo','distributionAo');
 		$this->load->model('client/remindDb','remindDb');
+		$this->load->model('distribution/distributionConfigAo','distributionConfigAo');
+	}
+
+	//更改积分配置
+	private function changeScore($userId){
+		$config = $this->distributionConfigAo->getConfig($userId);
+		if($config){
+			$this->systemScore['CHECK_IN'] = $config['checkin'];
+			$this->systemScore['ENJOY_CIRCLE'] = $config['circle'];
+			$this->systemScore['ENJOY_FRIEND'] = $config['friend'];
+			$this->systemScore['AKS_DISTRIBUTION'] = $config['ask'];
+			$this->systemScore['ENJOY_DOWN']   = $config['enjoydown'];
+		}
 	}
 
 	//签到
@@ -37,13 +50,13 @@ class ScoreAo extends CI_Model {
 		$data['type']   = 2;
 		$clientId = $this->clientAo->addOnce($data);
 		$result = $this->checkInToday($clientId);
+		$this->changeScore($userId);
 		if($result){
 			return '您今天已经签到了,请明天再来';
 		}else{
 			//判断还有多少积分
 			$userInfo = $this->userAo->get($userId);
 			$venderScore = $userInfo['score'];
-
 			if($venderScore < 100){
 				$result = $this->remindDb->checkScore($userId);
 				$code   = 100;
@@ -69,8 +82,6 @@ class ScoreAo extends CI_Model {
 					}
 				}
 			}
-
-
 			if($userInfo['score'] < $this->systemScore['CHECK_IN']){
 				return '该商家的积分不足,不能分配积分';
 			}else{
@@ -150,6 +161,7 @@ class ScoreAo extends CI_Model {
 
 	//分享朋友圈成功
 	public function enjoyShareSuccess($userId,$clientId,$url){
+		$this->changeScore($userId);
 		$result = $this->checkEnjoyShareToday($clientId,$url);
 		if($result){
 			return 0;
@@ -255,6 +267,7 @@ class ScoreAo extends CI_Model {
 
 	//分享朋友成功
 	public function enjoyFriendSuccess($userId,$clientId,$url){
+		$this->changeScore($userId);
 		$result = $this->checkEnjoyFriendToday($clientId,$url);
 		if($result){
 			return 0;
@@ -359,8 +372,8 @@ class ScoreAo extends CI_Model {
 
 	//申请分销增加积分
 	public function askDistribution($vender,$upUserClientId){
+		$this->changeScore($vender);
 		$userInfo = $this->userAo->get($vender);
-
 		$venderScore = $userInfo['score'];
 		if($venderScore < 100){
 			$result = $this->remindDb->checkScore($vender);

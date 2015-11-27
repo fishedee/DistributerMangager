@@ -128,6 +128,23 @@ class OrderAo extends CI_Model
 		return $this->search($dataWhere,array())['data'];
 	}
 
+	public function getClientOrderDetail2($clientId,$state){
+		$dataWhere = array('clientId'=>$clientId);
+		if( $state != 0 )
+			$dataWhere['state'] = $state;
+		$shopOrder = $this->search($dataWhere,array())['data'];
+		foreach ($shopOrder as $key => $value) {
+			$info = $this->orderCommodityDb->getByShopOrderId($value['shopOrderId']);
+			foreach ($info as $k => $v) {
+				$info[$k]['showPrice'] = sprintf('%.2f',$v['price']/100);
+				$info[$k]['sum'] = sprintf('%.2f',($v['price'] * $v['quantity'])/100);
+			}
+			$shopOrder[$key]['list'] = $info;
+		}
+		// var_dump($shopOrder);die;
+		return $shopOrder;
+	}
+
 	public function get($shopOrderId){
 		$shopOrder = $this->orderDb->get($shopOrderId);
 
@@ -149,11 +166,10 @@ class OrderAo extends CI_Model
 		return $shopOrder;
 	}
 
-	public function add($entranceUserId,$clientId,$loginClientId,$shopTrollerId,$address,$tt){
-		// var_dump($tt);die;
+	public function add($entranceUserId,$clientId,$loginClientId,$shopTrollerId,$address){
 		//获取购物车内的商品信息
 		$shopTroller = $this->trollerAo->getByIds($clientId,$shopTrollerId);
-
+		var_dump($shopTroller);die;
 		//校验购物车内的商品信息
 		foreach($shopTroller as $singleShopTroller){
 			$this->trollerAo->check($singleShopTroller);
@@ -191,9 +207,78 @@ class OrderAo extends CI_Model
 		$this->trollerAo->delByIds($clientId,$shopTrollerId);
 
 		//触发分成订单
-		$this->distributionOrderWhen->whenGenerateOrder($entranceUserId,$this->get($orderInfo['shopOrderId']),$tt);
+		$this->distributionOrderWhen->whenGenerateOrder($entranceUserId,$this->get($orderInfo['shopOrderId']));
 
 		return $orderInfo['shopOrderId'];
+	}
+
+	//新商城模板 不需要传递地址信息
+	public function add2($entranceUserId,$clientId,$loginClientId,$shopTrollerId){
+		if(!$shopTrollerId){
+			throw new CI_MyException(1,'无效购物车信息');
+		}
+		// var_dump($shopTrollerId);die;
+		//获取购物车内的商品信息
+		$shopTroller = $this->trollerAo->getCartInfo($clientId,$shopTrollerId);
+		// var_dump($shopTroller);die;
+		//校验购物车内的商品信息
+		foreach($shopTroller as $singleShopTroller){
+			$this->trollerAo->check($singleShopTroller);
+		}
+
+		$address = $this->addressAo->get($clientId);
+
+		//校验地址信息
+		$this->addressAo->check($address);
+
+		//保存为默认收货地址
+		$this->addressAo->mod($clientId,$address);
+		
+		//校验商品信息
+		if( count($shopTroller) == 0 )
+			throw new CI_MyException(1,'订单内的商品不能为空');
+		foreach($shopTroller as $singleShopTroller)
+			if($singleShopTroller['quantity'] <= 0 )
+				throw new CI_MyException(1,'选择的商品数量不能为0');
+		$userId = $shopTroller[0]['userId'];
+		foreach($shopTroller as $singleShopTroller)
+			if($singleShopTroller['userId'] != $userId)
+				throw new CI_MyException (1,$this->commonErrorEnum->SHOP_CART_CHECK_ERROR,'只能购买同一商城内的商品');
+
+		//扣库存
+		foreach($shopTroller as $singleShopTroller ){
+			$this->commodityAo->reduceStock($singleShopTroller['userId'],$singleShopTroller['shopCommodityId'],$singleShopTroller['quantity']);
+		}
+
+		//下单
+		$orderInfo = $this->addMyOrder($userId,$clientId,$shopTroller,$address,$entranceUserId);
+		// var_dump($orderInfo);die;
+
+		//微信统一下单
+		$this->addWxOrder($userId,$loginClientId,$orderInfo);
+
+		//删购物车
+		$this->trollerAo->delByIds($clientId,$shopTrollerId);
+
+		//触发分成订单
+		$this->distributionOrderWhen->whenGenerateOrder($entranceUserId,$this->get($orderInfo['shopOrderId']));
+
+		return $orderInfo['shopOrderId'];
+	}
+
+	public function againOrder($shopOrderId){
+
+		$this->load->model('shop/trollerAo', 'trollerAo');
+
+		$orderInfo = $this->get($shopOrderId);
+
+		foreach ($orderInfo['commodity'] as $key => $value) {
+
+			$this->trollerAo->addCommodity($orderInfo['clientId'],$value['shopCommodityId'],$value['quantity']);
+		}
+
+		$updataMsg = array('state'=>0);
+		return $this->mod($shopOrderId,$updataMsg);
 	}
 
 	public function wxJsPay($clientId,$shopOrderId){
@@ -265,5 +350,93 @@ class OrderAo extends CI_Model
 	//获取订单数量
 	public function getOrderNum($userId,$entranceUserId){
 		return $this->orderDb->getOrderNum($userId,$entranceUserId);
+	}
+
+	//获取订单明细
+	public function getOrderCommodity($shopOrderCommodityId){
+		$info = $this->orderCommodityDb->getOrderCommodity($shopOrderCommodityId);
+		if($info){
+			return $info[0];
+		}else{
+			throw new CI_MyException(1,'无效订单明细信息');
+		}
+	}
+
+	//更新订单评论
+	public function mod($shopOrderId,$data){
+		// $data['state'] = $this->orderStateEnum->HAS_COMMENT;
+		return $this->orderDb->mod($shopOrderId,$data);
+	}
+
+
+	public function modOrderCommodity($shopOrderCommodityId){
+		$data['comment'] = 1;
+		return $this->orderCommodityDb->mod($shopOrderCommodityId,$data);
+	}
+
+	// //更新订单收货
+	// public function modReceive($shopOrderId,$data){
+	// 	// $data['state'] = $this->orderStateEnum->HAS_SEND;
+	// 	return $this->orderDb->mod($shopOrderId,$data);
+	// }
+
+	//检测评论数目
+	public function checkComment($shopOrderId){
+		$info = $this->orderCommodityDb->checkComment($shopOrderId);
+		return count($info);
+	}
+
+	// //确认收货
+	// public function confirmReceive($clientId,$shopOrderId,$shopOrderCommodityId){
+	// 	//获取订单明细的信息
+	// 	$shopOrderCommodityInfo = $this->getOrderCommodity($shopOrderCommodityId);
+	// 	//获取订单信息
+	// 	$orderInfo = $this->get($shopOrderId);
+	// 	//判断订单状态
+	// 	if($orderInfo['state'] != $this->orderStateEnum->HAS_SEND){
+	// 		throw new CI_MyException(1,'该订单不处于可收货状态');
+	// 	}
+	// 	//检测订单合法性
+	// 	if($orderInfo['clientId'] != $clientId){
+	// 		throw new CI_MyException(1,'无效操作');
+	// 	}
+	// 	//比较订单流水号信息
+	// 	if($shopOrderCommodityInfo['shopOrderId'] != $shopOrderId){
+	// 		throw new CI_MyException(1,'无效订单流水号');
+	// 	}
+	// 	if($shopOrderCommodityInfo['receive'] != 0){
+	// 		throw new CI_MyException(1,'该订单已经收货');
+	// 	}
+	// 	$data['receive'] = 1;
+	// 	$data['receive'] = 1;
+	// 	$result = $this->orderCommodityDb->mod($shopOrderCommodityId,$data);
+	// 	if($result){
+	// 		$result = $this->orderCommodityDb->checkReceive($shopOrderId);
+	// 		if($result){
+	// 			return 1;
+	// 		}else{
+	// 			$data = array();
+	// 			$data['state'] = $this->orderStateEnum->HAS_RECEIVED;
+	// 			return $this->mod($shopOrderId,$data);
+	// 		}
+	// 	}else{
+	// 		throw new CI_MyException(1,'收货失败');
+	// 	}
+	// }
+
+	public function confirmReceive($clientId,$shopOrderId,$shopOrderCommodityId){
+		//获取订单信息
+		$orderInfo = $this->get($shopOrderId);
+		//判断订单状态
+		if($orderInfo['state'] != $this->orderStateEnum->HAS_SEND){
+			throw new CI_MyException(1,'该订单不处于可收货状态');
+		}
+		$data['state'] = $this->orderStateEnum->HAS_RECEIVED;
+		$result = $this->mod($shopOrderId,$data);
+		if($result){
+			return $result;
+		}else{
+			throw new CI_MyException(1,'确认收货失败');
+		}
 	}
 }

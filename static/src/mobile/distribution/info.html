@@ -182,24 +182,34 @@
                         <p>确认修改</p>\
                     </div>\
                     <div class='blank'></div>\
-                    <div class='footer'>\
+            <div class='footer'>\
                         <div class='list'>\
-                            <div class='item'>\
-                                <div class='img sp'></div>\
-                                <a href='"+itemUrl+"'><p>商品</p></a>\
-                            </div>\
-                            <div class='item'>\
-                                <div class='img dd'></div>\
-                                <a href='"+orderUrl+"'><p>订单</p></a>\
-                            </div>\
-                            <div class='item'>\
-                                <div class='img hyzx active'></div>\
-                                <a href='"+centerUrl+"'><p>会员中心</p></a>\
-                            </div>\
+          <div class='item'>\
+                <a href='"+itemUrl+"'>\
+                    <div class='img sp'></div>\
+                    <p>商品</p>\
+                </a>\
+            </div>\
+            <div class='item'>\
+            </div>\
+            <div class='item'>\
+                <a href='"+orderUrl+"'>\
+                    <div class='img dd'></div>\
+                    <p>订单</p>\
+                </a>\
+            </div>\
+            <div class='item active'>\
+                <a href='"+centerUrl+"'>\
+                    <div class='img hyzx'></div>\
+                    <p>我</p>\
+                </a>\
+            </div>\
                         </div>\
-                    </div>";
+                    </div>";   
         $('body').append(html);
         setTimeout(birth,100);
+    //正圆形
+    $('.footer .item:first-child').css('height', parseInt($('.footer .item:first-child').css('width')));
     }
 
     //个人资料的提交

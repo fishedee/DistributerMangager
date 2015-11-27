@@ -58,8 +58,10 @@ class OrderDb extends CI_Model
 	}
 
 	public function mod( $shopOrderId , $data ){
+		$data['modifyTime'] = date('Y-m-d H:i:s',time());
 		$this->db->where("shopOrderId",$shopOrderId);
 		$this->db->update($this->tableName,$data);
+		return $this->db->affected_rows();
 	}
 
 	public function getCountByClientId($clientId){

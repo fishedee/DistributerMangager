@@ -102,7 +102,14 @@
 							});
 						});
 					}
-				}],
+				},
+				{
+					name:'查看评价',
+					click:function(data){
+						location.href = 'comment.html?shopCommodityId='+data.shopCommodityId;
+					}
+				}
+				],
 				button:[
 				{
 					name:'添加商品',

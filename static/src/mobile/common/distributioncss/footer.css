@@ -1,23 +1,30 @@
 /*占空白位置*/
-.blank{
-   height: 60px; 
+
+.blank {
+    height: 60px;
+}
+
+.footer a {
+    color: #fff;
+    text-decoration: none;
 }
 
 .footer {
     position: fixed;
     bottom: 0px;
     width: 100%;
-    height: 40px;
+
 }
-.footer .list{
+
+.footer .list {
     display: -webkit-box;
     display: -moz-box;
     display: -o-box;
     display: -ms-box;
     display: box;
-    background: #fff;
-    padding-left: 9px;
-    padding-right: 10px;
+    background: #252a2d;
+    padding-left: 10%;
+    /*    padding-right: 10px;*/
 }
 
 .footer .item {
@@ -27,38 +34,58 @@
     -ms-box-flex: 1;
     box-flex: 1;
     text-align: center;
+    color: #fff;
+}
+
+.footer .item:first-child {
+    position: absolute;
+    top: -20px;
+    left: -3%;
+    background: #252a2d;
+    border-radius: 50%;
+    width: 28%;
+    height: 53px;
 }
 
 .footer .item:last-child {
     width: 8%;
 }
-.footer .item p{
+
+.footer .item p {
     margin: 2px 0;
     font-size: 12px;
 }
-.footer .item .img{
+
+.footer .item .img {
     background-size: 20px;
     background-repeat: no-repeat;
     background-position: center;
-    background-color: dimgray;
+    /*    background-color: dimgray;*/
     width: 25px;
     height: 25px;
-    border-radius: 50%;
+    /*    border-radius: 50%;*/
     display: block;
     margin: 0 auto;
     margin-top: 5px;
 }
-.footer .item .sp{
-    background-image: url('/data/upload/image/distribution/images/icon/12.png');
 
+.footer .item .sp {
+    background-image: url('/data/upload/image/distribution/images/icon/sp.png');
+	background-size: 35px;
+	width: 40px;
+	height: 40px;
 }
-.footer .item .dd{
-    background-image: url('/data/upload/image/distribution/images/icon/13.png');
 
+.footer .item .dd {
+    background-image: url('/data/upload/image/distribution/images/icon/dd.png');
 }
-.footer .item .hyzx{
-    background-image: url('/data/upload/image/distribution/images/icon/14.png');
+
+.footer .item .hyzx {
+    background-image: url('/data/upload/image/distribution/images/icon/vip.png');
+    background-size: 35px;
+    width: 40px;
 }
-.footer .item .active{
-    background-color: crimson;
+
+.footer .active {
+    background-color: #d80404;
 }

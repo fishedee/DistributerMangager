@@ -69,7 +69,29 @@
             next();
         })
     }
-
+    //检测系统是否已经分配账号
+    function checkClientId(next){
+        $.get('/user/checkClientId',{}, function(data) {
+            data = $.JSON.parse(data);
+            if(data.code != 0){
+                alert(data.msg);
+                return;
+            }
+            data = data.data;
+            if(data.length){
+                userId = data[0]['userId'];
+                itemUrl= 'http://'+location.host+'/'+userId+'/item.html';
+                orderUrl = 'http://'+location.host+'/'+userId+'/deal.html';
+                centerUrl= 'http://'+location.host+'/'+userId+'/distribution/index.html';
+            }else{
+                // alert('您还没有分配会员账号');
+                itemUrl = 'javascript:;';
+                orderUrl= 'javascript:;';
+                centerUrl = 'javascript:;';
+            }
+            next();
+        });
+    }
 
     //渲染页面
     function go(){
@@ -98,26 +120,39 @@
                     <ul class='distribution'>"+log+"\
                     </ul>\
                     <div class='blank'></div>\
-                    <div class='footer'>\
+             <div class='footer'>\
                         <div class='list'>\
-                            <div class='item'>\
-                                <div class='img sp'></div>\
-                                <p>商品</p>\
-                            </div>\
-                            <div class='item'>\
-                                <div class='img dd'></div>\
-                                <p>订单</p>\
-                            </div>\
-                            <div class='item'>\
-                                <div class='img hyzx active'></div>\
-                                <p>会员中心</p>\
-                            </div>\
+          <div class='item'>\
+                <a href='"+itemUrl+"'>\
+                    <div class='img sp'></div>\
+                    <p>商品</p>\
+                </a>\
+            </div>\
+            <div class='item'>\
+            </div>\
+            <div class='item'>\
+                <a href='"+orderUrl+"'>\
+                    <div class='img dd'></div>\
+                    <p>订单</p>\
+                </a>\
+            </div>\
+            <div class='item active'>\
+                <a href='"+centerUrl+"'>\
+                    <div class='img hyzx'></div>\
+                    <p>我</p>\
+                </a>\
+            </div>\
                         </div>\
-                    </div>";
+                    </div>";  
         $('body').html(html);
+          //正圆形
+         $('.footer .item:first-child').css('height', parseInt($('.footer .item:first-child').css('width')));
     }
     checkMustLogin(function(){
-        getLog(go);
+	checkClientId(function(){
+		getLog(go);
+	});
+        
     })
 </script>
 <link rel="import" href="./../footer.html?__inline">

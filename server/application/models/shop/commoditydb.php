@@ -8,7 +8,7 @@ class CommodityDb extends CI_Model
         parent::__construct();
     }
 
-    public function search($where, $limit){
+    public function search($where, $limit,$rank){
         if( isset($where['shopCommodityId']) && count($where['shopCommodityId']) == 0 )
             return array(
                 'count'=>0,
@@ -34,10 +34,25 @@ class CommodityDb extends CI_Model
             else if($key == 'shopCommodityId')
                 $this->db->where_in($key, $value);
         }
-        $this->db->order_by('sort', 'asc');
+        
 
         if(isset($limit['pageIndex']) && isset($limit['pageSize']))
             $this->db->limit($limit['pageSize'], $limit['pageIndex']);
+        if($rank){
+            if($rank == 'timeDown'){
+                $this->db->order_by('createTime','DESC');
+            }
+            if($rank == 'timeUp'){
+                $this->db->order_by('createTime','ASC');
+            }
+            if($rank == 'priceUp'){
+                $this->db->order_by('price','ASC');
+            }
+            if($rank == 'priceDown'){
+                $this->db->order_by('price','DESC');
+            }
+        }
+        $this->db->order_by('sort', 'asc');
         $query = $this->db->get($this->tableName)->result_array();
 
        

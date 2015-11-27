@@ -98,11 +98,31 @@ class Troller extends CI_Controller
         $userId = $data['userId'];
         $shopCommodity = $data['shopCommodity'];
 
-         //检查权限
+        //检查权限
         $client = $this->clientLoginAo->checkMustLogin($userId);
         $clientId = $client['clientId'];
 
         //业务逻辑
         return $this->trollerAo->setAll($clientId,$shopCommodity);
+    }
+
+    /**
+     * @view json
+     * 购物车根据id进行操作 不更新整张表
+     */
+    public function set2(){
+        if($this->input->is_ajax_request()){
+            $data = $this->argv->checkPost(array(
+                array('userId', 'require'),
+            ));
+            $userId = $data['userId'];
+            //检查权限
+            $client = $this->clientLoginAo->checkMustLogin($userId);
+            $clientId = $client['clientId'];
+
+            $shopTrollerId = $this->input->post('shopTrollerId');
+            $quantity = $this->input->post('quantity');
+            return $this->trollerAo->set2($clientId,$shopTrollerId,$quantity);
+        }
     }
 }

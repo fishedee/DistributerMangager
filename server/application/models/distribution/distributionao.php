@@ -469,7 +469,7 @@ class DistributionAo extends CI_Model
             //有上线 不能再申请
             $hasUpUserId = $result[0]['upUserId'];
             $hasUpUserName = $this->userAo->getUserName($hasUpUserId);
-            $content = "1.您已经有上线:".$hasUpUserName.",不能继续申请。\n2.赚取积分小技巧：\n①让朋友扫描您的二维码，每次可赚取10积分\n②分享顺辰电器产品至朋友圈均可获得10积分\n③直接将产品推荐给朋友可获得20积分，每日只限一次\n④每日签到也可以获得10积分\n注：分享商品，需要进入公众号免费领-会员中心-商品-任选一款产品，发送到朋友圈才有积分赚哦";
+            $content = "1.您已经有上线:".$hasUpUserName.",不能继续申请。";
             return $content;die;
         }else{
             //没上线 申请 首先查询上线信息
@@ -509,7 +509,7 @@ class DistributionAo extends CI_Model
                     $upUserClientId = $upUserInfo['clientId'];
                     $this->load->model('client/scoreAo','scoreAo');
                     $this->scoreAo->askDistribution($vender,$upUserClientId);
-                    $content = "1.恭喜你成为".$hasUpUserName."的分销商.您的账号是:".$username.",密码:".$password."请点击，‘免费领’-‘我的海报’生成自己的二维码海报，发给朋友或朋友圈，让朋友们帮你刷积分吧。活动详情请点击‘免费领’-‘活动说明’。\n2.赚取积分小技巧：\n①让朋友扫描您的二维码，每次可赚取10积分\n②分享顺辰电器产品至朋友圈均可获得10积分\n③直接将产品推荐给朋友可获得20积分，每日只限一次\n④每日签到也可以获得10积分\n注：分享商品，需要进入公众号免费领-会员中心-商品-任选一款产品，发送到朋友圈才有积分赚哦";
+                    $content = "1.恭喜你成为".$hasUpUserName."的分销商.您的账号是:".$username.",密码:".$password."请点击，‘免费领’-‘我的海报’生成自己的二维码海报，发给朋友或朋友圈，让朋友们帮你刷积分吧。";
                     //推送客服消息
                     $upClientInfo = $this->clientAo->get($vender,$upUserClientId);
                     $upOpenId     = $upClientInfo['openId'];
@@ -586,7 +586,7 @@ class DistributionAo extends CI_Model
                 $this->userAo->mod($vender,$data);
                 
                 $userAppInfo = $this->userAppAo->get($vender);
-                $content = "1.恭喜您成为".$userAppInfo['appName']."下的一名会员,您的账号是:".$username.',密码是:'.$password."。您目前还没有开通分销中心,赶快申请成为一级代理商或者点击:'顺辰福利'-'代理商推荐',扫描二维码海报成为分销会员吧\n2.赚取积分小技巧：\n①让朋友扫描您的二维码，每次可赚取10积分\n②分享顺辰电器产品至朋友圈均可获得10积分\n③直接将产品推荐给朋友可获得20积分，每日只限一次\n④每日签到也可以获得10积分\n注：分享商品，需要进入公众号免费领-会员中心-商品-任选一款产品，发送到朋友圈才有积分赚哦";
+                $content = "1.恭喜您成为".$userAppInfo['appName']."下的一名会员,您的账号是:".$username.',密码是:'.$password."。您目前还没有开通分销中心,赶快申请成为一级代理商或者扫描别人的二维码成为会员。";
                 return $content;die;
             }else{
                 $content = "系统分配账号密码失败";
@@ -689,6 +689,7 @@ class DistributionAo extends CI_Model
     private $distributionLink = array();
 
     private function dfs2($vender,$userId){
+        // var_dump(1);die;
         if($vender == $userId){
             return true;
         }

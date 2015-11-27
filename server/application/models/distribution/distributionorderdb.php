@@ -36,7 +36,8 @@ class DistributionOrderDb extends CI_Model
     }
 
     public function search($where, $limit,$vender=0){
-
+        if(isset($limit['pageIndex']) && isset($limit['pageSize']))
+            $this->db->limit($limit['pageSize'], $limit['pageIndex']);
         foreach($where as $key=>$value){
             if($key == 'upUserId' || $key == 'downUserId')
                 $this->db->where($key, $value);
@@ -62,12 +63,11 @@ class DistributionOrderDb extends CI_Model
         }
         $query = $this->db->get($this->tableName)->result_array();
         $count = count($query);
-        if(isset($limit['pageIndex']) && isset($limit['pageSize']))
-            $this->db->limit($limit['pageSize'], $limit['pageIndex']);
+        
         if($count){
             $this->db->order_by('createTime', 'desc');
         }
-        
+        // var_dump($query);die;
         return array(
             'count'=>$count,
             'data'=>$query

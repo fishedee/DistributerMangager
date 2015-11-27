@@ -1,0 +1,44 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		function go(){
+			query.simpleQuery({
+				id:'container',
+				url:'/commoditycomment/search',
+				column:[
+					{id:'commentId',type:'text',name:'评论id'},
+					{id:'nickName',type:'text',name:'评论人昵称'},
+					{id:'headImgUrl',type:'image',name:'评论人头像'},
+					{id:'content',type:'text',name:'评论内容'},
+					{id:'createTime',type:'text',name:'创建时间'},
+				],
+				queryColumn:[],
+				operate:[
+					{
+						name:'删除评价',
+						click:function(data){
+							dialog.confirm('确认删除该条评价吗？操作不可回退。',function(){
+								$.get('/commoditycomment/del',{commentId:data.commentId},function(data) {
+									data = $.JSON.parse(data);
+									if(data.code != 0){
+										dialog.message(data.msg);
+										return;
+									}
+									window.location.reload();
+								});
+							})
+						}
+					}
+				],
+				button:[
+				],
+			});
+		}
+
+		go();
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

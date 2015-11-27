@@ -71,7 +71,7 @@ class Wxreply extends CI_Model {
                 $result = "unknown msg type: ".$RX_TYPE;
                 break;
         }
-        file_put_contents(dirname(__FILE__).'/out.text', var_export($result,TRUE));
+        // file_put_contents(dirname(__FILE__).'/out.text', var_export($result,TRUE));
         echo $result;
     }
     
@@ -88,7 +88,6 @@ class Wxreply extends CI_Model {
         switch ($postObj->Event)
         {
             case "subscribe":
-                //
                 $this->load->model('client/clientAo','clientAo');
                 $this->clientAo->ref($userId,$postObj->FromUserName);
                 //检测是否开通了高级分成功能
@@ -97,9 +96,10 @@ class Wxreply extends CI_Model {
                 $result = $this->userPermissionDb->checkPermissionId2($userId,$condition);
                 if($result){
                     $this->load->model('distribution/distributionAo');
-                    $key = $postObj->EventKey;
+                    // $key = $postObj->EventKey;
                     $openId = $postObj->FromUserName;
-                    if(strstr($key, 'qrscene')){
+                    if(strstr($postObj->EventKey, 'qrscene') && isset($postObj->EventKey)){
+                        $key  = $postObj->EventKey;
                         $info = substr($key, strpos($key, '_')+1);
                         $info = explode(',', $info);
                         $vender = $info[0];
@@ -160,6 +160,25 @@ class Wxreply extends CI_Model {
                     }
                 }elseif($postObj->EventKey == 'product' || $postObj->EventKey == 'after'){
                     return $this->transmitText($postObj,'功能内测，稍后开放！');
+                }elseif($postObj->EventKey == 'poll'){
+                    $this->load->model('poll/pollAo','pollAo');
+                    $openId = $postObj->FromUserName;
+                    $result = $this->pollAo->poll($userId,$openId);
+                    if($result['code'] == 1){
+                        return $this->transmitText($postObj,$result['msg']);
+                    }else{
+                        $arr['MediaId'] = $result['msg'];
+                        return $this->transmitImage($postObj,$arr);
+                    }
+                }elseif($postObj->EventKey == 'ipoll'){
+                    $weixinSubscribe = $this->wxSubscribeAo->search($userId,array('remark'=>'我要投票'),'')['data'][0];
+                    $weixinSubscribeId = $weixinSubscribe['weixinSubscribeId'];
+                }elseif($postObj->EventKey == 'free'){
+                    $text = "如果您觉得您的店铺有好玩好吃的福利活动Fun享，别犹豫，马上联系队长。\n\n队长微信：sdfun111\n队长QQ：3220375148";
+                    return $this->transmitText($postObj,$text);
+                }elseif($postObj->EventKey == 'complain'){
+                    $text = "如果成员们收集到对大家有利的活动情报，发现到有好地方的又或者觉得队长提供的情报有误，都可以联系通知队长。\n\n队长微信：sdfun111\n队长QQ：3220375148";
+                    return $this->transmitText($postObj,$text);
                 }
                 break;
             case 'user_get_card':
@@ -445,6 +464,14 @@ $item_str
         }elseif($EventKey == 'recommend'){
             foreach ($graphic as $key => $v) {
                 $content[] = array("Title"=>$v['company'],"Description"=>base64_decode($v['nickName']),"PicUrl"=>$v['img'], "Url"=>$v['url']);
+            }
+        }elseif($object->EventKey == 'ipoll'){
+            foreach ($graphic as $v){
+                $this->load->model('poll/pollAo','pollAo');
+                $openId = $object->FromUserName;
+                $clientId = $this->pollAo->getClientId($userId,$openId);
+                $url = $v['Url'].'?a='.$clientId;
+                $content[] = array("Title"=>$v['Title'],"Description"=>$v['Description'], "PicUrl"=>'http://'.$_SERVER[HTTP_HOST].$v['PicUrl'], "Url" =>$url);
             }
         }else{
             foreach ($graphic as $v){

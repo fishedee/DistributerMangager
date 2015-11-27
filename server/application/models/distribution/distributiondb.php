@@ -59,16 +59,22 @@ class DistributionDb extends CI_Model
                 'data'=>array()
             );
         if($vender && isset($where['upUserId'])){
+            // var_dump($userId);die;
             $this->db->where('vender',$userId);
             $query = $this->db->get($this->tableName)->result_array();
             $count = count($query);
             if(isset($limit['pageIndex']) && isset($limit['pageSize']))
                 $this->db->limit($limit['pageSize'], $limit['pageIndex']);
-            $this->db->order_by('scort','asc');
-            $query = $this->db->get($this->tableName)->result_array();
-            if($query){
-                $query = $this->getMenuTree($query);
+            foreach ($where as $key => $value) {
+            	if($key == 'state')
+                    $this->db->where($key, $value);
             }
+            $this->db->order_by('scort','asc');
+            $this->db->where('vender',$userId);
+            $query = $this->db->get($this->tableName)->result_array();
+            // if($query){
+            //     $query = $this->getMenuTree($query);
+            // }
             return array(
                 'count'=>$count,
                 'data'=>$query

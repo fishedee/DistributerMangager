@@ -16,7 +16,7 @@ class DistributionOrderWhen extends CI_Model
         }else{
             $userId = $shopOrder['userId'];
         }
-        $linkUsers = $this->distributionAo->getLink($userId, $entranceUserId);
+        // $linkUsers = $this->distributionAo->getLink($userId, $entranceUserId);
         $links = $this->distributionAo->getLinks($userId,$entranceUserId);
         foreach ($links as $key => $value) {
         	//添加分成订单

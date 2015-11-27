@@ -34,6 +34,18 @@ class TrollerDb extends CI_Model
         );
     }
 
+    public function getCartInfo($clientId,$shopTrollerId){
+        $this->db->where('clientId',$clientId);
+        $arr = array();
+        foreach ($shopTrollerId as $key => $value) {
+            $arr[] = $value['shopTrollerId'];
+        }
+        if($arr){
+            $this->db->where_in('shopTrollerId',$arr);
+        }
+        return $this->db->get($this->tableName)->result_array();
+    }
+
     public function get($shopTrollerId){
         $this->db->where("shopTrollerId", $shopTrollerId);    
         $query = $this->db->get($this->tableName)->result_array();
@@ -67,9 +79,18 @@ class TrollerDb extends CI_Model
     }
 
     public function delByClientIdAndShopTrollerId($clientId,$shopTrollerId){
+        if(is_array($shopTrollerId)){
+            $arr = array();
+            foreach ($shopTrollerId as $key => $value) {
+                $arr[] = $value['shopTrollerId'];
+            }
+            $this->db->where_in("shopTrollerId", $arr);
+        }else{
+            $this->db->where('shopTrollerId',$shopTrollerId);
+        }
         $this->db->where("clientId", $clientId);
-        $this->db->where_in("shopTrollerId", $shopTrollerId);
         $this->db->delete($this->tableName);
+        return $this->db->affected_rows();
     }
 
     public function add($data){
@@ -80,6 +101,7 @@ class TrollerDb extends CI_Model
     public function mod($shopTrollerId, $data){
         $this->db->where('shopTrollerId', $shopTrollerId);
         $this->db->update($this->tableName, $data);
+        return $this->db->affected_rows();
     }
 
     public function modByClientIdAndCommodityId($clientId,$shopCommodityId, $data){

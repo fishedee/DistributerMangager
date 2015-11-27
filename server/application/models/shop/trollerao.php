@@ -44,8 +44,31 @@ class TrollerAo extends CI_Model
         return $shopTroller;
     }
 
+    public function getCartInfo($clientId,$shopTrollerId){
+        $data = $this->trollerDb->getCartInfo($clientId,$shopTrollerId);
+        foreach($data as $key=>$value ){
+            $data[$key]['priceShow'] = $this->commodityAo->getFixedPrice($data[$key]['price']);
+            $data[$key]['oldPriceShow'] = $this->commodityAo->getFixedPrice($data[$key]['oldPrice']);
+        }
+
+        //取出库存等信息
+        foreach( $data as $key=>$singleShopTroller ){
+            $commodity = $this->commodityAo->getByOnlyId(
+                $singleShopTroller['shopCommodityId']
+            );
+            $userApp = $this->userAppAo->get(
+                $commodity['userId']
+            );
+            $data[$key]['inventory'] = $commodity['inventory'];
+            $data[$key]['appName'] = $userApp['appName'];
+            $data[$key]['userId'] = $userApp['userId'];
+        }
+        
+        return $data;
+    }
+
     public function delByIds($clientId,$shopTrollerId){
-        $this->trollerDb->delByClientIdAndShopTrollerId(
+        return $this->trollerDb->delByClientIdAndShopTrollerId(
             $clientId,
             $shopTrollerId
         );
@@ -176,6 +199,21 @@ class TrollerAo extends CI_Model
             $shopCommodityId,
             array('quantity'=>$quantity)
         );
+    }
+
+    public function set2($clientId,$shopTrollerId,$quantity){
+        $shopTroller = $this->getByIds($clientId,$shopTrollerId);
+        $shopTroller = $shopTroller[0];
+        if($shopTroller['clientId'] != $clientId){
+            throw new CI_MyException(1,'您无权操作');
+        }
+        if($quantity <= 0){
+            return $this->delByIds($clientId,$shopTrollerId);
+        }
+        $shopTroller['quantity'] = $quantity;
+        $this->check($shopTroller);
+        $data['quantity'] = $quantity;
+        return $this->trollerDb->mod($shopTrollerId,$data);
     }
 
 }

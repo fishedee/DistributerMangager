@@ -1,0 +1,57 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div class="alert alert-danger" role="alert">
+		积分若不填写默认为：
+		1.签到10分。
+		2.分享到朋友圈10分。
+		3.分享给朋友20分。
+		4.发展下线10分。
+		5.直接下级分享2分。
+	</div>
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var config = {};
+
+		//获取配置
+		function getConfig(next){
+			$.post('/distributionconfig/getConfig',{}, function(data) {
+				data = $.JSON.parse(data);
+				if(data.code != 0){
+					dialog.message(data.msg);
+					return;
+				}
+				config = data.data;
+				next();
+			});
+		}
+
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'checkin',type:'text',name:'签到积分'},
+					{id:'circle',type:'text',name:'分享朋友圈积分'},
+					{id:'friend',type:'text',name:'分享到朋友积分'},
+					{id:'ask',type:'text',name:'新会员加入所得积分'},
+					{id:'enjoydown',type:'text',name:'下级分享积分'},
+				],
+				value:config,
+				submit:function(data){
+					$.post('/distributionconfig/sub',{data:data},function(data){
+						data = $.JSON.parse(data);
+						if( data.code != 0 ){
+							dialog.message(data.msg);
+							return;
+						}
+						location.reload();
+					});
+				},
+				cancel:undefined
+			});
+		}
+		getConfig(go);
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

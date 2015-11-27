@@ -134,7 +134,7 @@
 				wx.config($.extend(
 					jsConfig,
 					{
-						debug:fales,
+						debug:true,
 						jsApiList:[
 					        'checkJsApi',
 					        'onMenuShareTimeline',
@@ -191,8 +191,8 @@
 			  //查看地理位置
 			  document.querySelector('#map').onclick = function () {
 			    wx.openLocation({
-			      latitude: contactData.latitude,
-			      longitude: contactData.longitude,
+			      latitude: parseFloat(contactData.latitude),
+			      longitude: parseFloat(contactData.longitude),
 			      name: contactData.name,
 			      address: contactData.address,
 			      scale: contactData.scale,

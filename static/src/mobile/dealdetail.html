@@ -29,7 +29,7 @@
 		var WXSdk = require('fishstrap/sdk/wxsdk.js');
 		var shopOrderId = $.location.getQueryArgv('shopOrderId');
 		var orderStateIdToName = {0:'全部',1:'未支付',2:'待发货',3:'已发货'};
-		var paymentIdToName = {1:'微信支付',2:'货到付款'};
+		var paymentIdToName = {1:'微信支付'};
 		var exp = {0:'商户未填写',1:'EMS',2: '中国邮政',3: '申通快递',4: '圆通速递',5: '顺丰速运',6: '天天快递',7: '韵达快递',8: '中通速递',9: '龙邦物流',10: '宅急送',11: '全一快递',12: '汇通速递'};
 		var shopOrder = {};
 		function orderPay(shopOrderId,next){

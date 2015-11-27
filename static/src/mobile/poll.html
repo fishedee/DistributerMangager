@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>投票</title>
+    <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=no,target-densitydpi=medium-dpi">
+    <script type="text/javascript" src="/fishstrap/lib/mod.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        
+        .head img {
+            display: block;
+            width: 100%;
+        }
+        /*
+        .frist,
+        .item {
+            padding-left: 3%;
+            padding-right: 8%;
+        }
+*/
+        
+        .frist {
+            padding-left: 3%;
+            padding-right: 4%;
+        }
+        
+        .frist {
+            display: -webkit-box;
+            display: -moz-box;
+            display: -o-box;
+            display: -ms-box;
+            display: box;
+            background-color: #ffcccb;
+            color: #fff;
+            line-height: 30px;
+            font-size: 1em;
+        }
+        .kongbai{
+	    width: 40px;
+	}
+        .lie {
+            -webkit-box-flex: 1;
+            -moz-box-flex: 1;
+            -o-box-flex: 1;
+            -ms-box-flex: 1;
+            box-flex: 1;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .item {
+            display: -webkit-box;
+            display: -moz-box;
+            display: -o-box;
+            display: -ms-box;
+            display: box;
+            font-weight: 600;
+            font-size: 0.8em;
+            padding-top: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #b1b1b3;
+        }
+        
+        .item .hang {
+            -webkit-box-flex: 1;
+            -moz-box-flex: 1;
+            -o-box-flex: 1;
+            -ms-box-flex: 1;
+            box-flex: 1;
+            font-weight: 600;
+            font-size: 1.2em;
+        }
+        
+        .item .tx {
+            position: relative;
+            left: 5%;
+        }
+        
+        .item .mc {
+            position: relative;
+        }
+        
+        .item .ph {
+            position: relative;
+        }
+        
+        .item .xm {
+            position: relative;
+        }
+        
+        .item .ps {
+            position: relative;
+        }
+
+        .item .mc,
+        .item .ph,
+        .item .xm,
+        .item .ps {
+            top: 15px;
+        }
+        .item .xm {
+            width: 5%;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            -o-text-overflow: ellipsis;
+            overflow: hidden;
+        }
+        .item .ph{
+            width: 3%;
+        }
+        .item .tx img {
+            display: block;
+            width: 50px;
+            border-radius: 50%
+        }
+        
+        .footer {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            background-color: #fff;
+            width: 100%;
+            height: 60px;
+        }
+        
+        .footer .text {
+            width: 75px;
+            height: 45px;
+            background-color: #76c5f0;
+            border-radius: 3px;
+            text-align: center;
+            line-height: 45px;
+            position: relative;
+            left: 41%;
+            top: 5px;
+            color: #fff;
+            font-weight: 600;
+            font-size: 1.3em;
+        }
+        .active {
+            background-color: #ff999a;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="head"><img src="/data/upload/image/poll/dyp.png" alt=""></div>
+    <div class="row">
+        <div class="frist">
+            <div class="lie kongbai"></div>
+            <div class="lie ph">编号</div>
+            <div class="lie ">姓名</div>
+            <div class="lie ps">票数</div>
+            <div class="lie mc">名次</div>
+        </div>
+        <div class="list">
+     
+        </div>
+        <br>
+        <br>
+        <br>
+
+        <div class="footer">
+            <div class="text">投票</div>
+        </div>
+    </div>
+</body>
+<script>
+    var $ = require('/fishstrap/core/global.js');
+    var clientId = $.location.getQueryArgv('a');
+    var poll = {};
+    var pollId = '';
+    //获取目前多少人
+    function getPoll(next) {
+        $.post('/poll/getPoll', {}, function (data) {
+            data = $.JSON.parse(data);
+            if (data.code != 0) {
+                alert(data.msg);
+                return;
+            }
+            poll = data.data;
+            console.info(data);
+            next();
+        });
+    }
+
+    //渲染页面
+    function go() {
+        var html = '';
+        $.each(poll, function (index, val) {
+            html +=
+                "<div class='item' pollId='" + val['pollId'] + "'>\
+                <div class='hang tx'><img src='" + val['headImgUrl'] + "'></div>\
+                <div class='hang ph'>" + val['pollId'] + "</div>\
+                <div class='hang xm'>" + val['nickName'] + "</div>\
+                <div class='hang ps'>" + val['num'] + "</div>\
+                <div class='hang mc'>" + (index + 1) + "</div>\
+            </div>";
+
+        });
+        $('.list').append(html);
+
+
+        //投票
+        $('.list .item').click(function () {
+
+            var index_num = $('.list .item').index($(this));
+
+            var active = $('.list .item').eq(index_num);
+            $('.list .item').removeClass('active');
+            active.addClass('active');
+
+            pollId = active.attr('pollId');
+
+
+        });
+    }
+
+
+
+
+    //投票
+    $('.text').click(function () {
+        if (isNaN(pollId)) {
+            alert('请选择一个人投票');
+            return;
+        }
+        console.log('client',clientId);
+        $.post('/poll/vote', {
+            clientId: clientId,
+            pollId: pollId
+        }, function (data) {
+            data = $.JSON.parse(data);
+            if (data.code != 0) {
+                alert(data.msg);
+                return;
+            }
+            alert('投票成功');
+            window.location.reload();
+        });
+    });
+
+    getPoll(go);
+</script>
+
+</html>

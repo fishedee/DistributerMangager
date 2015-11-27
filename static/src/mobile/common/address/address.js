@@ -48,7 +48,7 @@ function getAllCity(province){
 	return provinceInfo[1].split("|");
 }
 function getAllPayment(){
-	return ['微信支付','货到付款'];
+	return ['微信支付'];
 }
 var $ = require('../core/core.js');
 var SelectList = require('../selectlist/selectlist.js');

@@ -97,11 +97,10 @@ class CommodityAo extends CI_Model
         return $originCommodity;
     }
 
-    public function search($userId,$dataWhere, $dataLimit){
+    public function search($userId,$dataWhere, $dataLimit,$rank=''){
         $this->userAppAo->checkByUserId($userId);
-        
         $dataWhere['userId'] = $userId;
-        $data = $this->commodityDb->search($dataWhere, $dataLimit);
+        $data = $this->commodityDb->search($dataWhere, $dataLimit,$rank);
 
         foreach($data['data'] as $key=>$value)
             $data['data'][$key] = $this->findOriginCommodity($value);
@@ -164,13 +163,14 @@ class CommodityAo extends CI_Model
         return $map;
     }
 
-    public function getOnStoreByClassify($userId,$shopCommodityClassifyId,$type=''){
+    public function getOnStoreByClassify($userId,$shopCommodityClassifyId,$rank=''){
+        // $rank = 'priceDown';
         return $this->search($userId,array(
             'shopCommodityClassifyId'=>$shopCommodityClassifyId,
             'state'=>$this->commodityStateEnum->ON_STORAGE,
-            'type' => $type,
+            'rank' => $rank,
             ),
-            array()
+            array(),$rank
         )['data'];
         return $data;
     }
