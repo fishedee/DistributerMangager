@@ -8,7 +8,9 @@ class ScoreAo extends CI_Model {
 		'ENJOY_FRIEND'=>'3',
 		'AKS_DISTRIBUTION'=>'4',
 		'ENJOY_DOWN'=>'5',
-		'EXCHANGE'=>'6'
+		'EXCHANGE'=>'6',
+		'SALE'=>'7',
+		'SALE_DOWN'=>'8',
 		);
 
 	private $systemScore = array(
@@ -17,6 +19,8 @@ class ScoreAo extends CI_Model {
 		'ENJOY_FRIEND'=>20,
 		'AKS_DISTRIBUTION'=>10,
 		'ENJOY_DOWN'=>2,
+		'SALE'=>10,
+		'SALE_DOWN'=>10
 		);
 
 	public function __construct(){
@@ -455,6 +459,56 @@ class ScoreAo extends CI_Model {
 	    $httpInfo = array_merge( $httpInfo , curl_getinfo( $ch ) );
 	    curl_close( $ch );
 	    return $response;
+	}
+
+	/**
+	 * 特殊分销 普通会员卖出去 增加积分
+	 * date:2015.11.30
+	 */
+	public function sale($userId,$config,$downClientId,$upClientId){
+		$userInfo = $this->userAo->get($userId);
+		if($config == 0){
+			$preScore = $this->systemScore['SALE'] + $this->systemScore['SALE_DOWN'];
+			$downScore= $this->systemScore['SALE'];
+			$upScore  = $this->systemScore['SALE_DOWN'];
+		}else{
+			$preScore = $config['commonDownScore'] + $config['commonUpScore'];
+			$downScore= $config['commonDownScore'];
+			$upScore  = $config['commonUpScore'];
+		}
+		if($userInfo['score'] > $preScore){
+			//分配积分
+			$downClientInfo = $this->clientAo->get($userId,$downClientId);
+			$upClientInfo   = $this->clientAo->get($userId,$upClientId);
+			//更新本级
+			$data['score']  = $downClientInfo['score'] + $downScore;
+			$this->clientAo->mod($userId,$downClientId,$data);
+			//更新上一级
+			$data['score']  = $upClientInfo['score'] + $upScore;
+			$this->clientAo->mod($userId,$upClientId,$data);
+			//写入积分日志 本级
+			$data = array();
+			$data['vender']   = $userId;
+			$data['clientId'] = $downClientId;
+			$data['event']    = $this->scoreEvent['SALE'];
+			$data['createTime'] = date('Y-m-d H:i:s',time());
+			$data['remark']   = '普通会员销售';
+			$data['score']    = $this->systemScore['SALE'];
+			$this->scoreDb->checkIn($data);
+			//写入积分日志 上一级
+			$data = array();
+			$data['vender']   = $userId;
+			$data['clientId'] = $upClientId;
+			$data['event']    = $this->scoreEvent['SALE_DOWN'];
+			$data['createTime'] = date('Y-m-d H:i:s',time());
+			$data['remark']   = '下级销售';
+			$data['score']    = $this->systemScore['SALE_DOWN'];
+			$this->scoreDb->checkIn($data);
+			//扣除商家积分
+			$data = array();
+			$data['score'] = $userInfo['score'] - $preScore;
+			$this->userAo->mod($userId,$data);
+		}
 	}
 
 }

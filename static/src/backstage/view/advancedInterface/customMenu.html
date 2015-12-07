@@ -2,7 +2,7 @@
 <div class="alert alert-danger" role="alert">
 1、自定义菜单最多包括3个一级菜单，每个一级菜单最多包含5个二级菜单。</br>
 2、一级菜单最多4个汉字，二级菜单最多7个汉字，多出来的部分将会以“...”代替。</br>
-3、创建自定义菜单后，由于微信客户端缓存，需要24小时微信客户端才会展现出来。测试时可以尝试取消关注公众账号后再次关注，则可以看到创建后的效果。
+3、创建自定义菜单后，由于微信客户端缓存，需要24小时微信客户端才会展现出来。测试时可以尝试取消关注公众账号后再次关注，则可以看到创建后的效果。</br>
 4、key值为选填项，若key为空，则默认采用view跳转网页方式;若有key值，则采用CLICK点击相应方式。
 </div>
 <div id="container">
@@ -13,6 +13,7 @@
 		var input = require('/fishstrap/ui/input.js');
 		var subPage = require('/fishstrap/page/subPage.js');
 		var Menu = {};
+		var userId = '';
 		function get(next){
 			$.get('/wxadvancedinterface/getMenu',{},function(data){
 				data = $.JSON.parse(data);
@@ -21,6 +22,7 @@
 					return;
 				}
 				Menu = data.data;
+				userId = data.data.userId;
 				next();
 			});
 		}
@@ -214,6 +216,9 @@
 				],
 				value:Menu,
 				submit:function(data){
+					$.extend(data, {userId:userId});
+					console.log('data',data);
+					
 						$.post('/wxadvancedinterface/setMenu',data,function(data){
 							data = $.JSON.parse(data);
 							if( data.code != 0 ){

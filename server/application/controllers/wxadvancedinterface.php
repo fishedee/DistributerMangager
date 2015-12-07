@@ -25,8 +25,11 @@ class Wxadvancedinterface extends CI_Controller {
 	
 		//执行业务逻辑
 		$this->load->model('weixin/wxMenuAo','wxMenuAo');
-		return  $data=$this->wxMenuAo->getSetting($userId);
-		
+		$data=$this->wxMenuAo->getSetting($userId);
+
+		$data['userId'] = $userId;
+
+		return $data;
 		//print_r($data);die();
 	}
 	
@@ -35,6 +38,8 @@ class Wxadvancedinterface extends CI_Controller {
 	 * 设置自定义菜单
 	 */
 	public function setMenu(){
+
+
 		//检查输入参数
 		if (!empty($_POST['name1'])){$data[0]['name']=$this->input->post('name1');}
 		if (!empty($_POST['url1'])){$data[0]['url']=$this->input->post('url1');}
@@ -69,6 +74,11 @@ class Wxadvancedinterface extends CI_Controller {
 		//检查权限
 		$userId = $this->loginAo->checkMustLogin();
 		$userId =$userId['userId'];
+
+		if ($userId != $_POST['userId'])
+			throw new CI_MyException(1,"用户ID出错，请重新登录再提交数据，谢谢！");
+
+
 		$userApp = $this->userAppAo->get($userId);
 		$this->userAppAo->checkAppIdAppKey($userApp);
 		
