@@ -315,4 +315,49 @@ class DistributionDb extends CI_Model
         $this->db->where('scort',$scort);
         return $this->db->get($this->tableName)->num_rows();
     }
+
+    /**
+     * 查询会员
+     * date:2015.11.27
+     */
+    public function searchMember($where,$limit){
+        $this->load->model('distribution/distributionStateEnum','distributionStateEnum');
+        foreach ($where as $key => $value) {
+            $this->db->where($key,$value);
+        }
+        $this->db->where('state',$this->distributionStateEnum->ON_ACCEPT);
+        $count = $this->db->get($this->tableName)->num_rows();
+        foreach ($where as $key => $value) {
+            $this->db->where($key,$value);
+        }
+        $this->db->where('state',$this->distributionStateEnum->ON_ACCEPT);
+        if(isset($limit['pageIndex']) && isset($limit['pageSize']))
+            $this->db->limit($limit['pageSize'], $limit['pageIndex']);
+        $query = $this->db->get($this->tableName)->result_array();
+        return array(
+            'count'=>$count,
+            'data' =>$query
+            );
+    }
+
+    /**
+     * 获取用户分成关系
+     * date:2015.11.30
+     */
+    public function getDistributionUser($vender,$downUserId){
+        $this->db->where('vender',$vender);
+        $this->db->where('downUserId',$downUserId);
+        return $this->db->get($this->tableName)->result_array();
+    }
+
+    /**
+     * 获取分成id
+     * date:2015.12.08
+     */
+    public function getDistributionId($vender,$downUserId){
+        $this->db->where('vender',$vender);
+        $this->db->where('downUserId',$downUserId);
+        $this->db->select('distributionId');
+        return $this->db->get($this->tableName)->row_array();
+    }
 }

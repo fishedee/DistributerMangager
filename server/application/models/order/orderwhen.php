@@ -7,6 +7,14 @@ class OrderWhen extends CI_Model
 		parent::__construct();
 		$this->load->model('order/orderDb','orderDb');
 		$this->load->model('order/orderStateEnum','orderStateEnum');
+		$this->load->model('distribution/distributionOrderAo','distributionOrderAo');
+		$this->load->model('distribution/distributionAo','distributionAo');
+		$this->load->model('user/userAo','userAo');
+		$this->load->model('distribution/distributionOrderDb','distributionOrderDb');
+		$this->load->model('client/clientAo');
+		$this->load->model('distribution/distributionConfigAo','distributionConfigAo');
+		$this->load->model('distribution/distributionConfigEnum','distributionConfigEnum');
+		$this->load->model('distribution/distributionOrderStateEnum', 'distributionOrderStateEnum');
 	}
 
 	public function whenOrderPay($shopOrderId){
@@ -20,41 +28,79 @@ class OrderWhen extends CI_Model
 			array('state'=>$this->orderStateEnum->NO_SEND)
 		);
 
-		//触发分成
-		$this->load->model('distribution/distributionOrderAo','distributionOrderAo');
-		$this->load->model('distribution/distributionAo','distributionAo');
-		$this->load->model('user/userAo','userAo');
-		$this->load->model('distribution/distributionOrderDb','distributionOrderDb');
-		$this->load->model('client/clientAo');
-		$distributionOrder = $this->distributionOrderAo->getDistributionOrder($shopOrderId);
-		foreach ($distributionOrder as $key => $value) {
-			$info = $this->distributionAo->get($value['vender'],$value['distributionId']);
-			$distributionOrderId = $value['distributionOrderId'];
-			$data = array();
-			$data['state'] = 1;
-			if($info['scort'] == 1 || $value['downUserId'] == $shopOrder['entranceUserId']){
-				$data['price'] = intval($shopOrder['price'] * 0.01 * $info['distributionPercent'] * 0.01);
-			}else{
-				$data['price'] = intval($shopOrder['price'] * 0.01 * ($info['distributionPercent']/2) * 0.01);
+		//检测分销模式
+		$userId = $shopOrder['userId'];
+		$entranceUserId = $shopOrder['entranceUserId'];
+		$config = $this->distributionConfigAo->getConfig($userId);
+		if($config == 0 || $config['distribution'] == $this->distributionConfigEnum->COMMON){
+			//普通分销模式 触发分成
+			$distributionOrder = $this->distributionOrderAo->getDistributionOrder($shopOrderId);
+			foreach ($distributionOrder as $key => $value) {
+				$info = $this->distributionAo->get($value['vender'],$value['distributionId']);
+				$distributionOrderId = $value['distributionOrderId'];
+				$data = array();
+				$data['state'] = $this->distributionOrderStateEnum->IN_PAY;
+				// $data['state'] = 1;
+				// if($info['scort'] == 1 || $value['downUserId'] == $shopOrder['entranceUserId']){
+				// 	$data['price'] = intval($shopOrder['price'] * 0.01 * $info['distributionPercent'] * 0.0001);
+				// }else{
+				// 	$data['price'] = intval($shopOrder['price'] * 0.01 * ($info['distributionPercent']/2) * 0.0001);
+				// }
+				$result = $this->distributionOrderAo->mods($distributionOrderId,$data);
+				//同步用户信息
+				$downUserId   = $info['downUserId'];
+				$downUserInfo = $this->userAo->get($downUserId);
+				$clientId     = $downUserInfo['clientId'];
+				$infos = $this->distributionOrderDb->getDistributionPrice($value['vender'],$downUserId);
+		        $sales= 0;
+		        $fall = 0;
+		        foreach ($infos as $k => $v) {
+		            $shopOrderInfo = $this->orderDb->get($v['shopOrderId']);
+		            $sales += $shopOrderInfo['price'];
+		            $fall  += $v['price'];
+		        }
+		        $data = array();
+		        $data['sales'] = $sales;
+		        $data['fall']  = $fall;
+		        $this->clientAo->mod($value['vender'],$clientId,$data);
 			}
-			$result = $this->distributionOrderAo->mods($distributionOrderId,$data);
-
-			//同步用户信息
-			$downUserId   = $info['downUserId'];
-			$downUserInfo = $this->userAo->get($downUserId);
-			$clientId     = $downUserInfo['clientId'];
-			$infos = $this->distributionOrderDb->getDistributionPrice($value['vender'],$downUserId);
-	        $sales= 0;
-	        $fall = 0;
-	        foreach ($infos as $k => $v) {
-	            $shopOrderInfo = $this->orderDb->get($v['shopOrderId']);
-	            $sales += $shopOrderInfo['price'];
-	            $fall  += $v['price'];
-	        }
-	        $data = array();
-	        $data['sales'] = $sales;
-	        $data['fall']  = $fall;
-	        $this->clientAo->mod($value['vender'],$clientId,$data);
+		}else{
+			//特殊分销 date:2015.11.30
+			$distributionUser = $this->distributionAo->getDistributionUser($userId,$entranceUserId);
+			if($distributionUser['member'] == 1){
+				//高级会员
+				$distributionOrder = $this->distributionOrderAo->getDistributionOrder($shopOrderId);
+				foreach ($distributionOrder as $key => $value) {
+					$info = $this->distributionAo->get($value['vender'],$value['distributionId']);
+					$distributionOrderId = $value['distributionOrderId'];
+					$data = array();
+					$data['state'] = $this->distributionOrderStateEnum->IN_PAY;
+					// $data['state'] = 1;
+					// $data['price'] = intval($shopOrder['price'] * 0.01 * $info['distributionPercent'] * 0.01);
+					// $data['price'] = $shopOrder['price'] * 0.01 * $info['distributionPercent'] * 0.0001 * 100;
+					$result = $this->distributionOrderAo->mods($distributionOrderId,$data);
+					//同步用户信息
+					$downUserId   = $info['downUserId'];
+					$downUserInfo = $this->userAo->get($downUserId);
+					$clientId     = $downUserInfo['clientId'];
+					$infos = $this->distributionOrderDb->getDistributionPrice($value['vender'],$downUserId);
+			        $sales= 0;
+			        $fall = 0;
+			        foreach ($infos as $k => $v) {
+			            $shopOrderInfo = $this->orderDb->get($v['shopOrderId']);
+			            $sales += $shopOrderInfo['price'];
+			            $fall  += $v['price'];
+			        }
+			        $data = array();
+			        $data['sales'] = $sales;
+			        $data['fall']  = $fall;
+			        $this->clientAo->mod($value['vender'],$clientId,$data);
+				}
+			}else{
+				//普通会员 获取需分积分的用户
+				$scoreLink = $this->distributionAo->getScoreLinks($userId,$entranceUserId);
+				$this->scoreAo->saleScore($userId,$scoreLink);
+			}
 		}
 
 		

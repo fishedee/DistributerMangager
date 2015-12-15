@@ -262,6 +262,9 @@ class Deal extends CI_Controller {
 		//检查权限
 		$client = $this->clientLoginAo->checkMustLogin($userId);
 		$loginClientId = $client['clientId'];
+
+		$selectJiFen = $this->input->post('selectJiFen');
+
 		if($clientId == 0 )
 			$clientId = $loginClientId;
 	    // var_dump($shopTroller);die;
@@ -270,7 +273,8 @@ class Deal extends CI_Controller {
 			$entranceUserId,
 			$clientId,
 			$loginClientId,
-			$shopTroller
+			$shopTroller,
+			$selectJiFen
 		);
 	}
 

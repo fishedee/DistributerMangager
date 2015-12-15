@@ -25,11 +25,8 @@ class Wxadvancedinterface extends CI_Controller {
 	
 		//执行业务逻辑
 		$this->load->model('weixin/wxMenuAo','wxMenuAo');
-		$data=$this->wxMenuAo->getSetting($userId);
-
-		$data['userId'] = $userId;
-
-		return $data;
+		return  $data=$this->wxMenuAo->getSetting($userId);
+		
 		//print_r($data);die();
 	}
 	
@@ -38,18 +35,25 @@ class Wxadvancedinterface extends CI_Controller {
 	 * 设置自定义菜单
 	 */
 	public function setMenu(){
-
-
 		//检查输入参数
 		if (!empty($_POST['name1'])){$data[0]['name']=$this->input->post('name1');}
 		if (!empty($_POST['url1'])){$data[0]['url']=$this->input->post('url1');}
 		if (!empty($_POST['key1'])){$data[0]['key']=$this->input->post('key1');}
+		if (!empty($_POST['type1'])){$data[0]['type']=$this->input->post('type1');}
+
+
 		if (!empty($_POST['name2'])){$data[1]['name']=$this->input->post('name2');}
 		if (!empty($_POST['url2'])){$data[1]['url']=$this->input->post('url2');}
 		if (!empty($_POST['key2'])){$data[1]['key']=$this->input->post('key2');}
+		if (!empty($_POST['type2'])){$data[1]['type']=$this->input->post('type2');}
+
+
 		if (!empty($_POST['name3'])){$data[2]['name']=$this->input->post('name3');}
 		if (!empty($_POST['url3'])){$data[2]['url']=$this->input->post('url3');}
 		if (!empty($_POST['key3'])){$data[2]['key']=$this->input->post('key3');}
+		if (!empty($_POST['type3'])){$data[2]['type']=$this->input->post('type3');}
+
+
 		if (!empty($_POST['sub_button1'])){$data[0]['sub_button'] = $this->input->post('sub_button1');}
  		if (!empty($_POST['sub_button2'])){$data[1]['sub_button'] = $this->input->post('sub_button2');}
  		if (!empty($_POST['sub_button3'])){$data[2]['sub_button'] = $this->input->post('sub_button3');}
@@ -74,11 +78,6 @@ class Wxadvancedinterface extends CI_Controller {
 		//检查权限
 		$userId = $this->loginAo->checkMustLogin();
 		$userId =$userId['userId'];
-
-		if ($userId != $_POST['userId'])
-			throw new CI_MyException(1,"用户ID出错，请重新登录再提交数据，谢谢！");
-
-
 		$userApp = $this->userAppAo->get($userId);
 		$this->userAppAo->checkAppIdAppKey($userApp);
 		

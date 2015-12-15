@@ -8,6 +8,9 @@ class TrollerAo extends CI_Model
         $this->load->model('shop/commodityAo', 'commodityAo');
         $this->load->model('common/commonErrorEnum', 'commonErrorEnum');
         $this->load->model('user/userAppAo','userAppAo');
+        //date:2015.12.03
+        $this->load->model('distribution/distributionConfigAo','distributionConfigAo');
+        $this->load->model('client/clientAo','clientAo');
     }
 
     private function search($dataWhere,$dataLimit){
@@ -123,16 +126,16 @@ class TrollerAo extends CI_Model
         if($commodity['title'] != $shopTroller['title']
             || $commodity['icon'] != $shopTroller['icon'] 
             || $commodity['introduction'] != $shopTroller['introduction'] )
-            throw new CI_MyException (1,$this->commonErrorEnum->SHOP_CART_CHECK_ERROR,'商品信息发生变更');
+            throw new CI_MyException (1,'商品信息发生变更',$this->commonErrorEnum->SHOP_CART_CHECK_ERROR);
 
         if($commodity['price'] != $shopTroller['price'] )
-            throw new CI_MyException (1,$this->commonErrorEnum->SHOP_CART_CHECK_ERROR,'商品价格发生变更');
+            throw new CI_MyException (1,'商品价格发生变更,请重新选择',$this->commonErrorEnum->SHOP_CART_CHECK_ERROR);
 
         if($commodity['oldPrice'] != $shopTroller['oldPrice'] )
-            throw new CI_MyException (1,$this->commonErrorEnum->SHOP_CART_CHECK_ERROR,'商品原价格发生变更');
+            throw new CI_MyException (1,'商品原价格发生变更',$this->commonErrorEnum->SHOP_CART_CHECK_ERROR);
 
         if($commodity['inventory'] < $shopTroller['quantity'] )
-            throw new CI_MyException (1,$this->commonErrorEnum->SHOP_CART_CHECK_ERROR,'商品库存不足');
+            throw new CI_MyException (1,'商品库存不足',$this->commonErrorEnum->SHOP_CART_CHECK_ERROR);
 
         $this->commodityAo->check($shopTroller);
     }
@@ -214,6 +217,39 @@ class TrollerAo extends CI_Model
         $this->check($shopTroller);
         $data['quantity'] = $quantity;
         return $this->trollerDb->mod($shopTrollerId,$data);
+    }
+
+    /**
+     * @计算积分
+     * date:2015.12.03
+     */
+    public function calScore($userId,$clientId){
+        $shopTroller = $this->getAll($clientId);
+        $config = $this->distributionConfigAo->getConfig($userId);
+        if($config != 0 && $config['scorePrice']){
+            $clientInfo = $this->clientAo->get($userId,$clientId);
+            $score = $clientInfo['score'];           //用户目前积分
+            $scorePrice = $config['scorePrice'];     //抵消1元所需积分
+            $scorePercent = $config['scorePercent']; //积分抵消百分比
+            $sum = 0;
+            foreach ($shopTroller as $key => $value) {
+                $sum += $value['priceShow'] * $value['quantity'];
+            }
+            $maxPrice = floor($sum * $scorePercent * 0.01); //系统允许最大的抵消金额
+            $maxScore= floor($maxPrice * $scorePrice);
+            if($score >= $maxScore){
+                $data['remark'] = '您可以使用'.$maxScore.'积分抵消'.$maxPrice.'元';
+            }else{
+                $needScore = $score;
+                $disPrice  = floor($needScore/$scorePrice);
+                $data['remark'] = '您可以使用'.$needScore.'积分抵消'.$disPrice.'元';
+            }
+            $data['score'] = 1;
+        }else{
+            $data['remark']= '商家不支持积分兑换';
+            $data['score'] = 0;
+        }
+        return $data;
     }
 
 }

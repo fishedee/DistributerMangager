@@ -18,9 +18,12 @@ class OrderAo extends CI_Model
 		$this->load->model('address/addressPayMentEnum','addressPayMentEnum');
 		$this->load->model('common/commonErrorEnum', 'commonErrorEnum');
 		$this->load->model('distribution/distributionOrderWhen', 'distributionOrderWhen');
+		$this->load->model('distribution/distributionConfigAo','distributionConfigAo');
+		$this->load->model('distribution/distributionConfigEnum','distributionConfigEnum');
+		$this->load->model('client/scoreAo','scoreAo');
 	}
 
-	private function addMyOrder($userId,$clientId,$shopCommodity,$address,$entranceUserId){
+	private function addMyOrder($userId,$clientId,$shopCommodity,$address,$entranceUserId,$selectJiFen){
 		//计算出订单基本信息
 		$orderPrice = array_reduce($shopCommodity,function($sum,$single){
 			return $sum + $single['price']*$single['quantity'];
@@ -35,6 +38,30 @@ class OrderAo extends CI_Model
 		else
 			$orderState = $this->orderStateEnum->NO_PAY;
 
+		$order_price = 0; //抵消的订单金额
+		$orderScore  = 0; //使用的积分
+		if($selectJiFen == 'true'){
+			//计算积分
+			$config = $this->distributionConfigAo->getConfig($userId);
+			if($config != 0 && $config['scorePrice'] && $config['scoreStart']){
+				$clientInfo = $this->clientAo->get($userId,$clientId);
+	            $score = $clientInfo['score'];           //用户目前积分
+	            $scorePrice = $config['scorePrice'];     //抵消1元所需积分
+	            $scorePercent = $config['scorePercent']; //积分抵消百分比
+	            $maxPrice = floor($orderPrice * $scorePercent * 0.01); //系统允许最大的抵消金额
+	            $maxScore= floor($maxPrice/100 * $scorePrice);
+	            if($score >= $maxScore){
+	            	$order_price = floor($maxPrice/100) * 100;
+	            	$orderScore  = $maxScore;
+	            }else{
+	            	$needScore = $score;
+	                $disPrice  = floor($needScore/$scorePrice);
+	            	$order_price = $disPrice * 100;
+	            	$orderScore  = $needScore;
+	            }
+			}
+		}
+
 		//添加订单基本信息
 		$shopOrderId = date('YmdHis').$clientId.rand(10000,99999);
 		$orderInfo = array(
@@ -43,7 +70,8 @@ class OrderAo extends CI_Model
 			'clientId'=>$clientId,
 			'entranceUserId'=>$entranceUserId,
 			'image'=>$shopCommodity[0]['icon'],
-			'price'=>$orderPrice,
+			'price'=>$orderPrice-$order_price,
+			'orderScore'=>$orderScore,
 			'num'=>$orderNum,
 			'name'=>$address['name'],
 			'description'=>$orderDesc,
@@ -77,16 +105,32 @@ class OrderAo extends CI_Model
 			'payment'=>$address['payment'],
 		));
 
+		if($orderScore){
+			//扣除积分
+			$data = array();
+			$data['score'] = $clientInfo['score'] - $orderScore;
+			$this->clientAo->mod($userId,$clientId,$data);
+		}
+
+		//写入积分日志
+		$this->scoreAo->buy($userId,$clientId,$orderScore);
+
     	return $orderInfo;
 	}
 
 	private function addWxOrder($userId,$clientId,$orderInfo){
+		if($orderInfo['orderScore'] && $orderInfo['orderPrice']){
+			$price = $orderInfo['orderPrice'];
+		}else{
+			$price = $orderInfo['price'];
+		}
 		$wxOrderInfo = $this->orderPayAo->wxPay(
 			$userId,
 			$clientId,
 			$orderInfo['shopOrderId'],
 			$orderInfo['description'],
-			$orderInfo['price']
+			// $orderInfo['price']
+			$price
 		);
 
 		$this->orderDb->mod(
@@ -213,27 +257,25 @@ class OrderAo extends CI_Model
 	}
 
 	//新商城模板 不需要传递地址信息
-	public function add2($entranceUserId,$clientId,$loginClientId,$shopTrollerId){
+	public function add2($entranceUserId,$clientId,$loginClientId,$shopTrollerId,$selectJiFen){
 		if(!$shopTrollerId){
 			throw new CI_MyException(1,'无效购物车信息');
 		}
 		// var_dump($shopTrollerId);die;
 		//获取购物车内的商品信息
 		$shopTroller = $this->trollerAo->getCartInfo($clientId,$shopTrollerId);
-		// var_dump($shopTroller);die;
+
 		//校验购物车内的商品信息
 		foreach($shopTroller as $singleShopTroller){
 			$this->trollerAo->check($singleShopTroller);
 		}
-
+		// var_dump(1);die;
 		$address = $this->addressAo->get($clientId);
-
 		//校验地址信息
 		$this->addressAo->check($address);
 
 		//保存为默认收货地址
 		$this->addressAo->mod($clientId,$address);
-		
 		//校验商品信息
 		if( count($shopTroller) == 0 )
 			throw new CI_MyException(1,'订单内的商品不能为空');
@@ -244,14 +286,13 @@ class OrderAo extends CI_Model
 		foreach($shopTroller as $singleShopTroller)
 			if($singleShopTroller['userId'] != $userId)
 				throw new CI_MyException (1,$this->commonErrorEnum->SHOP_CART_CHECK_ERROR,'只能购买同一商城内的商品');
-
 		//扣库存
 		foreach($shopTroller as $singleShopTroller ){
 			$this->commodityAo->reduceStock($singleShopTroller['userId'],$singleShopTroller['shopCommodityId'],$singleShopTroller['quantity']);
 		}
 
 		//下单
-		$orderInfo = $this->addMyOrder($userId,$clientId,$shopTroller,$address,$entranceUserId);
+		$orderInfo = $this->addMyOrder($userId,$clientId,$shopTroller,$address,$entranceUserId,$selectJiFen);
 		// var_dump($orderInfo);die;
 
 		//微信统一下单

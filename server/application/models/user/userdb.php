@@ -164,7 +164,7 @@ class UserDb extends CI_Model
 	//我的二维码
 	public function myQrCode($clientId){
 		$condition['clientId'] = $clientId;
-		$result = $this->db->select('userId,qrcode')->from($this->tableName)->where($condition)->get()->row_array();
+		$result = $this->db->select('userId,qrcode,qrcodeCreateTime,qrcodeLimit,qrcodeLimitTime')->from($this->tableName)->where($condition)->get()->row_array();
 		return $result;
 	}
 

@@ -212,11 +212,16 @@
 					}
 					data = data.data;
 					hook = data;
-					alert(hook);
-					console.info(hook);
+					// alert(hook);
+					// console.info(hook);
 					if(hook){
 						$.each(hook,function(index,val) {
-							menu['系统管理']['插件管理'].push({name:val['hookName'],url:val['hookUrl']});
+							menu[val['parent']][val['hookName']] = {};
+							hookOption = $.JSON.parse(val['hookOption']);
+							$.each(hookOption,function(i,v) {
+								menu[val['parent']][val['hookName']][i] = {name:v['name'],url:v['url']};
+								// menu['系统管理'][val['hookName']].push({name:'插件管理2',url:'xxx.com'});
+							});
 						});
 					}
 					next();
@@ -248,7 +253,7 @@
 			});
 		}
 		setMenu(function(){
-			go();
+			getHook(go);
 		});
 	</script>
  </body>

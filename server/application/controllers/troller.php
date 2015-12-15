@@ -125,4 +125,20 @@ class Troller extends CI_Controller
             return $this->trollerAo->set2($clientId,$shopTrollerId,$quantity);
         }
     }
+
+    /**
+     * @view json
+     * 计算积分
+     * date:2015.12.03
+     */
+    public function calScore(){
+        $data = $this->argv->checkPost(array(
+            array('userId', 'require'),
+        ));
+        $userId = $data['userId'];
+        //检查权限
+        $client = $this->clientLoginAo->checkMustLogin($userId);
+        $clientId = $client['clientId'];
+        return $this->trollerAo->calScore($userId,$clientId);
+    }
 }

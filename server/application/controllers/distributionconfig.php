@@ -7,6 +7,32 @@ class DistributionConfig extends CI_Controller {
 		$this->load->model('user/loginAo','loginAo');
 		$this->load->model('user/userPermissionEnum','userPermissionEnum');
 		$this->load->model('distribution/distributionConfigAo','distributionConfigAo');
+        $this->load->model('distribution/distributionConfigEnum','distributionConfigEnum');
+        $this->load->library('argv','argv');
+    }
+
+    /**
+     * @view json
+     * 获取分销配置状态
+     */
+
+    public function getConfigState(){
+        return $this->distributionConfigEnum->names;
+    }
+
+    /**
+     * @view json
+     * 检测分销配置
+     */
+    public function checkConfig(){
+        if($this->input->is_ajax_request()){
+            //检查输入参数
+            $data = $this->argv->checkGet(array(
+                array('userId','require'),
+            ));
+            $userId = $data['userId'];
+            return $this->distributionConfigAo->getConfig($userId);
+        }
     }
 
     /**

@@ -2,7 +2,7 @@
 <div class="alert alert-danger" role="alert">
 1、自定义菜单最多包括3个一级菜单，每个一级菜单最多包含5个二级菜单。</br>
 2、一级菜单最多4个汉字，二级菜单最多7个汉字，多出来的部分将会以“...”代替。</br>
-3、创建自定义菜单后，由于微信客户端缓存，需要24小时微信客户端才会展现出来。测试时可以尝试取消关注公众账号后再次关注，则可以看到创建后的效果。</br>
+3、创建自定义菜单后，由于微信客户端缓存，需要24小时微信客户端才会展现出来。测试时可以尝试取消关注公众账号后再次关注，则可以看到创建后的效果。
 4、key值为选填项，若key为空，则默认采用view跳转网页方式;若有key值，则采用CLICK点击相应方式。
 </div>
 <div id="container">
@@ -13,7 +13,6 @@
 		var input = require('/fishstrap/ui/input.js');
 		var subPage = require('/fishstrap/page/subPage.js');
 		var Menu = {};
-		var userId = '';
 		function get(next){
 			$.get('/wxadvancedinterface/getMenu',{},function(data){
 				data = $.JSON.parse(data);
@@ -22,7 +21,6 @@
 					return;
 				}
 				Menu = data.data;
-				userId = data.data.userId;
 				next();
 			});
 		}
@@ -32,12 +30,15 @@
 				field:[
 					{id:'name1',type:'text',name:'第一栏主菜单标题'},
 					{id:'url1',type:'text',name:'第一栏主菜单链接(如果该子菜单有内容，该项不用填写)'},
+					{id:'key1',type:'text',name:'key值(选填)'},
+					{id:'type1',type:'enum',name:'事件',map:{'VIEW': '外链事件','CLICK': '点击事件', 'pic_photo_or_album':'拍照或发图事件','pic_sysphoto':'弹出系统拍照发图'}},
 					{id:'sub_button1',type:'table',name:'第一栏子菜单内容',
 						option:{
 							column:[
 								{id:'name',type:'text',name:'子菜单标题'},
 								{id:'url',type:'text',name:'子菜单链接'},
-								{id:'key',type:'text',name:'key值'}
+								{id:'key',type:'text',name:'key值'},
+								{id:'type',type:'enum',name:'事件',map:{'VIEW': '外链事件','CLICK': '点击事件', 'pic_photo_or_album':'拍照或发图事件','pic_sysphoto':'弹出系统拍照发图'}},
 							],
 							operate:[
 							{
@@ -90,15 +91,17 @@
 							}]
 						}
 					},
-					{id:'key1',type:'text',name:'key值(选填)'},
 					{id:'name2',type:'text',name:'第二栏主菜单标题'},
 					{id:'url2',type:'text',name:'第二栏主菜单链接(如果该子菜单有内容，该项不用填写)'},
+					{id:'key2',type:'text',name:'key值(选填)'},
+					{id:'type2',type:'enum',name:'事件',map:{'VIEW': '外链事件','CLICK': '点击事件', 'pic_photo_or_album':'拍照或发图事件','pic_sysphoto':'弹出系统拍照发图'}},
 					{id:'sub_button2',type:'table',name:'第二栏子菜单内容',
 						option:{
 							column:[
 								{id:'name',type:'text',name:'子菜单标题'},
 								{id:'url',type:'text',name:'子菜单链接'},
-								{id:'key',type:'text',name:'key值'}
+								{id:'key',type:'text',name:'key值'},
+								{id:'type',type:'enum',name:'事件',map:{'VIEW': '外链事件','CLICK': '点击事件', 'pic_photo_or_album':'拍照或发图事件','pic_sysphoto':'弹出系统拍照发图'}},
 							],
 							operate:[
 							{
@@ -151,15 +154,17 @@
 							}]
 						}
 					},
-					{id:'key2',type:'text',name:'key值(选填)'},
 					{id:'name3',type:'text',name:'第三栏主菜单标题'},
 					{id:'url3',type:'text',name:'第三栏主菜单链接(如果该子菜单有内容，该项不用填写)'},
+					{id:'key3',type:'text',name:'key值(选填)'},
+					{id:'type3',type:'enum',name:'事件',map:{'VIEW': '外链事件','CLICK': '点击事件', 'pic_photo_or_album':'拍照或发图事件','pic_sysphoto':'弹出系统拍照发图'}},
 					{id:'sub_button3',type:'table',name:'第三栏子菜单内容',
 						option:{
 							column:[
 								{id:'name',type:'text',name:'子菜单标题'},
 								{id:'url',type:'text',name:'子菜单链接'},
-								{id:'key',type:'text',name:'key值'}
+								{id:'key',type:'text',name:'key值'},
+								{id:'type',type:'enum',name:'事件',map:{'VIEW': '外链事件','CLICK': '点击事件', 'pic_photo_or_album':'拍照或发图事件','pic_sysphoto':'弹出系统拍照发图'}},
 							],
 							operate:[
 							{
@@ -212,13 +217,9 @@
 							}]
 						}
 					},
-					{id:'key3',type:'text',name:'key值(选填)'},
 				],
 				value:Menu,
 				submit:function(data){
-					$.extend(data, {userId:userId});
-					console.log('data',data);
-					
 						$.post('/wxadvancedinterface/setMenu',data,function(data){
 							data = $.JSON.parse(data);
 							if( data.code != 0 ){

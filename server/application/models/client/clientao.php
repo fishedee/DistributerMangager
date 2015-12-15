@@ -187,4 +187,40 @@ class ClientAo extends CI_Model {
 		));
 		var_dump($yonghu);die;
 	}
+
+	//自定义菜单记录记录client信息
+	public function menuClientInfo($userId,$openId){
+		$data['openId'] = $openId;
+        $data['userId'] = $userId;
+        $data['type']   = 2;
+        $clientId = $this->addOnce($data);
+        //获取用户信息
+        $userInfo   = $this->userAppAo->getTokenAndTicket($userId);
+		$access_token = $userInfo['appAccessToken'];
+		$url = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=".$access_token."&openid=".$openId."&lang=zh_CN";
+    	$yonghu = $this->http->ajax(array(
+			'url'=>$url,
+			'type'=>'post',
+			'data'=>array(),
+			'dataType'=>'plain',
+			'responseType'=>'json'
+		));
+		if(!isset($yonghu['body']['errcode'])){
+			$yonghu = $yonghu['body'];
+	    	if($yonghu['subscribe']){
+	    		// $nickname 	= $yonghu['nickname'];
+	    		$nickname   = base64_encode($yonghu['nickname']);
+	    		$headimgurl = $yonghu['headimgurl'];
+	    	}else{
+	    		$nickname 	= '用户没关注';
+	    		$headimgurl = 'null';
+	    	}
+	    	$data = array();
+	    	$data['nickName'] = $nickname;
+	    	$data['headImgUrl'] = $headimgurl;
+	    	$data['subscribe']  = $yonghu['subscribe'];
+	    	$this->mod($userId,$clientId,$data);
+		}
+		return $clientId;
+	}
 }

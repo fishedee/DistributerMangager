@@ -11,6 +11,7 @@ class ScoreAo extends CI_Model {
 		'EXCHANGE'=>'6',
 		'SALE'=>'7',
 		'SALE_DOWN'=>'8',
+		'BUY'=>9,
 		);
 
 	private $systemScore = array(
@@ -32,6 +33,7 @@ class ScoreAo extends CI_Model {
 		$this->load->model('distribution/distributionAo','distributionAo');
 		$this->load->model('client/remindDb','remindDb');
 		$this->load->model('distribution/distributionConfigAo','distributionConfigAo');
+		$this->load->model('distribution/distributionConfigEnum','distributionConfigEnum');
 	}
 
 	//更改积分配置
@@ -509,6 +511,22 @@ class ScoreAo extends CI_Model {
 			$data['score'] = $userInfo['score'] - $preScore;
 			$this->userAo->mod($userId,$data);
 		}
+	}
+
+	/**
+	 * @购买抵消积分
+	 * date:2015.12.08
+	 */
+	public function buy($userId,$clientId,$score){
+		$data = array();
+		$data['vender']   = $userId;
+		$data['clientId'] = $clientId;
+		$data['event']    = $this->scoreEvent['BUY'];
+		$data['createTime'] = date('Y-m-d H:i:s',time());
+		$data['remark']   = '积分抵消金额';
+		$data['score']    = $score;
+		$data['dis']      = 0;
+		$this->scoreDb->checkIn($data);
 	}
 
 }

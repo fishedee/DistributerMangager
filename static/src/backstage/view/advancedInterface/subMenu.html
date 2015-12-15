@@ -30,7 +30,8 @@
 			field:[
 				{id:'name',type:'text',name:'标题'},
 				{id:'url',type:'text',name:'外连接地址'},
-				{id:'key',type:'text',name:'key值'}
+				{id:'key',type:'text',name:'key值'},
+				{id:'type',type:'enum',name:'事件',map:{'VIEW': '外链事件','CLICK': '点击事件', 'pic_photo_or_album':'拍照或发图事件','pic_sysphoto':'弹出系统拍照发图'}},
 			],
 			value:data,
 			submit:undefined,

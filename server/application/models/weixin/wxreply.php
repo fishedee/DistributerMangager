@@ -89,7 +89,8 @@ class Wxreply extends CI_Model {
         {
             case "subscribe":
                 $this->load->model('client/clientAo','clientAo');
-                $this->clientAo->ref($userId,$postObj->FromUserName);
+                $openId = $postObj->FromUserName;
+                $this->clientAo->menuClientInfo($userId,$openId);
                 //检测是否开通了高级分成功能
                 $this->load->model('user/userPermissionDb','userPermissionDb');
                 $condition['permissionId'] = 5;
@@ -134,6 +135,7 @@ class Wxreply extends CI_Model {
                         // return $this->transmitText($postObj,$openId);
                         // $info   = $this->userAo->myQrCode($userId,$openId);
                         $media_id = $this->userAo->myPoster($userId,$openId);
+                        // return $this->transmitText($postObj,$media_id);
                         $arr['MediaId'] = $media_id;
                         return $this->transmitImage($postObj,$arr);
                         // return $this->transmitNews($postObj,$info,$postObj->EventKey);
@@ -158,8 +160,8 @@ class Wxreply extends CI_Model {
                         // return $this->transmitText($postObj,$info);
                         // return $this->transmitText($postObj,implode($info, ','));
                     }
-                }elseif($postObj->EventKey == 'product' || $postObj->EventKey == 'after'){
-                    return $this->transmitText($postObj,'功能内测，稍后开放！');
+                }elseif($postObj->EventKey == 'product' || $postObj->EventKey == 'after' || $postObj->EventKey == 'gujia'){
+                    return $this->transmitText($postObj,'功能内测，稍后开放！请留言或电话：400 605 1328');
                 }elseif($postObj->EventKey == 'poll'){
                     $this->load->model('poll/pollAo','pollAo');
                     $openId = $postObj->FromUserName;
@@ -189,6 +191,7 @@ class Wxreply extends CI_Model {
                 if($postObj->EventKey == 'distribution'){
                     $this->load->model('distribution/distributionQrCodeAo','distributionQrCodeAo');
                     $openId = $postObj->FromUserName;
+                    $this->clientAo->menuClientInfo($userId,$openId);
                     $content = $this->distributionQrCodeAo->qrAsk2($userId,$openId);
                     return $this->transmitText($postObj,$content);
                     break;
@@ -209,11 +212,23 @@ class Wxreply extends CI_Model {
                     break;
                 }else{
                     $info = $postObj->EventKey;
+                    if(strstr($info, ',')){
+                        $info = explode(',', $info);
+                        $vender = $info[0];
+                        $upUserId = $info[1];
+                        $line   = $info[2];
+                    }else{
+                        $qrcodeConfig = $this->distributionQrCodeAo->getQrcodeConfig($info);
+                        if($qrcodeConfig){
+                            $vender = $qrcodeConfig['vender'];
+                            $upUserId = $qrcodeConfig['downUserId'];
+                            $line = $qrcodeConfig['line'];
+                            // return $this->transmitText($postObj,$upUserId);
+                        }else{
+                            return $this->transmitText($postObj,'分成配置获取失败,请与客服联系');
+                        }
+                    }
                     $openId = $postObj->FromUserName;
-                    $info = explode(',', $info);
-                    $vender = $info[0];
-                    $upUserId = $info[1];
-                    $line   = $info[2];
                     //扫描成为分销商
                     $this->load->model('distribution/distributionAo');
                     $content = $this->distributionAo->qrCodeAsk($openId,$vender,$upUserId,$line);
@@ -320,6 +335,22 @@ class Wxreply extends CI_Model {
     //接收图片消息
     public function receiveImage($object)
     {
+        //搜索userId
+        $weixinNum=$object->ToUserName;
+        // return $this->transmitText($object,$weixinNum);
+        $this->load->model('user/userAppDb','userAppDb');
+        $userId = $this->userAppDb->search(array('weixinNum'=>$weixinNum),array())['data'][0]['userId'];
+        $openId = $object->FromUserName;
+        //记录client信息
+        $this->load->model('client/clientAo','clientAo');
+        $clientId = $this->clientAo->menuClientInfo($userId,$openId);
+        //增加买家秀的记录
+        $this->load->model('user/userShowAo','userShowAo');
+        $img = $object->PicUrl;
+        $mediaId = $object->MediaId;
+        $data['img'] = $img;
+        $data['mediaId'] = $mediaId;
+        $this->userShowAo->add($userId,$clientId,$data);
         $content = array("MediaId"=>$object->MediaId);
         $result = $this->transmitImage($object, $content);
         return $result;

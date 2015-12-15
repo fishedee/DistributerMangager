@@ -74,7 +74,8 @@ class DistributionOrderAo extends CI_Model
         foreach($data['data'] as $key=>$distributionOrder){
             $data['data'][$key] = $this->getOrderDetailInfo($distributionOrder);
             $distribution = $this->distributionAo->get($distributionOrder['vender'],$distributionOrder['distributionId']);
-            $data['data'][$key]['distributionPercent'] = $this->getFixedPrice($distributionOrder['price']/$data['data'][$key]['shopOrderPrice']);
+            // $data['data'][$key]['distributionPercent'] = $this->getFixedPrice($distributionOrder['price']/$data['data'][$key]['shopOrderPrice']);
+            $data['data'][$key]['distributionPercent'] = $this->getFixedPrice(($distributionOrder['price']/100/$data['data'][$key]['shopOrderPrice']*100)).'%';
         }
         // var_dump($data);die;
         return $data;

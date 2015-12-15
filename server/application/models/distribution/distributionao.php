@@ -14,6 +14,9 @@ class DistributionAo extends CI_Model
         $this->load->model('order/orderAo','orderAo');
         $this->load->model('distribution/distributionOrderAo','distributionOrderAo');
         $this->load->model('user/userAppAo','userAppAo');
+        //date:2015.11.27
+        $this->load->model('distribution/distributionConfigAo','distributionConfigAo');
+        $this->load->model('distribution/distributionConfigEnum','distributionConfigEnum');
     }
 
     public function getFixedPrice($price){
@@ -26,6 +29,13 @@ class DistributionAo extends CI_Model
             'http://${1}.'.$_SERVER['HTTP_HOST'].'/'.$distribution['downUserId'].'/item.html',
             $distribution['shopUrl']
         );
+        //date:2015.11.27
+        $userInfo = $this->userAo->get($distribution['downUserId']);
+        if($userInfo['clientId']){
+            $clientInfo = $this->clientAo->get($distribution['vender'],$userInfo['clientId']);
+            $distribution['nickName'] = base64_decode($clientInfo['nickName']);
+            $distribution['headImgUrl'] = $clientInfo['headImgUrl'];
+        }
         $distribution['upUserCompany'] = $this->userAo->get($distribution['upUserId'])['company'];
         $distribution['downUserCompany'] = $this->userAo->get($distribution['downUserId'])['company'];
         $distribution['distributionPercentShow'] = $this->getFixedPrice($distribution['distributionPercent']/100).'%';
@@ -172,13 +182,23 @@ class DistributionAo extends CI_Model
             'phone'=>$userInfo['phone'],
         );
         if($result){
+            //查找分销配置
+            $config = $this->distributionConfigAo->getConfig($upUserId);
+            $percent= 0;
+            if($config == 0 || $config['distribution'] == $this->distributionConfigEnum->COMMON){
+                //普通分销
+                $percent = $config['agentFall'] * 100;
+            }else{
+                //特殊分销
+                $percent = $config['highFall'] * 100;
+            }
             //查找line
             $line = $this->distributionDb->checkLine($upUserId);
             $line = $line[0]["MAX(line)"];
             //厂家
             $data['remark'] = '1级代理商';
             $data['scort']  = 1;
-            $data['distributionPercent'] = 800;
+            $data['distributionPercent'] = $percent;
             if($line){
                 $data['line'] = $line + 1;
             }else{
@@ -424,6 +444,7 @@ class DistributionAo extends CI_Model
      */
     public function qrCodeAsk($openId,$vender,$upUserId,$line){
         $this->load->model('user/userTypeEnum','userTypeEnum');
+        $config = $this->distributionConfigAo->getConfig($vender);
         //先根据openid查询clientId
         $client['userId'] = $vender;
         $client['type']   = 2;
@@ -469,7 +490,7 @@ class DistributionAo extends CI_Model
             //有上线 不能再申请
             $hasUpUserId = $result[0]['upUserId'];
             $hasUpUserName = $this->userAo->getUserName($hasUpUserId);
-            $content = "1.您已经有上线:".$hasUpUserName.",不能继续申请。";
+            $content = "1.您已经有上线:".$hasUpUserName.",不能继续申请。\n".$config['intoCue'];
             return $content;die;
         }else{
             //没上线 申请 首先查询上线信息
@@ -478,6 +499,12 @@ class DistributionAo extends CI_Model
                 $content = "分成信息出错";
                 return $content;die;
             }else{
+                $percent= 0;
+                if($config){
+                    $percent = $config['distributionFall'] * 100;
+                }else{
+                    $percent = 1000;
+                }
                 $line = $distribution[0]['line'];
                 $scort= $distribution[0]['scort'] + 1;
                 $data = array(
@@ -486,7 +513,7 @@ class DistributionAo extends CI_Model
                     'state'=>$this->distributionStateEnum->ON_ACCEPT,
                     'phone'=>'00000000000',
                     'remark'=>$scort.'级分销商',
-                    'distributionPercent'=>1000,
+                    'distributionPercent'=>$percent,
                     'line'=>$line,
                     'scort'=>$scort,
                     'vender'=>$vender,
@@ -503,13 +530,14 @@ class DistributionAo extends CI_Model
                     }
                     $distribution = $distribution[0];
                     $hasUpUserName = $this->userAo->getUserName($distribution['upUserId']);
-                    $this->distributionQrCodeAo->createQrCode($vender,$distribution);
+                    // $this->distributionQrCodeAo->createQrCode($vender,$distribution);  //创建永久二维码
+                    $this->distributionQrCodeAo->createLimitQrcode($vender,$distribution); //创建临时二维码
                     //为上级增加积分
                     $upUserInfo = $this->userAo->get($upUserId);
                     $upUserClientId = $upUserInfo['clientId'];
                     $this->load->model('client/scoreAo','scoreAo');
                     $this->scoreAo->askDistribution($vender,$upUserClientId);
-                    $content = "1.恭喜你成为".$hasUpUserName."的分销商.您的账号是:".$username.",密码:".$password."请点击，‘免费领’-‘我的海报’生成自己的二维码海报，发给朋友或朋友圈，让朋友们帮你刷积分吧。";
+                    $content = "1.恭喜你成为".$hasUpUserName."的分销商.您的账号是:".$username.",密码:".$password."请点击，‘免费领’-‘我的海报’生成自己的二维码海报，发给朋友或朋友圈，让朋友们帮你刷积分吧。\n".$config['intoCue'];
                     //推送客服消息
                     $upClientInfo = $this->clientAo->get($vender,$upUserClientId);
                     $upOpenId     = $upClientInfo['openId'];
@@ -550,6 +578,7 @@ class DistributionAo extends CI_Model
     //判断openid有无账号
     public function checkUserClientId2($vender,$openId){
         $this->load->model('user/userTypeEnum','userTypeEnum');
+        $config = $this->distributionConfigAo->getConfig($vender);
         //先根据openid查询clientId
         $client['userId'] = $vender;
         $client['type']   = 2;
@@ -586,7 +615,7 @@ class DistributionAo extends CI_Model
                 $this->userAo->mod($vender,$data);
                 
                 $userAppInfo = $this->userAppAo->get($vender);
-                $content = "1.恭喜您成为".$userAppInfo['appName']."下的一名会员,您的账号是:".$username.',密码是:'.$password."。您目前还没有开通分销中心,赶快申请成为一级代理商或者扫描别人的二维码成为会员。";
+                $content = "1.恭喜您成为".$userAppInfo['appName']."下的一名会员,您的账号是:".$username.',密码是:'.$password."。您目前还没有开通分销中心,赶快申请成为一级代理商或者扫描别人的二维码成为会员。\n".$config['intoCue'];
                 return $content;die;
             }else{
                 $content = "系统分配账号密码失败";
@@ -855,6 +884,207 @@ class DistributionAo extends CI_Model
         $arr['down']     = $down;
         $arr['withDrawNum'] = $withDrawNum;
         return $arr;
+    }
+
+    /**
+     * 查询会员
+     * date:2015.11.27
+     */
+    public function searchMember($userId,$where,$limit){
+        //判断是否为厂家
+        $result = $this->userPermissionDb->checkPermissionId($userId,$this->userPermissionEnum->VENDER);
+        if(!$result){
+            throw new CI_MyException(1,'该菜单只适用于厂家');
+        }
+        //检测特殊分销权限
+        $config = $this->distributionConfigAo->getConfig($userId);
+        if($config == 0 || $config['distribution'] == $this->distributionConfigEnum->COMMON){
+            throw new CI_MyException(1,'该菜单只适用于特殊分销');
+        }
+        $where['vender'] = $userId;
+        $data = $this->distributionDb->searchMember($where,$limit);
+        if($data['data']){
+            foreach ($data['data'] as $key => $value) {
+                $data['data'][$key] = $this->getOtherInfo($data['data'][$key]);
+            }
+        }
+        return $data;
+    }
+
+    /**
+     * 升级高级会员
+     * date:2015.11.27
+     */
+    public function upgradeMember($userId,$distributionId){
+        //判断是否为厂家
+        $result = $this->userPermissionDb->checkPermissionId($userId,$this->userPermissionEnum->VENDER);
+        if(!$result){
+            throw new CI_MyException(1,'非厂家无权操作');
+        }
+        //检测特殊分销权限
+        $config = $this->distributionConfigAo->getConfig($userId);
+        if($config == 0 || $config['distribution'] == $this->distributionConfigEnum->COMMON){
+            throw new CI_MyException(1,'该操作仅限于特殊分销');
+        }
+        $distribution = $this->get($userId,$distributionId);
+        if($distribution['member'] == 1){
+            throw new CI_MyException(1,'该会员已经是高级会员,不需要再去升级');
+        }
+        $data['member'] = 1;
+        return $this->distributionDb->mod($distributionId,$data);
+    }
+
+    /**
+     * 降级普通会员
+     * date:2015.11.27
+     */
+    public function degradeMember($userId,$distributionId){
+        //判断是否为厂家
+        $result = $this->userPermissionDb->checkPermissionId($userId,$this->userPermissionEnum->VENDER);
+        if(!$result){
+            throw new CI_MyException(1,'非厂家无权操作');
+        }
+        //检测特殊分销权限
+        $config = $this->distributionConfigAo->getConfig($userId);
+        if($config == 0 || $config['distribution'] == $this->distributionConfigEnum->COMMON){
+            throw new CI_MyException(1,'该操作仅限于特殊分销');
+        }
+        $distribution = $this->get($userId,$distributionId);
+        if($distribution['member'] == 0){
+            throw new CI_MyException(1,'该会员已经是普通会员,不需要再去降级');
+        }
+        $data['member'] = 0;
+        return $this->distributionDb->mod($distributionId,$data);
+    }
+
+    /**
+     * 获取用户分成关系
+     * date:2015.11.30
+     */
+    public function getDistributionUser($vender,$downUserId){
+        $result = $this->distributionDb->getDistributionUser($vender,$downUserId);
+        if($result){
+            return $result[0];
+        }else{
+            throw new CI_MyException(1,'分成关系出错');
+        }
+    }
+
+    /**
+     * date:2015.12.1
+     */
+    private function dfs3($vender,$entranceUserId){
+        //获取分销配置
+        $config = $this->distributionConfigAo->getConfig($vender);
+        //获取是第几级分销
+        $result = $this->distributionDb->getScort($vender,$entranceUserId);
+        $scort  = $result[0]['scort'];
+        if(!$result){
+            return false;
+        }
+        //获取多少级有分销提成
+        $distributionNum = $config['distributionNum'];
+        if($distributionNum == 1){
+            //总代
+            $line = $result[0]['line'];
+            $oneInfo = $this->distributionDb->getOneScort($vender,$line);
+            $this->distributionLink[0]['distributionId'] = $oneInfo[0]['distributionId'];
+            $this->distributionLink[0]['upUserId']       = $oneInfo[0]['upUserId'];
+            $this->distributionLink[0]['downUserId']     = $oneInfo[0]['downUserId'];
+            $this->distributionLink[0]['distributionPercent'] = $config['agentFall'];
+        }else{
+            $num = $distributionNum - 1;
+            //总代
+            $line = $result[0]['line'];
+            $oneInfo = $this->distributionDb->getOneScort($vender,$line);
+            $this->distributionLink[0]['distributionId'] = $oneInfo[0]['distributionId'];
+            $this->distributionLink[0]['upUserId']       = $oneInfo[0]['upUserId'];
+            $this->distributionLink[0]['downUserId']     = $oneInfo[0]['downUserId'];
+            $this->distributionLink[0]['distributionPercent'] = $config['agentFall'];
+            $scort--;
+            for ($i=0; $i < $num; $i++) {
+                if($scort){
+                    if($i == 0){
+                        //第一级
+                        $this->distributionLink[$i+1]['distributionId'] = $result[0]['distributionId'];
+                        $this->distributionLink[$i+1]['upUserId']     = $result[0]['upUserId'];
+                        $this->distributionLink[$i+1]['downUserId']   = $result[0]['downUserId'];
+                        $this->distributionLink[$i+1]['distributionPercent'] = $config['one'];
+                        $scort--;
+                    }elseif($i > 0 && $i < 3){
+                        //第二级
+                        $result = $this->distributionDb->getScort($vender,$this->distributionLink[$i]['upUserId']);
+                        $this->distributionLink[$i+1]['distributionId'] = $result[0]['distributionId'];
+                        $this->distributionLink[$i+1]['upUserId']     = $result[0]['upUserId'];
+                        $this->distributionLink[$i+1]['downUserId']   = $result[0]['downUserId'];
+                        if($i == 1){
+                            $this->distributionLink[$i+1]['distributionPercent'] = $config['two'];
+                        }elseif($i == 2){
+                            $this->distributionLink[$i+1]['distributionPercent'] = $config['three'];
+                        }
+                        $scort--;
+                    }else{
+                        return false;
+                    }
+                }else{
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private function dfs4($vender,$entranceUserId){
+        //获取分销配置
+        $config = $this->distributionConfigAo->getConfig($vender);
+        //获取分成关系
+        $result = $this->distributionDb->getScort($vender,$entranceUserId);
+        $scort  = $result[0]['scort'];
+        $scoreNum = $config['scoreNum'];
+        for ($i=0; $i < $scoreNum; $i++) { 
+            if($scort){
+                if($i == 0){
+                    //第一级
+                    $this->scoreLink[$i]['userId'] = $result[0]['downUserId'];
+                    $this->scoreLink[$i]['score']  = $config['commonDownScore'] ? $config['commonDownScore'] : 0;
+                    $userInfo = $this->userAo->get($result[0]['downUserId']);
+                    $this->scoreLink[$i]['clientId'] = $userInfo['clientId'];
+                    $scort--;
+                }else{
+                    $result = $this->distributionDb->getScort($vender,$this->scoreLink[$i-1]['userId']);
+                    $this->scoreLink[$i]['userId'] = $result[0]['upUserId'];
+                    $this->scoreLink[$i]['score']  = $config['commonUpScore'] ? $config['commonUpScore'] : 0;
+                    $userInfo = $this->userAo->get($result[0]['upUserId']);
+                    $this->scoreLink[$i]['clientId'] = $userInfo['clientId'];
+                    $scort--;
+                }
+            }else{
+                return false;
+            }
+        }
+    }
+
+    private $scoreLink = array();
+
+    //分成关系
+    public function getLinks2($vender,$userId){
+        $this->dfs3($vender,$userId);
+        return $this->distributionLink;
+    }
+
+    //积分关系
+    public function getScoreLinks($vender,$entranceUserId){
+        $this->dfs4($vender,$entranceUserId);
+        return $this->scoreLink;
+    }
+
+    /**
+     * 获取分成id
+     * date:2015.12.08
+     */
+    public function getDistributionId($vender,$downUserId){
+        $info = $this->distributionDb->getDistributionId($vender,$downUserId);
+        return $info['distributionId'];
     }
 }
 

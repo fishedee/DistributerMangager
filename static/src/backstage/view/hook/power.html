@@ -1,0 +1,90 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		var subPage = require('/fishstrap/page/subPage.js');
+		var isCheck = ($.location.getQueryArgv('check') != null);
+		var isClient = ($.location.getQueryArgv('isClient') != null);
+		var userType = {};
+		var tableOperation = {};
+		var hookId = $.location.getQueryArgv('hookId');
+		function getAllType(next){
+			$.get('/user/getAllType',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				userType = data.data;
+				next();
+			});
+		}
+		function whenWindowClose(mode,operation){
+			if( mode == 'confirm' )
+				operation.close( tableOperation.getCheckData() );
+			else
+				operation.close( []);
+		}
+		function go(){
+			tableOperation = query.simpleQuery({
+				id:'container',
+				url:'/hook/power?isClient='+isClient+'&hookId='+hookId,
+				checkAll:isCheck,
+				column:[
+					{id:'check',type:'text',name:'权限'},
+					{id:'userId',type:'text',name:'用户ID'},
+					{id:'name',type:'text',name:'姓名'},
+					{id:'type',type:'enum',name:'类型',map:userType},
+					{id:'company',type:'text',name:'公司'},
+					{id:'phone',type:'text',name:'电话号码'},
+					{id:'createTime',type:'text',name:'创建时间'},
+					{id:'modifyTime',type:'text',name:'修改时间'}
+				],
+				queryColumn:['name','type'],
+				operate:[],
+				button:[
+				{
+					name:'添加用户',
+					click:function(){
+						location.href = 'viewByAdmin.html';
+					}
+				}
+				],
+			});
+			$('#container').on('click', "input[name='power[]'][type=checkbox]", function() {
+				var userId = $(this).attr('userId');
+				var status = 0;
+				if($(this).is(':checked')){
+					status = 1;
+				}else{
+					status = 0;
+				}
+				$.ajax({
+					url: '/hook/changePower',
+					type: 'GET',
+					dataType: 'JSON',
+					data: {
+						userId: userId,
+						hookId: hookId,
+						status  : status
+					},
+					success:function(data){
+						data = $.JSON.parse(data);
+						if(data.code != 0){
+							alert('更新失败');
+							return;
+						}
+						alert('更新成功');
+					},
+					error:function(XMLResponse){
+						alert(XMLResponse.responseText);
+					}
+				})
+			});
+		}
+		getAllType(go);
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

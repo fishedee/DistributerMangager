@@ -1,0 +1,112 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+		<button name='add'>增加二级菜单</button>
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var hookId = $.location.getQueryArgv('hookId');
+		var typeInfo = {};
+		var hook = {};
+
+		function getHook(next){
+			$.get('/hook/getHook',{hookId:hookId},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				hook = data.data;
+				console.info(hook);
+				next();
+			});
+		}
+
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'parent',type:'text',name:'顶级菜单'},
+					{id:'hookName',type:'text',name:'插件名称'},
+					{id:'hookUrl',type:'text',name:'插件url'},
+					{id:'hookOptionName',type:'text',name:'二级菜单名称'},
+					{id:'hookOptionUrl',type:'text',name:'二级菜单url'}
+				],
+				value:hook,
+				submit:function(data){
+					var optionName = $("input[name='hookOptionName']").parent('td').find('input');
+					var optionUrl  = $("input[name='hookOptionUrl']").parent('td').find('input');
+					var selectName = new Array();
+					var selectUrl  = new Array();
+
+					optionName.each(function() {
+						selectName.push($(this).val());
+					});
+					optionUrl.each(function() {
+						selectUrl.push($(this).val());
+					});
+					data.hookOptionName = selectName;
+					data.hookOptionUrl  = selectUrl;
+
+					if( hookId != null ){
+						$.post('/hook/mod',{hookId:hookId,data:data},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							history.back();
+						});
+					}else{
+						$.post('/hook/add',{data:data},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							history.back();
+						});
+					}
+				},
+				cancel:function(){
+					history.back();
+				}
+			});
+
+			$('select[name=state]').val(1);
+
+			//编辑状态
+			if(hookId){
+				console.info(hook);
+				if(hook['hookOptionName'].length > 1){
+					for (var i = 0; i < hook['hookOptionName'].length; i++) {
+						if(i != 0){
+							var html = "<br/><input type='text' value='"+hook['hookOptionName'][i]+"'>";
+							$("input[name='hookOptionName']").parent('td').append(html);
+							var html2= "<br/><input type='text' value='"+hook['hookOptionUrl'][i]+"'>";
+							$("input[name='hookOptionUrl']").parent('td').append(html2);
+						}else{
+							$("input[name='hookOptionName']").val(hook['hookOptionName'][i]);
+							$("input[name='hookOptionUrl']").val(hook['hookOptionUrl'][i]);
+						}
+					};
+				}
+			}
+
+		}
+
+		//添加选项
+		$('button[name=add]').click(function() {
+			var html = "<br/><input type='text'>";
+			$("input[name='hookOptionName']").parent('td').append(html);
+			$("input[name='hookOptionUrl']").parent('td').append(html);
+		});
+
+		if(hookId){
+			getHook(go);
+		}else{
+			go();
+		}
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

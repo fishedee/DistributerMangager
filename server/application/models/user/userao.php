@@ -6,6 +6,7 @@ class UserAo extends CI_Model {
 		$this->load->model('user/userDb','userDb');
 		$this->load->model('user/userClientDb','userClientDb');
 		$this->load->model('user/userPermissionDb','userPermissionDb');
+		$this->load->model('distribution/distributionAo','distributionAo');
 	}
 	
 	public function checkMustVaildPassword($password,$passwordHash){
@@ -336,6 +337,15 @@ class UserAo extends CI_Model {
 
 		$userInfo = $this->userDb->myQrCode($clientId);
 		$myUserId = $userInfo['userId'];
+		//先判断用户的二维码是否过期
+		if($userInfo['qrcodeLimit']){
+			//临时二维码
+			if($userInfo['qrcodeCreateTime'] + $userInfo['qrcodeLimitTime'] < time()){
+				//重新创建
+				$this->updateQrCode($userId,$myUserId);
+			}
+		}
+		
 		//海报制作
 		// header('Content-type: image/jpg');
 		$save = dirname(__FILE__).'/../../../../data/upload/';
@@ -688,6 +698,18 @@ class UserAo extends CI_Model {
 	    $httpInfo = array_merge( $httpInfo , curl_getinfo( $ch ) );
 	    curl_close( $ch );
 	    return $response;
+	}
+
+	/**
+	 * 更新临时二维码
+	 * date:2015.12.08
+	 */
+	public function updateQrCode($vender,$myUserId){
+		$this->load->model('distribution/distributionQrCodeAo','distributionQrCodeAo');
+		$distributionId = $this->distributionAo->getDistributionId($vender,$myUserId);
+		$distribution   = $this->distributionAo->getDistribution($distributionId);
+		$distribution   = $distribution[0];
+		$this->distributionQrCodeAo->createLimitQrcode($vender,$distribution);
 	}
 
 }

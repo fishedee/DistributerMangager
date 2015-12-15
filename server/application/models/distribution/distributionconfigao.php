@@ -19,6 +19,11 @@ class DistributionConfigAo extends CI_Model {
 	//提交修改
 	public function sub($userId,$data){
 		$config = $this->getConfig($userId);
+		foreach ($data as $key => $value) {
+			if(!$value && $key != 'distribution'){
+				unset($data[$key]);
+			}
+		}
 		if($config){
 			return $this->distributionConfigDb->mod($userId,$data);
 		}else{

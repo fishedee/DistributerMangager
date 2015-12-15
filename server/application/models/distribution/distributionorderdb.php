@@ -53,6 +53,7 @@ class DistributionOrderDb extends CI_Model
                    $this->db->where($key, $value); 
                 }
             }
+            $count = $this->db->get($this->tableName)->num_rows();
         }else{
             foreach($where as $key=>$value){
                 if($key == 'upUserId' || $key == 'downUserId')

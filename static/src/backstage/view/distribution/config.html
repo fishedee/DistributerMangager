@@ -1,11 +1,22 @@
 <link rel="import" href="../common/header.html?__inline">
 	<div class="alert alert-danger" role="alert">
+		分销关系若不填写默认为普通分销：
+		<br>
+		1.普通分销区分为1级总代理商和多级分销商。分成比例为下级卖出去后4级有提成。
+		<br>
+		2.特殊分销区分为只有高级会员卖东西有提成，普通会员卖出去后只有本级和直接上级有积分。
+		<br>
 		积分若不填写默认为：
-		1.签到10分。
-		2.分享到朋友圈10分。
-		3.分享给朋友20分。
-		4.发展下线10分。
-		5.直接下级分享2分。
+		<br>
+		1.签到10分。2.分享到朋友圈10分。3.分享给朋友20分。4.发展下线10分。5.直接下级分享2分。6.特殊分销中若普通会员本级积分与上级基本不填则均默认为10分。
+		<br>
+		分成不填默认为：
+		<br>
+		1.代理商分成默认为8%。2.分销商默认分成10%。
+		<br>
+		分成级别：
+		<br>
+		1.分成级别既分销多少级有提成。2.连上总代理商总级别数量最大四级。3.若分销级别分成不填则默认按分销商提成处理。
 	</div>
 	<div id="container">
 	</div>
@@ -14,6 +25,19 @@
 		var dialog = require('/fishstrap/ui/dialog.js');
 		var input = require('/fishstrap/ui/input.js');
 		var config = {};
+		var configState = {};
+
+		function getConfigState(next){
+			$.get('/distributionconfig/getConfigState',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				configState = data.data;
+				next();
+			});
+		}
 
 		//获取配置
 		function getConfig(next){
@@ -32,11 +56,25 @@
 			input.verticalInput({
 				id:'container',
 				field:[
+					{id:'distribution',type:'enum',name:'分销关系',map:configState},
+					{id:'distributionNum',type:'enum',name:'分成级别',map:{'1':1,'2':2,'3':3,'4':4}},
+					{id:'scoreNum',type:'enum',name:'积分级别(特殊分销)',map:{'1':1,'2':2,'3':3,'4':4}},
+					{id:'scorePrice',type:'text',name:'多少积分抵消1元'},
+					{id:'scorePercent',type:'text',name:'积分最大抵消百分比'},
 					{id:'checkin',type:'text',name:'签到积分'},
 					{id:'circle',type:'text',name:'分享朋友圈积分'},
 					{id:'friend',type:'text',name:'分享到朋友积分'},
 					{id:'ask',type:'text',name:'新会员加入所得积分'},
 					{id:'enjoydown',type:'text',name:'下级分享积分'},
+					{id:'agentFall',type:'text',name:'代理商分成(普通分销)'},
+					{id:'one',type:'text',name:'第一级分成'},
+					{id:'two',type:'text',name:'第二级分成'},
+					{id:'three',type:'text',name:'第三级分成'},
+					{id:'distributionFall',type:'text',name:'分销商分成(普通分销)'},
+					{id:'highFall',type:'text',name:'高级会员分成(特殊分销)'},
+					{id:'commonDownScore',type:'text',name:'普通会员本级积分(特殊分销)'},
+					{id:'commonUpScore',type:'text',name:'普通会员上一级积分(特殊分销)'},
+					{id:'intoCue',type:'area',name:'成为分销提示语'},
 				],
 				value:config,
 				submit:function(data){
@@ -52,6 +90,8 @@
 				cancel:undefined
 			});
 		}
-		getConfig(go);
+		getConfigState(function(){
+			getConfig(go);
+		})
 	</script>
 <link rel="import" href="../common/footer.html?__inline">

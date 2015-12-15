@@ -10,6 +10,7 @@ class DistributionQrCodeAo extends CI_Model{
         $this->load->model('user/userAo','userAo');
         $this->load->model('user/userAppAo','userAppAo');
         $this->load->library('http');
+        $this->load->model('distribution/distributionQrcodeConfigDb','distributionQrcodeConfigDb');
     }
 
     //我的二维码
@@ -17,7 +18,7 @@ class DistributionQrCodeAo extends CI_Model{
         return $this->distributionQrCodeDb->qrCode($userId,$limit);
     }
 
-    //生成我的二维码
+    //生成我的二维码(永久二维码)
     public function createQrCode($userId,$distribution = array()){
         $qr = '';
         //处理上传二维码
@@ -219,6 +220,58 @@ class DistributionQrCodeAo extends CI_Model{
             'responseType'=>'json'
         ));
         return $httpResponse['body']['errcode'];
+    }
+
+    /**
+     * @view json
+     * 创建临时二维码
+     * date:2015.12.03
+     */
+    public function createLimitQrcode($userId,$distribution){
+        $qr = '';
+        $ticket = '';
+        //获取access_token
+        $info = $this->userAppAo->getTokenAndTicket($userId);
+        $access_token = $info['appAccessToken'];
+        //加入分销二维码配置
+        $data['vender'] = $userId;
+        $data['downUserId'] = $distribution['downUserId'];
+        $data['line'] = $distribution['line'];
+        $distributionConfigId = $this->distributionQrcodeConfigDb->add($data);
+        //处理二维码参数
+        $arr['action_name'] = 'QR_SCENE';
+        $arr['expire_seconds'] = 2592000;
+        $arr['action_info']['scene']['scene_id'] = $distributionConfigId;
+        $url = 'https://api.weixin.qq.com/cgi-bin/qrcode/create?access_token='.$access_token;
+        //发送请求
+        $httpResponse = $this->http->ajax(array(
+            'url'=>$url,
+            'type'=>'post',
+            'data'=>json_encode($arr),
+            'dataType'=>'plain',
+            'responseType'=>'json'
+        ));
+        if($httpResponse['body']['ticket']){
+            $ticket = $httpResponse['body']['ticket'];
+            $qr = 'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket='.$ticket;
+        }
+        $data = array();
+        $data['qrcode'] = $qr;
+        $data['qrcodeCreateTime'] = time();
+        $data['qrcodeLimit'] = 1;
+        // $data['qrcodeLimitTime']  = $httpResponse['body']['expire_seconds'];
+        $data['qrcodeLimitTime']  = 2592000;
+        $data['ticket'] = $ticket;
+        return $this->userAo->modInfo($distribution['downUserId'],$data);
+    }
+
+    /**
+     * @view json
+     * 获取分销二维码配置
+     * date:2015.12.03
+     */
+    public function getQrcodeConfig($configId){
+        return $this->distributionQrcodeConfigDb->getQrcodeConfig($configId);
     }
 
 }
