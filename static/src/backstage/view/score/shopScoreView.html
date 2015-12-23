@@ -1,0 +1,51 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'clientId',type:'text',name:'用户Id'},
+					{id:'price',type:'text',name:'价格'},
+				],
+				submit:function(data){
+					var addData  = data;
+					if(!data.clientId){
+						dialog.message('用户Id不能为空');
+						return;
+					}
+					if(!data.price){
+						dialog.message('价格不能为空');
+						return;
+					}
+					$.post('/shopscore/getInfo', {data: data}, function(data) {
+						data = $.JSON.parse(data);
+						if(data.code != 0){
+							dialog.message(data.msg);
+							return;
+						}
+						data = data.data;
+						dialog.confirm("用户Id为"+data.clientId+"，微信昵称为"+data.nickName+"，消费"+data.price+"元，确定为其增加商城积分："+data.score+"分，操作不可回退！？",function(){
+							$.post('/shopscore/add', {data: addData}, function(data) {
+								data = $.JSON.parse(data);
+								if(data.code != 0){
+									dialog.message(data.msg);
+									return;
+								}
+
+							});
+						});
+					});
+				},
+				cancel:function(){
+					history.back();
+				}
+			});
+		}
+		go();
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

@@ -1,0 +1,76 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var subPage = require('/fishstrap/page/subPage.js');
+		var collectId = $.location.getQueryArgv('collectId');
+		var collect = {};
+
+		function getCollect(next){
+			$.get('/question/getCollect',{collectId:collectId},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				collect = data.data;
+				next();
+			});
+		}
+		function go(){
+			inputOperation = input.verticalInput({
+				id:'container',
+				field:[
+					{id:'collectId',type:'read',name:'评论ID'},
+					{id:'clientId',type:'read',name:'用户ID'},
+					{id:'nickName',type:'read',name:'评论人昵称'},
+					// {id:'headImgUrl',type:'image',name:'评论人头像',option:{url:'/upload/image',width:640}},
+					{id:'createTime',type:'read',name:'评论时间'},
+					{id:'question',type:'table',name:'评论详细',
+						option:{
+							column:[
+								{name:'问题',type:'text',id:'question'},
+								{name:'程度',type:'enum',id:'degree',map:{'1':'满意','2':'一般','3':'差'}},
+							],
+							operate:[],
+							button:[]
+						}
+					},
+				],
+				value:collect,
+				submit:function(data){
+					// console.info(data);
+					var select = $('select[name=degree]');
+					$.each(select,function(index,val) {
+						data['question'][index]['degree'] = $(this).val();
+					});
+					$.post('/question/modCollect',{data: data},function(data){
+						data = $.JSON.parse(data);
+						if( data.code != 0 ){
+							dialog.message(data.msg);
+							return;
+						}
+						history.back();
+					});
+				},
+				cancel:function(){
+					history.back();
+				},
+			});
+			setTimeout(senum,500);
+		}
+		function senum(){
+			var selected = $('.degree');
+			$.each(selected,function(index,val) {
+				var degree = $(this).text();
+				var html = "<select name='degree'><option value='1'>满意</option><option value='2'>一般</option><option value='3'>差</option></select>";
+				$(this).html(html);
+				$(this).children('select').val(degree);
+			});
+		}
+		getCollect(go);
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

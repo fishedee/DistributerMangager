@@ -8,7 +8,7 @@ class CommodityDb extends CI_Model
         parent::__construct();
     }
 
-    public function search($where, $limit,$rank){
+    public function search($where, $limit,$rank,$album){
         if( isset($where['shopCommodityId']) && count($where['shopCommodityId']) == 0 )
             return array(
                 'count'=>0,
@@ -18,24 +18,38 @@ class CommodityDb extends CI_Model
         foreach($where as $key=>$value){
             if($key == 'title' || $key == 'introduction' )
                 $this->db->like($key, $value);
-            else if($key == 'userId' || $key == 'shopCommodityClassifyId' || $key == 'state' || $key == 'isLink' || $key == 'shopLinkCommodityId')
+            else if($key == 'userId' || $key == 'state' || $key == 'isLink' || $key == 'shopLinkCommodityId')
                 $this->db->where($key, $value);
             else if($key == 'shopCommodityId')
                 $this->db->where_in($key, $value);
+            else if($key == 'shopCommodityClassifyId' && $value != '-1') //显示全部
+                $this->db->where($key,$value);
                 
+        }
+        //date:2015.12.12
+        if($album == 1){
+            $this->db->where('album',1);
+        }else if($album == 0){
+            $this->db->where('album',0);
         }
         $count = $this->db->count_all_results($this->tableName);
 
         foreach($where as $key=>$value){
             if($key == 'title' || $key == 'introduction' )
                 $this->db->like($key, $value);
-            else if($key == 'userId' || $key == 'shopCommodityClassifyId' || $key == 'state' || $key == 'isLink' || $key == 'shopLinkCommodityId')
+            else if($key == 'userId' || $key == 'state' || $key == 'isLink' || $key == 'shopLinkCommodityId')
                 $this->db->where($key, $value);
             else if($key == 'shopCommodityId')
                 $this->db->where_in($key, $value);
+            else if($key == 'shopCommodityClassifyId' && $value != '-1') //显示全部
+                $this->db->where($key,$value);
         }
-        
-
+        //date:2015.12.12
+        if($album == 1){
+            $this->db->where('album',1);
+        }else if($album == 0){
+            $this->db->where('album',0);
+        }
         if(isset($limit['pageIndex']) && isset($limit['pageSize']))
             $this->db->limit($limit['pageSize'], $limit['pageIndex']);
         if($rank){
@@ -147,6 +161,17 @@ class CommodityDb extends CI_Model
         }else{
             $this->db->order_by('sort','asc');
         }
+        return $this->db->get($this->tableName)->result_array();
+    }
+
+    public function getAlbum($userId,$shopCommodityClassifyId,$select = array()){
+        if($select){
+            foreach ($select as $key => $value) {
+                $this->db->select($value);
+            }
+        }
+        $this->db->where('userId',$userId);
+        $this->db->where('shopCommodityClassifyId',$shopCommodityClassifyId);
         return $this->db->get($this->tableName)->result_array();
     }
 }

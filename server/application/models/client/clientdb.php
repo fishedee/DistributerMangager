@@ -152,15 +152,21 @@ class ClientDb extends CI_Model
 	}
 
 	//积分排行榜
-	public function rankingList($userId){
-		// $this->db->where('userId',$userId);
-		// $this->db->where('score>',0);
-		// $this->db->where('subscribe',1);
-		// $this->db->limit(50);
-		// $this->db->order_by('score','desc');
-		// return $this->db->get($this->tableName)->result_array();
-		$sql = "SELECT * FROM t_ranklist WHERE userId={$userId} AND score>0 AND subscribe=1 ORDER BY score DESC LIMIT 50";
-		return $this->db->query($sql)->result_array();
+	public function rankingList($userId,$select=array()){
+		if($select){
+			foreach ($select as $key => $value) {
+				$this->db->select($value);
+			}
+		}
+		// var_dump($userId);die;
+		$this->db->where('userId',$userId);
+		$this->db->where('score>',0);
+		$this->db->where('subscribe',1);
+		$this->db->limit(50);
+		$this->db->order_by('score','desc');
+		return $this->db->get($this->tableName)->result_array();
+		// $sql = "SELECT * FROM t_ranklist WHERE userId={$userId} AND score>0 AND subscribe=1 ORDER BY score DESC LIMIT 50";
+		// return $this->db->query($sql)->result_array();
 	}
 
 	public function ref($userId){

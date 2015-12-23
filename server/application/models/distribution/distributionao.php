@@ -486,11 +486,12 @@ class DistributionAo extends CI_Model
         }
         //判断这个用户有无上线
         $result = $this->checkUp($vender,$downUserId);
+        $userAppInfo = $this->userAppAo->get($vender);
         if($result){
             //有上线 不能再申请
             $hasUpUserId = $result[0]['upUserId'];
             $hasUpUserName = $this->userAo->getUserName($hasUpUserId);
-            $content = "1.您已经有上线:".$hasUpUserName.",不能继续申请。\n".$config['intoCue'];
+            $content = "您已经有推介人:".$hasUpUserName.",不能继续申请。".$config['intoCue'];
             return $content;die;
         }else{
             //没上线 申请 首先查询上线信息
@@ -537,7 +538,8 @@ class DistributionAo extends CI_Model
                     $upUserClientId = $upUserInfo['clientId'];
                     $this->load->model('client/scoreAo','scoreAo');
                     $this->scoreAo->askDistribution($vender,$upUserClientId);
-                    $content = "1.恭喜你成为".$hasUpUserName."的分销商.您的账号是:".$username.",密码:".$password."请点击，‘免费领’-‘我的海报’生成自己的二维码海报，发给朋友或朋友圈，让朋友们帮你刷积分吧。\n".$config['intoCue'];
+                    // $content = "恭喜你成为".$hasUpUserName."的分销商.您的账号是:".$username.",密码:".$password."。".$config['intoCue'];
+                    $content = "恭喜您成为".$userAppInfo['appName']."的代言人,您的推介人是".$hasUpUserName.",您的账号是:".$username.",密码:".$password."。".$config['intoCue'];
                     //推送客服消息
                     $upClientInfo = $this->clientAo->get($vender,$upUserClientId);
                     $upOpenId     = $upClientInfo['openId'];
@@ -615,7 +617,7 @@ class DistributionAo extends CI_Model
                 $this->userAo->mod($vender,$data);
                 
                 $userAppInfo = $this->userAppAo->get($vender);
-                $content = "1.恭喜您成为".$userAppInfo['appName']."下的一名会员,您的账号是:".$username.',密码是:'.$password."。您目前还没有开通分销中心,赶快申请成为一级代理商或者扫描别人的二维码成为会员。\n".$config['intoCue'];
+                $content = "恭喜您成为".$userAppInfo['appName']."下的一名会员,您的账号是:".$username.',密码是:'.$password."。".$config['subCue'];
                 return $content;die;
             }else{
                 $content = "系统分配账号密码失败";
@@ -1087,4 +1089,3 @@ class DistributionAo extends CI_Model
         return $info['distributionId'];
     }
 }
-

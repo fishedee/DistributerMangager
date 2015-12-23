@@ -1,0 +1,56 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		function go(){
+			tableOperation = query.simpleQuery({
+				id:'container',
+				url:'/companyshop/search',
+				column:[
+					{id:'companyShopId',type:'text',name:'导航门店ID'},
+					{id:'name',type:'text',name:'门店名称'},
+					{id:'icon',type:'image',name:'门店图片'},
+					{id:'address',type:'text',name:'地址'},
+					{id:'contact',type:'text',name:'联系方式'},
+					{id:'createTime',type:'text',name:'创建时间'},
+					{id:'modifyTime',type:'text',name:'修改时间'}
+				],
+				queryColumn:['name'],
+				operate:[
+				{
+					name:'修改',
+					click:function(data){
+						location.href = 'shopView.html?companyShopId='+data.companyShopId;
+					}
+				},
+				{
+					name:'删除',
+					click:function(data){
+						dialog.confirm('确认删除该门店，不可回退操作？!',function(){
+							$.post('/companyshop/del',{companyShopId:data.companyShopId},function(data){
+								data = $.JSON.parse(data);
+								if( data.code != 0 ){
+									dialog.message(data.msg);
+									return;
+								}
+								location.href = 'shop.html';
+							});
+						});
+					}
+				}],
+				button:[
+				{
+					name:'添加门店',
+					click:function(){
+						location.href = 'shopView.html';
+					}
+				}
+				],
+			});
+		}
+		go();
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

@@ -11,9 +11,11 @@
 			if($this->input->is_ajax_request()){
 				$data = $this->input->post();
 				foreach ($data as $key => $value) {
-					if($value == ''){
-						echo '提交资料不齐全';
-						die;
+					if($key != 'business_name'){
+						if($value == ''){
+							echo '提交资料不齐全';
+							die;
+						}
 					}
 				}
 				$userId = $data['userId'];

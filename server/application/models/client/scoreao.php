@@ -11,7 +11,8 @@ class ScoreAo extends CI_Model {
 		'EXCHANGE'=>'6',
 		'SALE'=>'7',
 		'SALE_DOWN'=>'8',
-		'BUY'=>9,
+		'BUY'=>'9',
+		'FLLOW'=>'10',
 		);
 
 	private $systemScore = array(
@@ -21,8 +22,12 @@ class ScoreAo extends CI_Model {
 		'AKS_DISTRIBUTION'=>10,
 		'ENJOY_DOWN'=>2,
 		'SALE'=>10,
-		'SALE_DOWN'=>10
+		'SALE_DOWN'=>10,
+		'FLLOW'=>0
 		);
+
+	private $maxCircle = 3;
+	private $maxFriend = 3;
 
 	public function __construct(){
 		parent::__construct();
@@ -45,6 +50,9 @@ class ScoreAo extends CI_Model {
 			$this->systemScore['ENJOY_FRIEND'] = $config['friend'];
 			$this->systemScore['AKS_DISTRIBUTION'] = $config['ask'];
 			$this->systemScore['ENJOY_DOWN']   = $config['enjoydown'];
+			$this->systemScore['FLLOW'] = $config['fllow'];
+			$this->maxCircle = $config['maxCircle'];
+			$this->maxFriend = $config['maxFriend'];
 		}
 	}
 
@@ -127,16 +135,28 @@ class ScoreAo extends CI_Model {
 		return $this->scoreDb->checkInToday($clientId,$event);
 	}
 
-	//判断今日分享到朋友全的页面
+	//判断今日分享到朋友圈的页面
 	public function checkEnjoyShareToday($clientId,$url){
 		$event = $this->scoreEvent['ENJOY_CIRCLE'];
 		return $this->scoreDb->checkEnjoyShareToday($clientId,$url,$event);
+	}
+
+	//判断今日分享到朋友圈的次数
+	public function checkEnjoyShareTodayNum($clientId){
+		$event = $this->scoreEvent['ENJOY_CIRCLE'];
+		return $this->scoreDb->checkEnjoyShareTodayNum($clientId,$event);
 	}
 
 	//判断今日分享到朋友的页面
 	public function checkEnjoyFriendToday($clientId,$url){
 		$event = $this->scoreEvent['ENJOY_FRIEND'];
 		return $this->scoreDb->checkEnjoyFriendToday($clientId,$url,$event);
+	}
+
+	//判断既然你分享到朋友的次数
+	public function checkEnjoyFriendTodayNum($clientId){
+		$event = $this->scoreEvent['ENJOY_FRIEND'];
+		return $this->scoreDb->checkEnjoyFriendTodayNum($clientId,$event);
 	}
 
 	//获取积分日志
@@ -170,8 +190,12 @@ class ScoreAo extends CI_Model {
 		$this->changeScore($userId);
 		$result = $this->checkEnjoyShareToday($clientId,$url);
 		if($result){
-			return 0;
+			throw new CI_MyException(1,'该产品您今天已经分享过朋友圈了,请选择别的产品分享吧');
 		}else{
+			$circleNum = $this->checkEnjoyShareTodayNum($clientId);
+			if($circleNum >= $this->maxCircle){
+				throw new CI_MyException(1,'今天分享到朋友圈获取积分的次数已经达到上限,请明天再来吧亲');
+			}
 			//判断商家积分是否充值
 			$userInfo = $this->userAo->get($userId);
 			$venderScore = $userInfo['score'];
@@ -258,7 +282,7 @@ class ScoreAo extends CI_Model {
 								}
 							}
 						}
-						return $result;
+						return $this->systemScore['ENJOY_CIRCLE'];
 					}else{
 						throw new CI_MyException(1,'积分日志增加成功,积分增加失败');
 					}
@@ -276,8 +300,12 @@ class ScoreAo extends CI_Model {
 		$this->changeScore($userId);
 		$result = $this->checkEnjoyFriendToday($clientId,$url);
 		if($result){
-			return 0;
+			throw new CI_MyException(1,'该产品您今天已经分享过朋友了,请选择别的产品分享吧');
 		}else{
+			$friendNum = $this->checkEnjoyFriendTodayNum($clientId);
+			if($friendNum >= $this->maxFriend){
+				throw new CI_MyException(1,'您今天分享给朋友获取积分的次数已经达到上限,请明天再来吧亲');
+			}
 			//判断商家 积分是否足够
 			$userInfo = $this->userAo->get($userId);
 			$venderScore = $userInfo['score'];
@@ -363,7 +391,7 @@ class ScoreAo extends CI_Model {
 								}
 							}
 						}
-						return $result;
+						return $this->systemScore['ENJOY_FRIEND'];
 					}else{
 						throw new CI_MyException(1,'积分日志增加成功,积分增加失败');
 					}
@@ -527,6 +555,47 @@ class ScoreAo extends CI_Model {
 		$data['score']    = $score;
 		$data['dis']      = 0;
 		$this->scoreDb->checkIn($data);
+	}
+
+	/**
+	 * 关注送积分
+	 */
+	public function fllow($userId,$openId){
+		$this->changeScore($userId);
+		$data['openId'] = $openId;
+		$data['userId'] = $userId;
+		$data['type']   = 2;
+		$clientId = $this->clientAo->addOnce($data);
+		$event = $this->scoreEvent['FLLOW'];
+		if($this->systemScore['FLLOW'] > 0){
+			$result = $this->scoreDb->checkFllow($clientId,$event);
+			if(!$result){
+				$userInfo = $this->userAo->get($userId);
+				if($userInfo['score'] > $this->systemScore['FLLOW']){
+					//商家足够分配积分
+					$data = array();
+					$data['vender']   = $userId;
+					$data['clientId'] = $clientId;
+					$data['event']    = $this->scoreEvent['FLLOW'];
+					$data['createTime'] = date('Y-m-d H:i:s',time());
+					$data['remark']   = '关注送积分';
+					$data['score']    = $this->systemScore['FLLOW'];
+					$result = $this->scoreDb->checkIn($data);
+					if($result){
+						$clientInfo = $this->clientAo->get($userId,$clientId);
+						$score      = $clientInfo['score'];
+						$data = array();
+						$data['score']  = $score + $this->systemScore['FLLOW'];
+						$result = $this->clientAo->mod($userId,$clientId,$data);
+						if($result){
+							$data = array();
+							$data['score'] = $userInfo['score'] - $this->systemScore['FLLOW'];
+							$this->userAo->mod($userId,$data);
+						}
+					}
+				}
+			}
+		}
 	}
 
 }

@@ -230,4 +230,32 @@ class UserAppAo extends CI_Model{
 		$userAppInfo = $this->get($userId);
 		return $userAppInfo['poster'];
 	}
+
+	/**
+	 * 推送客服消息
+	 * date:2015.12.11
+	 */
+	public function sendCustomMsg($userId,$clientId,$content='',$type='text'){
+		$this->load->model('client/clientAo','clientAo');
+		$this->load->library('http');
+		$clientInfo = $this->clientAo->get($userId,$clientId);
+		$openId = $clientInfo['openId'];
+		//获取token
+		$info = $this->getTokenAndTicket($userId);
+        $access_token = $info['appAccessToken'];
+		//推送url
+		$url = 'https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token='.$access_token;
+		if($type == 'text'){
+			$arr['touser'] = $openId;
+			$arr['msgtype']= $type;
+			$arr['text']['content'] = urlencode($content);
+			$httpResponse = $this->http->ajax(array(
+	            'url'=>$url,
+	            'type'=>'post',
+	            'data'=>urldecode(json_encode($arr)),
+	            'dataType'=>'plain',
+	            'responseType'=>'json'
+	        ));
+		}
+	}
 }

@@ -200,7 +200,8 @@
                 alert(data.msg);
                 return;
             }
-            ranklist = data.data;
+            data = data.data;
+            ranklist = data.ranklist;
             console.info(ranklist);
             next();
         });

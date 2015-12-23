@@ -1,0 +1,98 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var shopCommodityId = $.location.getQueryArgv('shopCommodityId');
+		var allClassify = {};
+		var allState = {};
+		var shopCommodity = {};
+		function getAllState(next){
+			$.get('/commodity/getState',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				allState = data.data;
+				next();
+			});
+		}
+		function getAllClassify(next){
+			$.get('/commodityclassify/search',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				allClassify[0] = '无分类';
+				for( var i in data.data.data ){
+					allClassify[data.data.data[i].shopCommodityClassifyId] = data.data.data[i].title;
+				}
+				next();
+			});
+		}
+		function getCommodity(next){
+			$.get('/commodity/get',{shopCommodityId:shopCommodityId},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				shopCommodity = data.data;
+				next();
+			});
+		}
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'title',type:'text',name:'标题'},
+					{id:'icon',type:'image',name:'图片',option:{url:'/upload/image',width:640}},
+					{id:'thumbicon',type:'image',name:'缩略图',option:{url:'/upload/image'}},
+					// {id:'thumb',type:'enum',name:'是否生成缩略图',map:{'0':'否','1':'是'}},
+					// {id:'detail',type:'fullEditor',name:'内容',option:{url:'/upload/ueditor'}},
+					{id:'shopCommodityClassifyId',type:'enum',name:'分类',map:allClassify},
+					{id:'remark',type:'text',name:'备注'},
+					{id:'state',type:'enum',name:'状态',map:allState},
+				],
+				value:shopCommodity,
+				submit:function(data){
+					if( shopCommodityId != null ){
+						data = $.extend({shopCommodityId:shopCommodityId},data);
+						$.post('/commodity/modAlbum',data,function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							history.back();
+						});
+					}else{
+						$.post('/commodity/addAlbum',data,function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							history.back();
+						});
+					}
+				},
+				cancel:function(){
+					history.back();
+				}
+			});
+		}
+		getAllState(function(){
+			getAllClassify(function(){
+				if( shopCommodityId != null )
+					getCommodity(go);
+				else
+					go();
+			});
+		});
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

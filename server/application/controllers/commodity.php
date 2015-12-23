@@ -40,9 +40,10 @@ class Commodity extends CI_Controller
             $this->userPermissionEnum->COMPANY_SHOP
         );
         $userId = $user['userId'];
-
+        //date:2015.12.12
+        $album  = $this->input->get('album') ? $this->input->get('album') : 0;
         //业务逻辑
-        return $this->commodityAo->search($userId,$dataWhere, $dataLimit);
+        return $this->commodityAo->search($userId,$dataWhere, $dataLimit,$album);
     }
     
 	/**
@@ -339,6 +340,86 @@ class Commodity extends CI_Controller
             $classifyId = $this->input->get('classifyId') ? $this->input->get('classifyId') : '';
             return $this->commodityAo->mobileGet($userId,$type,$classifyId);
         }
+    }
+
+    /**
+     * @view json
+     * 添加相册
+     * date:2015.12.07
+     */
+    public function addAlbum(){
+        //检查输入参数
+        $data = $this->argv->checkPost(array(
+            array('shopCommodityClassifyId', 'require'),
+            array('title', 'require'),
+            array('icon', 'require'),
+            // array('detail', 'require|noxss'),
+            array('state', 'require'),
+            array('thumbicon','require'),
+            // array('thumb','require'),
+        ));
+
+        //检查权限
+        $user = $this->loginAo->checkMustClient(
+            $this->userPermissionEnum->COMPANY_SHOP
+        );
+        $userId = $user['userId'];
+
+        if( $this->loginAo->hasCompanyShopPro($user) == false && 
+            $this->commodityAo->getNormalCommodityNum($userId) >= 3 ){
+            throw new CI_MyException(1,'普通商城权限自行上传最多3个产品');
+        }
+
+        //执行业务逻辑
+        $this->commodityAo->addAlbum($userId, $data);
+    }
+
+    /**
+     * @view json
+     * 前端获取相册
+     * date:2015.12.12
+     */
+    public function getAlbum(){
+        if($this->input->is_ajax_request()){
+            //检查输入参数
+            $data = $this->argv->checkPost(array(
+                array('userId','require'),
+            ));
+            $userId = $data['userId'];
+            $shopCommodityClassifyId = $this->input->post('shopCommodityClassifyId');
+            // var_dump($shopCommodityClassifyId);die;
+            //检查权限
+            $client = $this->clientLoginAo->checkMustLogin($userId);
+            return $this->commodityAo->getAlbum($userId,$shopCommodityClassifyId);
+        }
+    }
+
+    /**
+     * @view json
+     */
+    public function modAlbum(){
+        //检查输入参数
+        $data = $this->argv->checkPost(array(
+            array('shopCommodityId', 'require')
+        ));
+        $shopCommodityId = $data['shopCommodityId'];
+
+        $data = $this->argv->checkPost(array(
+            array('shopCommodityClassifyId', 'require'),
+            array('title', 'require'),
+            array('icon', 'require'),
+            array('thumbicon','require'),
+            array('state', 'require'),
+            array('remark', 'require'),
+        ));
+        //检查权限
+        $user = $this->loginAo->checkMustClient(
+            $this->userPermissionEnum->COMPANY_SHOP
+        );
+        $userId = $user['userId'];
+
+        //执行业务逻辑
+        $this->commodityAo->modAlbum($userId, $shopCommodityId, $data);
     }
 
 }

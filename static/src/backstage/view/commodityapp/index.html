@@ -24,6 +24,20 @@
 				next();
 			});
 		}
+
+		//获取二维码海报的风格
+		function getQrcodeStyle(next){
+			$.get('/distribution/getQrcodeStyle',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				qrcodeStyle = data.data;
+				next();
+			});
+		}
+
 		function go(){
 			input.verticalInput({
 				id:'container',
@@ -45,6 +59,7 @@
 					{id:'mchKey',type:'text',name:'mchKey'},
 					{id:'mchSslCert',type:'file',name:'mchSslCert',option:{url:'/upload/cert',type:'pem',maxSize:1024*1024}},
 					{id:'mchSslKey',type:'file',name:'mchSslKey',option:{url:'/upload/cert',type:'pem',maxSize:1024*1024}},
+					{id:'qrcodeStyle',type:'enum',name:'二维码海报风格',map:qrcodeStyle},
 					{id:'remark',type:'text',name:'备注'},
 					{id:'customService',type:'text',name:'客服消息'},
 				],
@@ -64,6 +79,8 @@
 				cancel:undefined
 			});
 		}
-		get(go);
+		get(function(){
+			getQrcodeStyle(go);
+		});
 	</script>
 <link rel="import" href="../common/footer.html?__inline">

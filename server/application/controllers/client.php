@@ -133,7 +133,10 @@ class Client extends CI_Controller {
 				array('userId','require'),
 			));
 			$userId = $data['userId'];
-			return $this->clientAo->rankingList($userId);
+			//检查权限
+			$client = $this->clientLoginAo->checkMustLogin($userId);
+			$clientId = $client['clientId'];
+			return $this->clientAo->rankingList($userId,$clientId);
 		}
 	}
 

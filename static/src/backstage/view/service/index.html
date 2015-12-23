@@ -1,0 +1,54 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		function go(){
+			query.simpleQuery({
+				id:'container',
+				url:'/question/search?album=0',
+				column:[
+					{id:'questionId',type:'text',name:'问题ID'},
+					{id:'question',type:'text',name:'问题'},
+					{id:'createTime',type:'text',name:'创建时间'},
+					{id:'modifyTime',type:'text',name:'修改时间'}
+				],
+				queryColumn:['question'],
+				operate:[
+				{
+					name:'编辑',
+					click:function(data){
+						location.href = 'view.html?questionId='+data.questionId;
+					}
+				},
+				{
+					name:'删除',
+					click:function(data){
+						dialog.confirm('确认删除该问题，不可回退操作？!',function(){
+							$.get('/question/del',{questionId:data.questionId},function(data){
+								data = $.JSON.parse(data);
+								if( data.code != 0 ){
+									dialog.message(data.msg);
+									return;
+								}
+								location.href = 'index.html';
+							});
+						});
+					}
+				},
+				],
+				button:[
+				{
+					name:'添加问题',
+					click:function(){
+						location.href = 'view.html';
+					}
+				},
+				],
+			});
+		}
+		go();
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

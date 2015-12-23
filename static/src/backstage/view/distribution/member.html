@@ -1,0 +1,88 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		var subPage = require('/fishstrap/page/subPage.js');
+		var distributionState = {};
+		function getAllState(next){
+			$.get('/distribution/getAllState',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				distributionState = data.data;
+				next();
+			});
+		}
+		function go(){
+			query.simpleQuery({
+				id:'container',
+				url:'/distribution/searchMember',
+				column:[
+					{id:'distributionId',type:'text',name:'分成关系ID'},
+					{id:'member',type:'enum',name:'会员级别',map:{0: '普通会员',1:'高级会员'}},
+					{id:'nickName',type:'text',name:'会员昵称'},
+					{id:'headImgUrl',type:'image',name:'会员头像'},
+					{id:'downUserCompany',type:'text',name:'分销商名称'},
+					{id:'phone',type:'text',name:'联系电话'},
+					{id:'shopUrl',type:'text',name:'商城地址'},
+					{id:'distributionPercentShow',type:'text',name:'默认分成比例'},
+					{id:'recommend',type:'enum',name:'是否推荐',map:{0:'否',1:'是'}},
+					// {id:'createTime',type:'text',name:'创建时间'},
+					// {id:'modifyTime',type:'text',name:'修改时间'}
+				],
+				queryColumn:['nickName','member'],
+				operate:[
+				{
+					name:'升级高级会员',
+					click:function(data){
+						$.post('/distribution/upgradeMember',{distributionId:data.distributionId},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							location.reload();
+						});
+					}
+				},
+				{
+					name:'降级普通会员',
+					click:function(data){
+						$.post('/distribution/degradeMember',{distributionId:data.distributionId},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							location.reload();
+						});
+					}
+				},
+				{
+					name:'推荐',
+					click:function(data){
+						dialog.confirm('确认删除该下级分成，不可回退操作？!',function(){
+							$.post('/distribution/recommend',{distributionId:data.distributionId},function(data){
+								data = $.JSON.parse(data);
+								if( data.code != 0 ){
+									dialog.message(data.msg);
+									return;
+								}
+								location.reload();
+							});
+						});
+					}
+				},
+				],
+				button:[],
+			});
+		}
+		go();
+		// getAllState(go);
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

@@ -385,6 +385,31 @@ class Deal extends CI_Controller {
 			return $this->orderAo->confirmReceive($clientId,$shopOrderId,$shopOrderCommodityId);
 		}
 	}
+
+	/**
+	 * @view json
+	 * 检测厂家id 和 进入的id
+	 * date:2015.12.16
+	 */
+	public function checkUserAndEntrance(){
+		if($this->input->is_ajax_request()){
+			//检查输入参数
+			$data = $this->argv->checkGet(array(
+				array('userId', 'require'),
+			));
+			$userId = $data['userId']; //厂家id
+			$entranceUserId = $this->input->get('entranceUserId');
+			if($userId != $entranceUserId){
+				$url = 'http://'.$_SERVER['HTTP_HOST'].'/'.$userId.'/shopcart.html';
+				return array(
+					'url'=>$url,
+					'entranceUserId'=>$entranceUserId
+					);
+			}else{
+				return 1;
+			}
+		}
+	}
 }
 
 /* End of file welcome.php */

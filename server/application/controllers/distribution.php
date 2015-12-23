@@ -12,6 +12,7 @@ class Distribution extends CI_Controller
         $this->load->model('distribution/distributionQrCodeAo','distributionQrCodeAo');
         $this->load->model('user/userTypeEnum','userTypeEnum');
         $this->load->library('argv', 'argv');
+        $this->load->model('distribution/distributionPosterEnum','distributionPosterEnum');
     }
 
     /**
@@ -451,6 +452,55 @@ class Distribution extends CI_Controller
 
     /**
      * @view json
+     * en?
+     * date:2015.12.17
+     */
+    public function getEnjoyInfo(){
+        if($this->input->is_ajax_request()){
+            $this->load->model('user/userAo','userAo');
+            $this->load->model('client/clientAo','clientAo');
+            $this->load->model('user/userAppAo','userAppAo');
+            //检查参数
+            $data = $this->argv->checkGet(array(
+                array('userId', 'require'),
+            ));
+            $upUserId   = $data['userId'];
+            $downUserId = $this->input->get('downUserId');
+            $userInfo = $this->userAo->get($downUserId);
+            $clientId = $userInfo['clientId'];
+            $clientInfo = $this->clientAo->get($upUserId,$clientId);
+            $userAppInfo = $this->userAppAo->get($downUserId);
+            $nickName = base64_decode($clientInfo['nickName']);
+            $headImgUrl = $clientInfo['headImgUrl'];
+            return array(
+                'nickName'=>$nickName,
+                'headImgUrl'=>$headImgUrl
+                );
+        }
+    }
+
+    /**
+     * @view json
+     * 获取用户id
+     * date:2015.12.17
+     */
+    public function getDownUserId(){
+        $data = $this->argv->checkGet(array(
+            array('userId', 'require'),
+        ));
+        $userId = $data['userId'];
+        $client = $this->clientLoginAo->checkMustLogin($userId);
+        $clientId = $client['clientId'];
+        $result = $this->userAo->checkClientId($userId,$clientId);
+        if($result){
+            return $result[0]['userId'];
+        }else{
+            return 0;
+        }
+    }
+
+    /**
+     * @view json
      * 我的盟友
      */
     public function myAllies(){
@@ -567,34 +617,72 @@ class Distribution extends CI_Controller
         print_r($links);
     }
 
-    //测试推送客服消息
-    public function testCustom(){
-        echo $_SERVER["HTTP_HOST"];
-        // $userId = 10081;
-        // $this->load->model('weixin/wxSubscribeAo','wxSubscribeAo');
-        // $weixinSubscribe = $this->wxSubscribeAo->search($userId,array('remark'=>'新朋友'),'')['data'][0];
-        // $weixinSubscribeId = $weixinSubscribe['weixinSubscribeId'];
-        // $graphic=$this->wxSubscribeAo->graphicSearch($userId,$weixinSubscribeId);
-        // // var_dump($graphic);die;
-        // $this->load->model('user/userAppAo','userAppAo');
-        // $info   = $this->userAppAo->getTokenAndTicket($userId);
-        // $access_token = $info['appAccessToken'];
-        // $url = 'https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token='.$access_token;
-        // $arr['touser'] = 'oTKRMuJrvqmx0jB2AV2I1JlT35RI';
-        // $arr['msgtype']= 'news';
-        // $data['title'] = urlencode($graphic[0]['Title']);
-        // $data['description'] = urlencode($graphic[0]['Description']);
-        // $data['url']   = 'http://10081.shop.tongyinyang.com/10081/distribution/center.html';
-        // $data['picurl']= 'http://shop.tongyinyang.com'.$graphic[0]['PicUrl'];
-        // $arr['news']['articles'][] = $data;
-        // $this->load->library('http');
-        // $httpResponse = $this->http->ajax(array(
-        //     'url'=>$url,
-        //     'type'=>'post',
-        //     'data'=>urldecode(json_encode($arr)),
-        //     'dataType'=>'plain',
-        //     'responseType'=>'json'
-        // ));
-        // var_dump($httpResponse);die;
+        /**
+     * @view json
+     * 查看会员
+     * date:2015.11.27
+     */
+    public function searchMember(){
+        //检查参数
+        $dataWhere = $this->argv->checkGet(array(
+            array('member','option')
+        ));
+
+        $dataLimit = $this->argv->checkGet(array(
+            array('pageIndex', 'require'),
+            array('pageSize', 'require')
+        ));
+
+        //检查分销权限
+        $user = $this->loginAo->checkMustClient(
+            $this->userPermissionEnum->COMPANY_DISTRIBUTION
+        );
+        $userId = $user['userId'];
+        return $this->distributionAo->searchMember($userId,$dataWhere,$dataLimit);
     }
+
+    /**
+     * @view json
+     * 升级高级会员
+     * date:2015.11.27
+     */
+    public function upgradeMember(){
+        if($this->input->is_ajax_request()){
+            //检查分销权限
+            $user = $this->loginAo->checkMustClient(
+                $this->userPermissionEnum->COMPANY_DISTRIBUTION
+            );
+            $userId = $user['userId'];
+            $distributionId = $this->input->post('distributionId');
+            return $this->distributionAo->upgradeMember($userId,$distributionId);
+        }
+    }
+
+    /**
+     * @view json
+     * 降级普通会员
+     * date:2015.11.27
+     */
+    public function degradeMember(){
+        if($this->input->is_ajax_request()){
+            //检查分销权限
+            $user = $this->loginAo->checkMustClient(
+                $this->userPermissionEnum->COMPANY_DISTRIBUTION
+            );
+            $userId = $user['userId'];
+            $distributionId = $this->input->post('distributionId');
+            return $this->distributionAo->degradeMember($userId,$distributionId);
+        }
+    }
+
+    /**
+     * @view json
+     * 获取二维码风格
+     * date:2015.12.15
+     */
+    public function getQrcodeStyle(){
+        return $this->distributionPosterEnum->names;
+    }
+
+
 }

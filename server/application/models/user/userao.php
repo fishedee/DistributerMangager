@@ -321,6 +321,7 @@ class UserAo extends CI_Model {
 
 	//发送二维码海报
 	public function myPoster($userId,$openId){
+		// return 1;
 		$this->load->model('client/clientAo','clientAo');
 		$this->load->model('user/userAppAo','userAppAo');
 		$this->load->library('http');
@@ -348,40 +349,58 @@ class UserAo extends CI_Model {
 		
 		//海报制作
 		// header('Content-type: image/jpg');
-		$save = dirname(__FILE__).'/../../../../data/upload/';
+		$save = dirname(__FILE__).'/../../../../data/upload/image/poster/';
 		$path = dirname(__FILE__).'/../../../..'.$venderAppInfo['poster'];
-		// echo $path;die;
-		$size = getimagesize($path);
-		$type = $size[2];
-		//海报资源
-		if($type == 3){
-			$img = imagecreatefrompng($path);
-		}else{
-			$img = imagecreatefromjpeg($path);
+		$img  = imagecreatefromjpeg($path);   //海报的资源
+		if($venderAppInfo['qrcodeStyle'] == 1){
+			//字体
+			$fonts= dirname(__FILE__).'/../../../../data/upload/fonts/black.ttf'; //字体
+			$color= imagecolorallocate($img, 255, 0, 0); //颜色
+			imagefttext($img, 16, 0, 250, 280, $color, $fonts, $nickName);
+			//头像
+			$url = $head;
+			$headPath = $save.$clientId.'_head.jpg';  //头像的路径
+			$this->download($url,$headPath); //头像保存到本地
+			$this->thumb($headPath,90,88,$headPath,0);
+			$img2 = imagecreatefromjpeg($headPath);
+			imagecopy($img, $img2, 140, 205, 0, 0, 90 ,88);
+			imagedestroy($img2);
+			//二维码
+			$qrcode = $userInfo['qrcode'];
+			$url    = 'http:'.substr($qrcode,6);
+			$qrcodePath = $save.$clientId.'_qrcode.jpg'; //二维码的路径
+			$this->download($url,$qrcodePath); // 二维码保存到本地
+			$this->thumb($qrcodePath,200,200,$qrcodePath,1);
+			$img3 = imagecreatefromjpeg($qrcodePath);
+			imagecopy($img, $img3, 170, 320, 0, 0, 200, 200);
+			imagedestroy($img3);
+			$resultPath = $save.$clientId.'_result.jpg'; //最后的结果图
+			imagejpeg($img,$resultPath);
+			unlink($headPath);
+			unlink($qrcodePath);
+		}elseif($venderAppInfo['qrcodeStyle'] == 2){
+			//头像
+			$url = $head;
+			$headPath = $save.$clientId.'_head.jpg';  //头像的路径
+			$this->download($url,$headPath); //头像保存到本地
+			$this->thumb($headPath,66,64,$headPath,0);
+			$img2 = imagecreatefromjpeg($headPath);
+			imagecopy($img, $img2, 90, 500, 0, 0, 66 ,64);
+			imagedestroy($img2);
+			//二维码
+			$qrcode = $userInfo['qrcode'];
+			$url    = 'http:'.substr($qrcode,6);
+			$qrcodePath = $save.$clientId.'_qrcode.jpg'; //二维码的路径
+			$this->download($url,$qrcodePath); // 二维码保存到本地
+			$this->thumb($qrcodePath,168,166,$qrcodePath,1);
+			$img3 = imagecreatefromjpeg($qrcodePath);
+			imagecopy($img, $img3, 75, 580, 0, 0, 168, 166);
+			imagedestroy($img3);
+			$resultPath = $save.$clientId.'_result.jpg'; //最后的结果图
+			imagejpeg($img,$resultPath);
+			unlink($headPath);
+			unlink($qrcodePath);
 		}
-		$fonts= dirname(__FILE__).'/../../../../data/upload/fonts/black.ttf'; //字体
-		// echo $fonts;die;
-		$color= imagecolorallocate($img, 255, 0, 0); //颜色
-		imagefttext($img, 16, 0, 250, 280, $color, $fonts, $nickName);
-		// imagejpeg($img);die;
-		//头像
-		$url = $head;
-		$headPath = $save.$clientId.'_head.jpg';  //头像的路径
-		$this->download($url,$headPath); //头像保存到本地
-		$this->thumb($headPath,90,88,$headPath,0);
-		$img2 = imagecreatefromjpeg($headPath);
-		imagecopy($img, $img2, 140, 205, 0, 0, 90 ,88);
-		imagedestroy($img2);
-
-		//二维码
-		$qrcode = $userInfo['qrcode'];
-		$url    = 'http:'.substr($qrcode,6);
-		$qrcodePath = $save.$clientId.'_qrcode.jpg'; //二维码的路径
-		$this->download($url,$qrcodePath); // 二维码保存到本地
-		$this->thumb($qrcodePath,299,295,$qrcodePath,1);
-		$img3 = imagecreatefromjpeg($qrcodePath);
-		imagecopy($img, $img3, 140, 310, 0, 0, 299, 295);
-		imagedestroy($img3);
 		// imagejpeg($img);die;
 		$resultPath = $save.$clientId.'_result.jpg'; //最后的结果图
 		imagejpeg($img,$resultPath);
@@ -408,18 +427,19 @@ class UserAo extends CI_Model {
 
 		//将请求的结果以文件流的形式返回
 		curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
-
 		//3、执行一个CURL会话
 		$optout = curl_exec($ch);
+		// return $optout;
 		$optoutArr = json_decode($optout,true);
 		$media_id = $optoutArr['media_id'];
+		// return $media_id;
 		//4、关闭CURL会话
 		curl_close($ch);
 		//推送客服消息
-		$url = 'https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token='.$access_token;
-		$arr['touser'] = $openId;
-		$arr['msgtype']= 'image';
-		$arr['image']['media_id'] = $media_id;
+		// $url = 'https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token='.$access_token;
+		// $arr['touser'] = $openId;
+		// $arr['msgtype']= 'image';
+		// $arr['image']['media_id'] = $media_id;
 		unlink($resultPath);
 		return $media_id;
 	}
@@ -710,6 +730,19 @@ class UserAo extends CI_Model {
 		$distribution   = $this->distributionAo->getDistribution($distributionId);
 		$distribution   = $distribution[0];
 		$this->distributionQrCodeAo->createLimitQrcode($vender,$distribution);
+	}
+
+	/**
+	 * @view json
+	 * date:2015.12.16
+	 */
+	public function getUserInfoNotThrow($clientId){
+		$result = $this->checkUserClientId($clientId);
+		if(!$result){
+			return 0;
+		}else{
+			return $userInfo;
+		}
 	}
 
 }

@@ -97,10 +97,10 @@ class CommodityAo extends CI_Model
         return $originCommodity;
     }
 
-    public function search($userId,$dataWhere, $dataLimit,$rank=''){
+    public function search($userId,$dataWhere, $dataLimit,$album,$rank=''){
         $this->userAppAo->checkByUserId($userId);
         $dataWhere['userId'] = $userId;
-        $data = $this->commodityDb->search($dataWhere, $dataLimit,$rank);
+        $data = $this->commodityDb->search($dataWhere, $dataLimit,$rank,$album);
 
         foreach($data['data'] as $key=>$value)
             $data['data'][$key] = $this->findOriginCommodity($value);
@@ -351,5 +351,97 @@ class CommodityAo extends CI_Model
         foreach($data as $key=>$value)
             $data[$key] = $this->findOriginCommodity($value);
         return $data;
+    }
+
+    /**
+     * @view json
+     * 增加相册
+     * date:2015.12.07
+     */
+    public function addAlbum($userId, $data){
+        // $thumb   = $data['thumb'];
+        // unset($data['thumb']);
+        $thumb = 0;
+        if($thumb){
+            //缩略
+            $thumbicon = $this->thumbImg($data['icon']);
+        }
+        $maxSort = $this->commodityDb->getMaxSortByUser($userId);
+        if( $maxSort == null )
+            $sort = 1;
+        else
+            $sort = $maxSort + 1;
+
+        $data['sort'] = $sort;
+        $data['userId'] = $userId;
+        $data['shopLinkCommodityId'] = 0;
+        $data['isLink'] = 0;
+        $data['album']  = 1;
+        $this->commodityDb->add($data);
+    }
+
+    //生成缩略图
+    private function thumbImg($img){
+        $thumbicon = dirname(__FILE__).'/../../../..'.$img;
+        $config['image_library'] = 'gd2';
+        $config['source_image'] = $thumbicon;
+        $config['create_thumb'] = TRUE;
+        $config['maintain_ratio'] = TRUE;
+        $config['width']     = 75;
+        $config['height']   = 50;
+        $this->load->library('image_lib', $config);
+        if($this->image_lib->resize()){
+            //缩略成功
+            return $this->insertToStr($img,strrpos($img, '.'),'_thumb');
+        }else{
+            throw new CI_MyException(1,'生成缩略图失败');
+        }
+    }
+
+    private function insertToStr($str, $i, $substr){
+        //指定插入位置前的字符串
+        $startstr="";
+        for($j=0; $j<$i; $j++){
+            $startstr .= $str[$j];
+        }
+        
+        //指定插入位置后的字符串
+        $laststr="";
+        for ($j=$i; $j<strlen($str); $j++){
+            $laststr .= $str[$j];
+        }
+        
+        //将插入位置前，要插入的，插入位置后三个字符串拼接起来
+        $str = $startstr . $substr . $laststr;
+        
+        //返回结果
+        return $str;
+    }
+
+    /**
+     * date:2015.12.12
+     */
+    public function modAlbum($userId, $shopCommodityId, $data){
+        $shopCommodity = $this->commodityDb->get($shopCommodityId);
+        if($shopCommodity['userId'] != $userId)
+            throw new CI_MyException(1, '非本商城用户无权限操作');
+        if($shopCommodity['isLink'] != 0)
+            throw new CI_MyException(1, '导入商品不能修改');
+
+        $this->commodityDb->mod($shopCommodityId, $data);
+
+        $this->recursiveRefreshCommodity();
+    }
+
+    //前端获取相册
+    public function getAlbum($userId,$shopCommodityClassifyId){
+        $select[] = 'shopCommodityId';
+        $select[] = 'icon';
+        $select[] = 'title';
+        $select[] = 'thumbicon';
+        $select[] = 'remark';
+        // var_dump($shopCommodityClassifyId);
+        // var_dump($this->commodityDb->getAlbum($userId,$shopCommodityClassifyId,$select));die;
+        return $this->commodityDb->getAlbum($userId,$shopCommodityClassifyId,$select);
     }
 }

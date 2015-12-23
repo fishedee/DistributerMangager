@@ -22,7 +22,8 @@ class UserAppDb extends CI_Model
 		'appJsApiTicket'=>'',
 		'appJsApiTicketExpire'=>'',
 		'remark'=>'',
-		'customService'=>''
+		'customService'=>'',
+		'qrcodeStyle'=>'',
 	);
 	public function __construct(){
 		parent::__construct();

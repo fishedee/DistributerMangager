@@ -29,6 +29,16 @@ class ScoreDb extends CI_Model {
 		return $this->db->get($this->tableName)->result_array();
 	}
 
+	//判断今日分享朋友圈的次数
+	public function checkEnjoyShareTodayNum($clientId,$event){
+		$nowTime = date('Y-m-d',time());
+		$this->db->where('event',$event);
+		$this->db->where('clientId',$clientId);
+		$this->db->like('createTime',$nowTime,'both');
+		$this->db->select('scoreId');
+		return $this->db->get($this->tableName)->num_rows();
+	}
+
 	//判断今日分享给朋友页面
 	public function checkEnjoyFriendToday($clientId,$url,$event){
 		$nowTime = date('Y-m-d',time());
@@ -40,6 +50,16 @@ class ScoreDb extends CI_Model {
 		return $this->db->get($this->tableName)->result_array();
 	}
 
+	//判断今日分享到朋友的次数
+	public function checkEnjoyFriendTodayNum($clientId,$event){
+		$nowTime = date('Y-m-d',time());
+		$this->db->where('event',$event);
+		$this->db->where('clientId',$clientId);
+		$this->db->like('createTime',$nowTime,'both');
+		$this->db->select('scoreId');
+		return $this->db->get($this->tableName)->num_rows();
+	}
+
 	//签到
 	public function checkIn($data){
 		$this->db->insert($this->tableName,$data);
@@ -48,6 +68,13 @@ class ScoreDb extends CI_Model {
 
 	//获取积分日志
 	public function getLog($clientId){
+		$this->db->where('clientId',$clientId);
+		return $this->db->get($this->tableName)->result_array();
+	}
+
+	//检测关注
+	public function checkFllow($clientId,$event){
+		$this->db->where('event',$event);
 		$this->db->where('clientId',$clientId);
 		return $this->db->get($this->tableName)->result_array();
 	}

@@ -1,0 +1,58 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		var isCheck = ($.location.getQueryArgv('check') != null);
+		var allClassify = {};
+		var allState = {};
+		var tableOperation = '';
+		var companyClassify = {};
+		function getClassify(next){
+			$.get('/wxsubscribe/getAllType',{},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				companyClassify = data.data;
+				next();
+			});
+		}
+		function whenWindowClose(mode,operation){
+			if( mode == 'confirm' )
+				operation.close( tableOperation.getCheckData() );
+			else
+				operation.close( []);
+		}
+		function say(){
+			window.parent.say();
+		}
+		function go(next){
+			tableOperation = query.simpleQuery({
+				id:'container',
+				url:'/wxsubscribe/search',
+				checkAll:isCheck,
+				column:[
+					{id:'weixinSubscribeId',type:'text',name:'素材ID'},
+					{id:'materialClassifyId',type:'enum',name:'分类',map:companyClassify},
+					{id:'title',type:'text',name:'素材标题'},
+					{id:'remark',type:'text',name:'备注'},
+					{id:'createTime',type:'text',name:'创建时间'},
+					{id:'modifyTime',type:'text',name:'修改时间'}
+				],
+				operate:[],
+				button:[],
+			});
+			next();
+		}
+		getClassify(function(){
+			go(function(){
+				setTimeout(say,100); 
+			});
+		});
+
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

@@ -1,0 +1,67 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var query = require('/fishstrap/ui/query.js');
+		function go(){
+			tableOperation = query.simpleQuery({
+				id:'container',
+				url:'/size/search',
+				column:[
+					{id:'sizeId',type:'text',name:'上门量尺寸申请id'},
+					{id:'clientId',type:'text',name:'用户id'},
+					{id:'name',type:'text',name:'名称'},
+					{id:'contact',type:'text',name:'联系方式'},
+					{id:'address',type:'text',name:'地址'},
+					{id:'state',type:'enum',name:'状态',map:{'0':'未受理','1':'已受理'}},
+					{id:'createTime',type:'text',name:'创建时间'},
+					{id:'modifyTime',type:'text',name:'修改时间'}
+				],
+				queryColumn:['name'],
+				operate:[
+				{
+					name:'受理',
+					click:function(data){
+						sizeId = data.sizeId;
+						$.get('/size/checkAccept',{sizeId: sizeId},function(data) {
+							data = $.JSON.parse(data);
+							if(data.code != 0){
+								dialog.message(data.msg);
+								return;
+							}
+							dialog.confirm('确定受理该申请吗，不可回退操作？!',function(){
+								$.get('/size/accept',{sizeId: sizeId},function(data) {
+									data = $.JSON.parse(data);
+									if(data.code != 0){
+										dialog.message(data.msg);
+										return;
+									}
+									window.location.reload();
+								});
+							});
+						});
+					}
+				},
+				{
+					name:'删除',
+					click:function(data){
+						dialog.confirm('确定删除该申请吗，不可回退操作？!',function(){
+							$.get('/size/del',{sizeId:data.sizeId},function(data){
+								data = $.JSON.parse(data);
+								if( data.code != 0 ){
+									dialog.message(data.msg);
+									return;
+								}
+								window.location.reload();
+							});
+						});
+					}
+				}],
+				button:[],
+			});
+		}
+		go();
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

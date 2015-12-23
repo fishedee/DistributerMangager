@@ -7,6 +7,7 @@ class ClientAo extends CI_Model {
 		$this->load->model('client/clientDb','clientDb');
 		$this->load->model('user/UserAppAo', 'userAppAo');
 		$this->load->model('chips/chipsPowerDb','chipsPowerDb');
+		$this->load->library('http');
 	}
 
 	public function search($userId,$where,$limit){
@@ -139,12 +140,28 @@ class ClientAo extends CI_Model {
 	}
 
 	//积分排行榜
-	public function rankingList($userId){
-		$info = $this->clientDb->rankingList($userId);
+	public function rankingList($userId,$clientId){
+		$select[] = 'clientId';
+		$select[] = 'nickName';
+		$select[] = 'headImgUrl';
+		$select[] = 'score';
+		$info = $this->clientDb->rankingList($userId,$select);
+		$client = array();
 		foreach ($info as $key => $value) {
 			$info[$key]['nickName'] = base64_decode($value['nickName']);
+			$list[]['nickName'] = base64_decode($value['nickName']);
+			if($value['clientId'] == $clientId){
+				$client['clientId'] = $value['clientId'];
+				$client['nickName'] = base64_decode($value['nickName']);
+				$client['headImgUrl'] = $value['headImgUrl'];
+				$client['rank'] = $key + 1;
+				$client['score'] = $value['score'];
+			}
 		}
-		return $info;
+		$data['client'] = $client;
+		$data['ranklist']   = $info;
+		// $data['ranklist'] = array();
+		return $data;
 	}
 
 	//刷新微信用户

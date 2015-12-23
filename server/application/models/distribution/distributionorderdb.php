@@ -36,39 +36,31 @@ class DistributionOrderDb extends CI_Model
     }
 
     public function search($where, $limit,$vender=0){
-        if(isset($limit['pageIndex']) && isset($limit['pageSize']))
-            $this->db->limit($limit['pageSize'], $limit['pageIndex']);
-        foreach($where as $key=>$value){
-            if($key == 'upUserId' || $key == 'downUserId')
-                $this->db->where($key, $value);
-            else if($key == 'state')
-                $this->db->where($key, $value);
-        }
-        $count = $this->db->count_all_results($this->tableName);
-
         if($vender){
             $this->db->where('vender',$vender);
-            foreach ($where as $key => $value) {
-                if($key == 'state'){
-                   $this->db->where($key, $value); 
+            foreach($where as $key=>$value){
+                if($key == 'upUserId' || $key == 'downUserId'){
+
+                }else if($key == 'state'){
+                    $this->db->where($key, $value);
                 }
             }
             $count = $this->db->get($this->tableName)->num_rows();
-        }else{
+            $this->db->where('vender',$vender);
             foreach($where as $key=>$value){
-                if($key == 'upUserId' || $key == 'downUserId')
+                if($key == 'upUserId' || $key == 'downUserId'){
+
+                }else if($key == 'state'){
                     $this->db->where($key, $value);
-                else if($key == 'state')
-                    $this->db->where($key, $value);
+                }
             }
+            if(isset($limit['pageIndex']) && isset($limit['pageSize'])){
+                $this->db->limit($limit['pageSize'], $limit['pageIndex']);
+            }
+            $query = $this->db->get($this->tableName)->result_array();
+        }else{
+            throw new CI_MyException(1,'该菜单只适合厂家使用');
         }
-        $query = $this->db->get($this->tableName)->result_array();
-        $count = count($query);
-        
-        if($count){
-            $this->db->order_by('createTime', 'desc');
-        }
-        // var_dump($query);die;
         return array(
             'count'=>$count,
             'data'=>$query

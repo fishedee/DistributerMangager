@@ -40,11 +40,14 @@ class WxMenuAo extends CI_Model
 		//搜索素材模型
 		$this->load->model('weixin/wxSubscribeAo','wxSubscribeAo');
 		foreach ($data as $k=>$v){
+			if(!isset($v['sub_button']) && !isset($v['name'])){
+				unset($data[$k]);
+				continue;
+			}
 			foreach ($v as $mainKey=>$mainValue){
 				if($mainKey =='name' && empty($mainValue)){
 					throw new CI_MyException(1,"第".($k+1)."栏主菜单的标题,不能为空");
 				}
-				
 				if ($mainKey =='url' && !empty($mainValue) && $this->isUrl($mainValue) == false){
 					//如果是素材ID
 					if($this->SubscribeNum($mainValue,$userId) == false){
@@ -54,8 +57,6 @@ class WxMenuAo extends CI_Model
 						$data[$k]['key'] = $data[$k]['url'];
 						unset($data[$k]['url']);
 					}
-				}else{
-					$data[$k]['type']='view';
 				}
 				
 				
@@ -65,8 +66,24 @@ class WxMenuAo extends CI_Model
 				if ( ($k >0 && empty($data[($k-1)]['name'])) || ($k >1 && empty($data[($k-2)]['name']))){
 					throw new CI_MyException(1,"第".($k+1)."栏主菜单有内容，前面主栏目内容不能空内容。");
 				}
+
+				if($mainKey == 'type'){
+					if($mainValue == 'VIEW'){
+						$data[$k]['type'] = 'view';
+					}elseif($mainValue == 'CLICK'){
+						$data[$k]['type']='click';
+					}elseif($mainValue == 'pic_photo_or_album'){
+						$data[$k]['type']='pic_photo_or_album';
+					}elseif($mainValue == 'pic_sysphoto'){
+						$data[$k]['type'] = 'pic_sysphoto';
+					}
+				}
+
 				if ($mainKey =='sub_button' && !empty($mainValue) ){
 					foreach ($mainValue as $sunKey=>$sunValue){
+						if(isset($data[$k]['type'])){
+							unset($data[$k]['type']);
+						}
 						if (empty($sunValue['name']) ){
 							throw new CI_MyException(1,"第".($k+1)."栏主菜单的第".($sunKey+1)."子菜单的标题,不能为空");
 						}
@@ -78,22 +95,33 @@ class WxMenuAo extends CI_Model
 								$data[$k]['sub_button'][$sunKey]['key'] = $data[$k]['sub_button'][$sunKey]['url'];
 								unset($data[$k]['sub_button'][$sunKey]['url']);
 							}
-							
-						}elseif($sunValue['key'] != 'undefined'){
-							$data[$k]['sub_button'][$sunKey]['type']='click';
-							$data[$k]['sub_button'][$sunKey]['key'] = $sunValue['key'];
-						}else {
-							$data[$k]['sub_button'][$sunKey]['type']='view';
+						}
+
+						if($sunValue['type'] == 'CLICK'){
+							unset($data[$k]['sub_button'][$sunKey]['url']);
+							$data[$k]['sub_button'][$sunKey]['type'] = 'click';
+							if(empty($data[$k]['sub_button'][$sunKey]['key'])){
+								throw new CI_MyException(1,"第".($k+1)."栏主菜单的第".($sunKey+1)."子菜单的链接,请输入正确的key值");
+							}
+						}elseif($sunValue['type'] == 'VIEW'){
+							unset($data[$k]['sub_button'][$sunKey]['key']);
+							$data[$k]['sub_button'][$sunKey]['type'] = 'view';
+						}elseif($sunValue['type'] == 'pic_photo_or_album'){
+							unset($data[$k]['sub_button'][$sunKey]['url']);
+							if(!$sunValue['key']){
+								throw new CI_MyException(1,"第".($k+1)."栏主菜单的第".($sunKey+1)."子菜单的链接,请输入正确的key值");
+							}
+						}elseif($sunValue['type'] == 'pic_sysphoto'){
+							unset($data[$k]['sub_button'][$sunKey]['url']);
+							if(!$sunValue['key']){
+								throw new CI_MyException(1,"第".($k+1)."栏主菜单的第".($sunKey+1)."子菜单的链接,请输入正确的key值");
+							}
 						}
 					}
 					if (empty($data[$k]['name'])){
 						throw new CI_MyException(1,"第".($k+1)."栏的子菜单有内容，主菜单标题不能为空");
 					}
 				}
-			}
-			if(!$v['url']){
-				$data[$k]['type'] = 'click';
-				$data[$k]['key']  = $v['key'];
 			}
 		}
 		// var_dump($data);die;

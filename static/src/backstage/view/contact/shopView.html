@@ -1,0 +1,62 @@
+<link rel="import" href="../common/header.html?__inline">
+	<div id="container">
+	</div>
+	<script type="text/javascript">
+		var $ = require('/fishstrap/core/global.js');
+		var dialog = require('/fishstrap/ui/dialog.js');
+		var input = require('/fishstrap/ui/input.js');
+		var companyShopId = $.location.getQueryArgv('companyShopId');
+		var companyBanner = {};
+		function get(next){
+			$.get('/companyshop/get',{companyShopId:companyShopId},function(data){
+				data = $.JSON.parse(data);
+				if( data.code != 0 ){
+					dialog.message(data.msg);
+					return;
+				}
+				companyBanner = data.data;
+				next();
+			});
+		}
+		function go(){
+			input.verticalInput({
+				id:'container',
+				field:[
+					{id:'name',type:'text',name:'标题'},
+					{id:'icon',type:'image',name:'图片',option:{url:'/upload/image',width:640}},
+					{id:'address',type:'text',name:'地址'},
+					{id:'contact',type:'text',name:'联系方式'},
+				],
+				value:companyBanner,
+				submit:function(data){
+					if( companyShopId != null ){
+						$.post('/companyshop/mod',{companyShopId:companyShopId,data: data},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							history.back();
+						});
+					}else{
+						$.post('/companyshop/add',{data: data},function(data){
+							data = $.JSON.parse(data);
+							if( data.code != 0 ){
+								dialog.message(data.msg);
+								return;
+							}
+							history.back();
+						});
+					}
+				},
+				cancel:function(){
+					history.back();
+				}
+			});
+		}
+		if( companyShopId != null )
+			get(go);
+		else
+			go();
+	</script>
+<link rel="import" href="../common/footer.html?__inline">

@@ -1,4 +1,4 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+ <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class PointsOrderAo extends CI_Model{
     public function __construct(){
@@ -50,8 +50,9 @@ class PointsOrderAo extends CI_Model{
                 $data['remark']   = '兑换奖品';
                 $data['score']    = $productInfo['points'];
                 $data['dis']      = 0;
-                $data['createTime'] = date('Y-m-d H:i:s',time());
+                // $data['createTime'] = date('Y-m-d H:i:s',time());
                 return $this->scoreDb->checkIn($data);
+                // return $result;
             }else{
                 throw new CI_MyException(1,'您的积分变更失败');
             }
@@ -63,5 +64,39 @@ class PointsOrderAo extends CI_Model{
     //我的奖品
     public function myProduct($userId,$clientId){
         return $this->pointsOrderDb->myProduct($userId,$clientId);
+    }
+
+    //查看兑换记录
+    public function search($vender,$dataWhere,$dataLimit){
+        $dataWhere['vender'] = $vender;
+        $result = $this->pointsOrderDb->search($dataWhere,$dataLimit);
+        foreach ($result['data'] as $key => $value) {
+            $clientInfo = $this->clientAo->get($vender,$value['clientId']);
+            $result['data'][$key]['nickName'] = base64_decode($clientInfo['nickName']);
+            $result['data'][$key]['headImgUrl'] = $clientInfo['headImgUrl'];
+        }
+        return $result;
+    }
+
+    public function getOrder($vender,$orderId){
+        $info = $this->pointsOrderDb->getOrder($orderId);
+        if($info){
+            if($info['vender'] == $vender){
+                return $info;
+            }else{
+                throw new CI_MyException(1,'无效查看');
+            }
+        }else{
+            throw new CI_MyException(1,'无效兑换记录');
+        }
+    }
+
+    public function accept($vender,$orderId){
+        $info = $this->getOrder($vender,$orderId);
+        if($info['state'] != 0){
+            throw new CI_MyException(1,'该记录已经受理');
+        }
+        $data['state'] = 1;
+        return $this->pointsOrderDb->mod($orderId,$data);
     }
 }

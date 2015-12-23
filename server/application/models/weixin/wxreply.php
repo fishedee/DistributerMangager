@@ -88,24 +88,44 @@ class Wxreply extends CI_Model {
         switch ($postObj->Event)
         {
             case "subscribe":
+                $this->load->model('distribution/distributionQrCodeAo','distributionQrCodeAo');
                 $this->load->model('client/clientAo','clientAo');
                 $openId = $postObj->FromUserName;
-                $this->clientAo->menuClientInfo($userId,$openId);
+                $result = $this->clientAo->menuClientInfo($userId,$openId);
+                // return $this->transmitText($postObj,$result);
                 //检测是否开通了高级分成功能
                 $this->load->model('user/userPermissionDb','userPermissionDb');
                 $condition['permissionId'] = 5;
                 $result = $this->userPermissionDb->checkPermissionId2($userId,$condition);
                 if($result){
+
+                    //开启了分销功能
+                    $this->load->model('client/scoreAo','scoreAo');
+                    $this->scoreAo->fllow($userId,$openId);
+                    // return $this->transmitText($postObj,$result);
+
                     $this->load->model('distribution/distributionAo');
                     // $key = $postObj->EventKey;
                     $openId = $postObj->FromUserName;
                     if(strstr($postObj->EventKey, 'qrscene') && isset($postObj->EventKey)){
                         $key  = $postObj->EventKey;
                         $info = substr($key, strpos($key, '_')+1);
-                        $info = explode(',', $info);
-                        $vender = $info[0];
-                        $upUserId = $info[1];
-                        $line   = $info[2];
+                        if(strstr($info, ',')){
+                            $info = explode(',', $info);
+                            $vender = $info[0];
+                            $upUserId = $info[1];
+                            $line   = $info[2];
+                        }else{
+                            $qrcodeConfig = $this->distributionQrCodeAo->getQrcodeConfig($info);
+                            if($qrcodeConfig){
+                                $vender = $qrcodeConfig['vender'];
+                                $upUserId = $qrcodeConfig['downUserId'];
+                                $line = $qrcodeConfig['line'];
+                                // return $this->transmitText($postObj,$upUserId);
+                            }else{
+                                return $this->transmitText($postObj,'分成配置获取失败,请与客服联系');
+                            }
+                        }
                         //扫描成为分销商
                         $content = $this->distributionAo->qrCodeAsk($openId,$vender,$upUserId,$line);
                         return $this->transmitText($postObj,$content);
@@ -132,9 +152,11 @@ class Wxreply extends CI_Model {
                     if($result){
                         //发送图文信息 我的二维码
                         $this->load->model('user/userAo','userAo');
+                        // return $this->transmitText($postObj,'123');
                         // return $this->transmitText($postObj,$openId);
                         // $info   = $this->userAo->myQrCode($userId,$openId);
                         $media_id = $this->userAo->myPoster($userId,$openId);
+                        // return $this->transmitText($postObj,$media_id);
                         // return $this->transmitText($postObj,$media_id);
                         $arr['MediaId'] = $media_id;
                         return $this->transmitImage($postObj,$arr);
@@ -154,7 +176,7 @@ class Wxreply extends CI_Model {
                     $this->load->model('distribution/distributionAo','distributionAo');
                     $info = $this->distributionAo->getRecommend($userId);
                     if($info == 0){
-                        return $this->transmitText(1,'该厂家没有设置推荐人');
+                        return $this->transmitText($postObj,'该厂家没有设置推荐人');
                     }else{
                         return $this->transmitNews($postObj,$info,$postObj->EventKey);
                         // return $this->transmitText($postObj,$info);
@@ -188,8 +210,8 @@ class Wxreply extends CI_Model {
                 $this->memberAo->testAdd();
                 break;
             case 'SCAN':
+                $this->load->model('distribution/distributionQrCodeAo','distributionQrCodeAo');
                 if($postObj->EventKey == 'distribution'){
-                    $this->load->model('distribution/distributionQrCodeAo','distributionQrCodeAo');
                     $openId = $postObj->FromUserName;
                     $this->clientAo->menuClientInfo($userId,$openId);
                     $content = $this->distributionQrCodeAo->qrAsk2($userId,$openId);
@@ -352,7 +374,8 @@ class Wxreply extends CI_Model {
         $data['mediaId'] = $mediaId;
         $this->userShowAo->add($userId,$clientId,$data);
         $content = array("MediaId"=>$object->MediaId);
-        $result = $this->transmitImage($object, $content);
+        // $result = $this->transmitImage($object, $content);
+        $result = $this->transmitText($object,'接收成功');
         return $result;
     }
 
@@ -493,6 +516,7 @@ $item_str
                 $content[] = array("Title"=>$v['Title'],"Description"=>"点击进入第".$EventKey."号桌","PicUrl"=>'http://'.$_SERVER[HTTP_HOST].$v['PicUrl'], "Url"=>$v['Url'].'?boardId='.$boardId);
             }
         }elseif($EventKey == 'recommend'){
+            $content[] = array("Title"=>'请点击以下合伙人',"Description"=>'',"PicUrl"=>'', "Url"=>'');
             foreach ($graphic as $key => $v) {
                 $content[] = array("Title"=>$v['company'],"Description"=>base64_decode($v['nickName']),"PicUrl"=>$v['img'], "Url"=>$v['url']);
             }
